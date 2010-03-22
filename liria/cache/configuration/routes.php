@@ -34,6 +34,13 @@ return array (
       'action' => 'details',
       'application' => 'recipe',
     ),
+    'ci.runtests' => 
+    array (
+      'rails' => '/ci/runtests/',
+      'controller' => 'madCiController',
+      'action' => 'runtests',
+      'application' => 'ci',
+    ),
   ),
   'comments' => 
   array (

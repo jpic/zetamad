@@ -26,23 +26,6 @@ if ( $currentErrorLevel != ( E_ALL | E_STRICT ) )
 
 require_once $_ENV['MAD_BOOTSTRAP'];
 
-//ini_set( 'include_path', getcwd(). PATH_SEPARATOR . dirname( __FILE__ ) . '/../..' . PATH_SEPARATOR . ini_get( 'include_path' ) );
-
-//require_once 'Base/src/base.php';
-
-//function __autoload( $className )
-//{
-    //if ( strpos( $className, '_' ) !== false )
-    //{
-        //$file = str_replace( '_', '/', $className ) . '.php';
-        //$val = require_once( $file );
-        //if ( $val == 0 )
-            //return true;
-        //return false;
-    //}
-    //ezcBase::autoload( $className );
-//}
-
 /**
  * @package MadCi
  */
@@ -72,6 +55,13 @@ class madTestRunner extends PHPUnit_TextUI_Command
         $this->arguments['test'] = new PHPUnit_Framework_TestSuite;
         $this->arguments['test']->setName( 'mad' );
 
+        $this->arguments['reportDirectory'] = realpath( join( DIRECTORY_SEPARATOR, array(
+            dirname( __FILE__ ),
+            '..',
+            'static',
+            'coverage',
+        ) ) );
+
         if ( empty( $packages ) )
         {
             $packages = $this->getPackages( $directory );
@@ -85,60 +75,37 @@ class madTestRunner extends PHPUnit_TextUI_Command
             $suite = $this->getTestSuite( $directory, $package );
             $this->arguments['test']->addTest( $suite );
 
-            //if ( ( $this->release == 'trunk'  && $slashCount !== 0 ) ||
-                 //( $this->release == 'stable' && $slashCount > 1 ) )
-            //{
-                //if ( file_exists( $package ) )
-                //{
-                    //PHPUnit_Util_Class::collectStart();
-                    //require_once( $package );
-                    //$class = PHPUnit_Util_Class::collectEnd();
+            // exclude tests subdir
+            $testIterator = new RecursiveIteratorIterator( new
+                RecursiveDirectoryIterator( realpath( join(
+                    DIRECTORY_SEPARATOR, array(  
+                        $directory,
+                        $package,
+                        'tests'
+                    ) 
+                ) ) ) 
+            );
 
-                    //if ( !empty( $class ) )
-                    //{
-                        //$this->arguments['test']->addTest( call_user_func( array( array_pop( $class ), 'suite' ) ) );
-                        //$added   = true;
-                        //$package = substr($package, 0, strpos($package, DIRECTORY_SEPARATOR));
-                    //}
-                    //else
-                    //{
-                        //die( "\n Cannot load: $package. \n" );
-                    //}
-                //}
-            //}
-            //else 
-            //{
-                //$suite = $this->getTestSuite( $directory, $package );
-
-                //if ( !is_null( $suite ) )
-                //{
-                    //$this->arguments['test']->addTest( $suite );
-                    //$added = true;
-                //}
-            //}
-
-            if ( $fillWhitelist && $added )
-            {
-                foreach ( glob( $directory . '/' . $package . '/*_autoload.php' ) as $autoloadFile )
-                {
-                    foreach ( include $autoloadFile as $className => $fileName )
-                    {
-                        if ( strpos($fileName, 'xmlwritersubstitute.php') === false )
-                        {
-                            $white = $directory . '/' . $fileName;
-                            $split = split( '/', $white );
-                            // ignore package/test files
-                            if( $split[count( $split )-2] == 'tests' ) {
-                                continue;
-                            }
-
-                            PHPUnit_Util_Filter::addFileToWhitelist(
-                                $white
-                            );
-                        }
-                    }
-                }
+            foreach( $testIterator as $fileInfo ) {
+                PHPUnit_Util_Filter::addFileToFilter(
+                    $fileInfo->getRealPath(  )
+                );
             }
+        }
+        
+        // exclude ezc file
+        $testIterator = new RecursiveIteratorIterator( new
+            RecursiveDirectoryIterator( realpath( join(
+                DIRECTORY_SEPARATOR, array(  
+                    $directory,
+                    'ezc'
+                ) 
+            ) ) ) 
+        );
+        foreach( $testIterator as $fileInfo ) {
+            PHPUnit_Util_Filter::addFileToFilter(
+                $fileInfo->getRealPath(  )
+            );
         }
 
         if ( isset( $this->arguments['colors'] ) && $this->arguments['colors'] === true )

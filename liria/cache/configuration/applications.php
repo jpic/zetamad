@@ -15,6 +15,11 @@ return array (
       'routePrefix' => '/recipe',
       'application' => 'liria',
     ),
+    'ci' => 
+    array (
+      'routePrefix' => '/ci',
+      'application' => 'liria',
+    ),
   ),
   'comments' => 
   array (

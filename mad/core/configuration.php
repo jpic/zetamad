@@ -135,7 +135,9 @@ class madCoreConfiguration {
                                 continue;
                             }
 
-                            $paths[] = $path;
+                            if ( !in_array( $path, $paths ) ) {
+                                $paths[] = $path;
+                            }
                         }
                     }
                 }
