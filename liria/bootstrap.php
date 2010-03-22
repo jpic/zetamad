@@ -57,20 +57,26 @@ $options = new ezcBaseAutoloadOptions;
 $options->debug = true;
 ezcBase::setOptions( $options ); 
 
-$ocwd = getcwd();
-chdir( dirname( __FILE__ ) );
-# regenerate bin
-chdir( 'bin' );
-shell_exec( './generate-bin ../../' );
-chdir( '..' );
-# regenerate autoload cache
-shell_exec( 'bin/generate-autoload-file ../ > cache/autoload.php' );
-chdir( $ocwd );
+if ( PHP_OS != 'Linux' ) {
+    $ocwd = getcwd();
+    chdir( dirname( __FILE__ ) );
+    # regenerate bin
+    chdir( 'bin' );
+    shell_exec( './generate-bin ../../' );
+    chdir( '..' );
+    # regenerate autoload cache
+    shell_exec( 'bin/generate-autoload-file ../ > cache/autoload.php' );
+    chdir( $ocwd );
+}
 
 $registry = madRegistry::instance();
 
 # regenerate conf
-$registry->configuration = madCoreConfiguration::factory( APP_PATH, true );
+if ( PHP_OS != 'Linux' ) {
+    $registry->configuration = madCoreConfiguration::factory( APP_PATH );
+} else {
+    $registry->configuration = madCoreConfiguration::factory( APP_PATH, true );
+}
 $registry->database = new PDO( 'mysql:host=localhost;dbname=madmodel', 'root', null, array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')); 
 $registry->model = new madModel( $registry->database );
 
