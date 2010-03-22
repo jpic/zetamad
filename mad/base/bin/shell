@@ -1,0 +1,10 @@
+#!/usr/bin/php
+<?php
+
+include $_ENV['MAD_BOOTSTRAP'];
+
+$registry = madRegistry::instance(  );
+
+include '/usr/share/php/php-shell-cmd.php';
+
+?>
