@@ -9,5 +9,9 @@ echo "<?php";
 echo "return array(";
 echo `find $scanPath -name "*php"  | xargs grep "^class " | sed -e "s@\([^:]*\):class \([^ ]*\).*@    '\2' => '\1',\
 @"`;
+echo `find $scanPath -name "*php"  | xargs grep "^abstract class " | sed -e "s@\([^:]*\):abstract class \([^ ]*\).*@    '\2' => '\1',\
+@"`;
+echo `find $scanPath -name "*php"  | xargs grep "^interface " | sed -e "s@\([^:]*\):interface \([^ ]*\).*@    '\2' => '\1',\
+@"`;
 echo ");";
 echo "?>";

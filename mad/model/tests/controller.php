@@ -11,9 +11,9 @@ class madModelControllerTest extends PHPUnit_Framework_TestCase {
     public $model = null;
 
     public function setUp() {
-        $this->db = ezcDbFactory::create( 'mysql://root@localhost/madmodel' );
-        ezcDbInstance::set( $this->db );
-        $this->model = new madModel( $this->db );
+        $registry = madRegistry::instance();
+        $this->db = $registry->database;
+        $this->model = $registry->model;
         $this->db->query( 'truncate mad_model' );
     }
 

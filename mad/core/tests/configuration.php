@@ -80,8 +80,9 @@ class madCoreConfigurationTest extends ezcTestCase {
             $this->createTempDir( '/tmp' );
             $result = $this->getTempDir(  );
             $config->write( $result );
-            $equal = shell_exec( "diff $expected $result" ) == null;
-            $this->assertTrue( $equal, "diff -u $expected $result" );
+            $expectedDiffOutput = "Only in $expected: .svn\n";
+            $diffOutput = shell_exec( "diff $expected $result" );
+            $this->assertEquals( $expectedDiffOutput, $diffOutput, "diff -u $expected $result" );
         }
     }
 }
