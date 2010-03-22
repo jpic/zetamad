@@ -1,11 +1,4 @@
 <?php
-define( 'EZC_TRUNK_PATH', realpath( 
-    join( DIRECTORY_SEPARATOR, array(
-        DIRECTORY_SEPARATOR . 'srv',
-        'ezc',
-        'trunk',
-) ) ) );
-
 define( 'APP_PATH', realpath( 
     join( DIRECTORY_SEPARATOR, array(
         dirname( __FILE__ ),
@@ -26,19 +19,24 @@ define( 'APPS_PATH', realpath(
 
 set_include_path( join( PATH_SEPARATOR, array( 
     get_include_path(  ),
-    EZC_TRUNK_PATH,
     APPS_PATH,
     APP_PATH,
     PRESTASHOP_PATH,
 ) ) );
 
-require 'Base/src/base.php';
-ezcBase::setRunMode( ezcBase::MODE_DEVELOPMENT );
-ezcBase::addClassRepository( APP_PATH, APP_PATH . DIRECTORY_SEPARATOR . 'cache' );
+//require 'mad/ezc/Base/base.php';
+//require 'mad/ezc/Base/options.php';
+
+$autoloadArray = require APP_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 function __autoload( $class ) {
+    global $autoloadArray;
     try {
-        ezcBase::autoload( $class );
+        $path = realpath( join( DIRECTORY_SEPARATOR, array( 
+            APP_PATH,
+            $autoloadArray[$class]
+        ) ) );
+        require $path;
     } catch( ezcBaseAutoloadException $e ) {
         require join( DIRECTORY_SEPARATOR, array( 
             PRESTASHOP_PATH,
@@ -47,6 +45,9 @@ function __autoload( $class ) {
         ) );
     }
 }
+
+ezcBase::setRunMode( ezcBase::MODE_DEVELOPMENT );
+ezcBase::addClassRepository( APP_PATH, APP_PATH . DIRECTORY_SEPARATOR . 'cache' );
 
 $options = new ezcBaseAutoloadOptions;
 $options->debug = true;
@@ -66,7 +67,7 @@ $registry = madRegistry::instance();
 
 # regenerate conf
 $registry->configuration = madCoreConfiguration::factory( APP_PATH, true );
-$registry->database = ezcDbFactory::create( 'mysql://root@localhost/madmodel' );
+$registry->database = new PDO( 'mysql:host=localhost;dbname=madmodel', 'root', null, array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')); 
 $registry->model = new madModel( $registry->database );
 
 unset( $registry );

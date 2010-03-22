@@ -1,7 +1,0 @@
-#!/bin/bash
-# this script should be sourced like this:
-# soucre /path/to/activate
-
-export MAD_BOOTSTRAP="/srv/mad/xp/liria/bootstrap.php"
-export PATH="${MAD_BOOTSTRAP%/*}/bin:$PATH"
-export PS1="(liria) $PS1"
