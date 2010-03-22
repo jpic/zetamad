@@ -57,7 +57,7 @@ $options = new ezcBaseAutoloadOptions;
 $options->debug = true;
 ezcBase::setOptions( $options ); 
 
-if ( PHP_OS != 'Linux' ) {
+if ( PHP_OS != 'Linux' || defined( 'WINNT_MODE' ) ) {
     $ocwd = getcwd();
     chdir( dirname( __FILE__ ) );
     # regenerate bin
@@ -72,7 +72,7 @@ if ( PHP_OS != 'Linux' ) {
 $registry = madRegistry::instance();
 
 # regenerate conf
-if ( PHP_OS != 'Linux' ) {
+if ( PHP_OS != 'Linux' || defined( 'WINNT_MODE' ) ) {
     $registry->configuration = madCoreConfiguration::factory( APP_PATH );
 } else {
     $registry->configuration = madCoreConfiguration::factory( APP_PATH, true );
