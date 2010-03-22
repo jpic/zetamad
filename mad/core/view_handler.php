@@ -8,6 +8,9 @@ class madCoreViewHandler extends ezcMvcPhpViewHandler {
     }
 
     public function getAbsoluteStaticUrl( $url ) {
+        $registry = madRegistry::instance();
+        $prefix = $registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
+
         if ( substr( $url, 0, 1 ) != '/' ) {
             $url = '/' . $url;
         }
@@ -17,7 +20,7 @@ class madCoreViewHandler extends ezcMvcPhpViewHandler {
             //return $url;
         //}
 
-        return '/static' . $url;
+        return $prefix . '/static' . $url;
     }
 }
 
