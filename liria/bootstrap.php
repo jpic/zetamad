@@ -31,18 +31,23 @@ $autoloadArray = require APP_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SE
 
 function __autoload( $class ) {
     global $autoloadArray;
-    try {
+
+    $prestashopClassPath = join( DIRECTORY_SEPARATOR, array( 
+        PRESTASHOP_PATH,
+        'classes',
+        $class . '.php',
+    ) );
+
+    if( isset( $autoloadArray[$class] ) ) {
         $path = realpath( join( DIRECTORY_SEPARATOR, array( 
             APP_PATH,
             $autoloadArray[$class]
         ) ) );
         require $path;
-    } catch( ezcBaseAutoloadException $e ) {
-        require join( DIRECTORY_SEPARATOR, array( 
-            PRESTASHOP_PATH,
-            'classes',
-            $class . '.php',
-        ) );
+    } elseif( file_exists( $prestashopClassPath ) ) {
+        require $prestashopClassPath;
+    } else {
+        trigger_error( "Autoload can't load class '$class'" );
     }
 }
 

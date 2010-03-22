@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule .* liria/www/index.php [L,QSA]
