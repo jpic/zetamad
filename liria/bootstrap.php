@@ -52,7 +52,6 @@ function __autoload( $class ) {
 }
 
 ezcBase::setRunMode( ezcBase::MODE_DEVELOPMENT );
-ezcBase::addClassRepository( APP_PATH, APP_PATH . DIRECTORY_SEPARATOR . 'cache' );
 
 $options = new ezcBaseAutoloadOptions;
 $options->debug = true;
