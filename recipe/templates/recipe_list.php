@@ -30,8 +30,8 @@
 	<li><a href="">au hasard</a></li>
 </ul>
 
-<div class="recipe-block">
-<?php foreach( $this->objectList as $object ): ?>
+<?php $forloopCounter = 1; foreach( $this->objectList as $object ): ?>
+<div class="recipe-block" <?php if( $forloopCounter == count( $this->objectList ) ): ?> style="padding-right: 0;"<?php endif; ?>>
 	<p class="link">remipathier.cookingfor.com</p>
 	<div class="recipe-details">
 		<img class="picture" width="226" height="226" src="http://storage.canalblog.com/94/98/314534/45426118_p.jpg" />
@@ -43,8 +43,8 @@
 
 		<p class="author">R&eacute;mi Pathier du 75 &bull;</p>
 	</div>
-<?php endforeach; ?>
 </div>
+<?php $forloopCounter++; endforeach; ?>
 
 </ul>
 
