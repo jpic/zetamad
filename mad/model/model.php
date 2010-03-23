@@ -265,6 +265,34 @@ class madModel {
     }
 
     /**
+     * Return an array with all existing values for an arbitary attribute name.
+     * 
+     * Example:
+     * <code>
+     * $origins = $model->getAttributeValues( 'origin' );
+     * </code>
+     *
+     * @param string $attributeName 
+     * @return array
+     */
+    public function getAttributeValues( $attributeName ) {
+        $sql = 'select distinct attribute_value from mad_model where attribute_key = :key';
+        
+        $statement = $this->db->prepare( $sql );
+        $statement->execute( array( 
+            'key' => $attributeName,
+        ) );
+
+        $return = array(  );
+
+        foreach( $statement->fetchAll(  ) as $row ) {
+            $return[] = $row[0];
+        }
+
+        return $return;
+    }
+
+    /**
      * Takes an array of attributes as argument, and return an array of 
      * entities.
      * 

@@ -437,6 +437,41 @@ class madModelTest extends PHPUnit_Framework_TestCase {
         }
     }
 
+    static public function getAttributeValuesProvider(  ) {
+        return array( 
+            array(
+                'origin',
+                array(
+                    new madBase( array(
+                        'origin' => 'france',
+                    ) ),
+                    new madBase( array(
+                        'origin' => 'france',
+                    ) ),
+                    new madBase( array(
+                        'origin' => 'spain',
+                    ) ),
+                ),
+                array( 
+                    'france',
+                    'spain',
+                )
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider getAttributeValuesProvider
+     */
+    public function testGetAttributeValues( $scenario, $fixtures, $expected ) {
+        foreach( $fixtures as $fixture ) {
+            $this->model->save( $fixture );
+        }
+
+        $result = $this->model->getAttributeValues( $scenario );
+        $this->assertEquals( $expected, $result );
+    }
+
     /**
      * Implicit foreign key relation is when an attribute value is non unique.
      *
