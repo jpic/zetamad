@@ -18,7 +18,10 @@ return array (
       'rails' => '/recipe/create/',
       'controller' => 'madModelController',
       'action' => 'form',
-      'form' => 'recipe.recipe',
+      'arguments' => 
+      array (
+        'form' => 'recipe.recipe',
+      ),
       'application' => 'recipe',
     ),
     'recipe.edit' => 
@@ -26,7 +29,10 @@ return array (
       'rails' => '/recipe/edit/:id/',
       'controller' => 'madModelController',
       'action' => 'form',
-      'form' => 'recipe.recipe',
+      'arguments' => 
+      array (
+        'form' => 'recipe.recipe',
+      ),
       'application' => 'recipe',
     ),
     'recipe.details' => 

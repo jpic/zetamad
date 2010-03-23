@@ -6,16 +6,21 @@ return array (
     array (
       'fields' => 
       array (
+        'namespace' => 
+        array (
+          'value' => 'recipe',
+        ),
         'title' => 
         array (
           'label' => 'titre de la recette',
+          'required' => true,
         ),
         'origin' => 
         array (
           'label' => 'origine',
           'help' => 'le pays ou la culture d\'origine de votre recette (latine, france)',
-          'widget' => 'autocompleteSelect',
-          'widget.strict' => 'no',
+          'widget' => 'autocomplete',
+          'widget.strict' => false,
         ),
         'summary' => 
         array (
