@@ -195,6 +195,8 @@ class madCoreConfiguration {
     public function read() {
         $this->settings['staticFiles'] = array( 'paths' => array(  ));
         $this->comments['staticFiles'] = array(  );
+        $this->settings['applications'] = array(  );
+        $this->comments['applications'] = array(  );
 
         foreach( $this->paths as $path ) {
             if ( !$path ) {
@@ -203,6 +205,11 @@ class madCoreConfiguration {
 
             $split = split( DIRECTORY_SEPARATOR, $path );
             $application = $split[count( $split )-2];
+            if ( !isset( $this->settings['applications'][$application] ) ) {
+                $this->settings['applications'][$application] = array();
+            }
+            $this->settings['applications'][$application]['path'] = realpath( 
+                $path . DIRECTORY_SEPARATOR . '..' );
 
             foreach( glob( $path . DIRECTORY_SEPARATOR . '*' ) as $file ) {
                 $name = substr( $file, strrpos( $file, DIRECTORY_SEPARATOR ) + 1, -4 );
