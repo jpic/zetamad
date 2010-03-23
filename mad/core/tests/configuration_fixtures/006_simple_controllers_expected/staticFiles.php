@@ -2,9 +2,8 @@
 return array (
   'settings' => 
   array (
-    'dispatcher' => 
+    'paths' => 
     array (
-      'prefix' => '/xp',
     ),
   ),
   'comments' => 

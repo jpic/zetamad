@@ -6,7 +6,19 @@ class madCiController extends ezcMvcController {
             dirname( __FILE__ ),
             '..'
         ) ) ) );
-        shell_exec( 'ci/bin/runtests' );
+
+        $bootstrap = realpath( join( DIRECTORY_SEPARATOR, array( 
+            '..',
+            'liria',
+            'bootstrap.php'
+        ) ) );
+
+
+        $out = shell_exec( 'MAD_BOOTSTRAP="'.$bootstrap.'" ci/bin/runtests' );
+
+        $result = new ezcMvcResult(  );
+        $result->variables['consoleOutput'] = $out;
+        return $result;
     }
 }
 

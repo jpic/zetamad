@@ -4,21 +4,44 @@ return array (
   array (
     'liria' => 
     array (
+      'path' => '/srv/mad.100305/jpic_data/madeleinemarket.com.svn/xp/liria',
+      'classes' => 
+      array (
+        0 => 'madTestRunner',
+      ),
       'configPaths' => 
       array (
         0 => '../',
       ),
-      'application' => 'liria',
     ),
     'recipe' => 
     array (
       'routePrefix' => '/recipe',
-      'application' => 'liria',
+      'path' => '/srv/mad.100305/jpic_data/madeleinemarket.com.svn/xp/recipe',
+      'classes' => 
+      array (
+      ),
     ),
     'ci' => 
     array (
       'routePrefix' => '/ci',
-      'application' => 'liria',
+      'path' => '/srv/mad.100305/jpic_data/madeleinemarket.com.svn/xp/mad/ci',
+      'classes' => 
+      array (
+        0 => 'madCiController',
+        1 => 'madTestRunner',
+      ),
+    ),
+    'model' => 
+    array (
+      'path' => '/srv/mad.100305/jpic_data/madeleinemarket.com.svn/xp/mad/model',
+      'classes' => 
+      array (
+        0 => 'madModelController',
+        1 => 'madModel',
+        2 => 'madModelException',
+        3 => 'madModelExceptedId',
+      ),
     ),
   ),
   'comments' => 

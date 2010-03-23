@@ -78,7 +78,19 @@ class madCoreView extends ezcMvcView {
             return $zones;
         }
 
-        $zones[] = new madCoreViewHandler( 'body', $this->getTemplate( $this->getTemplateName(  ) ) );
+        if ( isset( $this->result->variables['consoleOutput'] ) ) {
+            $zones[] = new ezcMvcPhpViewHandler( 'content', join( DIRECTORY_SEPARATOR, array( 
+                dirname( __FILE__ ),
+                'templates',
+                'consoleOutput.php'
+            ) ) );
+
+            // short circuit to avoid regular template rendering in the case of 
+            // a file download request
+            return $zones;
+        }
+
+        $zones[] = new madCoreViewHandler( 'body', $this->getTemplate( ) );
         
         if ( $layout ) {
             $zones[] = new madCoreViewHandler( 'site_base', APP_PATH . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'site_base.php' );
@@ -89,52 +101,138 @@ class madCoreView extends ezcMvcView {
 
     /**
      * Try to figure the template path for this request/result.
+     *
+     * If the route set argument "template", then:
+     * - use $entryAppPath/templates/$routeApp/$template if exists,
+     * - use $routeAppPath/templates/$template if exists,
+     * - throw an exception.
+     *
+     * If the controller result has an "object" variable or the route set 
+     * argument "filter__namespace", then:
+     * - use $entryAppPath/templates/$routeApp/$namespace_$action.php if exists,
+     * - use $routeAppPath/templates/$namespace_$action.php if exists,
+     *
+     * Anyway, try:
+     * - use $entryAppPath/templates/$routeApp/$action.php if exists,
+     * - use $entryAppPath/templates/$action.php if exists,
+     * - use $routeAppPath/templates/$action.php if exists,
+     * - use $controllerAppPath/templates/$action.php if exists
      * 
+     * And finnaly, throw an exception.
+     *
      * @return string template path
      */
-    public function getTemplate( $templateName ) {
-        $testPaths = array( 
-            join( DIRECTORY_SEPARATOR, array( 
-                APP_PATH,
-                'templates',
-                $this->routeInfo->route->application,
-                $templateName,
-            ) ),
-            join( DIRECTORY_SEPARATOR, array( 
-                // tmp hack until we have an appname=>path array
-                APPS_PATH,
-                $this->routeInfo->route->application,
-                'templates',
-                $templateName,
-            ) ),
-        );
+    public function getTemplate(  ) {
+        $actionName = $this->routeInfo->action;
 
-        foreach( $testPaths as $path ) {
-            if ( file_exists( $path ) ) {
-                return $path;
-            }
-        }
-    }
+        $registry = madRegistry::instance(  );
+        
+        // path to the "entry point" application
+        $entryApplicationPath = APP_PATH;
+        
+        // path to the application defining the route
+        $routeApplicationName = $this->routeInfo->route->application;
+        $routeApplicationPath = $registry->configuration->getSetting( 
+            'applications', $routeApplicationName, 'path' ) ;
+        
+        // path to the application defining the controller
+        $controllerApplicationName = $registry->configuration->getClassApplicationName( $this->routeInfo->controllerClass );
+        $controllerApplicationPath = $registry->configuration->getSetting( 'applications', $controllerApplicationName, 'path' );
 
-    /**
-     * Figures the template to use.
-     * 
-     * @return void
-     */
-    public function getTemplateName(  ) {
+        // pass 1, template was hardcoded in the route, it *must* exists
         if ( isset( $this->request->variables['template'] ) ) {
-            return $this->request->variables['template'];
+            $templateName = $this->request->variables['template'];
+
+            $testPaths = array( 
+                // $entryAppPath/templates/$routeApp/$template
+                join( DIRECTORY_SEPARATOR, array( 
+                    $entryApplicationPath,
+                    'templates',
+                    $routeApplicationName,
+                    $templateName,
+                ) ),
+                // $routeAppPath/templates/$template
+                join( DIRECTORY_SEPARATOR, array( 
+                    $routeApplicationPath,
+                    'templates',
+                    $templateName,
+                ) ),
+            );
+
+            // return the first guessed template path or die!
+            foreach( $testPaths as $templatePath ) {
+                if ( file_exists( $templatePath ) ) {
+                    return $templatePath;
+                }
+            }
+
+            throw new madException( "Cannot find path for $templateName, tryed " . join( ", ", $testPaths ) );
         }
+
+        // pass 2, template should be magically figured from the most specific 
+        // path to the most generic path
+        $testPaths = array();
 
         $namespace = $this->getNamespace(  );
         if ( $namespace ) {
-            return sprintf( '%s_%s.php',
+            $templateName = sprintf( '%s_%s.php',
                 $namespace,
-                $this->routeInfo->action
+                $actionName
             );
-        }
 
-        trigger_error( "Can't figure a template name!" );
+            // $entryAppPath/templates/$routeApp/$namespace_$action.php
+            $testPaths[] = join( DIRECTORY_SEPARATOR, array( 
+                $entryApplicationPath,
+                'templates',
+                $routeApplicationName,
+                $templateName,
+            ) );
+
+            // $routeAppPath/templates/$namespace_$action.php
+            $testPaths[] = join( DIRECTORY_SEPARATOR, array( 
+                $routeApplicationPath,
+                'templates',
+                $templateName,
+            ) );
+        }
+        
+        // $entryAppPath/templates/$routeApp/$action.php
+        $testPaths[] = join( DIRECTORY_SEPARATOR, array(
+            $entryApplicationPath,
+            'templates',
+            $routeApplicationName,
+            $actionName . '.php',
+        ) );
+
+        // $entryAppPath/templates/$action.php
+        $testPaths[] = join( DIRECTORY_SEPARATOR, array(
+            $entryApplicationPath,
+            'templates',
+            $actionName . '.php',
+        ) );
+
+        // $routeAppPath/templates/$action.php
+        $testPaths[] = join( DIRECTORY_SEPARATOR, array(
+            $routeApplicationPath,
+            'templates',
+            $actionName . '.php',
+        ) );
+
+        // $controllerAppPath/templates/$action.php
+        $testPaths[] = join( DIRECTORY_SEPARATOR, array(
+            $controllerApplicationPath,
+            'templates',
+            $actionName . '.php',
+        ) );
+
+        // return the first guessed template or die!
+        foreach( $testPaths as $templatePath ) {
+            if ( file_exists( $templatePath ) ) {
+                return $templatePath;
+            }
+        }
+        
+        trigger_error( "Can't figure a template path for " . join( "<br />", $testPaths ) );
     }
 
     /**
@@ -155,6 +253,8 @@ class madCoreView extends ezcMvcView {
         if ( isset( $this->result->variables['object'] ) ) {
             return $this->result->variables['object']['namespace'];
         }
+
+        return false;
     }
 }
 

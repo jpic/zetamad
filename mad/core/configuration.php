@@ -205,11 +205,23 @@ class madCoreConfiguration {
 
             $split = split( DIRECTORY_SEPARATOR, $path );
             $application = $split[count( $split )-2];
+            $applicationPath = realpath( $path . DIRECTORY_SEPARATOR . '..' );
             if ( !isset( $this->settings['applications'][$application] ) ) {
                 $this->settings['applications'][$application] = array();
             }
-            $this->settings['applications'][$application]['path'] = realpath( 
-                $path . DIRECTORY_SEPARATOR . '..' );
+            $this->settings['applications'][$application]['path'] = $applicationPath;
+
+            if ( !isset( $this->settings['applications'][$application]['classes'] ) ) {
+                $this->settings['applications'][$application]['classes'] = array();
+            }
+            $command = "grep --exclude-dir=tests --exclude-dir=.svn -o -r '^class [a-zA-Z0-9]*' $applicationPath | sed 's/.*class //'";
+            $out = shell_exec( $command );
+            foreach( split( "\n", $out ) as $className ) {
+                if ( !$className ) { // skip empty className
+                    continue;
+                }
+                $this->settings['applications'][$application]['classes'][] = $className;
+            }
 
             foreach( glob( $path . DIRECTORY_SEPARATOR . '*' ) as $file ) {
                 $name = substr( $file, strrpos( $file, DIRECTORY_SEPARATOR ) + 1, -4 );
@@ -242,9 +254,11 @@ class madCoreConfiguration {
                 $settings = $cfg->getAllSettings(  );
                 $comments = $cfg->getAllComments(  );
 
-                foreach( $settings as $sectionName => $section ) {
-                    if ( !isset( $settings[$sectionName]['application'] ) ) {
-                        $settings[$sectionName]['application'] = $application;
+                if ( $name == 'routes' ) {
+                    foreach( $settings as $sectionName => $section ) {
+                        if ( !isset( $settings[$sectionName]['application'] ) ) {
+                            $settings[$sectionName]['application'] = $application;
+                        }
                     }
                 }
 
@@ -347,6 +361,16 @@ class madCoreConfiguration {
 
     public function getSetting( $group, $section, $name ) {
         return $this->settings[$group][$section][$name];
+    }
+
+    public function getClassApplicationName( $className ) {
+        foreach( $this->settings['applications'] as $name => $settings ) {
+            if ( in_array( $className, $settings['classes'] ) ) {
+                return $name;
+            }
+        }
+
+        throw new Exception( "Cannot find the name of the application containing class $className, does it contain a 'configuration' subdir?" );
     }
 }
 
