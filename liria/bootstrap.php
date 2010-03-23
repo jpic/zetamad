@@ -73,9 +73,9 @@ $registry = madRegistry::instance();
 
 # regenerate conf
 if ( PHP_OS == 'Linux' ) {
-    $registry->configuration = madCoreConfiguration::factory( APP_PATH );
-} else {
     $registry->configuration = madCoreConfiguration::factory( APP_PATH, true );
+} else {
+    $registry->configuration = madCoreConfiguration::factory( APP_PATH );
 }
 $registry->database = new PDO( 'mysql:host=localhost;dbname=madmodel', 'root', null, array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')); 
 $registry->model = new madModel( $registry->database );
