@@ -223,6 +223,14 @@ class madCoreConfiguration {
                 $this->settings['applications'][$application]['classes'][] = $className;
             }
 
+
+            $staticPath = realpath( $applicationPath . DIRECTORY_SEPARATOR . 'static' );
+            foreach( new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $staticPath ) ) as $fileInfo ) {
+                $absolutePath = $fileInfo->getRealPath(  );
+                $relativePath = substr( $absolutePath, strlen( $staticPath ) );
+                $this->settings['staticFiles']['paths'][$relativePath] = $absolutePath;
+            }
+
             foreach( glob( $path . DIRECTORY_SEPARATOR . '*' ) as $file ) {
                 $name = substr( $file, strrpos( $file, DIRECTORY_SEPARATOR ) + 1, -4 );
                 $extension = substr( $file, -3 );
@@ -260,13 +268,6 @@ class madCoreConfiguration {
                             $settings[$sectionName]['application'] = $application;
                         }
                     }
-                }
-
-                $staticPath = realpath( $path . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'static' );
-                foreach( new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $staticPath ) ) as $fileInfo ) {
-                    $absolutePath = $fileInfo->getRealPath(  );
-                    $relativePath = substr( $absolutePath, strlen( $staticPath ) );
-                    $this->settings['staticFiles']['paths'][$relativePath] = $absolutePath;
                 }
 
                 $this->settings[$name] = self::array_contribute( $this->settings[$name], $settings );
