@@ -4,6 +4,7 @@ return array (
   array (
     'recipe.recipe' => 
     array (
+      'label' => 'enregistrement de recette',
       'fields' => 
       array (
         'namespace' => 
@@ -59,6 +60,30 @@ return array (
           'help' => 'pour combien de personnes va cette recette?',
         ),
       ),
+      'formsets' => 
+      array (
+        'ingredient' => 
+        array (
+          'label' => 'ingrédients',
+          'fields' => 
+          array (
+            'namespace' => 
+            array (
+              'value' => 'ingredient',
+            ),
+            'name' => 
+            array (
+              'label' => 'nom',
+              'widget' => 'autocomplete',
+              'widget.strict' => false,
+            ),
+            'quantity' => 
+            array (
+              'label' => 'quantité',
+            ),
+          ),
+        ),
+      ),
     ),
   ),
   'comments' => 
@@ -72,10 +97,6 @@ return array (
           'label' => ' default:
  fields[origin][widget]=input
  fields[origin][widget.type]=text',
-        ),
-        'restTime' => 
-        array (
-          'label' => ' ingredients? M2M? multival?',
         ),
       ),
     ),
