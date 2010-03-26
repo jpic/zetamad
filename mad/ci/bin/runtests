@@ -1,4 +1,4 @@
-#!/usr/bin/env php
+#!/usr/local/php5.2.13/bin/php
 <?php
 require_once 'PHPUnit/TextUI/Command.php';
 require_once 'PHPUnit/Util/Class.php';
@@ -179,6 +179,8 @@ class madTestRunner extends PHPUnit_TextUI_Command
             include_once $suitePath;
 
             $className = 'mad'. ucfirst( $package ) . 'Suite';
+            var_dump( $className, get_class( call_user_func(  array(
+                $className, 'suite' ) ) ) );
             $suite     = call_user_func( array( $className, 'suite' ) );
 
             return $suite;

@@ -4,7 +4,7 @@ return array (
   array (
     'liria' => 
     array (
-      'path' => '/srv/mad.100305/jpic_data/madeleinemarket.com.svn/xp/liria',
+      'path' => '/srv/mad.svn/xp/liria',
       'classes' => 
       array (
         0 => 'madTestRunner',
@@ -17,7 +17,7 @@ return array (
     'recipe' => 
     array (
       'routePrefix' => '/recipe',
-      'path' => '/srv/mad.100305/jpic_data/madeleinemarket.com.svn/xp/recipe',
+      'path' => '/srv/mad.svn/xp/recipe',
       'classes' => 
       array (
       ),
@@ -25,16 +25,32 @@ return array (
     'ci' => 
     array (
       'routePrefix' => '/ci',
-      'path' => '/srv/mad.100305/jpic_data/madeleinemarket.com.svn/xp/mad/ci',
+      'path' => '/srv/mad.svn/xp/mad/ci',
       'classes' => 
       array (
         0 => 'madCiController',
         1 => 'madTestRunner',
       ),
     ),
+    'core' => 
+    array (
+      'path' => '/srv/mad.svn/xp/mad/core',
+      'classes' => 
+      array (
+        0 => 'madCoreRoute',
+        1 => 'madCoreView',
+        2 => 'madCoreFatalController',
+        3 => 'madCoreDownloadController',
+        4 => 'madCoreRoutingInformation',
+        5 => 'madCoreViewHandler',
+        6 => 'madCoreConfiguration',
+        7 => 'madCoreDispatcher',
+        8 => 'madCoreRouter',
+      ),
+    ),
     'model' => 
     array (
-      'path' => '/srv/mad.100305/jpic_data/madeleinemarket.com.svn/xp/mad/model',
+      'path' => '/srv/mad.svn/xp/mad/model',
       'classes' => 
       array (
         0 => 'madModelController',

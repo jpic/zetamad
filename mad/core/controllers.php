@@ -1,5 +1,12 @@
 <?php
 
+class madCoreFatalController extends ezcMvcController {
+    public function doFatal(  ) {
+        $ret = new ezcMvcResult;
+        return $ret;
+    }
+}
+
 class madCoreDownloadController extends ezcMvcController {
     public function doDownload() {
         $configuration = madRegistry::instance(  )->configuration;
@@ -15,6 +22,7 @@ class madCoreDownloadController extends ezcMvcController {
 
         $ret = new ezcMvcResult;
         $ret->content = new ezcMvcResultContent;
+        $ret->content->disposition = new ezcMvcResultContentDisposition;
         $ret->variables['absolutePath'] = $absolutePath;
         $ret->variables['fileRequest'] = true;
         switch( $extension ){
@@ -27,9 +35,10 @@ class madCoreDownloadController extends ezcMvcController {
             case 'css':
                 $ret->content->type = 'text/css';
                 break;
+            case 'tbz2':
+                $ret->content->disposition->type = 'attachment';
+                $ret->content->type = 'application/x-tar';
         }
-        $ret->content->disposition = new ezcMvcResultContentDisposition;
-        //$ret->content->disposition->type = 'attachment';
         $ret->content->disposition->filename = basename( $relativePath );
         //$ret->content->disposition->creationDate = new DateTime( '1978-12-22' );
 

@@ -1,57 +1,76 @@
 <link rel="stylesheet" type="text/css" href="<?php echo $this->getAbsoluteStaticUrl( 'css/uni-form.css' ) ; ?>" />
 <script type="text/javascript" src="<?php echo $this->getAbsoluteStaticUrl( 'js/uni-form.jquery.js' ) ; ?>"></script>
 
+<style type="text/css">
+.uniForm .formset .textInput, 
+.uniForm .formset .blockLabels .textInput, 
+.uniForm .formset .blockLabels .fileUpload {
+    width: 98%;
+}
+.formsetDeleteColumn {
+    text-align: center;
+}
+</style>
+
+<?php var_dump( $this->form ) ?>
+
 <form action="" method="post" class="uniForm">
     <fieldset class="inlineLabels">
-        <legend><?php echo ucfirst( $this->formConfiguration['label'] ) ?></legend>
-        <?php foreach( $this->formConfiguration['fields'] as $name => $field ):
+        <legend><?php echo ucfirst( $this->form->label ) ?></legend>
+        <?php foreach( $this->form->fields->options as $name => $field ):
             // skip fields with hard coded value (ie. namespace)
-            if ( isset( $field['value'] ) ) continue;
+            if ( isset( $field->value ) ) continue;
+            // skip formsets/relations
+            if ( $field instanceof madForm ) continue;
         ?>
     
         <div class="ctrlHolder">
-            <label for="<?php echo $name; ?>"><?php if ( isset( $field['required'] ) ): ?><em>*</em> <?php endif ?><?php echo ucfirst( $field['label'] ); ?></label>
+            <label for="<?php echo $name; ?>"><?php if ( isset( $field->required ) ): ?><em>*</em> <?php endif ?><?php echo ucfirst( $field->label ); ?></label>
 
-            <?php include 'widget.php'; ?>
+            <?php 
+            $form = $this->form;
+            include 'widget.php';
+            unset( $form );
+            ?>
 
-            <?php if ( isset( $field['help'] ) ): ?>
-            <p class="formHint"><?php echo ucfirst( $field['help'] ); ?></p>
+            <?php if ( isset( $field->help ) ): ?>
+            <p class="formHint"><?php echo ucfirst( $field->help ); ?></p>
             <?php endif ?>
         </div>
 
         <?php endforeach ?>
     </fieldset>
 
-    <?php foreach( $this->formConfiguration['formsets'] as $formsetName => $formset ): ?>
+    <?php foreach( $this->form->formsets->options as $formsetName => $formset ): ?>
     <fieldset class="formset_<?php echo $formsetName; ?> formset">
-        <legend><?php echo ucfirst( $formset['label'] ) ?></legend>
-        <table>
+        <legend><?php echo ucfirst( $formset->label ) ?></legend>
+        <table class="formset">
             <thead>
                 <tr>
-                    <?php foreach( $formset['fields'] as $name => $field ):
+                    <?php foreach( $formset->fields->options as $name => $field ):
                         // skip fields with hard coded value (ie. namespace)
-                        if ( isset( $field['value'] ) ) continue;
+                        if ( isset( $field->value ) ) continue;
                     ?>
-                    <th><?php echo ucfirst( $field['label'] ) ?></th>
+                    <th><?php echo ucfirst( $field->label ) ?></th>
                     <?php endforeach ?>
                     <th>Effacer</th>
                 </tr>
             </thead>
             <tbody>
-                <tr class="formset_<?php echo $formsetName; ?>_form">
-                <?php foreach( $formset['fields'] as $name => $field ):
-                    // skip fields with hard coded value (ie. namespace)
-                    if ( isset( $field['value'] ) ) continue;
+                <?php
+                $count = 0;
+                if ( count( $this->form[$formsetName] ) ):
+                    foreach( $this->form[$formsetName] as $formsetForm ): 
+                        $form = $formsetForm;
+                        include 'formset_row.php';
+                        unset( $form );
+                        unset( $formsetForm );
+                        $count ++;
+                    endforeach;
+                else:
+                    include 'formset_row.php';
+                endif;
                 ?>
-                    <td>
-                    <?php $name = 'formset_' . $formsetName . '_form1' . '_' . $name; /* formset hack */ ?>
-                    <?php include 'widget.php'; ?>
-                    </td>
-                <?php endforeach ?>
-                    <td>
-                        <input type="checkbox" name="<?php echo 'formset_' . $formsetName . '_form1' . '_DELETE' ?>" id="<?php echo 'formset_' . $formsetName . '_form1' . '_DELETE' ?>" />
-                    </td>
-                </tr>
             </tobdy>
         </table>
         <button class="formset_add">Ajouter</button>
@@ -72,15 +91,18 @@ $(document).ready( function(  ) {
         e.preventDefault(  );
         var table = $('button.formset_add').parent().children('table');
         var count = table.children('tbody').children('tr').length;
-        var next = count + 1;
+        var next = count;
         var tr = $('button.formset_add').parent().children('table').children('tbody').children('tr:first').clone().appendTo(table);
 
         tr.find('input[type=checkbox]').attr('disabled', 'disabled');
-    
+        tr.find('input[type=hidden]').remove();
+
         tr.find('input').each(function() {
             $(this).val('');
-            $(this).attr('name', $(this).attr('name').replace(/form1/, 'form' + next));
-            $(this).attr('id', $(this).attr('id').replace(/form1/, 'form' + next));
+            $(this).attr('name', $(this).attr('name').replace(/\[0\]/, '['+next+']'));
+            if ( $(this).attr( 'id' ) !== undefined ) {
+                $(this).attr('id', $(this).attr('id').replace(/\[0\]/, '['+next+']'));
+            }
         });
     });
 });

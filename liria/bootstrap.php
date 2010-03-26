@@ -27,6 +27,14 @@ set_include_path( join( PATH_SEPARATOR, array(
 //require 'mad/ezc/Base/base.php';
 //require 'mad/ezc/Base/options.php';
 
+if ( PHP_OS == 'Linux' ) {
+    $ocwd = getcwd();
+    chdir( dirname( __FILE__ ) );
+    # regenerate autoload cache
+    shell_exec( 'bin/generate-autoload-file ../ > cache/autoload.php' );
+    chdir( $ocwd );
+}
+
 $autoloadArray = require APP_PATH . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 function __autoload( $class ) {
@@ -63,9 +71,6 @@ if ( PHP_OS == 'Linux' ) {
     # regenerate bin
     chdir( 'bin' );
     shell_exec( './generate-bin ../../' );
-    chdir( '..' );
-    # regenerate autoload cache
-    shell_exec( 'bin/generate-autoload-file ../ > cache/autoload.php' );
     chdir( $ocwd );
 }
 
@@ -77,7 +82,8 @@ if ( PHP_OS == 'Linux' ) {
 } else {
     $registry->configuration = madCoreConfiguration::factory( APP_PATH );
 }
-$registry->database = new PDO( 'mysql:host=localhost;dbname=madmodel', 'root', null, array( PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')); 
+$registry->database = new PDO( 'mysql:host=localhost;dbname=madmodel', 'root' ); #, null, array( PDO::MYSQLI_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')); 
+$registry->database->setAttribute( PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 $registry->model = new madModel( $registry->database );
 
 unset( $registry );

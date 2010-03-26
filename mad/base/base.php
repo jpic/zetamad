@@ -38,6 +38,8 @@
  * @license http://madeleinemarket.com/code/license
  */
 class madBase extends ArrayObject {
+    protected $options = null;
+
      /**
      * Returns the list of dirty attributes, false otherwise.
      * 
@@ -75,7 +77,19 @@ class madBase extends ArrayObject {
      * @return void
      */
     public function clear() {
+        $backup = array(  );
+        foreach( $this as $key => $value ) {
+            if ( $value instanceof madBase ) {
+                $backup[$key] = $value;
+                $value->clear();
+            }
+        }
+
         $this->exchangeArray( array(  ) );
+
+        foreach( $backup as $key => $value ) {
+            $this[$key] = $value;
+        }
     }
 
     /**
@@ -96,8 +110,95 @@ class madBase extends ArrayObject {
                     }
                 }
                 return true;
-            default:
-                throw new madBasePropertyNotFoundException( $key );
+            case 'options':
+                return $this->options;
+        }
+        
+        if ( isset( $this->options[$key] ) ) {
+            return $this->options[$key];
+        } else {
+            throw new madBasePropertyNotFoundException( $key );
+        }
+    }
+
+    public function __set( $name, $value ) {
+        if ( is_null( $this->options ) ) {
+            $this->options = new madBase(  );
+        }
+
+        $this->options[$name] = $value;
+    }
+
+    public function __isset( $name ) {
+        return isset( $this->options[$name] );
+    }
+
+    public function setOptions( array $options ) {
+        foreach( $options as $key => $value ) {
+            if ( is_array( $value ) ) {
+                $this->options[$key] = new madBase();
+                $this->options[$key]->setOptions( $value );
+            } else {
+                $this->options[$key] = $value;
+            }
+        }
+    }
+
+    public function merge( array $data ) {
+        foreach( $data as $key => $value ) {
+            if ( is_array( $value ) ) {
+                if ( !isset( $this[$key] ) ) {
+                    $this[$key] = new madBase();
+                }
+                $this[$key]->merge( $value );
+            } else {
+                $this[$key] = $value;
+            }
+        }
+    }
+
+    public function clean( ) {
+        // hack around the weak php: Array was modified outside object and 
+        // internal position is no longer valid
+        $unst = array(  );
+
+        foreach( $this as $key => $value ) {
+            // unset empty attributes
+            if ( $value === '' ) {
+                $unst[] = $key;
+                continue;
+            }
+
+            if ( $value instanceof madBase ) {
+                if ( $value->isEntity ) {
+                    $value->clean(  );
+                } else {
+                    $value->cleanSubitems(  );
+                }
+
+                if ( !count( $value ) ) {
+                    $unst[] = $key;
+                }
+            }
+        }
+        
+        foreach( $unst as $key ) {
+            unset( $this[$key] );
+        }
+    }
+
+    public function cleanSubitems(  ) {
+        $unst = array(  );
+
+        foreach( $this as $key => $value ) {
+            $value->clean();
+            if ( !count( $value ) ) {
+                $unst[] = $key;
+            }
+        }
+
+        foreach( $unst as $key ) {
+            unset( $this[$key] );
         }
     }
 }

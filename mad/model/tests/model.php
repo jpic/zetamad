@@ -198,6 +198,32 @@ class madModelTest extends PHPUnit_Framework_TestCase {
     /**
      * @dataProvider fixtureProvider
      */
+    public function testDoubleSave( $scenario, $fixture ) {
+        $this->assertFalse( array_key_exists( 'id', $fixture ) );
+        $this->model->save( $fixture );
+        $expected = clone $fixture;
+        $this->model->refresh( $fixture );
+        $this->model->save( $fixture );
+        $this->assertEquals( $expected, $fixture, 'is refresh(  ) calling $data->clear(  ) ?' );
+    }
+
+    /**
+     * @dataProvider fixtureProvider
+     */
+    public function testTripleSave( $scenario, $fixture ) {
+        $this->assertFalse( array_key_exists( 'id', $fixture ) );
+        $this->model->save( $fixture );
+        $expected = clone $fixture;
+        $this->model->refresh( $fixture );
+        $this->model->save( $fixture );
+        $this->model->refresh( $fixture );
+        $this->model->save( $fixture );
+        $this->assertEquals( $expected, $fixture );
+    }
+
+    /**
+     * @dataProvider fixtureProvider
+     */
     public function testRefresh( $scenario, $fixture ) {
         $this->model->save( $fixture );
 

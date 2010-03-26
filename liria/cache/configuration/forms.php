@@ -20,24 +20,35 @@ return array (
         array (
           'label' => 'origine',
           'help' => 'le pays ou la culture d\'origine de votre recette (latine, france)',
-          'widget' => 'autocomplete',
-          'widget.strict' => false,
+          'widget' => 
+          array (
+            'class' => 'autocomplete',
+          ),
         ),
         'summary' => 
         array (
           'label' => 'résumé',
-          'widget' => 'textarea',
+          'widget' => 
+          array (
+            'class' => 'textarea',
+          ),
         ),
         'comment' => 
         array (
           'label' => 'commentaire personnel',
-          'widget' => 'textarea',
+          'widget' => 
+          array (
+            'class' => 'textarea',
+          ),
         ),
         'preparation' => 
         array (
           'label' => 'préparation',
           'help' => 'décrivez les étapes de préparation',
-          'widget' => 'textarea',
+          'widget' => 
+          array (
+            'class' => 'textarea',
+          ),
         ),
         'restTime' => 
         array (
@@ -62,7 +73,7 @@ return array (
       ),
       'formsets' => 
       array (
-        'ingredient' => 
+        'ingredients' => 
         array (
           'label' => 'ingrédients',
           'fields' => 
@@ -74,8 +85,10 @@ return array (
             'name' => 
             array (
               'label' => 'nom',
-              'widget' => 'autocomplete',
-              'widget.strict' => false,
+              'widget' => 
+              array (
+                'class' => 'autocomplete',
+              ),
             ),
             'quantity' => 
             array (
@@ -95,8 +108,8 @@ return array (
         'origin' => 
         array (
           'label' => ' default:
- fields[origin][widget]=input
- fields[origin][widget.type]=text',
+ fields[origin][widget][class]=input
+ fields[origin][widget][type]=text',
         ),
       ),
     ),

@@ -98,17 +98,20 @@ class madModel {
      * @param madBase $data Model instance to save.
      * @return madBase
      */
-    public function save( madBase $data ) {
-        //$this->db->beginTransaction();
-
+    public function save( madBase $data, $useTransaction = true ) {
         if ( array_key_exists( 'id', $data ) ) {
             $sql = 'delete from mad_model where ' . self::DECODE_ID_ENTITY;
 
+            $this->db->beginTransaction();
+            
             $statement = $this->db->prepare( $sql );
             $statement->execute( array( 
                 ':id' => $data['id'],
             ) );
 
+            if ( !$this->db->commit() ) {
+                throw new Exception( "Unable to commit" );
+            }
         } else {
             $data['id'] = $this->getNextEntityId();
         }
@@ -124,9 +127,6 @@ class madModel {
                 $value
             );
         }
-
-        //$this->db->commit();
-        
         return $data;
     }
 
@@ -152,7 +152,7 @@ class madModel {
 
         // handle foreign keys (n:1)
         if ( $value->isEntity && !isset( $value['id'] ) ) {
-            $this->save( $value );
+            $this->save( $value, false );
             return $this->insertAttribute( $data, $key, $value['id'] );
         }
 
@@ -161,7 +161,7 @@ class madModel {
             if ( ! ( $subvalue instanceof madBase ) ) { // handle simple multiVal
                 $this->insertAttribute( $data, $key, $subvalue );
             } else { // handle m2m
-                $this->save( $subvalue );
+                $this->save( $subvalue, false );
                 $this->insertAttribute( $data, $key, $subvalue['id'] );
             }
         }
@@ -176,6 +176,8 @@ class madModel {
      * @return void
      */
     private function insertAttribute( madBase $data, $key, $value ) {
+        $this->db->beginTransaction();
+
         $sql = sprintf( 
             'insert into mad_model set 
                 attribute_key = :attribute_key
@@ -192,6 +194,10 @@ class madModel {
 
         $statement = $this->db->prepare( $sql );
         $statement->execute( $arguments );
+
+        if ( !$this->db->commit() ) {
+            throw new Exception( "Unable to commit" );
+        }
     }
 
     /**

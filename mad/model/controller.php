@@ -29,53 +29,42 @@ class madModelController extends ezcMvcController {
     }
 
     public function doForm(  ) {
-        $result = new ezcMvcResult(  );
-        // get the form configuration
-        $formName = $this->request->variables['form'];
-        $formConfiguration = $this->registry->configuration->settings['forms'][$formName];
-        $formNamespaceFieldValue = $formConfiguration['fields']['namespace']['value'];
+        $form         = new madBase(  );
+        $form->name   = $this->request->variables['form'];
+        $form->action = $this->request->uri;
+        $form->model  = $this->registry->model;
+
+        // get and set the form configuration
+        // it *must* be called *before* refresh() or relations will fail
+        $form->setOptions( $this->registry->configuration->settings['forms'][$form->name] );
 
         // make/get the object
-        $object = new madBase();
         if ( isset( $this->id ) ) {
-            $object['id'] = $this->id;
-            $this->registry->model->refresh( $object );
+            $form['id'] = $this->id;
+            $this->registry->model->refresh( $form );
+            madCoreViewHandler::dump( array( $form ) );
         }
 
-        // add namespace if required
-        if ( !isset( $object['namespace'] ) ) {
-            $object['namespace'] = $formNamespaceFieldValue;
-        } else { // check the namespace
-            if ( $object['namespace'] != $formNamespaceFieldValue ) {
-                throw new Exception(
-                     "The form namespace field value '{$formNamespaceFieldValue}' is different from the object namespace {$object['namespace']}!"
-                );
-            }
-        }
+        var_dump( $form );
+        var_dump( $this->request->variables );
 
-        // add the object to result variables for reuse in the template
-        $result->variables['object'] = $object;
-        // add the form configuration to result variables
-        $result->variables['formConfiguration'] = $formConfiguration;
-
-        // prepare whatever the form needs to render
-        foreach( $formConfiguration['fields'] as $name => $field ) {
-            if ( $field['widget'] == 'autocomplete' ) {
-                // fill $field['choices'] with existing values
-                $field['choices'] = $this->registry->model->getAttributeValues( $name );
-            }
-        }
-
-        // save the object
+        // save the form
         if ( $this->request->protocol == 'http-post' ) {
-            foreach( $formConfiguration['fields'] as $name => $field ) {
-                if ( $_POST[$name] ) {
-                    $object[$name] = $_POST[$name];
-                }
+            $form->merge( $this->request->variables );
+            $form->clean();
+            $dirty = $form->dirtyAttributes(  );
+            if ( $dirty !== false ) {
+                var_dump( $dirty );
+            } else {
+                $this->registry->model->save( $form );
             }
-            $this->registry->model->save( $object );
         }
 
+        var_dump( $form );
+
+        // add the form to result variables for reuse in the template
+        $result = new ezcMvcResult(  );
+        $result->variables['form'] = $form;
         return $result;
     }
 

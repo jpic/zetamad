@@ -42,6 +42,13 @@ return array (
       'action' => 'details',
       'application' => 'recipe',
     ),
+    'core.fatal' => 
+    array (
+      'controller' => 'madCoreFatalController',
+      'action' => 'fatal',
+      'rails' => '/fatal/',
+      'application' => 'core',
+    ),
     'ci.runtests' => 
     array (
       'rails' => '/ci/runtests/',

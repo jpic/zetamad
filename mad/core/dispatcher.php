@@ -36,10 +36,11 @@ class madCoreDispatcher implements ezcMvcDispatcherConfiguration {
                                          ezcMvcResult $result,
                                          Exception $response )
     {
-        echo $response->getMessage();
-    
+        throw $response;
         $req = clone $request;
-        $req->uri = '/FATAL';
+        $registry = madRegistry::instance();
+        $prefix = $registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
+        $req->uri =  $prefix . $registry->router->generateUrl( 'core.fatal' );
     
         return $req;
     }
