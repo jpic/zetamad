@@ -59,12 +59,6 @@ function __autoload( $class ) {
     }
 }
 
-ezcBase::setRunMode( ezcBase::MODE_DEVELOPMENT );
-
-$options = new ezcBaseAutoloadOptions;
-$options->debug = true;
-ezcBase::setOptions( $options ); 
-
 if ( PHP_OS == 'Linux' ) {
     $ocwd = getcwd();
     chdir( dirname( __FILE__ ) );
