@@ -29,24 +29,23 @@ class madModelController extends ezcMvcController {
     }
 
     public function doForm(  ) {
+        $result       = new ezcMvcResult(  );
+        
         $form         = new madBase(  );
         $form->name   = $this->request->variables['form'];
         $form->action = $this->request->uri;
         $form->model  = $this->registry->model;
-
+               
         // get and set the form configuration
         // it *must* be called *before* refresh() or relations will fail
         $form->setOptions( $this->registry->configuration->settings['forms'][$form->name] );
-
+        $form['namespace'] = $form->fields->namespace->value;
+        
         // make/get the object
         if ( isset( $this->id ) ) {
             $form['id'] = $this->id;
             $this->registry->model->refresh( $form );
-            madCoreViewHandler::dump( array( $form ) );
         }
-
-        var_dump( $form );
-        var_dump( $this->request->variables );
 
         // save the form
         if ( $this->request->protocol == 'http-post' ) {
@@ -57,13 +56,16 @@ class madModelController extends ezcMvcController {
                 var_dump( $dirty );
             } else {
                 $this->registry->model->save( $form );
+                $prefix = $this->registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
+                $result->status = new ezcMvcExternalRedirect( 
+                    $prefix . $this->registry->router->generateUrl( 'recipe.details', array( 
+                        'id' => $form['id'],
+                    ) 
+                ) );
             }
         }
 
-        var_dump( $form );
-
         // add the form to result variables for reuse in the template
-        $result = new ezcMvcResult(  );
         $result->variables['form'] = $form;
         return $result;
     }

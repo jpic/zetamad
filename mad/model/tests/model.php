@@ -14,9 +14,27 @@ class madModelTest extends PHPUnit_Framework_TestCase {
     public $model = null;
 
     public function setUp() {
-        $this->db = new PDO( 'mysql:host=localhost;dbname=madmodel' );
+        $this->db = new PDO( 'mysql:host=localhost;dbname=madmodel', 'root' );
         $this->model = new madModel( $this->db );
         $this->db->query( 'truncate mad_model' );
+    }
+
+    public function testDelete(  ) {
+        $fixture = new madBase( array( 
+            'foo' => 'bar',
+        ) );
+
+        $this->model->save( $fixture );
+
+        $s = $this->db->query( 'select * from mad_model' );
+        $s->setFetchMode( PDO::FETCH_ASSOC );
+        $this->assertEquals( 1, count( $s->fetchAll(  ) ) );
+
+        $this->model->delete( $fixture );
+        
+        $s = $this->db->query( 'select * from mad_model' );
+        $s->setFetchMode( PDO::FETCH_ASSOC );
+        $this->assertEquals( 0, count( $s->fetchAll(  ) ) );
     }
 
     /**
@@ -215,10 +233,13 @@ class madModelTest extends PHPUnit_Framework_TestCase {
         $this->model->save( $fixture );
         $expected = clone $fixture;
         $this->model->refresh( $fixture );
+        $this->assertEquals( $expected, $fixture, '0' );
         $this->model->save( $fixture );
+        $this->assertEquals( $expected, $fixture, '1' );
         $this->model->refresh( $fixture );
+        $this->assertEquals( $expected, $fixture, '2' );
         $this->model->save( $fixture );
-        $this->assertEquals( $expected, $fixture );
+        $this->assertEquals( $expected, $fixture, '3' );
     }
 
     /**

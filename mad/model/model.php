@@ -67,6 +67,29 @@ class madModel {
         $this->db = $db;
     }
 
+    public function log( $event, $func, $args ) {
+        return;
+        file_put_contents( '/tmp/log/' . ( microtime(  ) * 100 ) . '_' . $event . '_' . $func, var_export( $args, true ) );
+    }
+
+    public function query( $sql, array $arguments = array(  ) ) {
+        $args = func_get_args(  );
+        $this->log( 'query', 'query', $args );
+        $final = $sql;
+        foreach ( $arguments as $key => $value ) {
+            $final = str_replace( "$key", "'$value'", $final );
+        }
+        //$final = str_replace( "'", "\'", $final );
+        //echo $final;
+        //$final = str_replace( "(", "\(", $final );
+        //$final = str_replace( ")", "\)", $final );
+        
+        $statement = $this->db->prepare( $sql );
+        $statement->execute( $arguments );
+        
+        return $statement;
+    }
+
     /**
      * Returns an acceptable new entity id.
      * 
@@ -76,7 +99,7 @@ class madModel {
      */
     public function getNextEntityId(  ) {
         $sql = 'select uuid( );';
-        $statement = $this->db->query( $sql );
+        $statement = $this->query( $sql );
         $id = strtoupper( $statement->fetchColumn( 0 ) );
         return $id;
     }
@@ -99,21 +122,20 @@ class madModel {
      * @return madBase
      */
     public function save( madBase $data, $useTransaction = true ) {
-        if ( array_key_exists( 'id', $data ) ) {
-            $sql = 'delete from mad_model where ' . self::DECODE_ID_ENTITY;
+        $args = func_get_args(  );
+        $this->log( 'start', 'save', $args );
 
+        if( $useTransaction ) {
             $this->db->beginTransaction();
-            
-            $statement = $this->db->prepare( $sql );
-            $statement->execute( array( 
-                ':id' => $data['id'],
-            ) );
+        }
 
-            if ( !$this->db->commit() ) {
-                throw new Exception( "Unable to commit" );
-            }
+        if ( array_key_exists( 'id', $data ) ) {
+            $this->delete( $data, false );
         } else {
             $data['id'] = $this->getNextEntityId();
+
+            $args = func_get_args(  );
+            $this->log( 'got new id' . $data['id'], 'save', $args );
         }
 
         foreach( $data as $key => $value ) {
@@ -121,12 +143,29 @@ class madModel {
                 continue;
             }
 
+            $args = func_get_args(  );
+            $this->log( 'saving attribute' . $key . ':' . $value, 'save', $args );
+
             $this->saveAttribute( 
                 $data,
                 $key,
                 $value
             );
+
+
+            $args = func_get_args(  );
+            $this->log( 'end saving attribute' . $key . ':' . $value, 'save', $args );
         }
+
+        if ( $useTransaction ) {
+            if ( !$this->db->commit() ) {
+                throw new Exception( "Unable to commit" );
+            }
+        }
+            
+        $args = func_get_args(  );
+        $this->log( 'end save', 'save', $args );
+
         return $data;
     }
 
@@ -176,8 +215,6 @@ class madModel {
      * @return void
      */
     private function insertAttribute( madBase $data, $key, $value ) {
-        $this->db->beginTransaction();
-
         $sql = sprintf( 
             'insert into mad_model set 
                 attribute_key = :attribute_key
@@ -192,12 +229,8 @@ class madModel {
             ':attribute_value' => $value,
         );
 
-        $statement = $this->db->prepare( $sql );
-        $statement->execute( $arguments );
+        $statement = $this->query( $sql, $arguments );
 
-        if ( !$this->db->commit() ) {
-            throw new Exception( "Unable to commit" );
-        }
     }
 
     /**
@@ -240,8 +273,7 @@ class madModel {
 
         $sql = substr( $sql, 0, -4 );
 
-        $statement = $this->db->prepare( $sql );
-        $statement->execute( $arguments );
+        $statement = $this->query( $sql, $arguments );
 
         $ids = array();
         while( $row = $statement->fetch(  ) ) {
@@ -264,8 +296,7 @@ class madModel {
             join( ', ', $ids )
         );
         
-        $statement = $this->db->prepare( $sql );
-        $statement->execute();
+        $statement = $this->query( $sql );
 
         return $this->reduce( $statement->fetchAll(  ), $data );
     }
@@ -284,8 +315,7 @@ class madModel {
     public function getAttributeValues( $attributeName ) {
         $sql = 'select distinct attribute_value from mad_model where attribute_key = :key';
         
-        $statement = $this->db->prepare( $sql );
-        $statement->execute( array( 
+        $statement = $this->query( $sql, array( 
             'key' => $attributeName,
         ) );
 
@@ -448,8 +478,7 @@ class madModel {
 
         $sql .= ' 1;';
 
-        $statement = $this->db->prepare( $sql );
-        $statement->execute( $arguments );
+        $statement = $this->query( $sql, $arguments );
 
         $data->clear();
 
@@ -466,5 +495,18 @@ class madModel {
         }
         
         return $data;
+    }
+
+    public function delete( madBase $data, $asRelation = true ) {
+        if ( $asRelation ) {
+            $sql = 'delete from mad_model where id = ' . self::ENCODE_ID_ENTITY . 
+                ' or attribute_value = :id';
+        } else {
+            $sql = 'delete from mad_model where id = ' . self::ENCODE_ID_ENTITY;
+        }
+              
+        $statement = $this->query( $sql, array( 
+            ':id' => $data['id'],
+        ) );
     }
 }
