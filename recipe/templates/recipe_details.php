@@ -89,9 +89,7 @@ a.btn-block:hover { background: #539893; }
                         <h2><?php echo $this->object['title']; ?></h2>
                         <p class="recipe-author">Par&nbsp;<a href="#lien">Laurent Touchet</a></p>
                         <p class="recipe-intro">
-                                Ce g&acirc;teau n'est pas un entremet, il est plus riche, on en servira de plus petites parts au dessert. Pour un cercle de 21 cm de diam&egrave;tre, on comptera environ 8 parts.
-                                <br />
-                                Important : Les framboises crues ( fra&icirc;ches ou surgel&eacute;es ) devront &ecirc;tre mix&eacute;es finement. La pur&eacute;e obtenue devra &ecirc;tre filtr&eacute;e en pressant &agrave; la cuill&egrave;re &agrave; travers une petite passoire. On pr&eacute;voiera un peu plus de framboises afin d'obtenir 100 g de pur&eacute;e filtr&eacute;e ( compter 150 g de fruits entiers, quitte &agrave; conserver le petit restant de la pur&eacute;e de fruits pour agr&eacute;menter un yahourt ).
+                            <?php echo $this->object['summary']; ?>
                         </p>
                         <div class="links-intro">
                                 <a href="#">J'aime cette recette</a>
@@ -108,32 +106,12 @@ a.btn-block:hover { background: #539893; }
                         
                         <div class="recipe-title-steps">Pr&eacute;paration</div>
                         <div class="recipe-infos">
-                                <p class="recipe-infos-block">Pr&eacute;paration: <span class="bold">45min</span></p>
-                                <p class="recipe-infos-block">Cuisson: <span class="bold">30min</span></p>
-                                <p class="recipe-infos-block" style="margin-right: 0;">Personnes: <span class="bold">6</span></p>
+                                <p class="recipe-infos-block">Pr&eacute;paration: <span class="bold"><?php echo $this->object['preparationTime'] ?>min</span></p>
+                                <p class="recipe-infos-block">Cuisson: <span class="bold"><?php echo $this->object['cookTime'] ?>min</span></p>
+                                <p class="recipe-infos-block" style="margin-right: 0;">Personnes: <span class="bold"><?php echo $this->object['numberOfPeople']; ?></span></p>
                         </div>
                         
-                        <p class="step-title clear">Pr&eacute;parer la base mi-sabl&eacute;e au coco</p>
-                                
-                        <p class="step-desc">Beurrer le cercle et le chemiser de papier sulfuris&eacute;. Le poser sur une plaque de four, recouverte elle-m&ecirc;me de papier sulfuris&eacute;. Dans un saladier, travailler le beurre en cr&egrave;me ( fouet &eacute;l&eacute;ctrique ). Dans un autre saladier, m&eacute;langer la coco r&acirc;p&eacute;e avec l'eau chaude. Ajouter le sucre et la semoule de bl&eacute; fine. Tamiser au-dessus le m&eacute;lange de farine et bicarbonate. M&eacute;langer &agrave; la cuill&egrave;re puis verser dans le beurre en cr&egrave;me. Travailler le tout &agrave; la main jusqu'&agrave; obtention d'une boule de p&acirc;te tr&egrave;s friable.</p>
-                        
-                        <p class="step-desc">Aplatir la p&acirc;te dans le cercle pr&eacute;par&eacute; &agrave; la main, tasser uniform&eacute;ment, r&eacute;server. Pr&eacute;chauffer le four &agrave; 170&deg;C.</p>
-                        
-                        <p class="step-title">Pr&eacute;parer la garniture aux amandes</p>
-                                
-                        <p class="step-desc">Mixer les amandes enti&egrave;res non mond&eacute;es en poudre fine. Dans un saladier, travailler le beurre mou avec le sucre ( fouet &eacute;l&eacute;ctrique ) jusqu'&agrave; ce qu'il devienne cr&eacute;meux. Ajouter les oeufs, fouetter, puis la poudre d'amandes, fouetter de nouveau pour homog&eacute;n&eacute;iser. Verser la pr&eacute;paration dans le cercle sur la base au coco, lisser et enfourner &agrave; 170&deg;C pendant 40 minutes environ. Retirer du four, laisser totalement refroidir, d&eacute;cercler et faire glisser sur une grille en prenant soin de retirer le papier sulfuris&eacute; dessous.</p>
-                        
-                        <p class="step-title">Pr&eacute;parer le gla&ccedil;age brillant cacao &amp; framboise</p>
-                                
-                        <p class="step-desc">Tamiser le cacao amer dans un bol. Mixer longuement les framboises ( pr&eacute;alablement gratt&eacute;es au couteau en cas de givre puis d&eacute;congel&eacute;es si elles ne sont pas fra&icirc;ches ) en pur&eacute;e fine. Filtrer cette pur&eacute;e au travers d'une petite passoire en pressant bien &agrave; l'aide d'une cuill&egrave;re afin d'en extraire les p&eacute;pins. Pr&eacute;lever 100 g de cette pur&eacute;e, r&eacute;server.</p>
-                        
-                        <p class="step-desc">Tremper la g&eacute;latine 10 minutes dans de l'eau froide. Verser le sucre, l'eau et les 100 g de pur&eacute;e filtr&eacute;e de framboises dans une casserole d'environ 16 cm de diam&egrave;tre. Chauffer le tout en remuant &agrave; la spatule en bois jusqu'&agrave; dissolution du sucre. Hors du feu, ajouter le cacao amer tamis&eacute; en remuant ( il restera des grumeaux ). Remettre sur le feu, porter &agrave; &eacute;bullition sans cesser de remuer vigoureusement &agrave; la spatule en bois et laisser bouillir une bonne minute toujours en remuant. Retirer du feu, ajouter le beurre en d&eacute;s, bien m&eacute;langer.</p>
-                        
-                        <p class="step-desc">Laisser la temp&eacute;rature descendre aux alentours de 60&deg;C avant d'ajouter la g&eacute;latine bien essor&eacute;e. M&eacute;langer doucement et de mani&egrave;re concentrique afin de chasser les bulles d'air ( partir du centre et tourner doucement jusqu'&agrave; atteindre les bords de la casserole ).</p>
-                        
-                        <p class="step-desc">Napper le g&acirc;teau de ce gla&ccedil;age lorsque celui-ci atteint la consistance id&eacute;ale. Personnellement j'ai laiss&eacute; refroidir. R&eacute;cup&eacute;rer le chocolat qui aura coul&eacute; au dessous dans un saladier afin de le r&eacute;utiliser si n&eacute;cessaire pour uniformiser les bords du g&acirc;teau, &agrave; l'aide d'une spatule. D&eacute;placer le g&acirc;teau sur un plat de service et r&eacute;frig&eacute;rer 1 nuit.</p>
-                        
-                        <p class="step-desc">D&eacute;corer &eacute;ventuellement de coco r&acirc;p&eacute;e, d'amandes et de framboises. En fonction de la temp&eacute;rature, on sortira le g&acirc;teau du frigo 15 &agrave; 30 minutes avant de le d&eacute;guster.</p>
+                        <?php echo $this->object['preparation']; ?>
                 </div>
         </div>
 </div>
@@ -142,13 +120,9 @@ a.btn-block:hover { background: #539893; }
         <div class="block">
                 <h3>Ingr&eacute;dients</h3>
                 <ul>
-                        <li><span class="recipe-step">La base mi-sabl&eacute;e coco :</span></li>
-                        <li><span class="att">150g</span> de farine</li>
-                        <li><span class="att">150g</span> de coco r&acirc;p&eacute;e</li>
-                        <li><span class="att">30g</span> de semoule de bl&eacute; fine</li>
-                        <li><span class="att">100g</span> de sucre</li>
-                        <li><span class="att">45g</span> d'eau chaude</li>
-                        <li><span class="att">1 pinc&eacute;e</span> de bicarbonate</li>
+                    <?php foreach( $this->object['ingredients'] as $ingredient ): ?>
+                        <li><?php echo $ingredient['name'] ?> : <span class="att"><?php echo $ingredient['quantity'] ?></span></li>
+                    <?php endforeach; ?>
                 </ul>
                 <a class="btn-block" href="#">Voir les produits</a>
         </div>
