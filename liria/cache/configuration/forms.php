@@ -47,7 +47,7 @@ return array (
           'help' => 'décrivez les étapes de préparation',
           'widget' => 
           array (
-            'class' => 'textarea',
+            'class' => 'wysiwyg',
           ),
         ),
         'restTime' => 

@@ -44,8 +44,7 @@ return array (
         4 => 'madCoreRoutingInformation',
         5 => 'madCoreViewHandler',
         6 => 'madCoreConfiguration',
-        7 => 'madCoreDispatcher',
-        8 => 'madCoreRouter',
+        7 => 'madCoreRouter',
       ),
     ),
     'model' => 
@@ -57,6 +56,8 @@ return array (
         1 => 'madModel',
         2 => 'madModelException',
         3 => 'madModelExceptedId',
+        4 => 'CKEditor',
+        5 => 'CKEditor',
       ),
     ),
   ),
