@@ -398,6 +398,9 @@ class madModel {
      * @return void
      */
     private function contributeAttribute( madBase $data, $key, $value ) {
+        // strip slashes
+        $value = stripslashes( $value );
+
         // if the value is an uuid, fetch the object and replace $value with it
         if ( preg_match( '/[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}/', $value ) ) {
             $value = new madBase( array(  
