@@ -67,14 +67,8 @@ class madModel {
         $this->db = $db;
     }
 
-    public function log( $event, $func, $args ) {
-        return;
-        file_put_contents( '/tmp/log/' . ( microtime(  ) * 100 ) . '_' . $event . '_' . $func, var_export( $args, true ) );
-    }
-
     public function query( $sql, array $arguments = array(  ) ) {
         $args = func_get_args(  );
-        $this->log( 'query', 'query', $args );
         $final = $sql;
         foreach ( $arguments as $key => $value ) {
             $final = str_replace( "$key", "'$value'", $final );
@@ -123,7 +117,6 @@ class madModel {
      */
     public function save( madBase $data, $useTransaction = true ) {
         $args = func_get_args(  );
-        $this->log( 'start', 'save', $args );
 
         if( $useTransaction ) {
             $this->db->beginTransaction();
@@ -134,8 +127,6 @@ class madModel {
         } else {
             $data['id'] = $this->getNextEntityId();
 
-            $args = func_get_args(  );
-            $this->log( 'got new id' . $data['id'], 'save', $args );
         }
 
         foreach( $data as $key => $value ) {
@@ -143,8 +134,6 @@ class madModel {
                 continue;
             }
 
-            $args = func_get_args(  );
-            $this->log( 'saving attribute' . $key . ':' . $value, 'save', $args );
 
             $this->saveAttribute( 
                 $data,
@@ -152,9 +141,6 @@ class madModel {
                 $value
             );
 
-
-            $args = func_get_args(  );
-            $this->log( 'end saving attribute' . $key . ':' . $value, 'save', $args );
         }
 
         if ( $useTransaction ) {
@@ -163,8 +149,6 @@ class madModel {
             }
         }
             
-        $args = func_get_args(  );
-        $this->log( 'end save', 'save', $args );
 
         return $data;
     }
