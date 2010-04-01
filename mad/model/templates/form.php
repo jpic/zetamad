@@ -12,7 +12,7 @@
 }
 </style>
 
-<?php var_dump( $this->form ) ?>
+<?php $widgets = array(  ) ?>
 
 <form action="" method="post" class="uniForm">
     <fieldset class="inlineLabels">
@@ -83,6 +83,11 @@
     </div>
 
 </form>
+
+<?php if ( in_array( 'wysiwyg', $widgets ) ): ?>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getAbsoluteStaticUrl( 'css/uni-form.css' ) ; ?>" />
+<script type="text/javascript" src="<?php echo $this->getAbsoluteStaticUrl( 'ckeditor/ckeditor.js' ) ; ?>"></script>
+<?php endif ?>
 
 <script type="text/javascript">
 $(document).ready( function(  ) {

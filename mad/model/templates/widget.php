@@ -10,6 +10,9 @@ if ( !isset( $inputName ) ) {
 <?php if ( !isset( $field->widget ) ): ?>
 <input value="<?php if ( isset( $form[$name] ) ) echo $form[$name]; ?>" name="<?php echo $inputName; ?>" id="<?php echo $name; ?>" type="text" class="textInput" />
 
+<?php elseif ( $field->widget->class == 'wysiwyg' ): ?>
+<textarea class="ckeditor" name="<?php echo $inputName; ?>" id="<?php echo $inputName; ?>"><?php if ( isset( $form[$name] ) ) echo $form[$name]; ?></textarea>
+
 <?php elseif ( $field->widget->class == 'textarea' ): ?>
 <textarea name="<?php echo $inputName; ?>" id="<?php echo $inputName; ?>"><?php if ( isset( $form[$name] ) ) echo $form[$name]; ?></textarea>
 
@@ -28,5 +31,5 @@ if ( !isset( $inputName ) ) {
     <?php endif ?>
 
 <?php endif ?>
-
+<?php if ( isset( $field->widget ) && isset( $field->widget->class ) ) $widgets[] = $field->widget->class ?>
 <?php unset( $inputName ); ?>
