@@ -29,7 +29,8 @@ return array (
       'classes' => 
       array (
         0 => 'madCiController',
-        1 => 'madTestRunner',
+        1 => 'madCiTestCase',
+        2 => 'madTestRunner',
       ),
     ),
     'core' => 

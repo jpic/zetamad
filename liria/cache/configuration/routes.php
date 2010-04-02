@@ -49,6 +49,13 @@ return array (
       'rails' => '/fatal/',
       'application' => 'core',
     ),
+    'model.autocompleteAttribute' => 
+    array (
+      'controller' => 'madModelController',
+      'action' => 'autocompleteAttribute',
+      'rails' => 'autocomplete/attribute/:name/',
+      'application' => 'model',
+    ),
     'ci.runtests' => 
     array (
       'rails' => '/ci/runtests/',
