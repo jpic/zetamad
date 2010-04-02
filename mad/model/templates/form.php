@@ -85,9 +85,14 @@
 </form>
 
 <?php if ( in_array( 'wysiwyg', $widgets ) ): ?>
-<link rel="stylesheet" type="text/css" href="<?php echo $this->getAbsoluteStaticUrl( 'css/uni-form.css' ) ; ?>" />
 <script type="text/javascript" src="<?php echo $this->getAbsoluteStaticUrl( 'ckeditor/ckeditor.js' ) ; ?>"></script>
 <?php endif ?>
+<!--
+<?php if ( in_array( 'autocomplete', $widgets ) ): ?>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getAbsoluteStaticUrl( 'jquery-autocomplete/jquery.autocomplete.css' ) ; ?>" />
+<script type="text/javascript" src="<?php echo $this->getAbsoluteStaticUrl( 'jquery-autocomplete/jquery.autocomplete.pack.js' ) ; ?>"></script>
+<?php endif ?>
+-->
 
 <script type="text/javascript">
 $(document).ready( function(  ) {
