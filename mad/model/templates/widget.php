@@ -17,7 +17,7 @@ if ( !isset( $inputName ) ) {
 <textarea name="<?php echo $inputName; ?>" id="<?php echo $inputName; ?>"><?php if ( isset( $form[$name] ) ) echo $form[$name]; ?></textarea>
 
 <?php elseif ( $field->widget->class == 'autocomplete' ): ?>
-<input value="<?php if ( isset( $form[$name] ) ) echo $form[$name] ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputName; ?>" type="text" class="textInput" />
+<input autocomplete="off" value="<?php if ( isset( $form[$name] ) ) echo $form[$name] ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputName; ?>" type="text" class="textInput" />
     
     <?php if ( isset( $field->choices ) && $field->choices ): ?>
     <script type="text/javascript">
