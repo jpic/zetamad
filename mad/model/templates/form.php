@@ -73,7 +73,7 @@
                 ?>
             </tobdy>
         </table>
-        <button class="formset_add">Ajouter</button>
+        <button disabled="disabled" class="formset_add">Ajouter</button>
     </fieldset>
     <?php endforeach ?>
 
@@ -115,5 +115,6 @@ $(document).ready( function(  ) {
             }
         });
     });
+    $( 'button.formset_add' ).attr( 'disabled', '' );
 });
 </script>
