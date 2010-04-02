@@ -5,7 +5,7 @@
     ?>
     <td>
     <?php 
-    $inputName = $formsetName . '['. $count .'][' . $name . ']';
+    $inputName = '[' . $formsetName . ']['. $count .'][' . $name . ']';
     include 'widget.php'; 
     unset( $inputName );
     ?>

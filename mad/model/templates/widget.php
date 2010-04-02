@@ -3,7 +3,7 @@
  * This templates renders a field with config $field and name $name with $form.
  */
 if ( !isset( $inputName ) ) {
-    $inputName = $name;
+    $inputName = sprintf( '%s[%s]', $form->name, $name );
 }
 ?>
 
@@ -23,9 +23,9 @@ if ( !isset( $inputName ) ) {
     <script type="text/javascript">
     $(document).ready( function() {
         // try not to mess with other input fields in the page
-        $("form.uniForm input[name=<?php echo $name; ?>]").autocomplete([
-        "<?php echo join( '", "', $field['choices'] ) ?>"
-        ]);
+        $("form.uniForm input[name=<?php echo $name; ?>]").autocomplete(
+            "<?php echo $this->generateUrl( 'model.autocompleteAttribute', array( 'name' => $name ) ) ?> "
+        );
     });
     </script>
     <?php endif ?>

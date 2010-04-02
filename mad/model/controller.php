@@ -28,9 +28,13 @@ class madModelController extends ezcMvcController {
         return $result;
     }
 
+    protected function getFormOptions( madBase $form ) {
+        return $this->registry->configuration->settings['forms'][$form->name];
+    }
+
     public function doForm(  ) {
         $result       = new ezcMvcResult(  );
-        
+
         $form         = new madBase(  );
         $form->name   = $this->request->variables['form'];
         $form->action = $this->request->uri;
@@ -38,8 +42,22 @@ class madModelController extends ezcMvcController {
                
         // get and set the form configuration
         // it *must* be called *before* refresh() or relations will fail
-        $form->setOptions( $this->registry->configuration->settings['forms'][$form->name] );
-        $form['namespace'] = $form->fields->namespace->value;
+        $form->setOptions( $this->getFormOptions( $form ) );
+
+        // process options
+        foreach( $form->fields->options as $name => $field ) {
+            // hard coded values
+            if ( isset( $field->value ) ) {
+                $form[$name] = $field->value;
+            }
+
+            if ( isset( $field->widget ) && isset( $field->widget->class ) ) {
+                switch( $field->widget->class ) {
+                    case 'autocomplete':
+                        $field->choices = $this->registry->model->getAttributeValues( $name );
+                }
+            }
+        }
         
         // make/get the object
         if ( isset( $this->id ) ) {
@@ -49,7 +67,7 @@ class madModelController extends ezcMvcController {
 
         // save the form
         if ( $this->request->protocol == 'http-post' ) {
-            $form->merge( $this->request->variables );
+            $form->merge( $this->request->variables[$form->name] );
             $form->clean();
             $dirty = $form->dirtyAttributes(  );
             if ( $dirty !== false ) {
@@ -57,6 +75,7 @@ class madModelController extends ezcMvcController {
             } else {
                 $this->registry->model->save( $form );
                 $prefix = $this->registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
+
                 $result->status = new ezcMvcExternalRedirect( 
                     $prefix . $this->registry->router->generateUrl( 'recipe.details', array( 
                         'id' => $form['id'],
@@ -68,6 +87,10 @@ class madModelController extends ezcMvcController {
         // add the form to result variables for reuse in the template
         $result->variables['form'] = $form;
         return $result;
+    }
+
+    public function doAutocomplete(  ) {
+
     }
 
     public function doDetails(  ) {
