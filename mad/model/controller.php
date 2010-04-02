@@ -59,10 +59,21 @@ class madModelController extends ezcMvcController {
             }
         }
         
-        // make/get the object
+        // get the object
         if ( isset( $this->id ) ) {
             $form['id'] = $this->id;
             $this->registry->model->refresh( $form );
+        }
+
+        if ( isset( $form->formsets ) ) {
+            foreach( $form->formsets->options as $name => $formset ) {
+                if ( $form[$name]->isEntity ) {
+                    // there is only one related object, and the model couldn't 
+                    // know that it is supposed to be an M2M relation. 
+                    // Monkey-fix it.
+                    $form[$name] = new madBase( array( $form[$name] ) );
+                }
+            }
         }
 
         // save the form
