@@ -120,9 +120,13 @@ a.btn-block:hover { background: #539893; }
         <div class="block">
                 <h3>Ingr&eacute;dients</h3>
                 <ul>
-                    <?php foreach( $this->object['ingredients'] as $ingredient ): ?>
-                        <li><?php echo $ingredient['name'] ?> : <span class="att"><?php echo $ingredient['quantity'] ?></span></li>
-                    <?php endforeach; ?>
+                    <?php if ( $this->object['ingredients']->isEntity ): ?>
+                        <li><?php echo $this->object['ingredients']['name'] ?> : <span class="att"><?php echo $this->object['ingredients']['quantity'] ?></span></li>
+                    <?php else: ?>
+                        <?php foreach( $this->object['ingredients'] as $ingredient ): ?>
+                            <li><?php echo $ingredient['name'] ?> : <span class="att"><?php echo $ingredient['quantity'] ?></span></li>
+                        <?php endforeach; ?>
+                    <?php endif ?>
                 </ul>
                 <a class="btn-block" href="#">Voir les produits</a>
         </div>
