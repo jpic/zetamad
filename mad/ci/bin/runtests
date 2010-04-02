@@ -1,4 +1,4 @@
-#!/usr/local/php5.2.13/bin/php
+#!/usr/bin/php
 <?php
 require_once 'PHPUnit/TextUI/Command.php';
 require_once 'PHPUnit/Util/Class.php';
