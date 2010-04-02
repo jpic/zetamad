@@ -63,6 +63,8 @@ a.btn-block:hover { background: #539893; }
         <li><a href="">au hasard</a></li>
 </ul>
 
+<?php var_dump( $this->object ) ?>
+
 <div class="recipe">
         <div class="recipe-left">
                 <div id="recipe-photo">
@@ -117,6 +119,7 @@ a.btn-block:hover { background: #539893; }
 </div>
 
 <div id="recipe-column">
+        <?php if ( $this->object['ingredients'] ): ?>
         <div class="block">
                 <h3>Ingr&eacute;dients</h3>
                 <ul>
@@ -130,6 +133,7 @@ a.btn-block:hover { background: #539893; }
                 </ul>
                 <a class="btn-block" href="#">Voir les produits</a>
         </div>
+        <?php endif ?>
         <div class="block">
                 <h3>Produits de la recette</h3>
                 -
