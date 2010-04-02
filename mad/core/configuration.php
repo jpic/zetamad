@@ -225,10 +225,12 @@ class madCoreConfiguration {
 
 
             $staticPath = realpath( $applicationPath . DIRECTORY_SEPARATOR . 'static' );
-            foreach( new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $staticPath ) ) as $fileInfo ) {
-                $absolutePath = $fileInfo->getRealPath(  );
-                $relativePath = substr( $absolutePath, strlen( $staticPath ) );
-                $this->settings['staticFiles']['paths'][$relativePath] = $absolutePath;
+            if ( $staticPath ) {
+                foreach( new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $staticPath ) ) as $fileInfo ) {
+                    $absolutePath = $fileInfo->getRealPath(  );
+                    $relativePath = substr( $absolutePath, strlen( $staticPath ) );
+                    $this->settings['staticFiles']['paths'][$relativePath] = $absolutePath;
+                }
             }
 
             foreach( glob( $path . DIRECTORY_SEPARATOR . '*' ) as $file ) {
