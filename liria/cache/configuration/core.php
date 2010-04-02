@@ -4,7 +4,7 @@ return array (
   array (
     'dispatcher' => 
     array (
-      'prefix' => '/xp',
+      'prefix' => '/mm/xp',
     ),
   ),
   'comments' => 
