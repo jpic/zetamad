@@ -126,7 +126,7 @@ class madCoreConfiguration {
 
                     $out = shell_exec( "find $path -name configuration -type d \! -path \"*/tests/*\" \! -path \"*/cache/*\"" );
                     if ( $out ) {
-                        foreach( split( "\n", $out ) as $path ) {
+                        foreach( explode( "\n", $out ) as $path ) {
                             if ( $path == dirname( __FILE__ ) ) {
                                 continue;
                             }
@@ -203,8 +203,8 @@ class madCoreConfiguration {
                 continue;
             }
 
-            $split = split( DIRECTORY_SEPARATOR, $path );
-            $application = $split[count( $split )-2];
+            $explode = explode( DIRECTORY_SEPARATOR, $path );
+            $application = $explode[count( $explode )-2];
             $applicationPath = realpath( $path . DIRECTORY_SEPARATOR . '..' );
             if ( !isset( $this->settings['applications'][$application] ) ) {
                 $this->settings['applications'][$application] = array();
@@ -216,7 +216,7 @@ class madCoreConfiguration {
             }
             $command = "grep --exclude-dir=tests --exclude-dir=.svn -o -r '^class [a-zA-Z0-9]*' $applicationPath | sed 's/.*class //'";
             $out = shell_exec( $command );
-            foreach( split( "\n", $out ) as $className ) {
+            foreach( explode( "\n", $out ) as $className ) {
                 if ( !$className ) { // skip empty className
                     continue;
                 }
