@@ -2,12 +2,12 @@
 <dataset>
     <mad_model 
         id="1FDB6574-3E40-11DF-8BB4-1B969F5BE980"
-        attribute_key="namespace" 
-        attribute_value="recipe" 
+        attribute_key="title" 
+        attribute_value="Ti'Punch" 
     />
     <mad_model 
         id="1FDB6574-3E40-11DF-8BB4-1B969F5BE980"
-        attribute_key="title" 
-        attribute_value="tiponch" 
+        attribute_key="namespace" 
+        attribute_value="recipe" 
     />
 </dataset>

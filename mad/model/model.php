@@ -484,8 +484,8 @@ class madModel {
         return $data;
     }
 
-    public function delete( madBase $data, $asRelation = true ) {
-        if ( $asRelation ) {
+    public function delete( madBase $data, $cascade = true ) {
+        if ( $cascade ) {
             $sql = 'delete from mad_model where id = ' . self::ENCODE_ID_ENTITY . 
                 ' or attribute_value = :id';
         } else {

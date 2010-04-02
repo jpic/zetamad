@@ -1,5 +1,55 @@
 <?php
 require_once 'PHPUnit/Extensions/Database/DataSet/DataSetFilter.php';
+require_once 'PHPUnit/Extensions/Database/DB/DataSet.php';
+
+class madModelTable extends PHPUnit_Extensions_Database_DB_Table {
+    /**
+     * Creates a new database table object.
+     *
+     * @param PHPUnit_Extensions_Database_DataSet_ITableMetaData $tableMetaData
+     * @param PHPUnit_Extensions_Database_DB_IDatabaseConnection $databaseConnection
+     */
+    public function __construct(PHPUnit_Extensions_Database_DataSet_ITableMetaData $tableMetaData, PHPUnit_Extensions_Database_DB_IDatabaseConnection $databaseConnection)
+    {
+        $this->setTableMetaData($tableMetaData);
+
+        $pdoStatement = $databaseConnection->getConnection()->prepare(sprintf( '
+            select
+                %s as id,
+                attribute_key,
+                attribute_value
+            from
+                mad_model
+        ', madModel::DECODE_ID_ENTITY));
+        $pdoStatement->execute();
+        $this->data = $pdoStatement->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
+class madModelDataSet extends PHPUnit_Extensions_Database_DB_DataSet {
+    /**
+     * Returns a table object for the given table.
+     *
+     * @param string $tableName
+     * @return PHPUnit_Extensions_Database_DB_Table
+     */
+    public function getTable($tableName)
+    {
+        if (!in_array($tableName, $this->getTableNames())) {
+            throw new InvalidArgumentException("$tableName is not a table in the current database.");
+        }
+
+        if (empty($this->tables[$tableName])) {
+            if ( $tableName == 'mad_model' ) {
+                $this->tables[$tableName] = new madModelTable($this->getTableMetaData($tableName), $this->databaseConnection);
+            } else {
+                $this->tables[$tableName] = new PHPUnit_Extensions_Database_DB_Table($this->getTableMetaData($tableName), $this->databaseConnection);
+            }
+        }
+
+        return $this->tables[$tableName];
+    }
+}
 
 class madModelControllerMock extends madModelController {
     public $options;
@@ -7,6 +57,41 @@ class madModelControllerMock extends madModelController {
     protected function getFormOptions( $form ) {
         return $this->options;
     }
+}
+
+class madModelMock extends madModel {
+    public $ids = array(
+        '0FDB6574-3E40-11DF-8BB4-1B969F5BE980',
+        '1FDB6574-3E40-11DF-8BB4-1B969F5BE980',
+        '2FDB6574-3E40-11DF-8BB4-1B969F5BE980',
+        '3FDB6574-3E40-11DF-8BB4-1B969F5BE980',
+        '4FDB6574-3E40-11DF-8BB4-1B969F5BE980',
+        '5FDB6574-3E40-11DF-8BB4-1B969F5BE980',
+        '6FDB6574-3E40-11DF-8BB4-1B969F5BE980',
+        '7FDB6574-3E40-11DF-8BB4-1B969F5BE980',
+        '8FDB6574-3E40-11DF-8BB4-1B969F5BE980',
+        '9FDB6574-3E40-11DF-8BB4-1B969F5BE980',
+    );
+
+    /**
+     * Return ids in a predictable order
+     * 
+     * @return void
+     */
+    public function getNextEntityId(  ) {
+        return next( $this->ids );
+    }
+
+    /**
+     * Avdance internal uuid pointer if $data already have an id to even out
+     */
+    //public function save( madBase $data, $useTransaction = true ) {
+        //if ( isset( $data['id'] ) ) {
+            //$this->getNextEntityId(  );
+        //}
+
+        //parent::save( $data, $useTransaction );
+    //}
 }
 
 /**
@@ -28,8 +113,8 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
                          ->will( $this->returnValue( '/bar' ) );
 
         $this->db = $registry->database;
+        $registry->model = new madModelMock( $this->db );
         $this->model = $registry->model;
-
         $this->db->query( 'truncate mad_model' );
     }
 
@@ -65,7 +150,7 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
             $arguments[] = $request;
             $arguments[] = $form;
             $arguments[] = $test . DIRECTORY_SEPARATOR . 'expected_dataset.xml';
-            $arguments[] = $test . DIRECTORY_SEPARATOR . 'initial_dataset.xml';
+            $arguments[] = $test . DIRECTORY_SEPARATOR . 'setup.php';
             
             $scenarios[] = $arguments;
         }
@@ -75,18 +160,31 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
 
     protected function filterDataset( $dataset ) {
         $dataset = new PHPUnit_Extensions_Database_DataSet_DataSetFilter( $dataset );
-        $dataset->setExcludeColumnsForTable( 'mad_model', array( 'id_attribute', 'id' ) );
+        $dataset->setExcludeColumnsForTable( 'mad_model', array( 'id_attribute' ) );
         return $dataset;
+    }
+
+    protected function copyNOTEST( $from, $to ) {
+        foreach( $to as $key => $value ) {
+            if ( $value == 'NOTEST' ) {
+                $to[$key] = $from[$key];
+            }
+
+            if ( $value instanceof madBase ) {
+                $this->copyNOTEST( $from[$key], $to[$key] );
+            }
+        }
     }
 
     /**
      * @dataProvider formProvider
      */
-    public function testForm( $scenario, $options, $request, $expectedForm, $expectedDatasetFile, $initialDataset ) {
-        // set up initial dataset
-        $this->getDatabaseTester()->setDataSet( $this->createFlatXMLDataSet(
-            $initialDataset
-        ) );
+    public function testForm( $scenario, $options, $request, $expectedForm, $expectedDatasetFile, $setup ) {
+
+        // reset predictable uuid pointer
+        reset( madRegistry::instance()->model->ids );
+
+        include $setup;
 
         // get result
         $controller = new madModelControllerMock( 'form', $request );
@@ -95,9 +193,7 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
         $actualForm = $result->variables['form'];
 
         // hard set the expected form id, for "create" tests
-        if ( $expectedForm['id'] == 'NOTEST' ) {
-            $expectedForm['id'] = $actualForm['id'];
-        }
+        $this->copyNOTEST( $actualForm, $expectedForm );
         
         // test result relevance
         $expectedForm->ksort(  );
@@ -108,7 +204,7 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
         $expectedDataset = $this->createFlatXMLDataSet($expectedDatasetFile);
         $expectedDataset = $this->filterDataset( $expectedDataset );
 
-        $actualDataset   = $this->getConnection()->createDataSet();
+        $actualDataset   = new madModelDataSet( $this->getConnection() );
         $actualDataset   = $this->filterDataset( $actualDataset );
         
         $this->assertDataSetsEqual($expectedDataset, $actualDataset );

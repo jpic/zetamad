@@ -67,7 +67,32 @@ class madModelController extends ezcMvcController {
 
         // save the form
         if ( $this->request->protocol == 'http-post' ) {
-            $form->merge( $this->request->variables[$form->name] );
+            $form->merge( $this->request->variables[str_replace( '.', '_', $form->name)] );
+            
+            // handle delete of related objects
+            if ( isset( $form->formsets ) ) {
+                foreach( $form->formsets->options as $name => $formset ) {
+                    $deletes = array(  );
+
+                    foreach( $form[$name] as $key => $related ) {
+                        if ( isset( $related['DELETE'] ) ) {
+                            // unsetting the related object here would break 
+                            // the idiot php array pointer and raise a runtime 
+                            // exception
+                            $deletes[] = $key;
+                        }
+                    }
+                    
+                    foreach( $deletes as $key ) {
+                        $delete = $form[$name][$key];
+                        // delete from database
+                        $this->registry->model->delete( $delete );
+                        // delete from object
+                        unset( $form[$name][$key] );
+                    }
+                }
+            }
+            
             $form->clean();
             $dirty = $form->dirtyAttributes(  );
             if ( $dirty !== false ) {

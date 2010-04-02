@@ -5,16 +5,16 @@
     ?>
     <td>
     <?php 
-    $inputName = '[' . $formsetName . ']['. $count .'][' . $name . ']';
+    $inputName = $this->form->name . '[' . $formsetName . ']['. $count .'][' . $name . ']';
     include 'widget.php'; 
     unset( $inputName );
     ?>
     </td>
     <?php endforeach ?>
     <td class="formsetDeleteColumn">
-        <input type="checkbox" name="<?php echo $formsetName . '['.$count.'][DELETE]' ?>" <?php if ( !isset( $formsetForm['id'] ) ): ?>disabled="disabled"<?php endif ?> />
+        <input type="checkbox" name="<?php echo $this->form->name . '[' . $formsetName . ']['.$count.'][DELETE]' ?>" <?php if ( !isset( $formsetForm['id'] ) ): ?>disabled="disabled"<?php endif ?> />
         <?php if ( isset( $formsetForm['id'] ) ): ?>
-        <input type="hidden" value="<?php echo $formsetForm['id'] ?>" name="<?php echo $formsetName . '['. $count .'][id]' ?>" />
+        <input type="hidden" value="<?php echo $formsetForm['id'] ?>" name="<?php echo $this->form->name . '[' . $formsetName . ']['. $count .'][id]' ?>" />
         <?php endif ?>
     </td>
 </tr>
