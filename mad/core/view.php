@@ -227,6 +227,14 @@ class madCoreView extends ezcMvcView {
 
         // return the first guessed template or die!
         foreach( $testPaths as $templatePath ) {
+            // handle relative path
+            if ( substr( $templatePath, 0, 1 ) != DIRECTORY_SEPARATOR ) {
+                $templatePath = realpath( implode( DIRECTORY_SEPARATOR, array( 
+                    APP_PATH,
+                    $templatePath,
+                ) ) );
+            }
+
             if ( file_exists( $templatePath ) ) {
                 return $templatePath;
             }
