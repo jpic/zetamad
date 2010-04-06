@@ -92,7 +92,7 @@ class madCoreView extends ezcMvcView {
 
         $zones[] = new madCoreViewHandler( 'body', $this->getTemplate( ) );
         
-        if ( $layout ) {
+        if ( $layout && !$this->request->variables['ajaxRequest'] ) {
             $zones[] = new madCoreViewHandler( 'site_base', APP_PATH . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'site_base.php' );
         }
 

@@ -49,6 +49,10 @@ if ( substr( $request->uri, 0, 8) != '/static/' ) {
     }
 }
 
+// check if ajax
+$request->variables['ajaxRequest'] = isset( $request->raw['HTTP_X_REQUESTED_WITH'] ) &&
+    $request->raw['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
+
 /**
  * A router should be istnanciated with the request object.
  *
