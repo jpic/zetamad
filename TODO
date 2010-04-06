@@ -1,0 +1,13 @@
+Do autocomplete
+Form validation
+Implement complex filters on select queries
+Better details urls (slugs?)
+Make "model administration" views with object details (no pre-defined forms)
+Implement multi-app model tables
+Implement authentication with a prestashop backend
+Implement "social networking" app to publish objects on twitter, facebook etc ...
+Implement "comments" app
+Implement smoke tests
+Implement the continuous integration app
+Document the framework
+Release the framework as open source
