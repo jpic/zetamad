@@ -8,6 +8,49 @@ class madCoreConfigurationTest extends ezcTestCase {
         return new PHPUnit_Framework_TestSuite( 'madCoreConfigurationTest' );
     }
 
+    static public function getRelativePathProvider(  )  {
+        return array( 
+            array( 
+                '/srv/foo/bar',
+                '/srv',
+                'foo/bar',
+            ),
+            array( 
+                '/srv/foo/bar',
+                '/srv/',
+                'foo/bar',
+            ),
+            array( 
+                '/srv/foo/bar/',
+                '/srv',
+                'foo/bar',
+            ),
+            array( 
+                '/srv/foo/bar/',
+                '/srv/',
+                'foo/bar',
+            ),
+            array( 
+                '/srv/foo/bar',
+                '/srv/test',
+                '../foo/bar',
+            ),
+            array( 
+                '/srv/foo/bar',
+                '/srv/test/fool',
+                '../../foo/bar',
+            ),
+        );
+    }
+
+    /**
+     * @dataProvider getRelativePathProvider
+     */
+    public function testGetRelativePath( $path, $compareTo, $expected ) {
+        $result = madCoreConfiguration::getRelativePath( $path, $compareTo );
+        $this->assertEquals( $result, $expected );
+    }
+
     static public function configCacheFunctionnalProvider(  ) {
         $scenarios = array();
 

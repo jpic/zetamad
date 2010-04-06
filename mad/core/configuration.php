@@ -375,6 +375,35 @@ class madCoreConfiguration {
 
         throw new Exception( "Cannot find the name of the application containing class $className, does it contain a 'configuration' subdir?" );
     }
+
+    static public function getRelativePath( $path, $compareTo ) {
+        // clean arguments by removing trailing slashes
+        if ( substr( $path, -1 ) == DIRECTORY_SEPARATOR ) {
+            $path = substr( $path, 0, -1 );
+        }
+
+        if ( substr( $compareTo, -1 ) == DIRECTORY_SEPARATOR ) {
+            $compareTo = substr( $compareTo, 0, -1 );
+        }
+
+        // simple case: $compareTo is in $path
+        if ( strpos( $path, $compareTo ) === 0 ) {
+            $offset = strlen( $compareTo ) + 1;
+            return substr( $path, $offset );
+        }
+
+        $relative  = '';
+        $pathParts = explode( DIRECTORY_SEPARATOR, $path );
+        $compareToParts = explode( DIRECTORY_SEPARATOR, $compareTo );
+
+        $diff = array_diff( $compareToParts, $pathParts );
+        $relative = str_repeat( '..' . DIRECTORY_SEPARATOR, count( $diff ) );
+
+        $diff = array_diff( $pathParts, $compareToParts );
+        $relative .= implode( DIRECTORY_SEPARATOR, $diff );
+
+        return $relative;
+    }
 }
 
 ?>
