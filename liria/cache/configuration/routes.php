@@ -42,19 +42,36 @@ return array (
       'action' => 'details',
       'application' => 'recipe',
     ),
+    'recipe.originAutocomplete' => 
+    array (
+      'rails' => '/recipe/autocomplete/origin/',
+      'controller' => 'madModelController',
+      'action' => 'attributeAutocomplete',
+      'arguments' => 
+      array (
+        'filter__namespace' => 'recipe',
+        'attribute' => 'origin',
+      ),
+      'application' => 'recipe',
+    ),
+    'recipe.ingredientNameAutocomplete' => 
+    array (
+      'rails' => '/recipe/autocomplete/origin/',
+      'controller' => 'madModelController',
+      'action' => 'attributeAutocomplete',
+      'arguments' => 
+      array (
+        'filter__namespace' => 'ingredient',
+        'attribute' => 'origin',
+      ),
+      'application' => 'recipe',
+    ),
     'core.fatal' => 
     array (
       'controller' => 'madCoreFatalController',
       'action' => 'fatal',
       'rails' => '/fatal/',
       'application' => 'core',
-    ),
-    'model.autocompleteAttribute' => 
-    array (
-      'controller' => 'madModelController',
-      'action' => 'autocompleteAttribute',
-      'rails' => 'autocomplete/attribute/:name/',
-      'application' => 'model',
     ),
     'ci.runtests' => 
     array (

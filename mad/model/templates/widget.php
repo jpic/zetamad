@@ -8,27 +8,25 @@ if ( !isset( $inputName ) ) {
 ?>
 
 <?php if ( !isset( $field->widget ) ): ?>
-<input value="<?php if ( isset( $form[$name] ) ) echo htmlentities( $form[$name] ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $name; ?>" type="text" class="textInput" />
+    <input value="<?php if ( isset( $form[$name] ) ) echo htmlentities( $form[$name] ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $name; ?>" type="text" class="textInput" />
 
 <?php elseif ( $field->widget->class == 'wysiwyg' ): ?>
-<textarea class="ckeditor" name="<?php echo $inputName; ?>" id="<?php echo $inputName; ?>"><?php if ( isset( $form[$name] ) ) echo htmlentities( $form[$name] ) ?></textarea>
+    <textarea class="ckeditor" name="<?php echo $inputName; ?>" id="<?php echo $inputName; ?>"><?php if ( isset( $form[$name] ) ) echo htmlentities( $form[$name] ) ?></textarea>
 
 <?php elseif ( $field->widget->class == 'textarea' ): ?>
-<textarea name="<?php echo $inputName; ?>" id="<?php echo $inputName; ?>"><?php if ( isset( $form[$name] ) ) echo htmlentities( $form[$name] ) ?></textarea>
+    <textarea name="<?php echo $inputName; ?>" id="<?php echo $inputName; ?>"><?php if ( isset( $form[$name] ) ) echo htmlentities( $form[$name] ) ?></textarea>
 
 <?php elseif ( $field->widget->class == 'autocomplete' ): ?>
-<input autocomplete="off" value="<?php if ( isset( $form[$name] ) ) echo htmlentities( $form[$name] ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputName; ?>" type="text" class="textInput" />
+    <input autocomplete="off" value="<?php if ( isset( $form[$name] ) ) echo htmlentities( $form[$name] ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputName; ?>" type="text" class="textInput" />
     
-    <?php if ( isset( $field->choices ) && $field->choices ): ?>
     <script type="text/javascript">
     $(document).ready( function() {
         // try not to mess with other input fields in the page
-        $("form.uniForm input[name=<?php echo $name; ?>]").autocomplete(
-            "<?php echo $this->generateUrl( 'model.autocompleteAttribute', array( 'name' => $name ) ) ?> "
+        $("form.uniForm input[name=\"<?php echo $inputName; ?>\"]").autocomplete(
+            "<?php echo $this->generateUrl( $field->widget->route ) ?> "
         );
     });
     </script>
-    <?php endif ?>
 
 <?php endif ?>
 <?php if ( isset( $field->widget ) && isset( $field->widget->class ) ) $widgets[] = $field->widget->class ?>

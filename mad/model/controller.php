@@ -10,6 +10,7 @@ class madModelController extends ezcMvcController {
 
     public function doList() {
         $filter = new madBase();
+        
         foreach( $this->request->variables as $key => $value ) {
             if ( strpos( $key, 'filter__' ) === 0 ) {
                 $name = substr(
@@ -21,7 +22,7 @@ class madModelController extends ezcMvcController {
         }
 
         $objectList = $this->registry->model->load( $filter );
-
+        
         $result = new ezcMvcResult(  );
         $result->variables['objectList'] = $objectList;
         $result->variables['filter']     = $filter;
@@ -54,13 +55,6 @@ class madModelController extends ezcMvcController {
             // hard coded values
             if ( isset( $field->value ) ) {
                 $form[$name] = $field->value;
-            }
-
-            if ( isset( $field->widget ) && isset( $field->widget->class ) ) {
-                switch( $field->widget->class ) {
-                    case 'autocomplete':
-                        $field->choices = $this->registry->model->getAttributeValues( $name );
-                }
             }
         }
         
@@ -124,8 +118,26 @@ class madModelController extends ezcMvcController {
         return $result;
     }
 
-    public function doAutocomplete(  ) {
+    public function doAttributeAutocomplete(  ) {
+        $result = $this->doList();
+        $values = array(  );
+        
+        $attributeName = $this->request->variables['attribute'];
 
+        foreach( $result->variables['objectList'] as $object ) {
+            if ( !isset( $object[$attributeName] ) ) {
+                continue;
+            }
+
+            if ( in_array( $object[$attributeName], $values ) ) {
+                continue;
+            }
+
+            $values[] = $object[$attributeName];
+        }
+
+        $result->variables['autocompleteValues'] = $values;
+        return $result;
     }
 
     public function doDetails(  ) {

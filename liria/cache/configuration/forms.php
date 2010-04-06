@@ -23,6 +23,7 @@ return array (
           'widget' => 
           array (
             'class' => 'autocomplete',
+            'route' => 'recipe.originAutocomplete',
           ),
         ),
         'summary' => 
@@ -88,6 +89,7 @@ return array (
               'widget' => 
               array (
                 'class' => 'autocomplete',
+                'route' => 'recipe.ingredientNameAutocomplete',
               ),
             ),
             'quantity' => 
