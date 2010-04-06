@@ -39,12 +39,14 @@ $requestParser->prefix = $registry->configuration->getSetting( 'core', 'dispatch
  */
 $request = $requestParser->createRequest();
 
-// append trailing slash
-if ( substr( $request->requestId, -1 ) != '/' ) {
-    $request->requestId .= '/';
-}
-if ( substr( $request->uri, -1 ) != '/' ) {
-    $request->uri .= '/';
+// append trailing slash if not a static file
+if ( substr( $request->uri, 0, 8) != '/static/' ) {
+    if ( substr( $request->requestId, -1 ) != '/' ) {
+        $request->requestId .= '/';
+    }
+    if ( substr( $request->uri, -1 ) != '/' ) {
+        $request->uri .= '/';
+    }
 }
 
 /**
