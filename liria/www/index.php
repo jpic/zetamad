@@ -39,6 +39,14 @@ $requestParser->prefix = $registry->configuration->getSetting( 'core', 'dispatch
  */
 $request = $requestParser->createRequest();
 
+// append trailing slash
+if ( substr( $request->requestId, -1 ) != '/' ) {
+    $request->requestId .= '/';
+}
+if ( substr( $request->uri, -1 ) != '/' ) {
+    $request->uri .= '/';
+}
+
 /**
  * A router should be istnanciated with the request object.
  *
