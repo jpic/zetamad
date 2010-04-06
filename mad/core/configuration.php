@@ -166,7 +166,7 @@ class madCoreConfiguration {
      * <code>
      * $configuration->write( '/var/cache/configuration' );
      * </code>
-     * 
+     *
      * @param string $path Output path
      * @return void
      */
@@ -197,7 +197,7 @@ class madCoreConfiguration {
         $this->comments['staticFiles'] = array(  );
         $this->settings['applications'] = array(  );
         $this->comments['applications'] = array(  );
-
+        
         foreach( $this->paths as $path ) {
             if ( !$path ) {
                 continue;
@@ -209,7 +209,7 @@ class madCoreConfiguration {
             if ( !isset( $this->settings['applications'][$application] ) ) {
                 $this->settings['applications'][$application] = array();
             }
-            $this->settings['applications'][$application]['path'] = $applicationPath;
+            $this->settings['applications'][$application]['path'] = self::getRelativePath( $applicationPath, APP_PATH );
 
             if ( !isset( $this->settings['applications'][$application]['classes'] ) ) {
                 $this->settings['applications'][$application]['classes'] = array();
@@ -229,7 +229,7 @@ class madCoreConfiguration {
                 foreach( new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $staticPath ) ) as $fileInfo ) {
                     $absolutePath = $fileInfo->getRealPath(  );
                     $relativePath = substr( $absolutePath, strlen( $staticPath ) );
-                    $this->settings['staticFiles']['paths'][$relativePath] = $absolutePath;
+                    $this->settings['staticFiles']['paths'][$relativePath] = self::getRelativePath( $absolutePath, APP_PATH );
                 }
             }
 
@@ -377,13 +377,19 @@ class madCoreConfiguration {
     }
 
     static public function getRelativePath( $path, $compareTo ) {
-        // clean arguments by removing trailing slashes
+        // clean arguments by removing trailing and prefixing slashes
         if ( substr( $path, -1 ) == DIRECTORY_SEPARATOR ) {
             $path = substr( $path, 0, -1 );
+        }
+        if ( substr( $path, 0, 1 ) == DIRECTORY_SEPARATOR ) {
+            $path = substr( $path, 1 );
         }
 
         if ( substr( $compareTo, -1 ) == DIRECTORY_SEPARATOR ) {
             $compareTo = substr( $compareTo, 0, -1 );
+        }
+        if ( substr( $compareTo, 0, 1 ) == DIRECTORY_SEPARATOR ) {
+            $compareTo = substr( $compareTo, 1 );
         }
 
         // simple case: $compareTo is in $path
@@ -392,17 +398,27 @@ class madCoreConfiguration {
             return substr( $path, $offset );
         }
 
-        $relative  = '';
+        $relative  = array(  );
         $pathParts = explode( DIRECTORY_SEPARATOR, $path );
         $compareToParts = explode( DIRECTORY_SEPARATOR, $compareTo );
 
-        $diff = array_diff( $compareToParts, $pathParts );
-        $relative = str_repeat( '..' . DIRECTORY_SEPARATOR, count( $diff ) );
+        foreach( $compareToParts as $index => $part ) {
+            if ( isset( $pathParts[$index] ) && $pathParts[$index] == $part ) {
+                continue;
+            }
 
-        $diff = array_diff( $pathParts, $compareToParts );
-        $relative .= implode( DIRECTORY_SEPARATOR, $diff );
+            $relative[] = '..';
+        }
 
-        return $relative;
+        foreach( $pathParts as $index => $part ) {
+            if ( isset( $compareToParts[$index] ) && $compareToParts[$index] == $part ) {
+                continue;
+            }
+
+            $relative[] = $part;
+        }
+
+        return implode( DIRECTORY_SEPARATOR, $relative );
     }
 }
 

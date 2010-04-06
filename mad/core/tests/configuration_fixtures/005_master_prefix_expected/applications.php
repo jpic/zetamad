@@ -4,7 +4,7 @@ return array (
   array (
     'MASTER' => 
     array (
-      'path' => '/srv/mad.100305/jpic_data/madeleinemarket.com.svn/xp/mad/core/tests/configuration_fixtures/005_master_prefix_source/MASTER',
+      'path' => '../mad/core/tests/configuration_fixtures/005_master_prefix_source/MASTER',
       'classes' => 
       array (
       ),
@@ -12,14 +12,14 @@ return array (
     'recipe' => 
     array (
       'routePrefix' => '/recipe/prefix',
-      'path' => '/srv/mad.100305/jpic_data/madeleinemarket.com.svn/xp/mad/core/tests/configuration_fixtures/005_master_prefix_source/recipe',
+      'path' => '../mad/core/tests/configuration_fixtures/005_master_prefix_source/recipe',
       'classes' => 
       array (
       ),
     ),
     'profiles' => 
     array (
-      'path' => '/srv/mad.100305/jpic_data/madeleinemarket.com.svn/xp/mad/core/tests/configuration_fixtures/005_master_prefix_source/profiles',
+      'path' => '../mad/core/tests/configuration_fixtures/005_master_prefix_source/profiles',
       'classes' => 
       array (
       ),

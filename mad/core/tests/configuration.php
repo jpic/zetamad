@@ -40,6 +40,11 @@ class madCoreConfigurationTest extends ezcTestCase {
                 '/srv/test/fool',
                 '../../foo/bar',
             ),
+            array( 
+                '/srv/mad/xp/mad/model/static/css/uni-form.css',
+                '/srv/mad/xp/liria/',
+                '../mad/model/static/css/uni-form.css',
+            ),
         );
     }
 
@@ -48,7 +53,7 @@ class madCoreConfigurationTest extends ezcTestCase {
      */
     public function testGetRelativePath( $path, $compareTo, $expected ) {
         $result = madCoreConfiguration::getRelativePath( $path, $compareTo );
-        $this->assertEquals( $result, $expected );
+        $this->assertEquals( $expected, $result );
     }
 
     static public function configCacheFunctionnalProvider(  ) {
@@ -72,7 +77,7 @@ class madCoreConfigurationTest extends ezcTestCase {
             $arguments[] = $name;
             $arguments[] = glob( $test . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . 'conf' );
             $arguments[] = str_replace( '_source', '_expected', $test );
-            
+
             if( is_dir( $arguments[2] ) ) {
                 $arguments[] = false; // don't overwrite
             } else {
@@ -123,9 +128,10 @@ class madCoreConfigurationTest extends ezcTestCase {
             $this->createTempDir( '/tmp' );
             $result = $this->getTempDir(  );
             $config->write( $result );
-            $expectedDiffOutput = "Only in $expected: .svn\n";
+            //$expectedDiffOutput = "Only in $expected: .svn\n";
+            $expectedDiffOutput = null;
             $diffOutput = shell_exec( "diff $expected $result" );
-            $this->assertEquals( $expectedDiffOutput, $diffOutput, "diff -u $expected $result" );
+            $this->assertEquals( $expectedDiffOutput, $diffOutput, "diff -u $expected $result # APP_PATH: " . APP_PATH );
         }
     }
 }

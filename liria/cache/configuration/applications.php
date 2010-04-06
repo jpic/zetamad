@@ -4,7 +4,7 @@ return array (
   array (
     'liria' => 
     array (
-      'path' => '/srv/mad/xp/liria',
+      'path' => false,
       'classes' => 
       array (
         0 => 'madTestRunner',
@@ -17,7 +17,7 @@ return array (
     'recipe' => 
     array (
       'routePrefix' => '/recipe',
-      'path' => '/srv/mad/xp/recipe',
+      'path' => '../recipe',
       'classes' => 
       array (
       ),
@@ -25,7 +25,7 @@ return array (
     'ci' => 
     array (
       'routePrefix' => '/ci',
-      'path' => '/srv/mad/xp/mad/ci',
+      'path' => '../mad/ci',
       'classes' => 
       array (
         0 => 'madCiController',
@@ -35,7 +35,7 @@ return array (
     ),
     'core' => 
     array (
-      'path' => '/srv/mad/xp/mad/core',
+      'path' => '../mad/core',
       'classes' => 
       array (
         0 => 'madCoreRoute',
@@ -50,7 +50,7 @@ return array (
     ),
     'model' => 
     array (
-      'path' => '/srv/mad/xp/mad/model',
+      'path' => '../mad/model',
       'classes' => 
       array (
         0 => 'madModelController',
