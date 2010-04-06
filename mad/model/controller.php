@@ -41,8 +41,13 @@ class madModelController extends ezcMvcController {
         $form->model  = $this->registry->model;
                
         // get and set the form configuration
-        // it *must* be called *before* refresh() or relations will fail
         $form->setOptions( $this->getFormOptions( $form ) );
+
+        // get the object
+        if ( isset( $this->id ) ) {
+            $form['id'] = $this->id;
+            $this->registry->model->refresh( $form );
+        }
 
         // process options
         foreach( $form->fields->options as $name => $field ) {
@@ -59,12 +64,6 @@ class madModelController extends ezcMvcController {
             }
         }
         
-        // get the object
-        if ( isset( $this->id ) ) {
-            $form['id'] = $this->id;
-            $this->registry->model->refresh( $form );
-        }
-
         if ( isset( $form->formsets ) ) {
             foreach( $form->formsets->options as $name => $formset ) {
                 if ( $form[$name]->isEntity ) {
