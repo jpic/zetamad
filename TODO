@@ -1,4 +1,4 @@
-Do autocomplete
+Configuration refactor for autocomplete
 Form validation
 Implement complex filters on select queries
 Better details urls (slugs?)
