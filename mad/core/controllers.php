@@ -17,7 +17,10 @@ class madCoreDownloadController extends ezcMvcController {
             $relativePath .= 'index.html';
         }
 
-        $absolutePath = $configuration->getSetting( 'staticFiles', 'paths', $relativePath );
+        $absolutePath = realpath( implode( DIRECTORY_SEPARATOR, array( 
+            APP_PATH,
+            $configuration->getSetting( 'staticFiles', 'paths', $relativePath ),
+        ) ) );
         $extension = substr(strrchr($absolutePath, '.'), 1);
 
         $ret = new ezcMvcResult;
