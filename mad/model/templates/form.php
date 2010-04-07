@@ -41,7 +41,46 @@
         <?php endforeach ?>
     </fieldset>
 
-    <?php foreach( $this->form->formsets->options as $formsetName => $formset ): ?>
+    <?php 
+    if ( isset( $this->form->multipleFields ) ):
+        foreach( $this->form->multipleFields->options as $multipleFieldName => $multipleField ):
+    ?>
+    <fieldset class="multipleField_<?php echo $multipleFieldName ?>">
+        <legend><?php echo ucfirst( $multipleField->label ) ?></legend>
+        <table class="multipleField">
+            <thead>
+                <tr>
+                    <td>&nbsp;</td>
+                    <th>Effacer</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $count = 0;
+                if ( count( $this->form[$multipleFieldName] ) ):
+                    foreach( $this->form[$multipleFieldName] as $multipleFieldValue ): 
+                        include 'multipleField_row.php';
+                        $count ++;
+                    endforeach;
+                else:
+                    $multipleFieldValue = '';
+                    include 'multipleField_row.php';
+                    unset( $multipleFieldValue );
+                endif;
+                ?>
+            </tbody>
+        </table>
+        <button disabled="disabled" class="formset_add">Ajouter</button>
+    </fieldset>
+    <?php
+        endforeach;
+    endif
+    ?>
+
+    <?php
+    if ( isset( $this->form->formsets ) ):
+        foreach( $this->form->formsets->options as $formsetName => $formset ):
+    ?>
     <fieldset class="formset_<?php echo $formsetName; ?> formset">
         <legend><?php echo ucfirst( $formset->label ) ?></legend>
         <table class="formset">
@@ -75,7 +114,10 @@
         </table>
         <button disabled="disabled" class="formset_add">Ajouter</button>
     </fieldset>
-    <?php endforeach ?>
+    <?php
+        endforeach;
+    endif
+    ?>
 
     <div class="buttonHolder">
       <button type="reset" class="resetButton">Rétablir les valeurs initiales</button>
@@ -99,10 +141,10 @@ $(document).ready( function(  ) {
     $( 'form.uniForm input:first' ).focus(  );
     $( 'button.formset_add' ).click( function( e ) {
         e.preventDefault(  );
-        var table = $('button.formset_add').parent().children('table');
+        var table = $(this).parent().children('table');
         var count = table.children('tbody').children('tr').length;
         var next = count;
-        var tr = $('button.formset_add').parent().children('table').children('tbody').children('tr:first').clone().appendTo(table);
+        var tr = $(this).parent().children('table').children('tbody').children('tr:first').clone().appendTo(table);
 
         tr.find('input[type=checkbox]').attr('disabled', 'disabled');
         tr.find('input[type=hidden]').remove();

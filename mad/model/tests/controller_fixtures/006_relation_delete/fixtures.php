@@ -32,6 +32,7 @@ $options = array (
 $request                               = new ezcMvcRequest(  );
 $request->protocol                     = 'http-post';
 $request->variables['form']            = 'recipe';
+$request->variables['successRoute']    = 'recipe.details';
 $request->variables['id']              = '1FDB6574-3E40-11DF-8BB4-1B969F5BE980';
 $request->variables['recipe']          = array(  );
 $request->variables['recipe']['title'] = 'tiponch';

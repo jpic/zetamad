@@ -60,9 +60,20 @@ class madModelController extends ezcMvcController {
         
         if ( isset( $form->formsets ) ) {
             foreach( $form->formsets->options as $name => $formset ) {
-                if ( $form[$name]->isEntity ) {
+                if ( isset( $form[$name] ) && $form[$name]->isEntity ) {
                     // there is only one related object, and the model couldn't 
                     // know that it is supposed to be an M2M relation. 
+                    // Monkey-fix it.
+                    $form[$name] = new madBase( array( $form[$name] ) );
+                }
+            }
+        }
+
+        if ( isset( $form->multipleFields ) ) {
+            foreach( $form->multipleFields->options as $name => $multipleField ) {
+                if ( isset( $form[$name] ) && ! $form[$name] instanceof madBase ) {
+                    // there is only one value, and the model couldn't 
+                    // know that it is supposed to be a multi value field.
                     // Monkey-fix it.
                     $form[$name] = new madBase( array( $form[$name] ) );
                 }
@@ -96,8 +107,24 @@ class madModelController extends ezcMvcController {
                     }
                 }
             }
+
+            // handle delete of multiple values
+            if ( isset( $form->multipleFields ) ) {
+                foreach( $form->multipleFields->options as $name => $formset ) {
+                    if ( !isset( $form[$name . '.DELETE'] ) ) {
+                        continue;
+                    }
+
+                    foreach( $form[$name . '.DELETE'] as $key ) {
+                        unset( $form[$name][$key] );
+                    }
+                    
+                    unset( $form[$name . '.DELETE'] );
+                }
+            }
             
             $form->clean();
+
             $dirty = $form->dirtyAttributes(  );
             if ( $dirty !== false ) {
                 var_dump( $dirty );
@@ -106,10 +133,11 @@ class madModelController extends ezcMvcController {
                 $prefix = $this->registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
 
                 $result->status = new ezcMvcExternalRedirect( 
-                    $prefix . $this->registry->router->generateUrl( 'recipe.details', array( 
-                        'id' => $form['id'],
+                    $prefix . $this->registry->router->generateUrl( 
+                        $this->successRoute,
+                        (array) $form
                     ) 
-                ) );
+                );
             }
         }
 
@@ -144,7 +172,6 @@ class madModelController extends ezcMvcController {
         $object = new madBase( array( 
             'id' => $this->id,
         ) );
-
         $this->registry->model->refresh( $object );
 
         $result = new ezcMvcResult(  );
