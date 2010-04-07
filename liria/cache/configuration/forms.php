@@ -100,6 +100,61 @@ return array (
         ),
       ),
     ),
+    'profile.profile' => 
+    array (
+      'label' => 'enregistrement de profil',
+      'fields' => 
+      array (
+        'namespace' => 
+        array (
+          'value' => 'profile',
+        ),
+        'name' => 
+        array (
+          'label' => 'nom du profil',
+          'required' => true,
+        ),
+        'introduction' => 
+        array (
+          'label' => 'texte d\'introduction',
+          'widget' => 
+          array (
+            'class' => 'textarea',
+          ),
+        ),
+        'presentation' => 
+        array (
+          'label' => 'texte de presentation',
+          'widget' => 
+          array (
+            'class' => 'textarea',
+          ),
+        ),
+        'email' => 
+        array (
+          'label' => 'email',
+        ),
+      ),
+      'multipleFields' => 
+      array (
+        'sites' => 
+        array (
+          'label' => 'sites internets',
+          'widget' => 
+          array (
+            'class' => 'multiple values',
+          ),
+        ),
+        'products' => 
+        array (
+          'label' => 'produits favoris',
+          'widget' => 
+          array (
+            'class' => 'multiple values',
+          ),
+        ),
+      ),
+    ),
   ),
   'comments' => 
   array (

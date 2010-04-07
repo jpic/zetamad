@@ -22,6 +22,14 @@ return array (
       array (
       ),
     ),
+    'profile' => 
+    array (
+      'routePrefix' => '/profile',
+      'path' => '../profile',
+      'classes' => 
+      array (
+      ),
+    ),
     'ci' => 
     array (
       'routePrefix' => '/ci',

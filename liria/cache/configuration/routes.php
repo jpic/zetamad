@@ -21,6 +21,7 @@ return array (
       'arguments' => 
       array (
         'form' => 'recipe.recipe',
+        'successRoute' => 'recipe.details',
       ),
       'application' => 'recipe',
     ),
@@ -32,6 +33,7 @@ return array (
       'arguments' => 
       array (
         'form' => 'recipe.recipe',
+        'successRoute' => 'recipe.details',
       ),
       'application' => 'recipe',
     ),
@@ -65,6 +67,48 @@ return array (
         'attribute' => 'origin',
       ),
       'application' => 'recipe',
+    ),
+    'profile.list' => 
+    array (
+      'rails' => '/profile/list/',
+      'controller' => 'madModelController',
+      'action' => 'list',
+      'arguments' => 
+      array (
+        'filter__namespace' => 'profile',
+      ),
+      'application' => 'profile',
+    ),
+    'profile.create' => 
+    array (
+      'rails' => '/profile/create/',
+      'controller' => 'madModelController',
+      'action' => 'form',
+      'arguments' => 
+      array (
+        'form' => 'profile.profile',
+        'successRoute' => 'profile.details',
+      ),
+      'application' => 'profile',
+    ),
+    'profile.edit' => 
+    array (
+      'rails' => '/profile/edit/:id/',
+      'controller' => 'madModelController',
+      'action' => 'form',
+      'arguments' => 
+      array (
+        'form' => 'profile.profile',
+        'successRoute' => 'profile.details',
+      ),
+      'application' => 'profile',
+    ),
+    'profile.details' => 
+    array (
+      'rails' => '/profile/details/:id/',
+      'controller' => 'madModelController',
+      'action' => 'details',
+      'application' => 'profile',
     ),
     'core.fatal' => 
     array (
