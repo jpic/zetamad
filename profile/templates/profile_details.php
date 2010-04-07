@@ -60,9 +60,13 @@ a.btn-block:hover { background: #539893; }
 		<div id="external-links">
 			<h3>Moi sur la toile...</h3>
 			<ul>
-                <?php foreach( $this->object['sites'] as $site ): ?>
-				<li><a href="http://<?php echo $site ?>"><span style="color: #232323;">&bull;</span> <?php echo $site ?></a></li>
-                <?php endforeach ?>
+                <?php if ( ! $this->object['sites'] instanceof madBase ): ?>
+    				<li><a href="http://<?php echo $this->object['sites'] ?>"><span style="color: #232323;">&bull;</span> <?php echo $this->object['sites'] ?></a></li>
+                <?php else: ?>
+                    <?php foreach( $this->object['sites'] as $site ): ?>
+    				<li><a href="http://<?php echo $site ?>"><span style="color: #232323;">&bull;</span> <?php echo $site ?></a></li>
+                    <?php endforeach ?>
+                <?php endif ?>
 			</ul>
 		</div>
         <?php endif ?>
@@ -89,9 +93,13 @@ a.btn-block:hover { background: #539893; }
 	<div class="block">
 		<h3>Produits favoris</h3>
 		<ul>
-            <?php foreach( $this->object['products'] as $productId ): ?>
-			<li><a href="#"><?php echo $productId ?></a></li>
-            <?php endforeach ?>
+            <?php if ( ! $this->object['products'] instanceof madBase ): ?>
+	    		<li><a href="#"><?php echo $this->object['products'] ?></a></li>
+            <?php else: ?>
+                <?php foreach( $this->object['products'] as $productId ): ?>
+	    		<li><a href="#"><?php echo $productId ?></a></li>
+                <?php endforeach ?>
+            <?php endif ?>
 		</ul>
 	</div>
     <?php endif ?>
