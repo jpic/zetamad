@@ -191,8 +191,12 @@ class madBase extends ArrayObject {
         $unst = array(  );
 
         foreach( $this as $key => $value ) {
-            $value->clean();
-            if ( !count( $value ) ) {
+            if ( $value instanceof madBase ) {
+                $value->clean();
+                if ( !count( $value ) ) {
+                    $unst[] = $key;
+                }
+            } elseif ( !$value ) {
                 $unst[] = $key;
             }
         }

@@ -223,6 +223,24 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
                 ) ),
             ),
             array( 
+                'multival',
+                new madBase( array(  
+                    'foo' => 'bar',
+                    'test' => new madBase( array(  
+                        123,
+                        456,
+                        ''
+                    ) ),
+                ) ),
+                new madBase( array(  
+                    'foo' => 'bar',
+                    'test' => new madBase( array(  
+                        123,
+                        456,
+                    ) ),
+                ) ),
+            ),
+            array( 
                 'fk',
                 new madBase( array(  
                     'foo' => 'bar',
