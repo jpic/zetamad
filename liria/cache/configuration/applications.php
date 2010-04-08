@@ -28,6 +28,7 @@ return array (
       'path' => '../profile',
       'classes' => 
       array (
+        0 => 'madProfileController',
       ),
     ),
     'ci' => 

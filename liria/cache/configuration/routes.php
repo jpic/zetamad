@@ -106,7 +106,7 @@ return array (
     'profile.details' => 
     array (
       'rails' => '/profile/details/:id/',
-      'controller' => 'madModelController',
+      'controller' => 'madProfileController',
       'action' => 'details',
       'application' => 'profile',
     ),
