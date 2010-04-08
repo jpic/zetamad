@@ -49,9 +49,10 @@ a.btn-block:hover { background: #539893; }
 <div class="recipe">
 	<div class="author-left">
 		<div id="author-photo">
-			<img src="http://www.blobidesign.com/other/mmhome/img/avatar-mrbean.jpg" alt="recette X" height="260" width="260" />
+			<img src="<?php echo $this->getAbsoluteUploadUrl( $this->object['picture'] ); ?>" alt="<?php echo $this->object['name']; ?>" height="260" width="260" />
 			<p class="share">
 				<a href="#">
+                    TODO
 					<img src="http://www.madeleinemarket.com/themes/mmarket/img/lg-bookmark-mm.gif" />
 				</a>
 			</p>
