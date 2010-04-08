@@ -153,6 +153,7 @@ class madCoreView extends ezcMvcView {
                 ) ),
                 // $routeAppPath/templates/$template
                 join( DIRECTORY_SEPARATOR, array( 
+                    APP_PATH,
                     $routeApplicationPath,
                     'templates',
                     $templateName,
