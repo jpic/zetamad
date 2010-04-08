@@ -146,6 +146,7 @@ class madCoreView extends ezcMvcView {
             $testPaths = array( 
                 // $entryAppPath/templates/$routeApp/$template
                 join( DIRECTORY_SEPARATOR, array( 
+                    APP_PATH,
                     $entryApplicationPath,
                     'templates',
                     $routeApplicationName,
@@ -170,7 +171,39 @@ class madCoreView extends ezcMvcView {
             throw new Exception( "Cannot find path for $templateName, tryed " . join( ", ", $testPaths ) );
         }
 
-        // pass 2, template should be magically figured from the most specific 
+        // pass 2, template was hardcoded in the result, it *must* exists
+        if ( isset( $this->result->variables['template'] ) ) {
+            $templateName = $this->result->variables['template'];
+
+            $testPaths = array( 
+                // $entryAppPath/templates/$routeApp/$template
+                join( DIRECTORY_SEPARATOR, array( 
+                    APP_PATH,
+                    $entryApplicationPath,
+                    'templates',
+                    $routeApplicationName,
+                    $templateName,
+                ) ),
+                // $routeAppPath/templates/$template
+                join( DIRECTORY_SEPARATOR, array( 
+                    APP_PATH,
+                    $routeApplicationPath,
+                    'templates',
+                    $templateName,
+                ) ),
+            );
+
+            // return the first guessed template path or die!
+            foreach( $testPaths as $templatePath ) {
+                if ( file_exists( $templatePath ) ) {
+                    return $templatePath;
+                }
+            }
+
+            throw new Exception( "Cannot find path for $templateName, tryed " . join( ", ", $testPaths ) );
+        }
+
+        // pass 3, template should be magically figured from the most specific 
         // path to the most generic path
         $testPaths = array();
 
