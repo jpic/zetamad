@@ -167,7 +167,7 @@ class madCoreView extends ezcMvcView {
                 }
             }
 
-            throw new madException( "Cannot find path for $templateName, tryed " . join( ", ", $testPaths ) );
+            throw new Exception( "Cannot find path for $templateName, tryed " . join( ", ", $testPaths ) );
         }
 
         // pass 2, template should be magically figured from the most specific 
