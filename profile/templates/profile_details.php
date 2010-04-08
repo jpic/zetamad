@@ -87,8 +87,10 @@ a.btn-block:hover { background: #539893; }
 <div id="recipe-column">
 	<div class="block">
 		<p class="title-setmsg">&Agrave; <?php echo htmlentities( $this->object['name'] ) ?> :</p>
-		<textarea class="msg-author">Votre message</textarea>
-		<a class="btn-block" href="#">Envoyer</a>
+        <form action="" method="post" class="msg-author-form">
+		    <textarea name="message" class="msg-author">Votre message</textarea>
+		    <a class="btn-block" href="#">Envoyer</a>
+        </form>
 	</div>
     <?php if ( isset( $this->object['products'] ) ): ?>
 	<div class="block">
@@ -105,3 +107,29 @@ a.btn-block:hover { background: #539893; }
 	</div>
     <?php endif ?>
 </div>
+
+<script type="text/javascript">
+$(document).ready( function(  ) {
+    $( 'textarea.msg-author' ).focus( function(  ) {
+        if ( $( this ).val(  ) == 'Votre message' ) {
+            $( this ).val( '' );
+        }
+    });
+
+    $( 'form.msg-author-form a.btn-block' ).click( function( e ) {
+        e.preventDefault(  );
+        
+        var form = $( this ).parents( 'form' );
+
+        $.ajax({
+            async: true,
+            complete: function( request, textStatus ) {
+                $( 'form.msg-author-form' ).html( request.responseText );
+            },
+            data: form.serialize(  ),
+            type: 'POST',
+            url: document.location.href,
+        });
+    });
+});
+</script>
