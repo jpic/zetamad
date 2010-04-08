@@ -130,6 +130,14 @@ return array (
             'class' => 'textarea',
           ),
         ),
+        'picture' => 
+        array (
+          'label' => 'photo',
+          'widget' => 
+          array (
+            'class' => 'file',
+          ),
+        ),
         'email' => 
         array (
           'label' => 'email',
