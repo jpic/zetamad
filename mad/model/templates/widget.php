@@ -28,6 +28,9 @@ if ( !isset( $inputName ) ) {
     });
     </script>
 
+<?php elseif ( $field->widget->class == 'file' ): ?>
+    <input value="<?php if ( isset( $form[$name] ) ) echo htmlentities( $form[$name] ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $name; ?>" type="file" class="fileInput" />
+
 <?php endif ?>
 <?php if ( isset( $field->widget ) && isset( $field->widget->class ) ) $widgets[] = $field->widget->class ?>
 <?php unset( $inputName ); ?>

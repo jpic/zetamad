@@ -83,7 +83,7 @@ class madModelController extends ezcMvcController {
         // save the form
         if ( $this->request->protocol == 'http-post' ) {
             $form->merge( $this->request->variables[str_replace( '.', '_', $form->name)] );
-            
+
             // handle delete of related objects
             if ( isset( $form->formsets ) ) {
                 foreach( $form->formsets->options as $name => $formset ) {
@@ -121,6 +121,38 @@ class madModelController extends ezcMvcController {
                     
                     unset( $form[$name . '.DELETE'] );
                 }
+            }
+
+            // handle file uploads, the dirty way, which does not support files 
+            // in formsets
+            $uploadDir = APP_PATH . DIRECTORY_SEPARATOR . 'upload';
+            if ( !is_dir( $uploadDir ) ) {
+                mkdir( $uploadDir, 0750, true );
+            }
+
+            foreach( $form->fields->options as $fieldName => $field ) {
+                if ( !isset( $field->widget ) )        continue;
+                if ( !isset( $field->widget->class ) ) continue;
+                if ( $field->widget->class != 'file' ) continue;
+                
+                $file     = $this->request->files[str_replace( '.', '_', $form->name )][$fieldName];
+                $relative = $file->name;
+                $uploadTo = $uploadDir . DIRECTORY_SEPARATOR . $relative;
+                
+                $i = 1;
+                while ( file_exists( $uploadTo ) ) {
+                    $info = pathinfo( $uploadTo );
+                    $relative = $info['filename'] . str_repeat( '_', $i ) . '.' . $info['extension'];
+                    $uploadTo = $uploadDir . DIRECTORY_SEPARATOR . $relative;
+                    $i++;
+                }
+                unset( $i );
+
+                if ( !move_uploaded_file( $file->tmpPath, $uploadTo ) ) {
+                    throw new Exception( "Could not move uploaded file to $uploadTo" );
+                }
+
+                $form[$fieldName] = $relative;
             }
             
             $form->clean();

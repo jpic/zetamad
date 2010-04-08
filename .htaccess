@@ -1,2 +1,3 @@
 RewriteEngine On
+RewriteRule upload/(.*) liria/upload/$1 [L,QSA]
 RewriteRule .* liria/www/index.php [L,QSA]

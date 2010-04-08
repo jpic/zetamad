@@ -23,6 +23,11 @@ class madCoreViewHandler extends ezcMvcPhpViewHandler {
         return $prefix . '/static' . $url;
     }
 
+    public function getAbsoluteUploadUrl( $relativePath ) {
+        $registry = madRegistry::instance();
+        return $registry->configuration->getSetting( 'core', 'upload', 'url' ) . '/' . $relativePath;
+    }
+
     static public function dump( $values, $level = 0 ) {
         if ($level==-1)
         {

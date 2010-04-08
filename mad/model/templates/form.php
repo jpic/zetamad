@@ -14,7 +14,7 @@
 
 <?php $widgets = array(  ) ?>
 
-<form action="" method="post" class="uniForm">
+<form action="" method="post" class="uniForm" enctype="multipart/form-data">
     <fieldset class="inlineLabels">
         <legend><?php echo ucfirst( $this->form->label ) ?></legend>
         <?php foreach( $this->form->fields->options as $name => $field ):
