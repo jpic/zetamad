@@ -27,7 +27,7 @@ set_include_path( join( PATH_SEPARATOR, array(
 //require 'mad/ezc/Base/base.php';
 //require 'mad/ezc/Base/options.php';
 
-if ( PHP_OS == 'Linux' ) {
+if ( PHP_OS == 'Linux'&& !strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
     $ocwd = getcwd();
     chdir( dirname( __FILE__ ) );
     # regenerate autoload cache
@@ -59,7 +59,7 @@ function __autoload( $class ) {
     }
 }
 
-if ( PHP_OS == 'Linux' ) {
+if ( PHP_OS == 'Linux' && !strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
     $ocwd = getcwd();
     chdir( dirname( __FILE__ ) );
     # regenerate bin
@@ -71,7 +71,7 @@ if ( PHP_OS == 'Linux' ) {
 $registry = madRegistry::instance();
 
 # regenerate conf
-if ( PHP_OS == 'Linux' ) {
+if ( PHP_OS == 'Linux' && !strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
     $registry->configuration = madCoreConfiguration::factory( APP_PATH, true );
 } else {
     $registry->configuration = madCoreConfiguration::factory( APP_PATH );
