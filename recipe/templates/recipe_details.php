@@ -68,28 +68,28 @@ a.btn-block:hover { background: #539893; }
 <div class="recipe">
         <div class="recipe-left">
                 <div id="recipe-photo">
-                        <img src="http://storage.canalblog.com/21/51/314534/43401831_p.jpg" alt="recette X" height="240" width="240" />
+			            <img src="<?php echo $this->getAbsoluteUploadUrl( $this->object['profile']['picture'] ); ?>" alt="<?php echo $this->object['title']; ?>" height="260" width="260" />
                 </div>
-                <!--if video-->
+                <!--
                 <div id="recipe-video">
                         <a href="#link" title="Jouer la vid&eacute;o"><img src="<?php echo $this->getAbsoluteStaticUrl( 'recipe/img/btn-play.png '); ?>" /></a>
                         <div id="background-video">
                         </div>
                 </div>
-                <!--if video-->
+                -->
                 <div class="recipe-author">
-                        <p class="author-name">Laurent Touchet</p>
+                        <p class="author-name"><?php echo $this->object['profile']['name'] ?></p>
                         <p class="author-description">
-                                <img class="author-photo" src="http://www.blobidesign.com/other/mmhome/img/avatar-mrbean.jpg" width="87" height="87" title="Photo profil X" />
-                                Beaucoup de r&eacute;actions &agrave; ce que j'ai pu constater, et &eacute;tant parfaitement insensible aux mauvaises langues, il est bien entendu hors de question que mon blog cesse son activit&eacute;. Pas tant que je ne l'aurai pas d&eacute;cid&eacute; de par moi-m&ecirc;me quoi qu'il arrive. Beaucoup de contretemps et d'impr&eacute;vus depuis novembre, je reviendrai tr&egrave;s prochainement en douceur, sur un rythme peut-&ecirc;tre un peu d&eacute;cousu au d&eacute;part, puis plus soutenu par la suite.
+                                <img class="author-photo" src="<?php echo $this->getAbsoluteUploadUrl( $this->object['profile']['picture'] ); ?>" width="87" height="87" title="Photo profil X" />
+                                <?php echo $this->object['profile']['introduction'] ?>
                         </p>
-                        <a href="#" class="btn-block" style="width: 100%;">Voir le profil</a>
+                        <a href="<?php echo $this->generateUrl( 'profile.details', array( 'id' => $this->object['profile']['id'] ) ) ?>" class="btn-block" style="width: 100%;">Voir le profil</a>
                 </div>
         </div>
         <div class="recipe-right">
                 <div class="recipe-header">
                         <h2><?php echo $this->object['title']; ?></h2>
-                        <p class="recipe-author">Par&nbsp;<a href="#lien">Laurent Touchet</a></p>
+                        <p class="recipe-author">Par&nbsp;<a href="<?php echo $this->generateUrl( 'profile.details', array( 'id' => $this->object['profile']['id'] ) ) ?>"><?php echo $this->object['profile']['name'] ?></a></p>
                         <p class="recipe-intro">
                             <?php echo $this->object['summary']; ?>
                         </p>
@@ -108,9 +108,15 @@ a.btn-block:hover { background: #539893; }
                         
                         <div class="recipe-title-steps">Pr&eacute;paration</div>
                         <div class="recipe-infos">
+                            <?php if ( isset( $this->object['preparationTime'] ) ): ?>
                                 <p class="recipe-infos-block">Pr&eacute;paration: <span class="bold"><?php echo $this->object['preparationTime'] ?>min</span></p>
+                            <?php endif ?>
+                            <?php if ( isset( $this->object['cookTime'] ) ): ?>
                                 <p class="recipe-infos-block">Cuisson: <span class="bold"><?php echo $this->object['cookTime'] ?>min</span></p>
+                            <?php endif ?>
+                            <?php if ( isset( $this->object['numberOfPeople'] ) ): ?>
                                 <p class="recipe-infos-block" style="margin-right: 0;">Personnes: <span class="bold"><?php echo $this->object['numberOfPeople']; ?></span></p>
+                            <?php endif ?>
                         </div>
                         
                         <?php echo $this->object['preparation']; ?>

@@ -10,19 +10,33 @@ class madModelController extends ezcMvcController {
 
     public function doList() {
         $filter = new madBase();
+
+        if ( isset( $this->request->variables['filter'] ) ) {
+            foreach( $this->request->variables['filter'] as $key => $value ) {
+                $filter[$key] = $value;
+            }
+        }
         
-        foreach( $this->request->variables as $key => $value ) {
-            if ( strpos( $key, 'filter__' ) === 0 ) {
-                $name = substr(
-                    $key,
-                    strlen( 'filter__' )
-                );
-                $filter[$name] = $value;
+        $objectList = $this->registry->model->load( $filter );
+
+        if ( isset( $this->request->variables['distinct'] ) ) {
+            $attribute = $this->request->variables['distinct'];
+            $unst = array(  );
+            $seen = array(  );
+
+            foreach( $objectList as $key => $object ) {
+                if ( !in_array( $object[$attribute], $seen ) ) {
+                    $seen[] = $object[$attribute];
+                } else {
+                    $unst[] = $key;
+                }
+            }
+
+            foreach( $unst as $key ) {
+                unset( $objectList[$key] );
             }
         }
 
-        $objectList = $this->registry->model->load( $filter );
-        
         $result = new ezcMvcResult(  );
         $result->variables['objectList'] = $objectList;
         $result->variables['filter']     = $filter;
@@ -55,6 +69,25 @@ class madModelController extends ezcMvcController {
             // hard coded values
             if ( isset( $field->value ) ) {
                 $form[$name] = $field->value;
+                continue;
+            }
+
+            // autocomplete have an "hidden" value
+            if ( isset( $field->widget ) && isset( $field->widget->class ) ) {
+                if ( $field->widget->class == 'autocomplete' ) {
+                    if ( !isset( $form[$name] ) ) {
+                        $field->widget->actualValue  = '';
+                        $field->widget->displayValue = '';
+                    } else {
+                        if ( isset( $field->widget->attribute ) ) {
+                            $field->widget->actualValue  = $form[$name];
+                            $field->widget->displayValue = $form[$name];
+                        } else { // assume relation
+                            $field->widget->actualValue  = $form[$name][$field->widget->actualAttribute];
+                            $field->widget->displayValue = $form[$name][$field->widget->displayAttribute];
+                        }
+                    }
+                }
             }
         }
         
@@ -197,6 +230,15 @@ class madModelController extends ezcMvcController {
         }
 
         $result->variables['autocompleteValues'] = $values;
+        return $result;
+    }
+
+    public function doAutocomplete(  ) {
+        $result = $this->doList(  );
+
+        $result->variables['valueAttribute'] = $this->request->variables['valueAttribute'];
+        $result->variables['displayAttribute'] = $this->request->variables['displayAttribute'];
+
         return $result;
     }
 

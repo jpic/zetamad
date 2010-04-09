@@ -14,6 +14,8 @@
 
 <?php $widgets = array(  ) ?>
 
+<?php var_dump( $this->form ) ?>
+
 <form action="" method="post" class="uniForm" enctype="multipart/form-data">
     <fieldset class="inlineLabels">
         <legend><?php echo ucfirst( $this->form->label ) ?></legend>

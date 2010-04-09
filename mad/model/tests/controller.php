@@ -232,7 +232,9 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
                     ) ),
                 ),
                 array(
-                    'filter__origin' => 'spain',
+                    'filter' => array( 
+                        'origin' => 'spain',
+                    ),
                 ),
                 new madBase( array( 
                     'origin' => 'spain',
@@ -240,6 +242,35 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
                 array(
                     2,
                     3,
+                ),
+            ),
+            array(
+                array(
+                    new madBase( array( 
+                        'origin' => 'france',
+                        'withRhum' => 'no',
+                    ) ),
+                    new madBase( array( 
+                        'origin' => 'france',
+                        'withRhum' => 'yes',
+                    ) ),
+                    new madBase( array( 
+                        'origin' => 'spain',
+                        'withRhum' => 'yes',
+                    ) ),
+                    new madBase( array( 
+                        'origin' => 'spain',
+                        'withRhum' => 'no',
+                    ) ),
+                ),
+                array(
+                    'distinct' => 'origin',
+                ),
+                new madBase( array( 
+                ) ),
+                array(
+                    0,
+                    1,
                 ),
             ),
             array(
@@ -291,10 +322,11 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
 
         $this->assertEquals( $expectedFilter, $result->variables['filter'] );
 
+        $this->assertEquals( count( $expected ), count( $result->variables['objectList'] ) );
+
         foreach( $expected as $key ) {
             $expectedObj = $fixtures[$key];
             $this->assertTrue( in_array( $expectedObj, $result->variables['objectList'] ) );
-            $this->assertEquals( count( $expected ), count( $result->variables['objectList'] ) );
         }
     }
 }
