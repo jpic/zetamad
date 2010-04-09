@@ -11,6 +11,17 @@ return array (
         array (
           'value' => 'recipe',
         ),
+        'profile' => 
+        array (
+          'label' => 'chef',
+          'widget' => 
+          array (
+            'class' => 'autocomplete',
+            'route' => 'profile.autocomplete',
+            'displayAttribute' => 'name',
+            'actualAttribute' => 'id',
+          ),
+        ),
         'title' => 
         array (
           'label' => 'titre de la recette',
@@ -24,6 +35,7 @@ return array (
           array (
             'class' => 'autocomplete',
             'route' => 'recipe.originAutocomplete',
+            'attribute' => 'origin',
           ),
         ),
         'summary' => 
@@ -89,7 +101,9 @@ return array (
               'widget' => 
               array (
                 'class' => 'autocomplete',
-                'route' => 'recipe.ingredientNameAutocomplete',
+                'route' => 'recipe.ingredientAutocomplete',
+                'displayAttribute' => 'name',
+                'actualAttribute' => 'name',
               ),
             ),
             'quantity' => 

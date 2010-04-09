@@ -9,7 +9,10 @@ return array (
       'action' => 'list',
       'arguments' => 
       array (
-        'filter__namespace' => 'recipe',
+        'filter' => 
+        array (
+          'namespace' => 'recipe',
+        ),
       ),
       'application' => 'recipe',
     ),
@@ -48,23 +51,32 @@ return array (
     array (
       'rails' => '/recipe/autocomplete/origin/',
       'controller' => 'madModelController',
-      'action' => 'attributeAutocomplete',
+      'action' => 'autocomplete',
       'arguments' => 
       array (
-        'filter__namespace' => 'recipe',
-        'attribute' => 'origin',
+        'filter' => 
+        array (
+          'namespace' => 'recipe',
+        ),
+        'distinct' => 'origin',
+        'valueAttribute' => 'origin',
+        'displayAttribute' => 'origin',
       ),
       'application' => 'recipe',
     ),
-    'recipe.ingredientNameAutocomplete' => 
+    'recipe.ingredientAutocomplete' => 
     array (
       'rails' => '/recipe/autocomplete/origin/',
       'controller' => 'madModelController',
-      'action' => 'attributeAutocomplete',
+      'action' => 'autocomplete',
       'arguments' => 
       array (
-        'filter__namespace' => 'ingredient',
-        'attribute' => 'origin',
+        'filter' => 
+        array (
+          'namespace' => 'ingredient',
+        ),
+        'valueAttribute' => 'name',
+        'displayAttribute' => 'name',
       ),
       'application' => 'recipe',
     ),
@@ -75,7 +87,10 @@ return array (
       'action' => 'list',
       'arguments' => 
       array (
-        'filter__namespace' => 'profile',
+        'filter' => 
+        array (
+          'namespace' => 'profile',
+        ),
       ),
       'application' => 'profile',
     ),
@@ -108,6 +123,22 @@ return array (
       'rails' => '/profile/details/:id/',
       'controller' => 'madProfileController',
       'action' => 'details',
+      'application' => 'profile',
+    ),
+    'profile.autocomplete' => 
+    array (
+      'rails' => '/profile/autocomplete/',
+      'controller' => 'madModelController',
+      'action' => 'autocomplete',
+      'arguments' => 
+      array (
+        'filter' => 
+        array (
+          'namespace' => 'profile',
+        ),
+        'valueAttribute' => 'id',
+        'displayAttribute' => 'name',
+      ),
       'application' => 'profile',
     ),
     'core.fatal' => 
