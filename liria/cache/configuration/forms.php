@@ -27,6 +27,15 @@ return array (
           'label' => 'titre de la recette',
           'required' => true,
         ),
+        'picture' => 
+        array (
+          'label' => 'photo de la recette',
+          'widget' => 
+          array (
+            'class' => 'file',
+          ),
+          'required' => true,
+        ),
         'origin' => 
         array (
           'label' => 'origine',
@@ -98,12 +107,12 @@ return array (
             'name' => 
             array (
               'label' => 'nom',
+              'required' => true,
               'widget' => 
               array (
                 'class' => 'autocomplete',
                 'route' => 'recipe.ingredientAutocomplete',
-                'displayAttribute' => 'name',
-                'actualAttribute' => 'name',
+                'attribute' => 'name',
               ),
             ),
             'quantity' => 
@@ -135,6 +144,7 @@ return array (
           array (
             'class' => 'textarea',
           ),
+          'required' => true,
         ),
         'presentation' => 
         array (
@@ -151,10 +161,12 @@ return array (
           array (
             'class' => 'file',
           ),
+          'required' => true,
         ),
         'email' => 
         array (
           'label' => 'email',
+          'required' => true,
         ),
       ),
       'multipleFields' => 
@@ -180,18 +192,6 @@ return array (
   ),
   'comments' => 
   array (
-    'recipe.recipe' => 
-    array (
-      'fields' => 
-      array (
-        'origin' => 
-        array (
-          'label' => ' default:
- fields[origin][widget][class]=input
- fields[origin][widget][type]=text',
-        ),
-      ),
-    ),
   ),
 );
 ?>
