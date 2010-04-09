@@ -42,8 +42,17 @@
  * $obj->foo->someOption; // 'some value'
  * </code>
  *
- * The read-only property $options allows to get the list of options, for 
- * example:
+ * It is possible to directly set $options to a value that already has been 
+ * through setOptions() for performance reasons:
+ * <code>
+ * // BAD: not setting options that were already processed
+ * $obj->options = array( 'foo' => 'bar' );
+ *
+ * // GOOD: setting options that were already parsed by reference:
+ * $obj->options =& $otherObj->options;
+ * </code>
+ *
+ * The property $options allows to get the list of options, for example:
  * <code>
  * foreach( $obj->options as $optionName => $optionValue ) {
  *     // do something ...
@@ -120,10 +129,10 @@
  * @author Christophe Biarrotte <jamespic@gmail.com> 
  * @license http://madeleinemarket.com/code/license
  * @property-read $isEntity True if the first key is not numeric.
- * @property-read $options  Associative array of options.
+ * @property $options  Associative madBase of options.
  */
 class madBase extends ArrayObject {
-    protected $options = null;
+    public $options = null;
 
      /**
      * Returns the list of dirty attributes, false otherwise.

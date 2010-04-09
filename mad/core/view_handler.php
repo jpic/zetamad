@@ -1,10 +1,10 @@
 <?php
 
 class madCoreViewHandler extends ezcMvcPhpViewHandler {
-    public function generateUrl( $name, array $arguments = array(  ) ) {
+    public function generateUrl( $name, $arguments = array(  )) {
         $registry = madRegistry::instance();
         $prefix = $registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
-        return $prefix . $registry->router->generateUrl( $name, $arguments );
+        return $prefix . $registry->router->generateUrl( $name, (array) $arguments );
     }
 
     public function getAbsoluteStaticUrl( $url ) {
@@ -26,6 +26,10 @@ class madCoreViewHandler extends ezcMvcPhpViewHandler {
     public function getAbsoluteUploadUrl( $relativePath ) {
         $registry = madRegistry::instance();
         return $registry->configuration->getSetting( 'core', 'upload', 'url' ) . '/' . $relativePath;
+    }
+
+    public function e( $val ) {
+        echo stripslashes( htmlentities( $val ) );
     }
 
     static public function dump( $values, $level = 0 ) {

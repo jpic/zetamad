@@ -20,6 +20,7 @@ return array (
       'path' => '../recipe',
       'classes' => 
       array (
+        0 => 'madRecipeController',
       ),
     ),
     'profile' => 

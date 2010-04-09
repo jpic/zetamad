@@ -139,6 +139,17 @@ class madCoreView extends ezcMvcView {
         $controllerApplicationName = $registry->configuration->getClassApplicationName( $this->routeInfo->controllerClass );
         $controllerApplicationPath = $registry->configuration->getSetting( 'applications', $controllerApplicationName, 'path' );
 
+        // also check parent controller
+        // TODO make this recursive
+        $parentControllerClass = get_parent_class( $this->routeInfo->controllerClass );
+        // todo: catch proper exception
+        try {
+            $parentControllerApplicationName = $registry->configuration->getClassApplicationName( $parentControllerClass );
+            $parentControllerApplicationPath = $registry->configuration->getSetting( 'applications', $parentControllerApplicationName, 'path' );
+        } catch( Exception $e ) {
+            // pass
+        }
+
         // pass 1, template was hardcoded in the route, it *must* exists
         if ( isset( $this->request->variables['template'] ) ) {
             $templateName = $this->request->variables['template'];
@@ -259,6 +270,15 @@ class madCoreView extends ezcMvcView {
             $actionName . '.php',
         ) );
 
+        if ( isset( $parentControllerApplicationPath ) ) {
+            // $parentControllerAppPath/templates/$action.php
+            $testPaths[] = join( DIRECTORY_SEPARATOR, array(
+                $parentControllerApplicationPath,
+                'templates',
+                $actionName . '.php',
+            ) );
+        }
+
         // return the first guessed template or die!
         foreach( $testPaths as $templatePath ) {
             // handle relative path
@@ -288,8 +308,8 @@ class madCoreView extends ezcMvcView {
      * @return string Persistent object namespace attribute.
      */
     public function getNamespace(  ) {
-        if ( isset( $this->request->variables['filter__namespace'] ) ) {
-            return $this->request->variables['filter__namespace'];
+        if ( isset( $this->request->variables['filter']['namespace'] ) ) {
+            return $this->request->variables['filter']['namespace'];
         }
 
         if ( isset( $this->result->variables['object'] ) ) {

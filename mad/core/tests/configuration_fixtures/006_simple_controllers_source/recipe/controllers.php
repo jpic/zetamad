@@ -1,6 +1,6 @@
 <?php
 
-class madRecipeController extends ezcMvcController {
+class testRecipeController extends ezcMvcController {
 
 }
 

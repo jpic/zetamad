@@ -19,10 +19,11 @@ return array (
     'recipe.create' => 
     array (
       'rails' => '/recipe/create/',
-      'controller' => 'madModelController',
+      'controller' => 'madRecipeController',
       'action' => 'form',
       'arguments' => 
       array (
+        'template' => 'recipe_form.php',
         'form' => 'recipe.recipe',
         'successRoute' => 'recipe.details',
       ),
@@ -31,7 +32,7 @@ return array (
     'recipe.edit' => 
     array (
       'rails' => '/recipe/edit/:id/',
-      'controller' => 'madModelController',
+      'controller' => 'madRecipeController',
       'action' => 'form',
       'arguments' => 
       array (
@@ -42,7 +43,7 @@ return array (
     ),
     'recipe.details' => 
     array (
-      'rails' => '/recipe/details/:id/',
+      'rails' => '/recipe/details/:slug/',
       'controller' => 'madModelController',
       'action' => 'details',
       'application' => 'recipe',
@@ -66,7 +67,7 @@ return array (
     ),
     'recipe.ingredientAutocomplete' => 
     array (
-      'rails' => '/recipe/autocomplete/origin/',
+      'rails' => '/recipe/autocomplete/ingredient/',
       'controller' => 'madModelController',
       'action' => 'autocomplete',
       'arguments' => 
@@ -75,9 +76,54 @@ return array (
         array (
           'namespace' => 'ingredient',
         ),
-        'valueAttribute' => 'name',
+        'valueAttribute' => 'id',
         'displayAttribute' => 'name',
       ),
+      'application' => 'recipe',
+    ),
+    'recipe.ingredientList' => 
+    array (
+      'rails' => '/recipe/ingredient/list/',
+      'controller' => 'madModelController',
+      'action' => 'list',
+      'arguments' => 
+      array (
+        'filter' => 
+        array (
+          'namespace' => 'ingredient',
+        ),
+      ),
+      'application' => 'recipe',
+    ),
+    'recipe.ingredientCreate' => 
+    array (
+      'rails' => '/recipe/ingredient/create/',
+      'controller' => 'madModelController',
+      'action' => 'form',
+      'arguments' => 
+      array (
+        'form' => 'recipe.ingredient',
+        'successRoute' => 'recipe.ingredientDetails',
+      ),
+      'application' => 'recipe',
+    ),
+    'recipe.ingredientEdit' => 
+    array (
+      'rails' => '/recipe/ingredient/edit/:id/',
+      'controller' => 'madModelController',
+      'action' => 'form',
+      'arguments' => 
+      array (
+        'form' => 'recipe.ingredient',
+        'successRoute' => 'recipe.ingredientDetails',
+      ),
+      'application' => 'recipe',
+    ),
+    'recipe.ingredientDetails' => 
+    array (
+      'rails' => '/recipe/ingredient/details/:id/',
+      'controller' => 'madModelController',
+      'action' => 'details',
       'application' => 'recipe',
     ),
     'profile.list' => 
@@ -120,7 +166,7 @@ return array (
     ),
     'profile.details' => 
     array (
-      'rails' => '/profile/details/:id/',
+      'rails' => '/profile/details/:slug/',
       'controller' => 'madProfileController',
       'action' => 'details',
       'application' => 'profile',

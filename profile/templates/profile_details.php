@@ -50,12 +50,14 @@ a.btn-block:hover { background: #539893; }
 	<div class="author-left">
 		<div id="author-photo">
 			<img src="<?php echo $this->getAbsoluteUploadUrl( $this->object['picture'] ); ?>" alt="<?php echo $this->object['name']; ?>" height="260" width="260" />
+            <!--
 			<p class="share">
 				<a href="#">
                     TODO
 					<img src="http://www.madeleinemarket.com/themes/mmarket/img/lg-bookmark-mm.gif" />
 				</a>
 			</p>
+            -->
 		</div>
         <?php if ( isset( $this->object['sites'] ) ): ?>
 		<div id="external-links">
@@ -85,6 +87,7 @@ a.btn-block:hover { background: #539893; }
 </div>
 
 <div id="recipe-column">
+    <!--
 	<div class="block">
 		<p class="title-setmsg">&Agrave; <?php echo htmlentities( $this->object['name'] ) ?> :</p>
         <form action="" method="post" class="msg-author-form">
@@ -92,17 +95,24 @@ a.btn-block:hover { background: #539893; }
 		    <a class="btn-block" href="#">Envoyer</a>
         </form>
 	</div>
+    -->
     <?php if ( isset( $this->object['products'] ) ): ?>
 	<div class="block">
 		<h3>Produits favoris</h3>
 		<ul>
-            <?php if ( ! $this->object['products'] instanceof madBase ): ?>
-	    		<li><a href="#"><?php echo $this->object['products'] ?></a></li>
-            <?php else: ?>
-                <?php foreach( $this->object['products'] as $productId ): ?>
-	    		<li><a href="#"><?php echo $productId ?></a></li>
-                <?php endforeach ?>
-            <?php endif ?>
+            <?php 
+            if ( ! $this->object['products'] instanceof madBase )
+                $this->object['products'] = new madBase( array( $this->object['products'] ) );
+            foreach( $this->object['products'] as $productId ): ?>
+	        
+            
+            <?php
+            $product = new Product(intval( $productId ), true, 2);
+            ?>
+			<li><a href="/mm/product.php?id_product=<?php echo $productId; ?>"><?php echo $product->name ?></a></li>
+            
+            
+            <?php endforeach ?>
 		</ul>
 	</div>
     <?php endif ?>

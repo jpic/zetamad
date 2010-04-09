@@ -68,11 +68,11 @@ class madModel {
     }
 
     public function query( $sql, array $arguments = array(  ) ) {
-        $args = func_get_args(  );
-        $final = $sql;
-        foreach ( $arguments as $key => $value ) {
-            $final = str_replace( "$key", "'$value'", $final );
-        }
+        //$args = func_get_args(  );
+        //$final = $sql;
+        //foreach ( $arguments as $key => $value ) {
+            //$final = str_replace( "$key", "'$value'", $final );
+        //}
         //$final = str_replace( "'", "\'", $final );
         //echo $final;
         //$final = str_replace( "(", "\(", $final );
@@ -133,7 +133,6 @@ class madModel {
             if ( $key == 'id' ) {
                 continue;
             }
-
 
             $this->saveAttribute( 
                 $data,

@@ -100,6 +100,43 @@ class madModelController extends ezcMvcController {
                     // Monkey-fix it.
                     $form[$name] = new madBase( array( $form[$name] ) );
                 }
+
+                // clone options and process autocomplete
+                if ( isset( $form[$name] ) && $form[$name] ) {
+                    foreach( $form[$name] as $boundFormset ) {
+                        $boundFormset->options =& $formset->options;
+    
+                        foreach( $boundFormset->fields->options as $name => $field ) {
+                            // autocomplete have an "hidden" value
+                            if ( isset( $field->widget ) && isset( $field->widget->class ) ) {
+                                if ( $field->widget->class == 'autocomplete' ) {
+                                    if ( !isset( $boundFormset[$name] ) ) {
+                                        $field->widget->actualValue  = '';
+                                        $field->widget->displayValue = '';
+                                    } else {
+                                        if ( isset( $field->widget->attribute ) ) {
+                                            $field->widget->actualValue  = $boundFormset[$name];
+                                            $field->widget->displayValue = $boundFormset[$name];
+                                        } else { // assume relation
+                                            $field->widget->actualValue  = $boundFormset[$name][$field->widget->actualAttribute];
+                                            $field->widget->displayValue = $boundFormset[$name][$field->widget->displayAttribute];
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else { // process defaults
+                    foreach( $formset->fields->options as $name => $field ) {
+                        // autocomplete have an "hidden" value
+                        if ( isset( $field->widget ) && isset( $field->widget->class ) ) {
+                            if ( $field->widget->class == 'autocomplete' ) {
+                                $field->widget->actualValue  = '';
+                                $field->widget->displayValue = '';
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -110,6 +147,13 @@ class madModelController extends ezcMvcController {
                     // know that it is supposed to be a multi value field.
                     // Monkey-fix it.
                     $form[$name] = new madBase( array( $form[$name] ) );
+                }
+
+                // clone options
+                if ( isset( $form[$name] ) ) {
+                    foreach( $form[$name] as $field ) {
+                        $field->options =& $multipleField->options;
+                    }
                 }
             }
         }
@@ -172,7 +216,7 @@ class madModelController extends ezcMvcController {
                 $file     = $this->request->files[str_replace( '.', '_', $form->name )][$fieldName];
 
                 if ( !$file->tmpPath ) { // check if a file was actually submitted
-                    if ( isset( $field->required ) && $field->required == true ) {
+                    if ( isset( $field->required ) && $field->required == true && !( isset( $form[$fieldName] ) && $form[$fieldName] ) ) {
                         // create the error if this field is required
                         $form->valid = false;
                         
@@ -226,21 +270,23 @@ class madModelController extends ezcMvcController {
             if ( isset( $form->formsets ) ) {
                 foreach( $form->formsets->options as $name => $formset ) {
                     if ( isset( $form[$name] ) ) {
-                        foreach( $form[$name] as $formsetKey => $formsetForm ) {
-                            foreach( $formset->fields->options as $fieldName => $field ) {
+                        foreach( $form[$name] as $boundFormset ) {
+                            if ( !$boundFormset->options ) {
+                                $boundFormset->options =& $formset->options;
+                            }
+
+                            foreach( $boundFormset->fields->options as $fieldName => $field ) {
                                 if ( isset( $field->required ) && $field->required == true ) {
-                                    if ( !isset( $formsetForm[$fieldName] ) || !$formsetForm[$fieldName] ) {
+                                    if ( !isset( $boundFormset[$fieldName] ) || !$boundFormset[$fieldName] ) {
                                         $form->valid = false;
-
+                
                                         if ( !isset( $field->errors ) ) {
-                                            $field->errors = new madBase;
+                                            $field->errors = new madBase();
                                         }
-
-                                        if ( !isset( $field->errors[$formsetKey] ) ) {
-                                            $field->errors[$formsetKey] = new madBase;
+                
+                                        if ( !isset( $field->errors['required'] ) ) {
+                                            $field->errors['required'] = 'empty value';
                                         }
-                                        
-                                        $field->errors[$formsetKey]['required'] = 'empty value';
                                     }
                                 }
                             }
@@ -248,6 +294,36 @@ class madModelController extends ezcMvcController {
                     }
                 }
             }
+
+            // slugify
+            if ( $form->valid ) {
+                foreach( $form->fields->options as $fieldName => $field ) {
+                    if ( isset( $field->slugify ) && !isset( $form[$fieldName] ) ) {
+                        $slug = preg_replace('~[^\\pL\d]+~u', '-', $form[$field->slugify]);
+                        $slug = trim($slug, '-');
+                        // transliterate
+                        if (function_exists('iconv'))
+                        {
+                            $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
+                        }
+                        // lowercase
+                        $slug = strtolower($slug);
+                        // remove unwanted characters
+                        $slug = preg_replace('~[^-\w]+~', '', $slug);
+    
+                        // ensure it is unique
+                        $stmt = $this->registry->database->query( "select id from mad_model where attribute_key = '" . $fieldName . "' and attribute_value = '" . $slug . "'" );
+                        while( intval( $stmt->rowCount(  ) ) > 0 ) {
+                            $slug .= '-';
+                            $stmt = $this->registry->database->query( "select id from mad_model where attribute_key = '" . $fieldName . "' and attribute_value = '" . $slug . "'" );
+                        }
+    
+                        $form[$fieldName] = $slug;
+                    }
+                }
+            }
+
+            $this->cleanFormsets( $form );
 
             // check if something is *really* wrong ( prorgamming error )
             $dirty = $form->dirtyAttributes(  );
@@ -304,14 +380,34 @@ class madModelController extends ezcMvcController {
     }
 
     public function doDetails(  ) {
-        $object = new madBase( array( 
-            'id' => $this->id,
+        if ( !isset( $this->id ) ) {
+            $sql = sprintf( '
+                select 
+                    %s as id
+                from mad_model 
+                where ',
+                madModel::DECODE_ID_ENTITY
+            );
+            $sql.= "attribute_key = 'slug' and attribute_value = :slug";
+            $stmt = $this->registry->database->prepare( $sql );
+            $stmt->execute( array( 'slug' => $this->slug ) );
+            $id = $stmt->fetchColumn( 0 );
+        } else {
+            $id = $this->id;
+        }
+
+        $object = new madBase( array(
+            'id' => $id,
         ) );
         $this->registry->model->refresh( $object );
 
         $result = new ezcMvcResult(  );
         $result->variables['object'] = $object;
         return $result;
+    }
+
+    public function cleanFormsets( madBase $form ) {
+        // do nothing
     }
 }
 

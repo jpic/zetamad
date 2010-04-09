@@ -52,6 +52,8 @@
 a.btn-block { display: block; height: 30px; width: 180px; margin: 0 auto; margin-top: 10px; text-align: center; font-size: 16px; font-style: italic; font-family: Times; color: #fff; line-height: 30px; background: #929da3; }
 a.btn-block:hover { background: #539893; }
 </style>
+
+<!--
 <ul id="nav-recipe">
         <li class="browseby">Trier par:</li>
         <li><a href="" class="selected">date</a></li>
@@ -62,13 +64,12 @@ a.btn-block:hover { background: #539893; }
         <li class="sep">|</li>
         <li><a href="">au hasard</a></li>
 </ul>
-
-<?php var_dump( $this->object ) ?>
+-->
 
 <div class="recipe">
         <div class="recipe-left">
                 <div id="recipe-photo">
-			            <img src="<?php echo $this->getAbsoluteUploadUrl( $this->object['profile']['picture'] ); ?>" alt="<?php echo $this->object['title']; ?>" height="260" width="260" />
+			            <img src="<?php echo $this->getAbsoluteUploadUrl( $this->object['picture'] ); ?>" alt="<?php $this->e( $this->object['title'] ) ?>" height="240" width="240" />
                 </div>
                 <!--
                 <div id="recipe-video">
@@ -78,21 +79,22 @@ a.btn-block:hover { background: #539893; }
                 </div>
                 -->
                 <div class="recipe-author">
-                        <p class="author-name"><?php echo $this->object['profile']['name'] ?></p>
+                        <p class="author-name"><?php $this->e( $this->object['profile']['name'] ) ?></p>
                         <p class="author-description">
                                 <img class="author-photo" src="<?php echo $this->getAbsoluteUploadUrl( $this->object['profile']['picture'] ); ?>" width="87" height="87" title="Photo profil X" />
-                                <?php echo $this->object['profile']['introduction'] ?>
+                                <?php $this->e( $this->object['profile']['introduction'] ) ?>
                         </p>
-                        <a href="<?php echo $this->generateUrl( 'profile.details', array( 'id' => $this->object['profile']['id'] ) ) ?>" class="btn-block" style="width: 100%;">Voir le profil</a>
+                        <a href="<?php echo $this->generateUrl( 'profile.details', $this->object['profile'] ) ?>" class="btn-block" style="width: 100%;">Voir le profil</a>
                 </div>
         </div>
         <div class="recipe-right">
                 <div class="recipe-header">
-                        <h2><?php echo $this->object['title']; ?></h2>
-                        <p class="recipe-author">Par&nbsp;<a href="<?php echo $this->generateUrl( 'profile.details', array( 'id' => $this->object['profile']['id'] ) ) ?>"><?php echo $this->object['profile']['name'] ?></a></p>
+                        <h2><?php $this->e( $this->object['title'] ) ?></h2>
+                        <p class="recipe-author">Par&nbsp;<a href="<?php echo $this->generateUrl( 'profile.details', $this->object['profile'] ) ?>"><?php $this->e( $this->object['profile']['name'] ) ?></a></p>
                         <p class="recipe-intro">
-                            <?php echo $this->object['summary']; ?>
+                            <?php $this->e( $this->object['summary'] ) ?>
                         </p>
+                        <!--
                         <div class="links-intro">
                                 <a href="#">J'aime cette recette</a>
                                 <a href="#">Commenter la recette</a>
@@ -103,23 +105,24 @@ a.btn-block:hover { background: #539893; }
                                         <img src="http://www.madeleinemarket.com/themes/mmarket/img/lg-bookmark-mm.gif" />
                                 </a>
                         </div>
+                        -->
                 </div>
                 <div class="recipe-description">
                         
                         <div class="recipe-title-steps">Pr&eacute;paration</div>
                         <div class="recipe-infos">
                             <?php if ( isset( $this->object['preparationTime'] ) ): ?>
-                                <p class="recipe-infos-block">Pr&eacute;paration: <span class="bold"><?php echo $this->object['preparationTime'] ?>min</span></p>
+                                <p class="recipe-infos-block">Pr&eacute;paration: <span class="bold"><?php $this->e( $this->object['preparationTime'] ) ?>min</span></p>
                             <?php endif ?>
                             <?php if ( isset( $this->object['cookTime'] ) ): ?>
-                                <p class="recipe-infos-block">Cuisson: <span class="bold"><?php echo $this->object['cookTime'] ?>min</span></p>
+                                <p class="recipe-infos-block">Cuisson: <span class="bold"><?php $this->e( $this->object['cookTime'] ) ?>min</span></p>
                             <?php endif ?>
                             <?php if ( isset( $this->object['numberOfPeople'] ) ): ?>
-                                <p class="recipe-infos-block" style="margin-right: 0;">Personnes: <span class="bold"><?php echo $this->object['numberOfPeople']; ?></span></p>
+                                <p class="recipe-infos-block" style="margin-right: 0;">Personnes: <span class="bold"><?php $this->e( $this->object['numberOfPeople'] ) ?></span></p>
                             <?php endif ?>
                         </div>
                         
-                        <?php echo $this->object['preparation']; ?>
+                        <?php echo $this->object['preparation'] ?>
                 </div>
         </div>
 </div>
@@ -130,16 +133,17 @@ a.btn-block:hover { background: #539893; }
                 <h3>Ingr&eacute;dients</h3>
                 <ul>
                     <?php if ( $this->object['ingredients']->isEntity ): ?>
-                        <li><?php echo $this->object['ingredients']['name'] ?> : <span class="att"><?php echo $this->object['ingredients']['quantity'] ?></span></li>
+                        <li><?php $this->e( $this->object['ingredients']['name'] ) ?> : <span class="att"><?php $this->e( $this->object['ingredients']['quantity'] ) ?></span></li>
                     <?php else: ?>
                         <?php foreach( $this->object['ingredients'] as $ingredient ): ?>
-                            <li><?php echo $ingredient['name'] ?> : <span class="att"><?php echo $ingredient['quantity'] ?></span></li>
+                            <li><?php $this->e( $ingredient['name'] ) ?> : <span class="att"><?php $this->e( $ingredient['quantity'] ) ?></span></li>
                         <?php endforeach; ?>
                     <?php endif ?>
                 </ul>
                 <a class="btn-block" href="#">Voir les produits</a>
         </div>
         <?php endif ?>
+        <!--
         <div class="block">
                 <h3>Produits de la recette</h3>
                 -
@@ -150,6 +154,9 @@ a.btn-block:hover { background: #539893; }
                 -
                 <a class="btn-block" href="#">Voir les produits</a>
         </div>
+        -->
 </div>
 
-<a href="<?php echo $this->generateUrl( 'recipe.edit', array( 'id'=> $this->object['id'] ) ) ?>">edit</a>
+<!--
+<a href="<?php echo $this->generateUrl( 'recipe.edit', $this->object ) ?>">edit</a>
+-->

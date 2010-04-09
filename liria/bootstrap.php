@@ -81,4 +81,7 @@ $registry->database->setAttribute( PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 $registry->model = new madModel( $registry->database );
 
 unset( $registry );
+
+// prestashop compat
+Configuration::loadConfiguration(  );
 ?>

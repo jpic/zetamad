@@ -3,8 +3,8 @@
         // skip fields with hard coded value (ie. namespace)
         if ( isset( $field->value ) ) continue;
 
-        if ( isset( $field->errors ) && isset( $field->errors[$formsetKey] ) ) {
-            $errors = $field->errors[$formsetKey];
+        if ( isset( $field->errors ) ) {
+            $errors = $field->errors;
         }
     ?>
     <td class="<?php if ( isset( $errors ) ) echo 'error' ?>">

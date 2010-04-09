@@ -11,6 +11,10 @@ return array (
         array (
           'value' => 'recipe',
         ),
+        'slug' => 
+        array (
+          'slugify' => 'title',
+        ),
         'profile' => 
         array (
           'label' => 'chef',
@@ -20,6 +24,7 @@ return array (
             'route' => 'profile.autocomplete',
             'displayAttribute' => 'name',
             'actualAttribute' => 'id',
+            'createRoute' => 'profile.create',
           ),
         ),
         'title' => 
@@ -104,7 +109,7 @@ return array (
             array (
               'value' => 'ingredient',
             ),
-            'name' => 
+            'ingredient' => 
             array (
               'label' => 'nom',
               'required' => true,
@@ -123,6 +128,22 @@ return array (
         ),
       ),
     ),
+    'recipe.ingredient' => 
+    array (
+      'label' => 'enregistrement d\'ingrédient',
+      'fields' => 
+      array (
+        'namespace' => 
+        array (
+          'value' => 'ingredient',
+        ),
+        'name' => 
+        array (
+          'label' => 'nom',
+          'required' => true,
+        ),
+      ),
+    ),
     'profile.profile' => 
     array (
       'label' => 'enregistrement de profil',
@@ -136,6 +157,10 @@ return array (
         array (
           'label' => 'nom du profil',
           'required' => true,
+        ),
+        'slug' => 
+        array (
+          'slugify' => 'name',
         ),
         'introduction' => 
         array (

@@ -10,11 +10,23 @@
 .formsetDeleteColumn {
     text-align: center;
 }
+
+.uniForm .inlineLabels .textInput, .uniForm .inlineLabels .fileUpload {
+    width:70%;
+}
+.uniForm .inlineLabels label, .uniForm .inlineLabels .label {
+    width:25%;
+}
+.uniForm .inlineLabels .formHint {
+    margin-left:27%;
+}
+.uniForm .inlineLabels textarea {
+    height:12em;
+    width:70%;
+}
 </style>
 
 <?php $widgets = array(  ) ?>
-
-<?php var_dump( $this->form ) ?>
 
 <form action="" method="post" class="uniForm" enctype="multipart/form-data">
     <?php if ( isset( $this->form->valid ) && !$this->form->valid ): ?>
@@ -26,8 +38,8 @@
     <fieldset class="inlineLabels">
         <legend><?php echo ucfirst( $this->form->label ) ?></legend>
         <?php foreach( $this->form->fields->options as $name => $field ):
-            // skip fields with hard coded value (ie. namespace)
-            if ( isset( $field->value ) ) continue;
+            // skip fields without label which should not be displayed
+            if ( !isset( $field->label ) ) continue;
             // skip formsets/relations
             if ( $field instanceof madForm ) continue;
         ?>
@@ -136,7 +148,9 @@
     ?>
 
     <div class="buttonHolder">
+      <!--
       <button type="reset" class="resetButton">Rétablir les valeurs initiales</button>
+      -->
       <button type="submit" class="primaryAction">Enregistrer</button>
     </div>
 

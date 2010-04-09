@@ -19,6 +19,7 @@
 .recipe-details .author { color: #656565; font-size: 10px; font-family: Verdana; font-weight: bold; }
 </style>
 
+<!--
 <ul id="nav-recipe">
 	<li class="browseby">Trier par:</li>
 	<li><a href="" class="selected">date</a></li>
@@ -29,23 +30,32 @@
 	<li class="sep">|</li>
 	<li><a href="">au hasard</a></li>
 </ul>
+-->
 
 <?php $forloopCounter = 1; foreach( $this->objectList as $object ): ?>
 <div class="recipe-block" <?php if( $forloopCounter == count( $this->objectList ) ): ?> style="padding-right: 0;"<?php endif; ?>>
-	<p class="link">remipathier.cookingfor.com</p>
+	<!--<p class="link">remipathier.cookingfor.com</p>-->
 	<div class="recipe-details">
-		<img class="picture" width="226" height="226" src="http://storage.canalblog.com/94/98/314534/45426118_p.jpg" />
+	    <a href="<?php echo $this->generateUrl( 'recipe.details', $object ) ?>">
+		    <img class="picture" width="226" height="226" src="<?php echo $this->getAbsoluteUploadUrl( $object['picture'] ) ?>" />
+        </a>
 		<p class="infos">
-			<a href="<?php echo $this->generateUrl( 'recipe.details', array( 'id' => $object['id'] ) ); ?>">
+			<a href="<?php echo $this->generateUrl( 'recipe.details', $object ) ?>">
 				<?php echo $object['title']; ?>
 			</a>
 		</p>
 
-		<p class="author">R&eacute;mi Pathier du 75 &bull;</p>
+		<p class="author">
+            <a href="<?php echo $this->generateUrl( 'profile.details', $object['profile'] ) ?>">
+            <?php echo $object['profile']['name'] ?> &bull;
+            </a>
+        </p>
 	</div>
 </div>
 <?php $forloopCounter++; endforeach; ?>
 
 </ul>
 
+<!--
 <a href="<?php echo $this->generateUrl( 'recipe.create' ); ?>">create</a>
+-->
