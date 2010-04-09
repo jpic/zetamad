@@ -54,7 +54,8 @@ class madModelController extends ezcMvcController {
         $form->name   = $this->request->variables['form'];
         $form->action = $this->request->uri;
         $form->model  = $this->registry->model;
-               
+        $form->valid  = true;
+        
         // get and set the form configuration
         $form->setOptions( $this->getFormOptions( $form ) );
 
@@ -143,7 +144,7 @@ class madModelController extends ezcMvcController {
 
             // handle delete of multiple values
             if ( isset( $form->multipleFields ) ) {
-                foreach( $form->multipleFields->options as $name => $formset ) {
+                foreach( $form->multipleFields->options as $name => $field ) {
                     if ( !isset( $form[$name . '.DELETE'] ) ) {
                         continue;
                     }
@@ -169,6 +170,22 @@ class madModelController extends ezcMvcController {
                 if ( $field->widget->class != 'file' ) continue;
                 
                 $file     = $this->request->files[str_replace( '.', '_', $form->name )][$fieldName];
+
+                if ( !$file->tmpPath ) { // check if a file was actually submitted
+                    if ( isset( $field->required ) && $field->required == true ) {
+                        // create the error if this field is required
+                        $form->valid = false;
+                        
+                        if ( !isset( $field->errors ) ) {
+                            $field->errors = new madBase(  );
+                        }
+
+                        $field->errors['required'] = 'no file';
+                    }
+
+                    continue;
+                }
+
                 $relative = $file->name;
                 $uploadTo = $uploadDir . DIRECTORY_SEPARATOR . $relative;
                 
@@ -190,10 +207,54 @@ class madModelController extends ezcMvcController {
             
             $form->clean();
 
+            // required fields
+            foreach( $form->fields->options as $fieldName => $field ) {
+                if ( isset( $field->required ) && $field->required == true ) {
+                    if ( !isset( $form[$fieldName] ) || !$form[$fieldName] ) {
+                        $form->valid = false;
+
+                        if ( !isset( $field->errors ) ) {
+                            $field->errors = new madBase();
+                        }
+
+                        if ( !isset( $field->errors['required'] ) ) {
+                            $field->errors['required'] = 'empty value';
+                        }
+                    }
+                }
+            }
+            if ( isset( $form->formsets ) ) {
+                foreach( $form->formsets->options as $name => $formset ) {
+                    if ( isset( $form[$name] ) ) {
+                        foreach( $form[$name] as $formsetKey => $formsetForm ) {
+                            foreach( $formset->fields->options as $fieldName => $field ) {
+                                if ( isset( $field->required ) && $field->required == true ) {
+                                    if ( !isset( $formsetForm[$fieldName] ) || !$formsetForm[$fieldName] ) {
+                                        $form->valid = false;
+
+                                        if ( !isset( $field->errors ) ) {
+                                            $field->errors = new madBase;
+                                        }
+
+                                        if ( !isset( $field->errors[$formsetKey] ) ) {
+                                            $field->errors[$formsetKey] = new madBase;
+                                        }
+                                        
+                                        $field->errors[$formsetKey]['required'] = 'empty value';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // check if something is *really* wrong ( prorgamming error )
             $dirty = $form->dirtyAttributes(  );
             if ( $dirty !== false ) {
                 var_dump( $dirty );
-            } else {
+
+            } elseif( $form->valid ) { // save if there is no errors
                 $this->registry->model->save( $form );
                 $prefix = $this->registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
 

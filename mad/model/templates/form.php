@@ -17,6 +17,12 @@
 <?php var_dump( $this->form ) ?>
 
 <form action="" method="post" class="uniForm" enctype="multipart/form-data">
+    <?php if ( isset( $this->form->valid ) && !$this->form->valid ): ?>
+    <div id="errorMsg">
+        <h3>Pour enregistrer, révisez les valeurs des champs entourés de rouge.</h3>
+    </div>
+    <?php endif ?>
+
     <fieldset class="inlineLabels">
         <legend><?php echo ucfirst( $this->form->label ) ?></legend>
         <?php foreach( $this->form->fields->options as $name => $field ):
@@ -26,7 +32,15 @@
             if ( $field instanceof madForm ) continue;
         ?>
     
-        <div class="ctrlHolder">
+        <div class="ctrlHolder <?php if ( isset( $field->errors ) ) echo 'error' ?>">
+            <?php 
+            if ( isset( $field->errors ) ) {
+                $errors = $field->errors;
+                include 'field_errors.php';
+                unset( $errors );
+            }
+            ?>
+
             <label for="<?php echo $name; ?>"><?php if ( isset( $field->required ) ): ?><em>*</em> <?php endif ?><?php echo ucfirst( $field->label ); ?></label>
 
             <?php 
@@ -101,7 +115,7 @@
                 <?php
                 $count = 0;
                 if ( count( $this->form[$formsetName] ) ):
-                    foreach( $this->form[$formsetName] as $formsetForm ): 
+                    foreach( $this->form[$formsetName] as $formsetKey => $formsetForm ): 
                         $form = $formsetForm;
                         include 'formset_row.php';
                         unset( $form );

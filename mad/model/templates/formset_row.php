@@ -2,12 +2,21 @@
     <?php foreach( $formset->fields->options as $name => $field ):
         // skip fields with hard coded value (ie. namespace)
         if ( isset( $field->value ) ) continue;
+
+        if ( isset( $field->errors ) && isset( $field->errors[$formsetKey] ) ) {
+            $errors = $field->errors[$formsetKey];
+        }
     ?>
-    <td>
+    <td class="<?php if ( isset( $errors ) ) echo 'error' ?>">
     <?php 
     $inputName = $this->form->name . '[' . $formsetName . ']['. $count .'][' . $name . ']';
+    
+    include 'field_errors.php';
     include 'widget.php'; 
     unset( $inputName );
+    if ( isset( $errors ) ) {
+        unset( $errors );
+    }
     ?>
     </td>
     <?php endforeach ?>
