@@ -34,7 +34,7 @@ $class = str_replace( array( '.', '[', ']' ), array( '__', '__', '' ), $inputNam
         );
 
         <?php if ( !isset( $field->widget->createRoute ) ): ?>
-        $( "form.uniForm" ).submit( function( e ) {
+        $("form.uniForm input[name=\"autocomplete_<?php echo $inputName; ?>\"]").blur( function( e ) {
             var display = $("form.uniForm input[name=\"autocomplete_<?php echo $inputName; ?>\"]");
             var actual = $("form.uniForm input[name=\"<?php echo $inputName; ?>\"]");
 
@@ -49,7 +49,7 @@ $class = str_replace( array( '.', '[', ']' ), array( '__', '__', '' ), $inputNam
 
     <?php if ( isset( $field->widget->createRoute ) ): ?>
     <p class="formHint">
-        <a class="add_anoter_<?php $this->e( $class ) ?>" href="<?php echo $this->generateUrl( $field->widget->createRoute ) ?>?popup=1" target="_blank">Cliquez ici pour en créer un nouveau</a>, si votre choix n'est pas dans la liste.
+        <a class="add_anoter_<?php $this->e( $class ) ?>" href="<?php echo $this->generateUrl( $field->widget->createRoute ) ?>" >Cliquez ici pour en créer un nouveau</a>, si votre choix n'est pas dans la liste.
     </p>
     <?php endif ?>
 

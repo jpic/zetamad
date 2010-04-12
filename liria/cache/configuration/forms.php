@@ -98,6 +98,17 @@ return array (
           'help' => 'pour combien de personnes va cette recette?',
         ),
       ),
+      'multipleFields' => 
+      array (
+        'products' => 
+        array (
+          'label' => 'produits de la recette',
+          'widget' => 
+          array (
+            'class' => 'multiple values',
+          ),
+        ),
+      ),
       'formsets' => 
       array (
         'ingredients' => 
@@ -107,7 +118,7 @@ return array (
           array (
             'namespace' => 
             array (
-              'value' => 'ingredient',
+              'value' => 'ingredientQuantity',
             ),
             'ingredient' => 
             array (

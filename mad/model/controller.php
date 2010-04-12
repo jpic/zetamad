@@ -104,7 +104,9 @@ class madModelController extends ezcMvcController {
                 // clone options and process autocomplete
                 if ( isset( $form[$name] ) && $form[$name] ) {
                     foreach( $form[$name] as $boundFormset ) {
-                        $boundFormset->options =& $formset->options;
+                        if ( !$boundFormset->options ) {
+                            $boundFormset->options =& $formset->options;
+                        }
     
                         foreach( $boundFormset->fields->options as $name => $field ) {
                             // autocomplete have an "hidden" value
@@ -295,31 +297,28 @@ class madModelController extends ezcMvcController {
                 }
             }
 
-            // slugify
-            if ( $form->valid ) {
-                foreach( $form->fields->options as $fieldName => $field ) {
-                    if ( isset( $field->slugify ) && !isset( $form[$fieldName] ) ) {
-                        $slug = preg_replace('~[^\\pL\d]+~u', '-', $form[$field->slugify]);
-                        $slug = trim($slug, '-');
-                        // transliterate
-                        if (function_exists('iconv'))
-                        {
-                            $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
-                        }
-                        // lowercase
-                        $slug = strtolower($slug);
-                        // remove unwanted characters
-                        $slug = preg_replace('~[^-\w]+~', '', $slug);
-    
-                        // ensure it is unique
-                        $stmt = $this->registry->database->query( "select id from mad_model where attribute_key = '" . $fieldName . "' and attribute_value = '" . $slug . "'" );
-                        while( intval( $stmt->rowCount(  ) ) > 0 ) {
-                            $slug .= '-';
-                            $stmt = $this->registry->database->query( "select id from mad_model where attribute_key = '" . $fieldName . "' and attribute_value = '" . $slug . "'" );
-                        }
-    
-                        $form[$fieldName] = $slug;
+            foreach( $form->fields->options as $fieldName => $field ) {
+                if ( isset( $field->slugify ) && isset( $form[$field->slugify] ) && !isset( $form[$fieldName] ) ) {
+                    $slug = preg_replace('~[^\\pL\d]+~u', '-', $form[$field->slugify]);
+                    $slug = trim($slug, '-');
+                    // transliterate
+                    if (function_exists('iconv'))
+                    {
+                        $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
                     }
+                    // lowercase
+                    $slug = strtolower($slug);
+                    // remove unwanted characters
+                    $slug = preg_replace('~[^-\w]+~', '', $slug);
+
+                    // ensure it is unique
+                    $stmt = $this->registry->database->query( "select id from mad_model where attribute_key = '" . $fieldName . "' and attribute_value = '" . $slug . "'" );
+                    while( intval( $stmt->rowCount(  ) ) > 0 ) {
+                        $slug .= '-';
+                        $stmt = $this->registry->database->query( "select id from mad_model where attribute_key = '" . $fieldName . "' and attribute_value = '" . $slug . "'" );
+                    }
+
+                    $form[$fieldName] = $slug;
                 }
             }
 

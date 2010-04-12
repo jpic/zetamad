@@ -177,7 +177,7 @@ $(document).ready( function(  ) {
         var tr = $(this).parent().children('table').children('tbody').children('tr:first').clone().appendTo(table);
 
         tr.find('input[type=checkbox]').attr('disabled', 'disabled');
-        tr.find('input[type=hidden]').remove();
+        tr.find('input[type=hidden]').val('');
 
         tr.find('input').each(function() {
             $(this).val('');

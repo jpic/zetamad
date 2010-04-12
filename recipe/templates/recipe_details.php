@@ -128,21 +128,43 @@ a.btn-block:hover { background: #539893; }
 </div>
 
 <div id="recipe-column">
-        <?php if ( $this->object['ingredients'] ): ?>
+        <?php if ( $this->object['ingredients'] ): ?> 
         <div class="block">
                 <h3>Ingr&eacute;dients</h3>
                 <ul>
                     <?php if ( $this->object['ingredients']->isEntity ): ?>
-                        <li><?php $this->e( $this->object['ingredients']['name'] ) ?> : <span class="att"><?php $this->e( $this->object['ingredients']['quantity'] ) ?></span></li>
+                        <li><?php $this->e( $this->object['ingredients']['ingredient'] ) ?> : <span class="att"><?php $this->e( $this->object['ingredients']['quantity'] ) ?></span></li>
                     <?php else: ?>
                         <?php foreach( $this->object['ingredients'] as $ingredient ): ?>
-                            <li><?php $this->e( $ingredient['name'] ) ?> : <span class="att"><?php $this->e( $ingredient['quantity'] ) ?></span></li>
+                            <li><?php $this->e( $ingredient['ingredient'] ) ?> : <span class="att"><?php $this->e( $ingredient['quantity'] ) ?></span></li>
                         <?php endforeach; ?>
                     <?php endif ?>
                 </ul>
                 <a class="btn-block" href="#">Voir les produits</a>
         </div>
         <?php endif ?>
+
+        <?php if ( isset( $this->object['products'] ) ): ?>
+    	<div class="block">
+    		<h3>Produits de la recette</h3>
+    		<ul>
+                <?php 
+                if ( ! $this->object['products'] instanceof madBase )
+                    $this->object['products'] = new madBase( array( $this->object['products'] ) );
+                foreach( $this->object['products'] as $productId ): ?>
+    	        
+                
+                <?php
+                $product = new Product(intval( $productId ), true, 2);
+                ?>
+    			<li><a href="/mm/product.php?id_product=<?php echo $productId; ?>"><?php echo $product->name ?></a></li>
+                
+                
+                <?php endforeach ?>
+    		</ul>
+    	</div>
+    <?php endif ?>
+
         <!--
         <div class="block">
                 <h3>Produits de la recette</h3>

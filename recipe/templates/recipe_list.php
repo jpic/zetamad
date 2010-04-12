@@ -50,6 +50,9 @@
             <?php echo $object['profile']['name'] ?> &bull;
             </a>
         </p>
+
+        <a href="<?php echo $this->generateUrl( 'profile.edit', $object['profile'] ) ?>">Modifier le profil</a>
+        <a href="<?php echo $this->generateUrl( 'recipe.edit', $object ) ?>">Modifier la recette</a>
 	</div>
 </div>
 <?php $forloopCounter++; endforeach; ?>

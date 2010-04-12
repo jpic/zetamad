@@ -76,7 +76,7 @@ return array (
         array (
           'namespace' => 'ingredient',
         ),
-        'valueAttribute' => 'id',
+        'valueAttribute' => 'name',
         'displayAttribute' => 'name',
       ),
       'application' => 'recipe',
