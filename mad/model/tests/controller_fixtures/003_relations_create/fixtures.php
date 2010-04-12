@@ -46,16 +46,18 @@ $request->variables['recipe']['ingredients'][1]['quantity'] = 'much';
 $form = new madBase( array( 
     'title'     => 'tiponch',
     'namespace' => 'recipe',
-    'id'        => 'NOTEST',
+    'id'        => '1FDB6574-3E40-11DF-8BB4-1B969F5BE980',
     'ingredients' => new madBase( array( 
         new madBase( array( 
-            'id'       => 'NOTEST',
+            'id'       => '2FDB6574-3E40-11DF-8BB4-1B969F5BE980',
             'name'     => 'lime',
             'quantity' => 'few',
+            'namespace' => 'ingredient',
         ) ),
         new madBase( array( 
-            'id'       => 'NOTEST',
+            'id'       => '3FDB6574-3E40-11DF-8BB4-1B969F5BE980',
             'name'     => 'rhum',
+            'namespace' => 'ingredient',
             'quantity' => 'much',
         ) ),       
     ) ),

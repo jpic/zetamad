@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-    <mad_model id_attribute="3" 
-        id="1FDB6574-3E40-11DF-8BB4-1B969F5BE980" 
-        attribute_key="ingredients" 
-        attribute_value="2FDB6574-3E40-11DF-8BB4-1B969F5BE980" />
+    <mad_model id_attribute="6"
+        id="2FDB6574-3E40-11DF-8BB4-1B969F5BE980"
+        attribute_key="namespace" 
+        attribute_value="ingredient" />
     <mad_model id_attribute="6"
         id="2FDB6574-3E40-11DF-8BB4-1B969F5BE980"
         attribute_key="quantity" 
@@ -28,6 +28,14 @@
         id="1FDB6574-3E40-11DF-8BB4-1B969F5BE980" 
         attribute_key="title" 
         attribute_value="tiponch" />
+    <mad_model id_attribute="3" 
+        id="1FDB6574-3E40-11DF-8BB4-1B969F5BE980" 
+        attribute_key="ingredients" 
+        attribute_value="2FDB6574-3E40-11DF-8BB4-1B969F5BE980" />
+    <mad_model id_attribute="7"
+        id="3FDB6574-3E40-11DF-8BB4-1B969F5BE980"
+        attribute_key="namespace" 
+        attribute_value="ingredient" />
     <mad_model id_attribute="4" 
         id="1FDB6574-3E40-11DF-8BB4-1B969F5BE980" 
         attribute_key="ingredients" 

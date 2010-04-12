@@ -164,18 +164,6 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
         return $dataset;
     }
 
-    protected function copyNOTEST( $from, $to ) {
-        foreach( $to as $key => $value ) {
-            if ( $value == 'NOTEST' ) {
-                $to[$key] = $from[$key];
-            }
-
-            if ( $value instanceof madBase ) {
-                $this->copyNOTEST( $from[$key], $to[$key] );
-            }
-        }
-    }
-
     /**
      * @dataProvider formProvider
      */
@@ -192,9 +180,6 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
         $result = $controller->createResult(  );
         $actualForm = $result->variables['form'];
 
-        // hard set the expected form id, for "create" tests
-        $this->copyNOTEST( $actualForm, $expectedForm );
-        
         // test result relevance
         $expectedForm->ksort(  );
         $actualForm->ksort(  );
@@ -271,37 +256,6 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
                 array(
                     0,
                     1,
-                ),
-            ),
-            array(
-                array(
-                    new madBase( array( 
-                        'origin' => 'france',
-                        'withRhum' => 'no',
-                    ) ),
-                    new madBase( array( 
-                        'origin' => 'france',
-                        'withRhum' => 'yes',
-                    ) ),
-                    new madBase( array( 
-                        'origin' => 'spain',
-                        'withRhum' => 'yes',
-                    ) ),
-                    new madBase( array( 
-                        'origin' => 'spain',
-                        'withRhum' => 'no',
-                    ) ),
-                ),
-                array(
-                    'filter__origin' => 'spain',
-                    'filter__withRhum' => 'no',
-                ),
-                new madBase( array( 
-                    'origin' => 'spain',
-                    'withRhum' => 'no',
-                ) ),
-                array(
-                    3,
                 ),
             ),
         );

@@ -4,6 +4,13 @@
         id="1FDB6574-3E40-11DF-8BB4-1B969F5BE980" 
         attribute_key="namespace" 
         attribute_value="recipe" />
+
+
+    <mad_model id_attribute="8"
+        id="3FDB6574-3E40-11DF-8BB4-1B969F5BE980"
+        attribute_key="namespace" 
+        attribute_value="ingredient" />
+
     <mad_model id_attribute="4" 
         id="1FDB6574-3E40-11DF-8BB4-1B969F5BE980" 
         attribute_key="ingredients" 

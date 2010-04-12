@@ -26,7 +26,7 @@ $request->variables['recipe']['title'] = 'tiponch';
 $form = new madBase( array( 
     'title'     => 'tiponch',
     'namespace' => 'recipe',
-    'id'        => 'NOTEST',
+    'id'        => '1FDB6574-3E40-11DF-8BB4-1B969F5BE980',
 ) );
 $form->name = 'recipe';
 

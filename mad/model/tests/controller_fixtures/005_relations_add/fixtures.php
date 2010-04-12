@@ -57,16 +57,19 @@ $form = new madBase( array(
             'name'     => 'lime',
             'id'       => '2FDB6574-3E40-11DF-8BB4-1B969F5BE980',
             'quantity' => 'few',
+            'namespace' => 'ingredient',
         ) ),
         new madBase( array( 
             'name'     => 'rhum',
             'id'       => '3FDB6574-3E40-11DF-8BB4-1B969F5BE980',
             'quantity' => 'not that much',
+            'namespace' => 'ingredient',
         ) ),       
         new madBase( array( 
             'name'     => 'sugar',
-            'id'       => '4FDB6574-3E40-11DF-8BB4-1B969F5BE980',
             'quantity' => 'not that much',
+            'namespace' => 'ingredient',
+            'id'       => '4FDB6574-3E40-11DF-8BB4-1B969F5BE980',
         ) ),       
     ) ),
 ) );
