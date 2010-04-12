@@ -26,29 +26,9 @@ class madModel {
      */
     private $db = null;
 
-    const DECODE_ID_ENTITY = '
-        CONCAT(
-            HEX(LEFT(id,4))
-            , "-"
-            , HEX(MID(id,5,2))
-            , "-"
-            , HEX(MID(id,7,2))
-            , "-"
-            , HEX(MID(id,9,2))
-            , "-"
-            , HEX(RIGHT(id,6))
-         )
-    ';
+    const DECODE_ID_ENTITY = 'id';
 
-    const ENCODE_ID_ENTITY = '
-        CONCAT(
-            UNHEX(LEFT(:id,8))
-            , UNHEX(MID(:id,10,4))
-            , UNHEX(MID(:id,15,4))
-            , UNHEX(MID(:id,20,4))
-            , UNHEX(RIGHT(:id,12))
-        )
-    ';
+    const ENCODE_ID_ENTITY = ':id';
 
     /**
      * Set the database instance private property.
