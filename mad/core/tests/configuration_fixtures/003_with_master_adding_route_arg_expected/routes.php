@@ -7,7 +7,10 @@ return array (
       'arguments' => 
       array (
         'filter__foo' => 'bar',
-        'filter__namespace' => 'recipe',
+        'filter' => 
+        array (
+          'namespace' => 'recipe',
+        ),
       ),
       'application' => 'MASTER',
       'controller' => 'madCrud',
@@ -21,7 +24,10 @@ return array (
       'rails' => '/list',
       'arguments' => 
       array (
-        'filter__namespace' => 'profile',
+        'filter' => 
+        array (
+          'namespace' => 'profile',
+        ),
       ),
       'application' => 'profiles',
     ),

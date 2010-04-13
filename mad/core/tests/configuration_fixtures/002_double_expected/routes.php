@@ -9,7 +9,10 @@ return array (
       'rails' => '/list',
       'arguments' => 
       array (
-        'filter__namespace' => 'profile',
+        'filter' => 
+        array (
+          'namespace' => 'profile',
+        ),
       ),
       'application' => 'profiles',
     ),
@@ -20,7 +23,10 @@ return array (
       'rails' => '/list',
       'arguments' => 
       array (
-        'filter__namespace' => 'recipe',
+        'filter' => 
+        array (
+          'namespace' => 'recipe',
+        ),
       ),
       'application' => 'recipe',
     ),

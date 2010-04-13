@@ -8,7 +8,10 @@ return array (
       'args' => 
       array (
         'filter__foo' => 'bar',
-        'filter__namespace' => 'recipe',
+        'filter' => 
+        array (
+          'namespace' => 'recipe',
+        ),
       ),
       'application' => 'MASTER',
       'action' => 'list',
@@ -21,7 +24,10 @@ return array (
       'rails' => '/list',
       'args' => 
       array (
-        'filter__namespace' => 'profile',
+        'filter' => 
+        array (
+          'namespace' => 'profile',
+        ),
       ),
       'application' => 'profiles',
     ),

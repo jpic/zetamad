@@ -368,7 +368,7 @@ class madCoreConfiguration {
 
     public function getClassApplicationName( $className ) {
         foreach( $this->settings['applications'] as $name => $settings ) {
-            if ( in_array( $className, $settings['classes'] ) ) {
+            if ( isset( $settings['classes'] ) && in_array( $className, $settings['classes'] ) ) {
                 return $name;
             }
         }
