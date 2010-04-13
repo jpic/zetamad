@@ -143,7 +143,7 @@ class madModelController extends ezcMvcController {
                 return true;
             }
 
-            if ( $field->widget->class == 'file' && $request->protocol == 'http-post' ) {
+            if ( $field->widget->class == 'file' && $this->request->protocol == 'http-post' ) {
                 $uploadDir = APP_PATH . DIRECTORY_SEPARATOR . 'upload';
 
                 $file = $this->request->files[str_replace( '.', '_', $form->name )][$name];
@@ -161,6 +161,10 @@ class madModelController extends ezcMvcController {
                         //$field->errors['required'] = 'no file';
                     //}
 
+                    return true;
+                }
+
+                if ( !file_exists( $file->tmpPath ) ) { // check if a file was already moved
                     return true;
                 }
 
@@ -468,7 +472,6 @@ class madModelController extends ezcMvcController {
                         (array) $form
                     ) 
                 );
-
             }
         }
 
