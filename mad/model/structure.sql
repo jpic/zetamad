@@ -6,5 +6,5 @@ CREATE TABLE `mad_model` (
       `id` varchar(44) default NULL,
       `attribute_key` varchar(50) NOT NULL,
       `attribute_value` text
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDb DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
