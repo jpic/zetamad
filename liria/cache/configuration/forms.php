@@ -31,18 +31,6 @@ return array (
           array (
             'class' => 'file',
           ),
-          'required' => true,
-        ),
-        'origin' => 
-        array (
-          'label' => 'origine',
-          'help' => 'le pays ou la culture d\'origine de votre recette (latine, france)',
-          'widget' => 
-          array (
-            'class' => 'autocomplete',
-            'route' => 'recipe.originAutocomplete',
-            'attribute' => 'origin',
-          ),
         ),
         'summary' => 
         array (
@@ -113,7 +101,7 @@ return array (
         'tools' => 
         array (
           'label' => 'matériel',
-          'help' => 'saisissez des noms d\'outls libres',
+          'help' => 'saisissez des noms d\'outils nécessaires à la préparation de la recette',
           'widget' => 
           array (
             'class' => 'multiple values',
@@ -122,7 +110,7 @@ return array (
       ),
       'formsets' => 
       array (
-        'ingredients' => 
+        'ingredientQuantities' => 
         array (
           'label' => 'ingrédients et quantités',
           'fields' => 
@@ -133,106 +121,12 @@ return array (
             ),
             'ingredient' => 
             array (
-              'label' => 'nom',
-              'required' => true,
-              'widget' => 
-              array (
-                'class' => 'autocomplete',
-                'route' => 'recipe.ingredientAutocomplete',
-                'displayAttribute' => 'name',
-                'actualAttribute' => 'name',
-              ),
+              'label' => 'nom de l\'ingrédient',
             ),
             'quantity' => 
             array (
               'label' => 'quantité',
             ),
-          ),
-        ),
-      ),
-    ),
-    'recipe.ingredient' => 
-    array (
-      'label' => 'enregistrement d\'ingrédient',
-      'fields' => 
-      array (
-        'namespace' => 
-        array (
-          'value' => 'ingredient',
-        ),
-        'name' => 
-        array (
-          'label' => 'nom',
-          'required' => true,
-        ),
-      ),
-    ),
-    'profile.profile' => 
-    array (
-      'label' => 'enregistrement de profil',
-      'fields' => 
-      array (
-        'namespace' => 
-        array (
-          'value' => 'profile',
-        ),
-        'name' => 
-        array (
-          'label' => 'nom du profil',
-          'required' => true,
-        ),
-        'slug' => 
-        array (
-          'slugify' => 'name',
-        ),
-        'introduction' => 
-        array (
-          'label' => 'texte d\'introduction',
-          'widget' => 
-          array (
-            'class' => 'textarea',
-          ),
-          'required' => true,
-        ),
-        'presentation' => 
-        array (
-          'label' => 'texte de presentation',
-          'widget' => 
-          array (
-            'class' => 'textarea',
-          ),
-        ),
-        'picture' => 
-        array (
-          'label' => 'photo',
-          'widget' => 
-          array (
-            'class' => 'file',
-          ),
-          'required' => true,
-        ),
-        'email' => 
-        array (
-          'label' => 'email',
-          'required' => true,
-        ),
-      ),
-      'multipleFields' => 
-      array (
-        'sites' => 
-        array (
-          'label' => 'sites internets',
-          'widget' => 
-          array (
-            'class' => 'multiple values',
-          ),
-        ),
-        'products' => 
-        array (
-          'label' => 'produits favoris',
-          'widget' => 
-          array (
-            'class' => 'multiple values',
           ),
         ),
       ),

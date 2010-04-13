@@ -26,11 +26,6 @@ return array (
     'profile' => 
     array (
       'routePrefix' => '/profile',
-      'path' => '../profile',
-      'classes' => 
-      array (
-        0 => 'madProfileController',
-      ),
     ),
     'ci' => 
     array (
