@@ -43,10 +43,51 @@ class madModelController extends ezcMvcController {
         return $result;
     }
 
+    /**
+     * Returns the configuration corresponding to the form name.
+     * 
+     * @param madBase $form 
+     * @return array
+     */
     protected function getFormOptions( madBase $form ) {
         return $this->registry->configuration->settings['forms'][$form->name];
     }
 
+    /**
+     * Processes options for a named field of a form.
+     *
+     * If $field has a 'value' option, then $form[$name] is set to 
+     * $field->value and the function returns. Typically this may be used for a 
+     * namespace attribute which should have an arbitary value.
+     * 
+     * If a field has a widget option with a class option set to 'autocomplete' 
+     * then it will set two widget options: actualValue and displayValue.
+     * The autocomplete has two input fields, a hidden one with the actual 
+     * value to save and a normal text input which is supposed to be convenient 
+     * for the user.
+     * An autocomplete widget *needs* a "route" option which should contain the 
+     * name of the route which will provide results. This controller also 
+     * provides an "autocomplete" action, see docblock of method 
+     * doAutocomplete() for more details.
+     * There are two ways to configure the autocomplete widget behaviour. If 
+     * you set the "attribute" option then it will just use the text value for 
+     * the displayValue and actualValue options, making the widget just behing 
+     * a basic helper for the user to fill the form.
+     * If the "actualAttribute" and "displayAttribute" are set, then it will 
+     * assume that $form[$name] is a related object, and use the value of its 
+     * attribute with name actualAttribute for the actualValue and its 
+     * attribute with name displayAttribute for the display field.
+     *
+     * If the field widget class is "file" then the uploaded file will be 
+     * copied to APP_PATH/upload, and its relative path will be set to $form[$name]. 
+     * If a file with that name already exists, it will append an underscore to 
+     * its basename.
+     *
+     * @param madBase $form 
+     * @param mixed $name 
+     * @param madBase $field 
+     * @return void
+     */
     public function processFormFieldOptions( madBase $form, $name, madBase $field ) {
         // hard coded values
         if ( isset( $field->value ) ) {
@@ -138,6 +179,14 @@ class madModelController extends ezcMvcController {
         }
     }
 
+    /**
+     * Monkey fix formsets, multiFields, prepare fields, and call 
+     * processFormFieldOptions() on every fields - be it normal form fields, 
+     * formset fields or multipleFields.
+     * 
+     * @param madBase $form 
+     * @return void
+     */
     public function processOptions( madBase $form ) {
         foreach( $form->fields->options as $name => $field ) {
             $this->processFormFieldOptions( $form, $name, $field );
@@ -291,6 +340,72 @@ class madModelController extends ezcMvcController {
         }
     }
 
+    /**
+     * Generic and configurable form action.
+     * 
+     * A madBase is instanciated which represents the current data to edit. Its 
+     * options are set from the result of getFormOptions() method. It will use 
+     * the configuration by default, see the method docblock for more details.
+     *
+     * If the request as an 'id' parameter, then data is loaded into the form 
+     * object.
+     *
+     * Form options are then processed by processOptions() method. It should 
+     * fix inconsistencies and call processFormFieldOptions() for each field, 
+     * be it multiple fields, formset fields and regular fields. See the method 
+     * docblock for more details.
+     *
+     * If the request HTTP method is POST, then some request variables will be 
+     * merged to the form object, for example if the form name is "fooApp.barForm" 
+     * then request variables in the "fooApp_barForm" are merged in the form. 
+     * So:
+     * <code>
+     * $form = new madBase( array( 
+     *     'foo' => 'bar',
+     * ) );
+     * $form->name = 'fooApp.barForm';
+     *
+     * $request = array( 
+     *     'fooApp_barForm' => array( 
+     *         'foo' => 'test'
+     *     ),
+     * );
+     *
+     * // $request['fooApp_barForm'] will be merged into $form and $form['foo'] 
+     * // will be set to 'test'.
+     * </code>
+     *
+     * If the request HTTP method is POST, then the controller method 
+     * processDeleteFields() will handle and remove special input field names 
+     * which contain word "DELETE". They are used for multipleFields and 
+     * formsets, allowing to delete values. See docblock for method 
+     * processDeleteFields() for details.
+     *
+     * If the request HTTP method is POST, the madBase method clean() will be 
+     * called to remove all empty values. See madBase clean() method for 
+     * details.
+     *
+     * If the request HTTP method is POST, the validate() method will be 
+     * called. It is responsible for filling the $field->errors array option 
+     * and switching $form->valid to false if any error is found. See validate()
+     * docblock for details.
+     *
+     * If the request HTTP method is POST, then processOptions() will be called 
+     * again to process the new data.
+     *
+     * If the request HTTP method is POST, then the madBase method 
+     * dirtyAttributes() will be called to ensure that the the $form state is 
+     * saveable, and badly die otherwise.
+     *
+     * If the request HTTP method is POST, and that the form is still valid 
+     * after being merged, processed, cleaned .... Then $form is saved and the 
+     * successRoute option is used to define the redirect URL.
+     *
+     * Otherwise, the visitor is not redirected and the form is displayed 
+     * again.
+     *
+     * @return ezcMvcResult
+     */
     public function doForm(  ) {
         $result       = new ezcMvcResult(  );
 
