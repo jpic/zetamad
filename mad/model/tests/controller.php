@@ -81,17 +81,6 @@ class madModelMock extends madModel {
     public function getNextEntityId(  ) {
         return next( $this->ids );
     }
-
-    /**
-     * Avdance internal uuid pointer if $data already have an id to even out
-     */
-    //public function save( madBase $data, $useTransaction = true ) {
-        //if ( isset( $data['id'] ) ) {
-            //$this->getNextEntityId(  );
-        //}
-
-        //parent::save( $data, $useTransaction );
-    //}
 }
 
 /**
