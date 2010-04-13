@@ -15,22 +15,14 @@ return array (
         array (
           'slugify' => 'title',
         ),
-        'profile' => 
-        array (
-          'label' => 'chef',
-          'widget' => 
-          array (
-            'class' => 'autocomplete',
-            'route' => 'profile.autocomplete',
-            'displayAttribute' => 'name',
-            'actualAttribute' => 'id',
-            'createRoute' => 'profile.create',
-          ),
-        ),
         'title' => 
         array (
           'label' => 'titre de la recette',
           'required' => true,
+        ),
+        'source' => 
+        array (
+          'label' => 'source',
         ),
         'picture' => 
         array (
@@ -74,7 +66,7 @@ return array (
           'help' => 'décrivez les étapes de préparation',
           'widget' => 
           array (
-            'class' => 'wysiwyg',
+            'class' => 'textarea',
           ),
         ),
         'restTime' => 
@@ -100,9 +92,28 @@ return array (
       ),
       'multipleFields' => 
       array (
-        'products' => 
+        'ingredientProducts' => 
         array (
-          'label' => 'produits de la recette',
+          'label' => 'ingrédients du catalogue',
+          'help' => 'saisissez des numéros de produit du catalogue',
+          'widget' => 
+          array (
+            'class' => 'multiple values',
+          ),
+        ),
+        'toolProducts' => 
+        array (
+          'label' => 'matériel du catalogue',
+          'help' => 'saisissez des numéros de produit du catalogue',
+          'widget' => 
+          array (
+            'class' => 'multiple values',
+          ),
+        ),
+        'tools' => 
+        array (
+          'label' => 'matériel',
+          'help' => 'saisissez des noms d\'outls libres',
           'widget' => 
           array (
             'class' => 'multiple values',
@@ -113,7 +124,7 @@ return array (
       array (
         'ingredients' => 
         array (
-          'label' => 'ingrédients',
+          'label' => 'ingrédients et quantités',
           'fields' => 
           array (
             'namespace' => 
@@ -128,7 +139,8 @@ return array (
               array (
                 'class' => 'autocomplete',
                 'route' => 'recipe.ingredientAutocomplete',
-                'attribute' => 'name',
+                'displayAttribute' => 'name',
+                'actualAttribute' => 'name',
               ),
             ),
             'quantity' => 
