@@ -36,9 +36,12 @@
 <div class="recipe-block" <?php if( $forloopCounter == count( $this->objectList ) ): ?> style="padding-right: 0;"<?php endif; ?>>
 	<!--<p class="link">remipathier.cookingfor.com</p>-->
 	<div class="recipe-details">
+        <?php if ( isset( $object['picture'] ) ): ?>
 	    <a href="<?php echo $this->generateUrl( 'recipe.details', $object ) ?>">
 		    <img class="picture" width="226" height="226" src="<?php echo $this->getAbsoluteUploadUrl( $object['picture'] ) ?>" />
         </a>
+        <?php endif ?>
+
 		<p class="infos">
 			<a href="<?php echo $this->generateUrl( 'recipe.details', $object ) ?>">
 				<?php echo $object['title']; ?>

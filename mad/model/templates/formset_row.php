@@ -1,4 +1,4 @@
-<tr class="formset_<?php echo $formsetName; ?>_form">
+<tr class="formset_<?php echo $formsetName; ?>_form" valign="top">
     <?php foreach( $formset->fields->options as $name => $field ):
         // skip fields with hard coded value (ie. namespace)
         if ( isset( $field->value ) ) continue;

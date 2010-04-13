@@ -24,6 +24,15 @@
     height:12em;
     width:70%;
 }
+
+table.formset {
+    width: 99%;
+}
+
+.uniForm table.formset  textarea {
+    height:18em;
+    width:99%;
+}
 </style>
 
 <?php $widgets = array(  ) ?>
@@ -178,6 +187,14 @@ $(document).ready( function(  ) {
 
         tr.find('input[type=checkbox]').attr('disabled', 'disabled');
         tr.find('input[type=hidden]').val('');
+
+        tr.find('textarea').each(function() {
+            $(this).val('');
+            $(this).attr('name', $(this).attr('name').replace(/\[0\]/, '['+next+']'));
+            if ( $(this).attr( 'id' ) !== undefined ) {
+                $(this).attr('id', $(this).attr('id').replace(/\[0\]/, '['+next+']'));
+            }
+        });
 
         tr.find('input').each(function() {
             $(this).val('');

@@ -29,7 +29,15 @@ class madCoreViewHandler extends ezcMvcPhpViewHandler {
     }
 
     public function e( $val ) {
-        echo stripslashes( htmlentities( $val ) );
+        echo nl2br( stripslashes( htmlentities( $val, ENT_COMPAT, 'UTF-8' ) ) );
+    }
+
+    public function iterate( $value ) {
+        if ( is_array( $value ) || $value instanceof Traversable ) {
+            return $value;
+        } else {
+            return array( $value );
+        }
     }
 
     static public function dump( $values, $level = 0 ) {

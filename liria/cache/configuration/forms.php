@@ -20,10 +20,6 @@ return array (
           'label' => 'titre de la recette',
           'required' => true,
         ),
-        'source' => 
-        array (
-          'label' => 'source',
-        ),
         'picture' => 
         array (
           'label' => 'photo de la recette',
@@ -32,26 +28,17 @@ return array (
             'class' => 'file',
           ),
         ),
+        'source' => 
+        array (
+          'label' => 'source',
+          'widget' => 
+          array (
+            'class' => 'textarea',
+          ),
+        ),
         'summary' => 
         array (
           'label' => 'résumé',
-          'widget' => 
-          array (
-            'class' => 'textarea',
-          ),
-        ),
-        'comment' => 
-        array (
-          'label' => 'commentaire personnel',
-          'widget' => 
-          array (
-            'class' => 'textarea',
-          ),
-        ),
-        'preparation' => 
-        array (
-          'label' => 'préparation',
-          'help' => 'décrivez les étapes de préparation',
           'widget' => 
           array (
             'class' => 'textarea',
@@ -110,6 +97,29 @@ return array (
       ),
       'formsets' => 
       array (
+        'recipeSteps' => 
+        array (
+          'label' => 'étapes de préparation',
+          'fields' => 
+          array (
+            'namespace' => 
+            array (
+              'value' => 'recipeStep',
+            ),
+            'title' => 
+            array (
+              'label' => 'titre de l\'étape',
+            ),
+            'description' => 
+            array (
+              'label' => 'description de l\'étape',
+              'widget' => 
+              array (
+                'class' => 'textarea',
+              ),
+            ),
+          ),
+        ),
         'ingredientQuantities' => 
         array (
           'label' => 'ingrédients et quantités',

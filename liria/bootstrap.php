@@ -76,12 +76,15 @@ if ( PHP_OS == 'Linux' && !strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
 } else {
     $registry->configuration = madCoreConfiguration::factory( APP_PATH );
 }
-$registry->database = new PDO( 'mysql:host=localhost;dbname=madmodel', 'root' ); #, null, array( PDO::MYSQLI_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')); 
+$registry->database = new PDO( 'mysql:host=localhost;dbname=madmodel', 'root'); # , null, array( PDO::MYSQLI_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')); 
+$registry->database->query( 'set names "UTF-8"' );
 $registry->database->setAttribute( PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 $registry->model = new madModel( $registry->database );
 
 unset( $registry );
 
 // prestashop compat
+require PRESTASHOP_PATH . '/config/config.inc.php';
+$GLOBALS['smarty'] = $smarty;
 Configuration::loadConfiguration(  );
 ?>

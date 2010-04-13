@@ -216,6 +216,7 @@ class madModelController extends ezcMvcController {
                     // there is no data bound to the formset
                     // create an empty formset
                     $emptyFormset = new madBase(  );
+                    $emptyFormset->empty = true;
                     $form[$name]  = new madBase( array( $emptyFormset ) );
                 }
 
@@ -444,16 +445,16 @@ class madModelController extends ezcMvcController {
             // handle special field names with "DELETE"
             $this->processDeleteFields( $form );
 
-            // clean empty/null values
-            $form->clean();
+            // process options again with the new data, autocomplete, hard 
+            // coded values, slugs ...
+            $this->processOptions( $form );
+
+            // remove everything we don't want to save
+            $this->clean( $form );
 
             // check for errors
             // commented because it doesn't work well
             // $this->validate( $form );
-
-            // process options again with the new data, autocomplete, hard 
-            // coded values, slugs ...
-            $this->processOptions( $form );
 
             // check if something is *really* wrong ( prorgamming error )
             $dirty = $form->dirtyAttributes(  );
@@ -478,6 +479,39 @@ class madModelController extends ezcMvcController {
         // add the form to result variables for reuse in the template
         $result->variables['form'] = $form;
         return $result;
+    }
+
+    public function clean( madBase $form ) {
+        // do normal clean, to wipe out empty values
+        $form->clean(  );
+
+        // remove any formset which only has hard coded value,
+        // thus: no input
+
+        if ( isset( $form->formsets ) ) {
+            foreach( $form->formsets->options as $name => $formset ) {
+                $unst = array(  );
+
+                foreach( $form[$name] as $boundFormsetKey => $boundFormset ) {
+                    $kill = true;
+                    foreach( $boundFormset as $key => $value ) {
+                        if ( !isset( $formset->fields->$key->value ) ) {
+                            $kill = false;
+                        }
+                    }
+                    if ( $kill ) {
+                        $unst[] = $boundFormsetKey;
+                    }
+                }
+
+                foreach( $unst as $key ) {
+                    unset( $form[$name][$key] );
+                }
+            }
+        }
+
+        // do normal clean, to wipe out empty formset containers
+        $form->clean(  );
     }
 
     public function doAttributeAutocomplete(  ) {
