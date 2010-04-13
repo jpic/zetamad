@@ -79,18 +79,22 @@ a.btn-block:hover { background: #539893; }
                 </div>
                 -->
                 <div class="recipe-author">
+                        <?php if ( isset( $this->object['profile'] ) ): ?>
                         <p class="author-name"><?php $this->e( $this->object['profile']['name'] ) ?></p>
                         <p class="author-description">
                                 <img class="author-photo" src="<?php echo $this->getAbsoluteUploadUrl( $this->object['profile']['picture'] ); ?>" width="87" height="87" title="Photo profil X" />
                                 <?php $this->e( $this->object['profile']['introduction'] ) ?>
                         </p>
                         <a href="<?php echo $this->generateUrl( 'profile.details', $this->object['profile'] ) ?>" class="btn-block" style="width: 100%;">Voir le profil</a>
+                        <?php endif ?>
                 </div>
         </div>
         <div class="recipe-right">
                 <div class="recipe-header">
                         <h2><?php $this->e( $this->object['title'] ) ?></h2>
+                        <?php if ( isset( $this->object['profile'] ) ): ?>
                         <p class="recipe-author">Par&nbsp;<a href="<?php echo $this->generateUrl( 'profile.details', $this->object['profile'] ) ?>"><?php $this->e( $this->object['profile']['name'] ) ?></a></p>
+                        <?php endif ?>
                         <p class="recipe-intro">
                             <?php $this->e( $this->object['summary'] ) ?>
                         </p>

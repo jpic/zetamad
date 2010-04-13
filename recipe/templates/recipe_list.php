@@ -45,13 +45,17 @@
 			</a>
 		</p>
 
+        <?php if ( isset( $object['profile'] ) ): ?>
 		<p class="author">
             <a href="<?php echo $this->generateUrl( 'profile.details', $object['profile'] ) ?>">
             <?php echo $object['profile']['name'] ?> &bull;
             </a>
         </p>
+        <?php endif ?>
 
+        <?php if ( isset( $object['profile'] ) ): ?>
         <a href="<?php echo $this->generateUrl( 'profile.edit', $object['profile'] ) ?>">Modifier le profil</a>
+        <?php endif ?>
         <a href="<?php echo $this->generateUrl( 'recipe.edit', $object ) ?>">Modifier la recette</a>
 	</div>
 </div>
