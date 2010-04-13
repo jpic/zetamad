@@ -62,8 +62,6 @@ return array (
         1 => 'madModel',
         2 => 'madModelException',
         3 => 'madModelExceptedId',
-        4 => 'CKEditor',
-        5 => 'CKEditor',
       ),
     ),
   ),
