@@ -60,6 +60,10 @@ class madModelController extends ezcMvcController {
      * $field->value and the function returns. Typically this may be used for a 
      * namespace attribute which should have an arbitary value.
      * 
+     * If a field has a 'slugify' option which corresponds to an attribute key, 
+     * then that attribute value will be slugified and set to $form[$name], if 
+     * it does not have a valeu.
+     *
      * If a field has a widget option with a class option set to 'autocomplete' 
      * then it will set two widget options: actualValue and displayValue.
      * The autocomplete has two input fields, a hidden one with the actual 
@@ -95,66 +99,6 @@ class madModelController extends ezcMvcController {
             return;
         }
 
-        // autocomplete have an "hidden" value
-        if ( isset( $field->widget ) && isset( $field->widget->class ) ) {
-            if ( $field->widget->class == 'autocomplete' ) {
-                if ( !isset( $form[$name] ) ) {
-                    $field->widget->actualValue  = '';
-                    $field->widget->displayValue = '';
-                } else {
-                    if ( isset( $field->widget->attribute ) ) {
-                        $field->widget->actualValue  = $form[$name];
-                        $field->widget->displayValue = $form[$name];
-                    } else { // assume relation
-                        $field->widget->actualValue  = $form[$name][$field->widget->actualAttribute];
-                        $field->widget->displayValue = $form[$name][$field->widget->displayAttribute];
-                    }
-                }
-
-                return true;
-            }
-
-            if ( $field->widget->class == 'file' ) {
-                $uploadDir = APP_PATH . DIRECTORY_SEPARATOR . 'upload';
-
-                $file = $this->request->files[str_replace( '.', '_', $form->name )][$name];
-
-                if ( !$file->tmpPath ) { // check if a file was actually submitted
-                    if ( isset( $field->required ) && $field->required == true && !( isset( $form[$name] ) && $form[$name] ) ) {
-                        // create the error if this field is required
-                        $form->valid = false;
-                        
-                        if ( !isset( $field->errors ) ) {
-                            $field->errors = new madBase(  );
-                        }
-
-                        $field->errors['required'] = 'no file';
-                    }
-
-                    continue;
-                }
-
-                $relative = $file->name;
-                $uploadTo = $uploadDir . DIRECTORY_SEPARATOR . $relative;
-                
-                $i = 1;
-                while ( file_exists( $uploadTo ) ) {
-                    $info = pathinfo( $uploadTo );
-                    $relative = $info['filename'] . str_repeat( '_', $i ) . '.' . $info['extension'];
-                    $uploadTo = $uploadDir . DIRECTORY_SEPARATOR . $relative;
-                    $i++;
-                }
-                unset( $i );
-
-                if ( !move_uploaded_file( $file->tmpPath, $uploadTo ) ) {
-                    throw new Exception( "Could not move uploaded file to $uploadTo" );
-                }
-
-                $form[$name] = $relative;
-                return true;
-            }
-        }
-
         if ( isset( $field->slugify ) && isset( $form[$field->slugify] ) && !isset( $form[$name] ) ) {
             $slug = preg_replace('~[^\\pL\d]+~u', '-', $form[$field->slugify]);
             $slug = trim($slug, '-');
@@ -176,6 +120,69 @@ class madModelController extends ezcMvcController {
             }
 
             $form[$name] = $slug;
+
+            return true;
+        }
+
+        // autocomplete have an "hidden" value
+        if ( isset( $field->widget ) && isset( $field->widget->class ) ) {
+            if ( $field->widget->class == 'autocomplete' ) {
+                if ( !isset( $form[$name] ) ) {
+                    $field->widget->actualValue  = '';
+                    $field->widget->displayValue = '';
+                } else {
+                    if ( isset( $field->widget->attribute ) ) {
+                        $field->widget->actualValue  = $form[$name];
+                        $field->widget->displayValue = $form[$name];
+                    } else { // assume relation
+                        $field->widget->actualValue  = $form[$name][$field->widget->actualAttribute];
+                        $field->widget->displayValue = $form[$name][$field->widget->displayAttribute];
+                    }
+                }
+
+                return true;
+            }
+
+            if ( $field->widget->class == 'file' && $request->protocol == 'http-post' ) {
+                $uploadDir = APP_PATH . DIRECTORY_SEPARATOR . 'upload';
+
+                $file = $this->request->files[str_replace( '.', '_', $form->name )][$name];
+
+                if ( !$file->tmpPath ) { // check if a file was actually submitted
+                    // todo: move to validate(  );
+                    //if ( isset( $field->required ) && $field->required == true && !( isset( $form[$name] ) && $form[$name] ) ) {
+                        //// create the error if this field is required
+                        //$form->valid = false;
+                        
+                        //if ( !isset( $field->errors ) ) {
+                            //$field->errors = new madBase(  );
+                        //}
+
+                        //$field->errors['required'] = 'no file';
+                    //}
+
+                    return true;
+                }
+
+                $relative = $file->name;
+                $uploadTo = $uploadDir . DIRECTORY_SEPARATOR . $relative;
+                
+                $i = 1;
+                while ( file_exists( $uploadTo ) ) {
+                    $info = pathinfo( $uploadTo );
+                    $relative = $info['filename'] . str_repeat( '_', $i ) . '.' . $info['extension'];
+                    $uploadTo = $uploadDir . DIRECTORY_SEPARATOR . $relative;
+                    $i++;
+                }
+                unset( $i );
+
+                if ( !move_uploaded_file( $file->tmpPath, $uploadTo ) ) {
+                    throw new Exception( "Could not move uploaded file to $uploadTo" );
+                }
+
+                $form[$name] = $relative;
+                return true;
+            }
         }
     }
 
@@ -300,7 +307,6 @@ class madModelController extends ezcMvcController {
     }
 
     public function processDeleteFields( madBase $form ) {
-        // handle delete of related objects
         if ( isset( $form->formsets ) ) {
             foreach( $form->formsets->options as $name => $formset ) {
                 $deletes = array(  );
@@ -438,7 +444,8 @@ class madModelController extends ezcMvcController {
             $form->clean();
 
             // check for errors
-            $this->validate( $form );
+            // commented because it doesn't work well
+            // $this->validate( $form );
 
             // process options again with the new data, autocomplete, hard 
             // coded values, slugs ...
@@ -449,7 +456,7 @@ class madModelController extends ezcMvcController {
             if ( $dirty !== false ) {
                 var_dump( $dirty );
 
-            } elseif( $form->valid ) { // save if there is no errors
+            } else { // save if there is no errors
                 $this->registry->model->save( $form );
 
                 // redirect to successRoute
