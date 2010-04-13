@@ -495,7 +495,7 @@ class madModelController extends ezcMvcController {
                 foreach( $form[$name] as $boundFormsetKey => $boundFormset ) {
                     $kill = true;
                     foreach( $boundFormset as $key => $value ) {
-                        if ( !isset( $formset->fields->$key->value ) ) {
+                        if ( !isset( $formset->fields->$key ) || !isset( $formset->fields->$key->value ) ) {
                             $kill = false;
                         }
                     }
