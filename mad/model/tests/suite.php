@@ -9,6 +9,7 @@
 
 require 'model.php';
 require 'controller.php';
+require 'query.php';
 
 /**
  * @package MadModel
@@ -20,6 +21,7 @@ class madModelSuite extends PHPUnit_Framework_TestSuite
     {
         parent::__construct();
         $this->setName("Model");
+        $this->addTest( madQueryTest::suite(  ) );
         $this->addTest( madModelTest::suite() );
         $this->addTest( madModelControllerTest::suite() );
     }
@@ -29,5 +31,6 @@ class madModelSuite extends PHPUnit_Framework_TestSuite
         $return = new madModelSuite();
         return $return;
     }
+
 }
 ?>
