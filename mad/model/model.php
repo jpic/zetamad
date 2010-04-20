@@ -24,27 +24,31 @@ class madModel {
      * 
      * @var PDO
      */
-    private $db = null;
+    private $pdo = null;
 
     const DECODE_ID_ENTITY = 'id';
 
     const ENCODE_ID_ENTITY = ':id';
 
+    public $coreConfiguration = array(  );
+    public $schemaConfiguration = array(  );
+    public $databaseTables = array(  );
+    public $configurationTables = array(  );
+    public $namespaceTableNames = array(  );
+
     /**
      * Set the database instance private property.
      * 
-     * @param PDO $db
-     * @throws madBaseValueException If the $db parameter is not given an 
+     * @param PDO $pdo
+     * @throws madBaseValueException If the $pdo parameter is not given an 
      *                               PDO
      * @return void
      */
-    public function __construct( $db ) {
-        if ( !$db instanceof PDO ) {
-            throw new madBaseValueException( 'db', $db, 
-                'instance of PDO', 'constructor argument' );
-        }
-
-        $this->db = $db;
+    public function __construct( PDO $pdo, $schemaConfiguration = null, $coreConfiguration = null ) {
+        $this->pdo = $pdo;
+        $this->schemaConfiguration = $schemaConfiguration;
+        $this->coreConfiguration   = $coreConfiguration;
+        $this->readConfiguration(  );
     }
 
     public function query( $sql, array $arguments = array(  ) ) {
@@ -58,7 +62,7 @@ class madModel {
         //$final = str_replace( "(", "\(", $final );
         //$final = str_replace( ")", "\)", $final );
         
-        $statement = $this->db->prepare( $sql );
+        $statement = $this->pdo->prepare( $sql );
         $statement->execute( $arguments );
         
         return $statement;
@@ -85,12 +89,10 @@ class madModel {
      * ( Is that really thread-safe? )
      *
      * If $data['id'] is set, then all attributes will be removed from the 
-     * database.
+     * database, recursively, in a transaction.
      *
-     * $data->getState() is called and all attributes are inserted in the 
-     * database.
-     *
-     * $data['id'] is set and $data is returned.
+     * If $data['namespace'] is configured to have an index table, then it will 
+     * be updated as well.
      * 
      * @param madBase $data Model instance to save.
      * @return madBase
@@ -99,14 +101,13 @@ class madModel {
         $args = func_get_args(  );
 
         if( $useTransaction ) {
-            $this->db->beginTransaction();
+            $this->pdo->beginTransaction();
         }
 
         if ( array_key_exists( 'id', $data ) ) {
             $this->delete( $data, false );
         } else {
             $data['id'] = $this->getNextEntityId();
-
         }
 
         foreach( $data as $key => $value ) {
@@ -123,11 +124,25 @@ class madModel {
         }
 
         if ( $useTransaction ) {
-            if ( !$this->db->commit() ) {
+            if ( !$this->pdo->commit() ) {
                 throw new Exception( "Unable to commit" );
             }
         }
             
+        if ( isset( $this->namespaceTableNames[$data['namespace']] ) ) {
+            $tableName = $this->namespaceTableNames[$data['namespace']];
+
+            $updateParts = array(  );
+            foreach( $this->configurationTables[$tableName] as $name => $column ) {
+                $updateParts[$keys] = "$key = :$key";
+            }
+
+            $cacheSql = "INSERT INTO `$tableName` SET ";
+            $cacheSql.= implode( ', ', $updateParts );
+            $cacheSql.= "ON DUPLICATE KEY UPDATE ";
+            unset( $updateParts['id'] );
+            $cacheSql.= implode( ', ', $updateParts );
+        }
 
         return $data;
     }
@@ -197,57 +212,37 @@ class madModel {
     }
 
     /**
-     * Returns an array with all models matching $data. $data['id'] is ignored.
-     *
-     * $data['id'] is unique, it makes no sense to use it to filter a result
-     * set. If you want $data['id'] support, see refresh().
-     *
-     * For example:
-     * <code>
-     * $allRecipes = $model->load( new myRecipeModel );
-     * // $allRecipes will contain the list of all recipes
-     *
-     * $drinks = $model->load( new myRecipeModel( array( 
-     *     'category' => 'Drink'
-     * ) ) );
-     * // $drinks will contain the list of all recipes in the 'Drink' category.
-     * </code>
+     * Load all persistent objects with id in the 'id' returned by the query 
+     * sql.
      * 
-     * @param madBase $data 
-     * @return void
+     * @param string $sql SQL query string which returns the id in first column.
+     * @param array $arguments Array arguments of the query.
+     * @return array madBase instances
      */
-    public function load( madBase $data ) {
-        $arguments = array( );
-
-        // part 1: fetch ids
-        $sql = sprintf( '
-            select 
-                %s as id
-            from mad_model 
-            where ',
-            self::DECODE_ID_ENTITY
-        );
-
-        foreach( $data as $key => $value ) {
-            $sql .= " attribute_key = :$key and attribute_value = :$value or ";
-            $arguments[$key] = $key;
-            $arguments[$value] = $value;
-        }
-
-        $sql = substr( $sql, 0, -4 );
-
-        $statement = $this->query( $sql, $arguments );
+    public function queryLoad( $sql, array $arguments = array(  ) ) {
+        $statement = $this->pdo->prepare( $sql );
+        $statement->setFetchMode( PDO::FETCH_COLUMN );
+        $statement->execute( $arguments );
 
         $ids = array();
-        while( $row = $statement->fetch(  ) ) {
-            $ids[] = str_replace( ':id', "'{$row['id']}'", self::ENCODE_ID_ENTITY );
+        while( $id = $statement->fetchColumn(  ) ) {
+            $ids[] = $id;
         }
 
+        return $this->loadFromIds( $ids );
+    }
+
+    /**
+     * Load all persistent objects which id is in $ids.
+     * 
+     * @param array $ids Array of ids.
+     * @return array madBase instances
+     */
+    public function loadFromIds( array $ids ) {
         if ( !$ids ) {
-            return array();
+            return array(  );
         }
 
-        // part 2: fetch objects
         $sql = sprintf( '
             select 
                 %s as id
@@ -263,7 +258,55 @@ class madModel {
 
         return $this->reduce( $statement->fetchAll(  ), $data );
     }
-    
+
+    /**
+     * Returns an array with all models matching $data. $data['id'] is ignored.
+     *
+     * $data['id'] is unique, it makes no sense to use it to filter a result
+     * set. If you want $data['id'] support, see refresh().
+     *
+     * For example:
+     * <code>
+     * $allRecipes = $model->loadMatching( new myRecipeModel );
+     * // $allRecipes will contain the list of all recipes
+     *
+     * $drinks = $model->loadMatching( new myRecipeModel( array( 
+     *     'category' => 'Drink'
+     * ) ) );
+     * // $drinks will contain the list of all recipes in the 'Drink' category.
+     * </code>
+     * 
+     * @param madBase $data 
+     * @return void
+     */
+    public function loadMatching( madBase $data ) {
+        $arguments = array( );
+
+        // part 1: fetch ids
+        $sql = sprintf( '
+            select 
+                %s as id
+            from mad_model 
+            where ',
+            self::DECODE_ID_ENTITY
+        );
+
+        foreach( $data as $key => $value ) {
+            $sql .= " ( attribute_key = '$key' and attribute_value = :$key ) or ";
+        }
+
+        $sql = substr( $sql, 0, -4 );
+
+        $statement = $this->query( $sql, (array) $data );
+
+        $ids = array();
+        while( $row = $statement->fetch(  ) ) {
+            $ids[] = str_replace( ':id', "'{$row['id']}'", self::ENCODE_ID_ENTITY );
+        }
+
+        return $this->loadFromIds( $ids );
+    }
+
     /**
      * Takes an array of attributes as argument, and return an array of 
      * entities.
@@ -451,5 +494,224 @@ class madModel {
         $statement = $this->query( $sql, array( 
             ':id' => $data['id'],
         ) );
+    }
+
+    public function readDatabase(  ) {
+        // get existing table names
+        $statement = $this->pdo->prepare( 'show tables' );
+        $statement->setFetchMode( PDO::FETCH_NUM );
+        $statement->execute();
+
+        foreach( $statement->fetchAll(  ) as $row ) {
+            $this->databaseTables[$row[0]] = array(  );
+        }
+
+        foreach( array_keys( $this->databaseTables ) as $table ) {
+            if ( strpos( $table, $this->coreConfiguration['prefix'] ) !== 0 ) {
+                continue;
+            }
+
+            foreach( $this->query( 'describe ' . $table )->fetchAll(  ) as $row ) {
+                $fieldNotNull = false;
+                if ( strlen( $row['Null'] ) == 0 || $row['Null'][0] != 'Y' )
+                {
+                    $fieldNotNull = true;
+                }
+    
+                $fieldDefault = null;
+    
+                if ( strlen( $row['Default'] ) != 0 )
+                {
+                    if ( $fieldType == 'boolean' )
+                    {
+                        $fieldDefault = ( $row['Default'] == '0' ) ? false : true;
+                    }
+                    else
+                    {
+                        $fieldDefault = $row['Default'];
+                    }
+                }
+    
+                $fieldIndex = false;
+                switch( $row['Key'] ) {
+                    case 'PRI':
+                        $fieldIndex = 'primary';
+                        break;
+                    case 'MUL':
+                        $fieldIndex = 'index';
+                        break;
+                    case 'UNI':
+                        $fieldIndex = 'unique';
+                        break;
+                }
+    
+                $this->databaseTables[$table][$row['Field']]['type'] = $row['Type'];
+                $this->databaseTables[$table][$row['Field']]['null'] = !$fieldNotNull;
+                $this->databaseTables[$table][$row['Field']]['default'] = $fieldDefault;
+                $this->databaseTables[$table][$row['Field']]['index'] = $fieldIndex;
+
+            }
+        }
+
+        return false;
+    }
+
+    public function readConfiguration(  ) {
+        foreach( $this->schemaConfiguration as $name => $table ) {
+            $tableName = $this->coreConfiguration['prefix'] . str_replace( '.', '_', $name );
+            $namespace = substr( $name, strpos( $name, '.' ) );
+            $this->namespaceTableNames[$namespace] = $tableName;
+
+            foreach( $table as $fieldName => $field ) {
+                $this->configurationTables[$tableName][$fieldName] = $field;
+
+                if ( !isset( $this->configurationTables[$tableName][$fieldName]['null'] ) ) {
+                    $this->configurationTables[$tableName][$fieldName]['null'] = true;
+                }
+
+                if ( !isset( $this->configurationTables[$tableName][$fieldName]['default'] ) ) {
+                    $this->configurationTables[$tableName][$fieldName]['default'] = false;
+                }
+
+                if ( !isset( $this->configurationTables[$tableName][$fieldName]['index'] ) ) {
+                    $this->configurationTables[$tableName][$fieldName]['index'] = false;
+                }
+            }
+
+            if ( !isset( $this->configurationTables[$tableName]['id_index'] ) ) {
+                $this->configurationTables[$tableName]['id_index'] = array( 
+                    'type'    => 'int(12)',
+                    'null'    => false,
+                    'default' => false,
+                    'index'   => 'primary',
+                );
+            }
+
+            if ( !isset( $this->configurationTables[$tableName]['id'] ) ) {
+                $this->configurationTables[$tableName]['id'] = array( 
+                    'type'    => 'varchar(44)',
+                    'null'    => false,
+                    'default' => false,
+                    'index'   => 'unique',
+                );
+            }
+        }
+    }
+
+    public function applyConfiguration(  ) {
+        $this->readDatabase(  );
+
+        foreach( $this->configurationTables as $tableName => $columns ) {
+            if ( !in_array( $tableName, array_keys( $this->databaseTables ) ) ) {
+                $this->query( $this->createTableSql( $tableName ) );
+                continue;
+            }
+
+            foreach( $columns as $columnName => $column ) {
+                if ( !in_array( $columnName, array_keys( $this->databaseTables[$tableName] ) ) ) {
+                    $this->query( $this->addColumnSql( $tableName, $columnName ) );
+                    continue;
+                }
+
+                $alter = false;
+
+                foreach( $column as $key => $value ) {
+                    if ( $value != $this->databaseTables[$tableName][$columnName][$key] ) {
+                        if ( $key == 'index' ) {
+                            # index change
+                            if ( $this->databaseTables[$tableName][$columnName][$key] != false ) {
+                                # drop previous index
+                                $this->query( $this->dropIndexSql( $tableName, $columnName ) );
+                            }
+                            if ( $value != false ) {
+                                # add new index
+                                $this->query( $this->addIndexSql( $tableName, $columnName ) );
+                            }
+                        } else {
+                            $alter = true;
+                        }
+                    }
+                }
+                
+                if ( $alter ) {
+                    $this->query( $this->alterColumnSql( $tableName, $columnName, $key ) );
+                }
+            }
+        }
+    }
+
+    public function createTableSql( $tableName ) {
+        $columnsSql = array(  );
+        $unique     = array(  );
+        $index      = array(  );
+
+        $sql = "CREATE TABLE `$tableName` ( ";
+
+        foreach( $this->configurationTables[$tableName] as $columnName => $column ) {
+            $columnsSql[] = $this->columnSql( $tableName, $columnName );
+
+            if ( $column['primary'] == 'unique' ) {
+                $unique[] = "`$columnName`";
+            }
+
+            if ( $column['primary'] == 'index' ) {
+                $index[] = "`$columnName`";
+            }
+        }
+        
+        $sql.= implode( ', ', $columnsSql );
+
+        if ( $unique ) {
+            $sql .= ', UNIQUE( ' . implode( ',', $unique ) . ' ) ';
+        }
+
+        if ( $index ) {
+            $sql .= ', INDEX( ' . implode( ',', $index ) . ' ) ';
+        }
+
+        $sql.= ' ) ENGINE=InnoDB DEFAULT CHARSET=UTF8';
+
+        return $sql;
+    }
+
+    public function addColumnSql( $tableName, $columnName ) {
+        $sql = "ALTER TABLE `$tableName` ADD " . $this->columnSql( $tableName, $columnName );
+        return $sql;
+    }
+
+    public function alterColumnSql( $tableName, $columnName, $key ) {
+        $sql = "ALTER TABLE `$tableName` MODIFY " . $this->columnSql( $tableName, $columnName );
+        return $sql;
+    }
+
+    public function columnSql( $tableName, $columnName ) {
+        $column    = $this->configurationTables[$tableName][$columnName];
+        $columnSql = "`$columnName` {$column['type']} ";
+
+        if ( !$column['null'] ) {
+            $columnSql .= 'NOT ';
+        }
+        $columnSql .= 'NULL ';
+
+        if ( $column['default'] ) {
+            $columnSql .= "DEFAULT \"{$column['default']}\" ";
+        }
+
+        if ( $column['index'] == 'primary' ) {
+            $columnSql .= "PRIMARY KEY AUTO_INCREMENT ";
+        }
+
+        return $columnSql;
+    }
+
+    public function dropIndexSql( $tableName, $columnName ) {
+        $sql = "ALTER TABLE `$tableName` DROP INDEX $columnName";
+        return $sql;
+    }
+
+    public function addIndexSql( $tableName, $columnName ) {
+        $index = strtoupper( $this->configurationTables[$tableName][$columnName]['primary'] );
+        $sql = "ALTER TABLE `$tableName` ADD $index $columnName";
+        return $sql;
     }
 }

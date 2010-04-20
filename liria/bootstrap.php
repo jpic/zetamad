@@ -27,7 +27,12 @@ set_include_path( join( PATH_SEPARATOR, array(
 //require 'mad/ezc/Base/base.php';
 //require 'mad/ezc/Base/options.php';
 
-if ( PHP_OS == 'Linux'&& !strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
+error_reporting( E_ALL|E_STRICT );
+
+define( 'CACHE_REGEN', PHP_OS == 'Linux' && !strpos( $_SERVER['REQUEST_URI'], 'static' ) );
+define( 'MODEL_REGEN', !strpos( $_SERVER['REQUEST_URI'], 'static' ) );
+
+if ( CACHE_REGEN ) {
     $ocwd = getcwd();
     chdir( dirname( __FILE__ ) );
     # regenerate autoload cache
@@ -59,7 +64,7 @@ function __autoload( $class ) {
     }
 }
 
-if ( PHP_OS == 'Linux' && !strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
+if ( CACHE_REGEN ) {
     $ocwd = getcwd();
     chdir( dirname( __FILE__ ) );
     # regenerate bin
@@ -79,7 +84,11 @@ if ( PHP_OS == 'Linux' && !strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
 $registry->database = new PDO( 'mysql:host=localhost;dbname=madmodel', 'root'); # , null, array( PDO::MYSQLI_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')); 
 $registry->database->query( 'set names "UTF-8"' );
 $registry->database->setAttribute( PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-$registry->model = new madModel( $registry->database );
+$registry->model = new madModel( $registry->database, $registry->configuration->settings['model'], $registry->configuration->settings['core']['model'] );
+
+if ( MODEL_REGEN ) {
+    $registry->model->applyConfiguration(  );
+}
 
 unset( $registry );
 

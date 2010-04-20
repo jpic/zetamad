@@ -59,6 +59,11 @@ return array (
       'classes' => 
       array (
         0 => 'madModelController',
+<<<<<<< HEAD
+        1 => 'madModel',
+        2 => 'madModelException',
+        3 => 'madModelExceptedId',
+=======
         1 => 'madBaseQuery',
         2 => 'madQuery',
         3 => 'madObject',
@@ -68,6 +73,7 @@ return array (
         7 => 'madModelSchema',
         8 => 'CKEditor',
         9 => 'CKEditor',
+>>>>>>> Added indexing support to madModel
       ),
     ),
   ),

@@ -10,6 +10,10 @@ return array (
     array (
       'url' => '/mm/xp/liria/upload',
     ),
+    'model' => 
+    array (
+      'prefix' => 'mad_',
+    ),
   ),
   'comments' => 
   array (
