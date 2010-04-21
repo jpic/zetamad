@@ -7,38 +7,26 @@ return array (
       'rails' => '/recipe/list/',
       'controller' => 'madModelController',
       'action' => 'list',
-      'arguments' => 
-      array (
-        'filter' => 
-        array (
-          'namespace' => 'recipe',
-        ),
-      ),
+      'query' => 'select id from %(recipe_index)s order by updated',
       'application' => 'recipe',
     ),
     'recipe.create' => 
     array (
       'rails' => '/recipe/create/',
-      'controller' => 'madRecipeController',
+      'controller' => 'madModelController',
       'action' => 'form',
-      'arguments' => 
-      array (
-        'template' => 'recipe_form.php',
-        'form' => 'recipe.recipe',
-        'successRoute' => 'recipe.details',
-      ),
+      'template' => 'recipe_form.php',
+      'form' => 'recipe.recipe',
+      'successRoute' => 'recipe.details',
       'application' => 'recipe',
     ),
     'recipe.edit' => 
     array (
       'rails' => '/recipe/edit/:id/',
-      'controller' => 'madRecipeController',
+      'controller' => 'madModelController',
       'action' => 'form',
-      'arguments' => 
-      array (
-        'form' => 'recipe.recipe',
-        'successRoute' => 'recipe.details',
-      ),
+      'form' => 'recipe.recipe',
+      'successRoute' => 'recipe.details',
       'application' => 'recipe',
     ),
     'recipe.details' => 
@@ -48,12 +36,21 @@ return array (
       'action' => 'details',
       'application' => 'recipe',
     ),
+    'recipe.categoryAutocomplete' => 
+    array (
+      'rails' => '/recipe/autocomplete/category/',
+      'controller' => 'madModelController',
+      'action' => 'autocomplete',
+      'query' => 'select id from %(recipe_index)s',
+      'attribute' => 'category',
+      'application' => 'recipe',
+    ),
     'core.fatal' => 
     array (
-      'controller' => 'madCoreFatalController',
+      'controller' => 'madFatalController',
       'action' => 'fatal',
       'rails' => '/fatal/',
-      'application' => 'core',
+      'application' => 'mad',
     ),
     'ci.runtests' => 
     array (

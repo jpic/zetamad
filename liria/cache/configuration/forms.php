@@ -15,54 +15,67 @@ return array (
         array (
           'slugify' => 'title',
         ),
+        'updated' => 
+        array (
+          'date' => 'now',
+        ),
         'title' => 
         array (
           'label' => 'titre de la recette',
           'required' => true,
+          'minLength' => 3,
+          'maxLength' => 100,
+        ),
+        'profile' => 
+        array (
+          'label' => 'chef',
+          'widget' => 'autocomplete',
+          'route' => 'profile.autocomplete',
+          'createRoute' => 'profile.create',
+          'strict' => true,
+          'required' => true,
+        ),
+        'category' => 
+        array (
+          'label' => 'catégorie',
+          'help' => 'par exemple: apéritif, entrée, dessert... (utilisé par google)',
+          'required' => true,
+          'widget' => 'autocomplete',
+          'route' => 'recipe.categoryAutocomplete',
         ),
         'picture' => 
         array (
           'label' => 'photo de la recette',
-          'widget' => 
-          array (
-            'class' => 'file',
-          ),
-        ),
-        'source' => 
-        array (
-          'label' => 'source',
-          'widget' => 
-          array (
-            'class' => 'textarea',
-          ),
+          'help' => 'affiché par google',
+          'widget' => 'file',
+          'required' => true,
         ),
         'summary' => 
         array (
           'label' => 'résumé',
-          'widget' => 
-          array (
-            'class' => 'textarea',
-          ),
+          'widget' => 'textarea',
+          'help' => 'Le début du résumé sera affiché dans les résultats google',
+          'required' => true,
         ),
         'restTime' => 
         array (
           'label' => 'temps de repos',
-          'help' => 'inscrivez le temps de repos en minutes',
+          'help' => 'inscrivez le temps de repos en minutes (utilisé par google)',
         ),
         'cookTime' => 
         array (
           'label' => 'temps de cuisson',
-          'help' => 'inscrivez le temps de cuisson en minutes',
+          'help' => 'inscrivez le temps de cuisson en minutes (utilisé par google)',
         ),
-        'preparationTime' => 
+        'prepTime' => 
         array (
           'label' => 'temps de préparation',
-          'help' => 'inscrivez le temps de préparation en minutes',
+          'help' => 'inscrivez le temps de préparation en minutes (utilisé par google)',
         ),
-        'numberOfPeople' => 
+        'yield' => 
         array (
-          'label' => 'nombre de personnes',
-          'help' => 'pour combien de personnes va cette recette?',
+          'label' => 'quantité produite',
+          'help' => 'la quantité produite avec ces quantités, par exemple: nombre de personnes, nombre de parts .... (utilisé par google)',
         ),
       ),
       'multipleFields' => 
@@ -71,28 +84,19 @@ return array (
         array (
           'label' => 'ingrédients du catalogue',
           'help' => 'saisissez des numéros de produit du catalogue',
-          'widget' => 
-          array (
-            'class' => 'multiple values',
-          ),
+          'widget' => 'multiple values',
         ),
         'toolProducts' => 
         array (
           'label' => 'matériel du catalogue',
           'help' => 'saisissez des numéros de produit du catalogue',
-          'widget' => 
-          array (
-            'class' => 'multiple values',
-          ),
+          'widget' => 'multiple values',
         ),
         'tools' => 
         array (
-          'label' => 'matériel',
+          'label' => 'matériel nécessaire',
           'help' => 'saisissez des noms d\'outils nécessaires à la préparation de la recette',
-          'widget' => 
-          array (
-            'class' => 'multiple values',
-          ),
+          'widget' => 'multiple values',
         ),
       ),
       'formsets' => 
@@ -100,6 +104,7 @@ return array (
         'recipeSteps' => 
         array (
           'label' => 'étapes de préparation',
+          'help' => 'utilisé par google',
           'fields' => 
           array (
             'namespace' => 
@@ -113,16 +118,14 @@ return array (
             'description' => 
             array (
               'label' => 'description de l\'étape',
-              'widget' => 
-              array (
-                'class' => 'textarea',
-              ),
+              'widget' => 'textarea',
             ),
           ),
         ),
         'ingredientQuantities' => 
         array (
           'label' => 'ingrédients et quantités',
+          'help' => 'utilisé par google',
           'fields' => 
           array (
             'namespace' => 
@@ -144,6 +147,16 @@ return array (
   ),
   'comments' => 
   array (
+    'recipe.recipe' => 
+    array (
+      'fields' => 
+      array (
+        'namespace' => 
+        array (
+          'value' => ' automatic',
+        ),
+      ),
+    ),
   ),
 );
 ?>
