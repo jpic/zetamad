@@ -36,6 +36,7 @@ class madCoreRouter extends ezcMvcRouter {
         } else {
             $routingInformation = parent::getRoutingInformation(  );
         }
+
         return $routingInformation;
     }
 

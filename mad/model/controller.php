@@ -1,6 +1,6 @@
 <?php
 
-class madModelController extends ezcMvcController {
+class madModelController extends madController {
     public $registry = null;
     
     public function __construct( $action, ezcMvcRequest $request ) {
@@ -514,33 +514,16 @@ class madModelController extends ezcMvcController {
         $form->clean(  );
     }
 
-    public function doAttributeAutocomplete(  ) {
-        $result = $this->doList();
-        $values = array(  );
-        
-        $attributeName = $this->request->variables['attribute'];
-
-        foreach( $result->variables['objectList'] as $object ) {
-            if ( !isset( $object[$attributeName] ) ) {
-                continue;
-            }
-
-            if ( in_array( $object[$attributeName], $values ) ) {
-                continue;
-            }
-
-            $values[] = $object[$attributeName];
-        }
-
-        $result->variables['autocompleteValues'] = $values;
-        return $result;
-    }
-
     public function doAutocomplete(  ) {
         $result = $this->doList(  );
 
-        $result->variables['valueAttribute'] = $this->request->variables['valueAttribute'];
-        $result->variables['displayAttribute'] = $this->request->variables['displayAttribute'];
+        if ( isset( $result->variables['attribute'] ) ) {
+            $result->variables['valueAttribute'] = $this->request->variables['attribute'];
+            $result->variables['displayAttribute'] = $this->request->variables['attribute'];
+        } else {
+            $result->variables['valueAttribute'] = $this->request->variables['valueAttribute'];
+            $result->variables['displayAttribute'] = $this->request->variables['displayAttribute'];
+        }
 
         return $result;
     }

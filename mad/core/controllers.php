@@ -1,13 +1,20 @@
 <?php
 
-class madCoreFatalController extends ezcMvcController {
+class madController extends ezcMvcController {
+    public $configuration = array(  );
+    public function setConfiguration( array $configuration ) {
+        $this->configuration = $configuration;
+    }
+}
+
+class madCoreFatalController extends madController {
     public function doFatal(  ) {
         $ret = new ezcMvcResult;
         return $ret;
     }
 }
 
-class madCoreDownloadController extends ezcMvcController {
+class madCoreDownloadController extends madController {
     public function doDownload() {
         $configuration = madRegistry::instance(  )->configuration;
 

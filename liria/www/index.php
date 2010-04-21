@@ -129,6 +129,13 @@ $routingInformation = $router->getRoutingInformation();
  */
 $controllerClass = $routingInformation->controllerClass;
 $controller = new $controllerClass( $routingInformation->action, $request );
+// get route configuration
+foreach( $registry->configuration->settings['routes'] as $routeName => $routeConfiguration ) {
+    if ( $routeConfiguration['rails'] == $routingInformation->matchedRoute ) {
+        $controller->setConfiguration( $routeConfiguration );
+        break;
+    }
+}
 $result = $controller->createResult();
 
 /**
