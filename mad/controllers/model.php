@@ -9,7 +9,7 @@ class madModelController extends madController {
     }
 
     public function doList() {
-        $filter = new madBase();
+        $filter = new madObject();
 
         if ( isset( $this->request->variables['filter'] ) ) {
             foreach( $this->request->variables['filter'] as $key => $value ) {
@@ -46,10 +46,10 @@ class madModelController extends madController {
     /**
      * Returns the configuration corresponding to the form name.
      * 
-     * @param madBase $form 
+     * @param madObject $form 
      * @return array
      */
-    protected function getFormOptions( madBase $form ) {
+    protected function getFormOptions( madObject $form ) {
         return $this->registry->configuration->settings['forms'][$form->name];
     }
 
@@ -87,12 +87,12 @@ class madModelController extends madController {
      * If a file with that name already exists, it will append an underscore to 
      * its basename.
      *
-     * @param madBase $form 
+     * @param madObject $form 
      * @param mixed $name 
-     * @param madBase $field 
+     * @param madObject $field 
      * @return void
      */
-    public function processFormFieldOptions( madBase $form, $name, madBase $field ) {
+    public function processFormFieldOptions( madObject $form, $name, madObject $field ) {
         // hard coded values
         if ( isset( $field->value ) ) {
             $form[$name] = $field->value;
@@ -155,7 +155,7 @@ class madModelController extends madController {
                         //$form->valid = false;
                         
                         //if ( !isset( $field->errors ) ) {
-                            //$field->errors = new madBase(  );
+                            //$field->errors = new madObject(  );
                         //}
 
                         //$field->errors['required'] = 'no file';
@@ -195,10 +195,10 @@ class madModelController extends madController {
      * processFormFieldOptions() on every fields - be it normal form fields, 
      * formset fields or multipleFields.
      * 
-     * @param madBase $form 
+     * @param madObject $form 
      * @return void
      */
-    public function processOptions( madBase $form ) {
+    public function processOptions( madObject $form ) {
         foreach( $form->fields->options as $name => $field ) {
             $this->processFormFieldOptions( $form, $name, $field );
         }
@@ -209,15 +209,15 @@ class madModelController extends madController {
                     // there is only one related object, and the model couldn't 
                     // know that it is supposed to be an M2M relation. 
                     // Monkey-fix it.
-                    $form[$name] = new madBase( array( $form[$name] ) );
+                    $form[$name] = new madObject( array( $form[$name] ) );
                 }
 
                 if ( !isset( $form[$name] ) || !$form[$name] ) {
                     // there is no data bound to the formset
                     // create an empty formset
-                    $emptyFormset = new madBase(  );
+                    $emptyFormset = new madObject(  );
                     $emptyFormset->empty = true;
-                    $form[$name]  = new madBase( array( $emptyFormset ) );
+                    $form[$name]  = new madObject( array( $emptyFormset ) );
                 }
 
                 foreach( $form[$name] as $boundFormset ) {  
@@ -233,28 +233,28 @@ class madModelController extends madController {
 
         if ( isset( $form->multipleFields ) ) {
             foreach( $form->multipleFields->options as $name => $multipleField ) {
-                if ( isset( $form[$name] ) && ! ( $form[$name] instanceof madBase && ! $form[$name]->isEntity ) ) {
+                if ( isset( $form[$name] ) && ! ( $form[$name] instanceof madObject && ! $form[$name]->isEntity ) ) {
                     // there is only one value, and the model couldn't 
                     // know that it is supposed to be a multi value field.
                     // Monkey-fix it.
-                    $form[$name] = new madBase( array( $form[$name] ) );
+                    $form[$name] = new madObject( array( $form[$name] ) );
                 }
 
                 if ( !isset( $form[$name] ) || !$form[$name] ) {
                     // there is no data in the multiple field
                     // create an empty one
                     $emptyValue  = '';
-                    $form[$name] = new madBase( array( $emptyValue ) );
+                    $form[$name] = new madObject( array( $emptyValue ) );
                 }
 
                 foreach( $form[$name] as $key => $value ) {
                     // make a field for each value
                     if ( !isset( $multipleField->fields ) ) {
-                        $multipleField->fields = new madBase(  );
+                        $multipleField->fields = new madObject(  );
                     }
 
                     if ( !isset( $multipleField->fields->$key ) ) {
-                        $multipleField->fields->$key = new madBase(  );
+                        $multipleField->fields->$key = new madObject(  );
                     }
 
                     // copy options on the field
@@ -265,7 +265,7 @@ class madModelController extends madController {
         }
     }
 
-    public function validate( madBase $form ) {
+    public function validate( madObject $form ) {
         // required fields
         foreach( $form->fields->options as $fieldName => $field ) {
             if ( isset( $field->required ) && $field->required == true ) {
@@ -273,7 +273,7 @@ class madModelController extends madController {
                     $form->valid = false;
 
                     if ( !isset( $field->errors ) ) {
-                        $field->errors = new madBase();
+                        $field->errors = new madObject();
                     }
 
                     if ( !isset( $field->errors['required'] ) ) {
@@ -296,7 +296,7 @@ class madModelController extends madController {
                                     $form->valid = false;
             
                                     if ( !isset( $field->errors ) ) {
-                                        $field->errors = new madBase();
+                                        $field->errors = new madObject();
                                     }
             
                                     if ( !isset( $field->errors['required'] ) ) {
@@ -311,7 +311,7 @@ class madModelController extends madController {
         }
     }
 
-    public function processDeleteFields( madBase $form ) {
+    public function processDeleteFields( madObject $form ) {
         if ( isset( $form->formsets ) ) {
             foreach( $form->formsets->options as $name => $formset ) {
                 $deletes = array(  );
@@ -354,7 +354,7 @@ class madModelController extends madController {
     /**
      * Generic and configurable form action.
      * 
-     * A madBase is instanciated which represents the current data to edit. Its 
+     * A madObject is instanciated which represents the current data to edit. Its 
      * options are set from the result of getFormOptions() method. It will use 
      * the configuration by default, see the method docblock for more details.
      *
@@ -371,7 +371,7 @@ class madModelController extends madController {
      * then request variables in the "fooApp_barForm" are merged in the form. 
      * So:
      * <code>
-     * $form = new madBase( array( 
+     * $form = new madObject( array( 
      *     'foo' => 'bar',
      * ) );
      * $form->name = 'fooApp.barForm';
@@ -392,8 +392,8 @@ class madModelController extends madController {
      * formsets, allowing to delete values. See docblock for method 
      * processDeleteFields() for details.
      *
-     * If the request HTTP method is POST, the madBase method clean() will be 
-     * called to remove all empty values. See madBase clean() method for 
+     * If the request HTTP method is POST, the madObject method clean() will be 
+     * called to remove all empty values. See madObject clean() method for 
      * details.
      *
      * If the request HTTP method is POST, the validate() method will be 
@@ -404,7 +404,7 @@ class madModelController extends madController {
      * If the request HTTP method is POST, then processOptions() will be called 
      * again to process the new data.
      *
-     * If the request HTTP method is POST, then the madBase method 
+     * If the request HTTP method is POST, then the madObject method 
      * dirtyAttributes() will be called to ensure that the the $form state is 
      * saveable, and badly die otherwise.
      *
@@ -420,7 +420,7 @@ class madModelController extends madController {
     public function doForm(  ) {
         $result       = new ezcMvcResult(  );
 
-        $form         = new madBase(  );
+        $form         = new madObject(  );
         $form->name   = $this->request->variables['form'];
         $form->action = $this->request->uri;
         $form->model  = $this->registry->model;
@@ -481,7 +481,7 @@ class madModelController extends madController {
         return $result;
     }
 
-    public function clean( madBase $form ) {
+    public function clean( madObject $form ) {
         // do normal clean, to wipe out empty values
         $form->clean(  );
 
@@ -545,7 +545,7 @@ class madModelController extends madController {
             $id = $this->id;
         }
 
-        $object = new madBase( array(
+        $object = new madObject( array(
             'id' => $id,
         ) );
         $this->registry->model->refresh( $object );
@@ -555,7 +555,7 @@ class madModelController extends madController {
         return $result;
     }
 
-    public function cleanFormsets( madBase $form ) {
+    public function cleanFormsets( madObject $form ) {
         // do nothing
     }
 }

@@ -3,28 +3,28 @@
  * @package Base
  * @subpackage Tests
  */
-class madBaseTest extends PHPUnit_Framework_TestCase {
+class madObjectTest extends PHPUnit_Framework_TestCase {
     static public function suite(  ) {
-        return new PHPUnit_Framework_TestSuite( 'madBaseTest' );
+        return new PHPUnit_Framework_TestSuite( 'madObjectTest' );
     }
 
     /**
-     * @expectedException madBasePropertyNotFoundException
+     * @expectedException madObjectPropertyNotFoundException
      */
     public function testGetterSanity(  ) {
-        $fixture = new madBase(  );
+        $fixture = new madObject(  );
         $fixture->aoeusthaoeusthoaeustaonehuoasnethu;
     }
 
     public function testSetOptions(  ) {
-        $fixture = new madBase( array( 'foo' => 'fooVal' ) );
+        $fixture = new madObject( array( 'foo' => 'fooVal' ) );
         $fixture->setOptions( array( 'foo' => 'fooOpt' ) );
         $this->assertEquals( 'fooVal', $fixture['foo'] );
         $this->assertEquals( 'fooOpt', $fixture->foo );
     }
 
     public function testSetOptionsNested(  ) {
-        $fixture = new madBase( array( 
+        $fixture = new madObject( array( 
             'foo' => array( 
                 'bar' => 'barVal',
             ),
@@ -40,7 +40,7 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetOptionsNestedMore(  ) {
-        $fixture = new madBase( array( 
+        $fixture = new madObject( array( 
             'foo' => array( 
                 'bar' => array( 
                     'test' => 'testVal',
@@ -60,7 +60,7 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testSetOptionsWithFormConfig(  ) {
-        $fixture = new madBase( );
+        $fixture = new madObject( );
         $fixture->setOptions( array( 
             'fields' => array( 
                 'foo' => array( 
@@ -76,19 +76,19 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
         return array(
             array(
                 'simple',
-                new madBase( array( 
+                new madObject( array( 
                     'foo' => 'bar',
                 ) ),
                 array( 
                     'foo' => 'test',
                 ),
-                new madBase( array( 
+                new madObject( array( 
                     'foo' => 'test',
                 ) ),
             ),
             array(
                 'fk',
-                new madBase( array( 
+                new madObject( array( 
                     'foo' => 'bar',
                 ) ),
                 array( 
@@ -97,16 +97,16 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
                         'nosql' => 'kiss',
                     ),
                 ),
-                new madBase( array( 
+                new madObject( array( 
                     'foo' => 'test',
-                    'fk'  => new madBase( array( 
+                    'fk'  => new madObject( array( 
                         'nosql' => 'kiss',
                     ) ),
                 ) ),
             ),
             array(
                 'relatedAdd',
-                new madBase( array( 
+                new madObject( array( 
                     'foo' => 'bar',
                 ) ),
                 array( 
@@ -120,13 +120,13 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
                         ),
                     ),
                 ),
-                new madBase( array( 
+                new madObject( array( 
                     'foo' => 'test',
-                    'rel'  => new madBase( array( 
-                        new madBase( array(  
+                    'rel'  => new madObject( array( 
+                        new madObject( array(  
                             'nosql' => 'kiss',
                         ) ),
-                        new madBase( array(  
+                        new madObject( array(  
                             'oop' => 'ok',
                         ) ),
                     ) ),
@@ -134,13 +134,13 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
             ),
             array(
                 'relatedEdit',
-                new madBase( array( 
+                new madObject( array( 
                     'foo' => 'bar',
-                    'rel'  => new madBase( array( 
-                        new madBase( array(  
+                    'rel'  => new madObject( array( 
+                        new madObject( array(  
                             'nosql' => 'sucks',
                         ) ),
-                        new madBase( array(  
+                        new madObject( array(  
                             'oop' => 'bad',
                             'rhum' => 'good',
                         ) ),
@@ -158,13 +158,13 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
                         ),
                     ),
                 ),
-                new madBase( array( 
+                new madObject( array( 
                     'foo' => 'test',
-                    'rel'  => new madBase( array( 
-                        new madBase( array(  
+                    'rel'  => new madObject( array( 
+                        new madObject( array(  
                             'nosql' => 'kiss',
                         ) ),
-                        new madBase( array(  
+                        new madObject( array(  
                             'oop' => 'ok',
                             'rhum' => 'good',
                         ) ),
@@ -205,36 +205,36 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
         return array( 
             array( 
                 'idle',
-                new madBase( array(  
+                new madObject( array(  
                     'foo' => 'bar',
                 ) ),
-                new madBase( array(  
+                new madObject( array(  
                     'foo' => 'bar',
                 ) ),
             ),
             array( 
                 'simple',
-                new madBase( array(  
+                new madObject( array(  
                     'foo' => 'bar',
                     'empty' => '',
                 ) ),
-                new madBase( array(  
+                new madObject( array(  
                     'foo' => 'bar',
                 ) ),
             ),
             array( 
                 'multival',
-                new madBase( array(  
+                new madObject( array(  
                     'foo' => 'bar',
-                    'test' => new madBase( array(  
+                    'test' => new madObject( array(  
                         123,
                         456,
                         ''
                     ) ),
                 ) ),
-                new madBase( array(  
+                new madObject( array(  
                     'foo' => 'bar',
-                    'test' => new madBase( array(  
+                    'test' => new madObject( array(  
                         123,
                         456,
                     ) ),
@@ -242,54 +242,54 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
             ),
             array( 
                 'fk',
-                new madBase( array(  
+                new madObject( array(  
                     'foo' => 'bar',
                     'empty' => '',
-                    'related' => new madBase( array( 
+                    'related' => new madObject( array( 
                         'rfoo' => 'rbar',
                         'rempty' => '',
                     ) ),
                 ) ),
-                new madBase( array(  
+                new madObject( array(  
                     'foo' => 'bar',
-                    'related' => new madBase( array( 
+                    'related' => new madObject( array( 
                         'rfoo' => 'rbar',
                     ) ),
                 ) ),
             ),
             array( 
                 'emptyfk',
-                new madBase( array(  
+                new madObject( array(  
                     'foo' => 'bar',
                     'empty' => '',
-                    'related' => new madBase( array( 
+                    'related' => new madObject( array( 
                         'rempty' => '',
                     ) ),
                 ) ),
-                new madBase( array(  
+                new madObject( array(  
                     'foo' => 'bar',
                 ) ),
             ),
             array( 
                 'relations',
-                new madBase( array(  
+                new madObject( array(  
                     'foo' => 'bar',
                     'empty' => '',
-                    'relations' => new madBase( array( 
-                        new madBase( array( 
+                    'relations' => new madObject( array( 
+                        new madObject( array( 
                             'foo' => 'bar',
                             'empty' => '',
                         ) ),
-                        new madBase( array( 
+                        new madObject( array( 
                             'empty'  => '',
                             'empty2' => '',
                         ) ),
                     ) ),
                 ) ),
-                new madBase( array(  
+                new madObject( array(  
                     'foo' => 'bar',
-                    'relations' => new madBase( array( 
-                        new madBase( array( 
+                    'relations' => new madObject( array( 
+                        new madObject( array( 
                             'foo' => 'bar',
                         ) ),
                     ) ),
@@ -309,13 +309,13 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
     public function dirtyAttributesProvider(  ) {
         return array( 
             array(
-                new madBase( array( 
+                new madObject( array( 
                     'foo' => 'bar',
                 ) ),
                 false,
             ),
             array(
-                new madBase( array( 
+                new madObject( array( 
                     'foo' => 'bar',
                     'fail' => array(  ),
                 ) ),
@@ -323,8 +323,8 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
                     'fail',
                 ),
             ),
-            array( // test madBase with mixed keys
-                new madBase( array( 
+            array( // test madObject with mixed keys
+                new madObject( array( 
                     'foo' => 'bar',
                     'test'
                 )),
@@ -351,21 +351,21 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
         return array( 
             array(
                 'simple',
-                new madBase(array( 
+                new madObject(array( 
                     'foo' => 'bar',
                 )),
-                new madBase(  ),
+                new madObject(  ),
             ),
             array(
                 'fk',
-                new madBase(array( 
+                new madObject(array( 
                     'foo' => 'bar',
-                    'fk' => new madBase( array(  
+                    'fk' => new madObject( array(  
                         'foo' => 'bar'
                     ) ),
                 )),
-                new madBase( array( 
-                    'fk' => new madBase( array(  
+                new madObject( array( 
+                    'fk' => new madObject( array(  
                     ) ),
                 ) ),
             ),
@@ -384,14 +384,14 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
         return array( 
             array(
                 'simpleEntity',
-                new madBase(array( 
+                new madObject(array( 
                    'foo' => 'bar',
                 )),
                 true,
             ),
             array( 
                 'simpleMultiVal',
-                new madBase(array( 
+                new madObject(array( 
                     'bar',
                     'foo',
                 )),
@@ -399,11 +399,11 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
             ),
             array(
                 'multiEntity',
-                new madBase(array( 
-                    new madBase(array( 
+                new madObject(array( 
+                    new madObject(array( 
                         'example' => 'test',
                     )),
-                    new madBase(array( 
+                    new madObject(array( 
                         'bar' => 'foo',
                     )),
                 )),
@@ -411,7 +411,7 @@ class madBaseTest extends PHPUnit_Framework_TestCase {
             ),
             array( 
                 'null',
-                new madBase(),
+                new madObject(),
                 null,
             ),
         );

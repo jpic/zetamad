@@ -31,11 +31,11 @@ $request->variables['profile']['name']        = 'james';
 $request->variables['profile']['products'][0] = '1';
 $request->variables['profile']['products'][1] = '9';
                                                         
-$form = new madBase( array( 
+$form = new madObject( array( 
     'id'        => '1FDB6574-3E40-11DF-8BB4-1B969F5BE980',
     'name'      => 'james',
     'namespace' => 'profile',
-    'products'  => new madBase( array( 
+    'products'  => new madObject( array( 
         '1',
         '9',
     ) ),

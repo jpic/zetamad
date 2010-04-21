@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the madBase class.
+ * File containing the madObject class.
  * 
  * @package MadBase
  * @version //autogen//
@@ -9,26 +9,26 @@
  * @license http://madeleinemarket.com/code/license
  */
 /**
- * madBase is a multi purpose data container which allows any kind of options 
+ * madObject is a multi purpose data container which allows any kind of options 
  * to be set.
  *
  * 
  * Options:
  * 
- * This feature makes use of PHP magical getter and setters as well as madBase 
+ * This feature makes use of PHP magical getter and setters as well as madObject 
  * itself.
  *
  * A non-array option can be directly set like this:
  * <code>
- * $obj = madBase;
+ * $obj = madObject;
  * $obj->someOption = $someValue;
  * </code>
  *
  * The method setOptions() should be used when setting an array of options, 
- * because it will automatically convert arrays to madBase, thus making option 
+ * because it will automatically convert arrays to madObject, thus making option 
  * accessors more consistent and less error prone. For example:
  * <code>
- * $obj = new madBase;
+ * $obj = new madObject;
  * $obj->setOptions( array( 
  *     'foo' => array( 
  *         'someOption' => 'some value',
@@ -63,61 +63,61 @@
  * Data containing:
  *
  * It can contain data for two purposes:
- * - an associative array of mixed values, including values of type 'madBase', 
+ * - an associative array of mixed values, including values of type 'madObject', 
  *   in which case it is an 'entity',
  * - a non associative list of values, in which case it is *not* an 'entity',
  *
  * Persistency:
  * 
- * A madBase which is *not* an entity should not be given an id when saved, 
- * wheras a madBase which *is* an entity should be given an id attribute when 
+ * A madObject which is *not* an entity should not be given an id when saved, 
+ * wheras a madObject which *is* an entity should be given an id attribute when 
  * saved.
  *
  * Rules:
  * 
- * - a madBase with a numeric attribute key is *not* an entity,
- * - a madBase with string attribute keys *is* an entity,
+ * - a madObject with a numeric attribute key is *not* an entity,
+ * - a madObject with string attribute keys *is* an entity,
  *
- * A madBase with only string attribute keys is considered a proper entity
+ * A madObject with only string attribute keys is considered a proper entity
  * which must be saved as is and attributed an id.
  *
  * For example:
  * <code>
  * // entity:
- * $obj = new madBase( array(
+ * $obj = new madObject( array(
  *     'foo' => 'bar',
  * ) );
  * </code>
  *
- * A madBase with only numeric attribute keys is considered a list of entities
- * that must not be saved as is, but as the value of a parent madBase 
+ * A madObject with only numeric attribute keys is considered a list of entities
+ * that must not be saved as is, but as the value of a parent madObject 
  * attribute.
  *
  * For example:
  * <code>
  * // no string key, so it is not entity, and thus not saveable as is:
- * $list = new madBase( array( 
+ * $list = new madObject( array( 
  *     'A',
  *     2,
  *     'foo'
  * ) );
  *
  * // $list should be set as attribute of an entity in order to be saveable:
- * $obj = new madBase;
+ * $obj = new madObject;
  * $obj['someList'] = $list; // $obj becomes an entity with the string key
  * </code>
  *
  * The magical read only property, $isEntity, allows to determin wether the 
- * madBase should be considered an entity or not.
+ * madObject should be considered an entity or not.
  * The dirtyAttributes() method checks the attributes keys and reports the
  * mix.
  *
  *
  * Data handling methods:
  *
- * madBase provides various data handling methods:
+ * madObject provides various data handling methods:
  * - dirtyAttributes() which should check if the object is sane,
- * - merge( $otherdData ) which merges attributes from another madBase,
+ * - merge( $otherdData ) which merges attributes from another madObject,
  * - clean() which removes attributes with irrelevant values,
  *
  * See the documentation of these methods for details.
@@ -129,9 +129,9 @@
  * @author Christophe Biarrotte <jamespic@gmail.com> 
  * @license http://madeleinemarket.com/code/license
  * @property-read $isEntity True if the first key is not numeric.
- * @property $options  Associative madBase of options.
+ * @property $options  Associative madObject of options.
  */
-class madBase extends ArrayObject {
+class madObject extends ArrayObject {
     public $options = null;
 
      /**
@@ -149,7 +149,7 @@ class madBase extends ArrayObject {
 
             // ensure that there is no pre-SPL array as default attribute
             if ( is_array( $value ) ) {
-                $dirty[$key] = new madBaseValueException( $key, $value, 'madBase', 'attribute value' );
+                $dirty[$key] = new madObjectValueException( $key, $value, 'madObject', 'attribute value' );
             }
         }
         
@@ -157,7 +157,7 @@ class madBase extends ArrayObject {
         if ( count( array_unique( $numericTests ) ) > 1 ) {
             foreach( $numericTests as $key => $value ) {
                 if ( !$value ) {
-                    $dirty[$key] = new madBaseMixedKeysException( $key );
+                    $dirty[$key] = new madObjectMixedKeysException( $key );
                 }
             }
         }
@@ -173,7 +173,7 @@ class madBase extends ArrayObject {
     public function clear() {
         $backup = array(  );
         foreach( $this as $key => $value ) {
-            if ( $value instanceof madBase ) {
+            if ( $value instanceof madObject ) {
                 $backup[$key] = $value;
                 $value->clear();
             }
@@ -211,7 +211,7 @@ class madBase extends ArrayObject {
         if ( isset( $this->options[$key] ) ) {
             return $this->options[$key];
         } else {
-            throw new madBasePropertyNotFoundException( $key );
+            throw new madObjectPropertyNotFoundException( $key );
         }
     }
 
@@ -224,7 +224,7 @@ class madBase extends ArrayObject {
      */
     public function __set( $name, $value ) {
         if ( is_null( $this->options ) ) {
-            $this->options = new madBase(  );
+            $this->options = new madObject(  );
         }
 
         $this->options[$name] = $value;
@@ -243,11 +243,11 @@ class madBase extends ArrayObject {
     /**
      * Set the option array.
      *
-     * It will replace all sub arrays by instances of madBase.
+     * It will replace all sub arrays by instances of madObject.
      * 
      * Example:
      * <code>
-     * $obj = new madBase;
+     * $obj = new madObject;
      * $obj->setOptions( array( 
      *     'foo' => 'foo value',
      * ) );
@@ -269,7 +269,7 @@ class madBase extends ArrayObject {
     public function setOptions( array $options ) {
         foreach( $options as $key => $value ) {
             if ( is_array( $value ) ) {
-                $this->options[$key] = new madBase();
+                $this->options[$key] = new madObject();
                 $this->options[$key]->setOptions( $value );
             } else {
                 $this->options[$key] = $value;
@@ -278,14 +278,14 @@ class madBase extends ArrayObject {
     }
 
     /**
-     * Merge values with another madBase, recursively.
+     * Merge values with another madObject, recursively.
      *
      * Example:
      * <code>
-     * $objA = new madBase( array( 
+     * $objA = new madObject( array( 
      *     'foo' => 'foo',
      * ) );
-     * $objB = new madBase( array( 
+     * $objB = new madObject( array( 
      *     'foo' => 'bar',
      * ) );
      *
@@ -300,7 +300,7 @@ class madBase extends ArrayObject {
         foreach( $data as $key => $value ) {
             if ( is_array( $value ) ) {
                 if ( !isset( $this[$key] ) ) {
-                    $this[$key] = new madBase();
+                    $this[$key] = new madObject();
                 }
                 $this[$key]->merge( $value );
             } else {
@@ -313,9 +313,9 @@ class madBase extends ArrayObject {
      * Clean the object values.
      * 
      * - remove any key which value is an empty string,
-     * - call clean() on each value which is a madBase of type 'entity',
-     * - call cleanSubitems() on each value which is madBase that is not an 'entity',
-     * - remove any key which value is an empty madBase,
+     * - call clean() on each value which is a madObject of type 'entity',
+     * - call cleanSubitems() on each value which is madObject that is not an 'entity',
+     * - remove any key which value is an empty madObject,
      *
      * @return void
      */
@@ -331,7 +331,7 @@ class madBase extends ArrayObject {
                 continue;
             }
 
-            if ( $value instanceof madBase ) {
+            if ( $value instanceof madObject ) {
                 if ( $value->isEntity ) {
                     $value->clean(  );
                 } else {
@@ -359,7 +359,7 @@ class madBase extends ArrayObject {
         $unst = array(  );
 
         foreach( $this as $key => $value ) {
-            if ( $value instanceof madBase ) {
+            if ( $value instanceof madObject ) {
                 $value->clean();
                 if ( !count( $value ) ) {
                     $unst[] = $key;

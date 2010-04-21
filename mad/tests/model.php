@@ -20,7 +20,7 @@ class madModelTest extends PHPUnit_Framework_TestCase {
     }
 
     public function testDelete(  ) {
-        $fixture = new madBase( array( 
+        $fixture = new madObject( array( 
             'foo' => 'bar',
         ) );
 
@@ -38,7 +38,7 @@ class madModelTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @expectedException madBaseValueException
+     * @expectedException madObjectValueException
      */
     public function testConstructorSanity(  ) {
         new madModel( 'fail' );
@@ -48,7 +48,7 @@ class madModelTest extends PHPUnit_Framework_TestCase {
         return array( 
             array(
                 'simple',
-                new madBase( array( // initial
+                new madObject( array( // initial
                     'title'    => 'Mojito',
                     'category' => 'Drinks',
                     'origin'   => 'Carabians',
@@ -56,11 +56,11 @@ class madModelTest extends PHPUnit_Framework_TestCase {
             ),
             array(
                 'fk',
-                new madBase( array( // initial
+                new madObject( array( // initial
                     'title'    => 'Mojito',
                     'category' => 'Drinks',
                     'origin'   => 'Carabians',
-                    'author'   => new madBase( array( 
+                    'author'   => new madObject( array( 
                         'name'  => 'james',
                         'email' => 'jamespic@example.com',
                     ) ),
@@ -68,14 +68,14 @@ class madModelTest extends PHPUnit_Framework_TestCase {
             ),
             array( 
                 'multiVal',
-                new madBase ( array(
+                new madObject ( array(
                     'title'       => 'Ti\'Punch',
                     'category'    => 'Drinks',
                     'origin'      => 'DOMTOM',
                     'short_desc'  => 'Efficiant cocktail.',
                     'comment'     => 'James loves it!',
                     'preparation' => 'Do this an that and this',
-                    'product_ids' => new madBase(array( 
+                    'product_ids' => new madObject(array( 
                         2,
                         3,
                         4000
@@ -84,19 +84,19 @@ class madModelTest extends PHPUnit_Framework_TestCase {
             ),
             array( 
                 'reverseFk',
-                new madBase ( array(
+                new madObject ( array(
                     'title'       => 'Ti\'Punch',
                     'category'    => 'Drinks',
                     'origin'      => 'DOMTOM',
                     'short_desc'  => 'Efficiant cocktail.',
                     'comment'     => 'James loves it!',
                     'preparation' => 'Do this an that and this',
-                    'comments'    => new madBase(array( 
-                        new madBase( array( 
+                    'comments'    => new madObject(array( 
+                        new madObject( array( 
                             'author' => 'chris',
                             'post'   => 'I love it too!'
                         ) ),
-                        new madBase( array( 
+                        new madObject( array( 
                             'author' => 'derick',
                             'post'   => 'Rhum is the best!'
                         ) ),
@@ -105,18 +105,18 @@ class madModelTest extends PHPUnit_Framework_TestCase {
             ), // mutation tests
             array( // VERSION 1
                 'mutation1',
-                new madBase ( array(
+                new madObject ( array(
                     'title'       => 'Ti\'Punch',
                     'category'    => 'Drinks',
                     'origin'      => 'DOMTOM',
                     'short_desc'  => 'Efficiant cocktail.',
                     'comment'     => 'James loves it!',
                     'preparation' => 'Do this an that and this',
-                    'comments'    => new madBase(array(  // comments are simple strings
+                    'comments'    => new madObject(array(  // comments are simple strings
                         'i love it!',
                         'me too!'
                     ) ),
-                    'product_ids' => new madBase(array( 
+                    'product_ids' => new madObject(array( 
                         2,
                         3,
                         4000
@@ -125,28 +125,28 @@ class madModelTest extends PHPUnit_Framework_TestCase {
             ),
             array( // VERSION 2
                 'mutation2',
-                new madBase ( array( // post mutation
+                new madObject ( array( // post mutation
                     'title'       => 'Ti\'Punch',
                     'category'    => 'Drinks',
                     'origin'      => 'DOMTOM',
                     'short_desc'  => 'Efficiant cocktail.',
                     'comment'     => 'James loves it!',
                     'preparation' => 'Do this an that and this',
-                    'comments'    => new madBase(array( 
+                    'comments'    => new madObject(array( 
                         // comments from v1
                         'i love it!',
                         'me too!',
                         // comments from v2 ( string->related entity mutation )
-                        new madBase( array(
+                        new madObject( array(
                             'author' => 'chris',
                             'post'   => 'I love it too!'
                         ) ),
-                        new madBase( array(
+                        new madObject( array(
                             'author' => 'derick',
                             'post'   => 'rhum is the best'
                         ) ),
                     ) ),
-                    'product_ids' => new madBase(array( 
+                    'product_ids' => new madObject(array( 
                         2,
                         3,
                         4000,
@@ -156,43 +156,43 @@ class madModelTest extends PHPUnit_Framework_TestCase {
             ),
             array( // VERSION 3
                 'mutation3',
-                new madBase ( array( // post mutation
+                new madObject ( array( // post mutation
                     'title'       => 'Ti\'Punch',
                     'category'    => 'Drinks',
                     'origin'      => 'DOMTOM',
                     'short_desc'  => 'Efficiant cocktail.',
                     'comment'     => 'James loves it!',
                     'preparation' => 'Do this an that and this',
-                    'comments'    => new madBase(array( 
+                    'comments'    => new madObject(array( 
                         // comments from v1
                         'i love it!',
                         'me too!',
                         // comments from v2 ( string->related entity mutation )
-                        new madBase( array(
+                        new madObject( array(
                             'author' => 'chris',
                             'post'   => 'I love it too!'
                         ) ),
-                        new madBase( array(
+                        new madObject( array(
                             'author' => 'derick',
                             'post'   => 'rhum is the best'
                         ) ),
                         // comments from v3, ( nested string->related entity mutation )
-                        new madBase( array(
-                            'author' => new madBase( array(
+                        new madObject( array(
+                            'author' => new madObject( array(
                                 'name' => 'james',
                                 'email' => 'james@example.com',
                             ) ),
                             'post'   => 'Rhum is best from martinica!'
                         ) ),
-                        new madBase( array(
-                            'author' => new madBase( array(
+                        new madObject( array(
+                            'author' => new madObject( array(
                                 'name' => 'michel',
                                 'email' => 'michel@example.com',
                             ) ),
                             'post'   => 'LIAAAAR ITS BEST FROM CUBA!'
                         ) ),
                     ) ),
-                    'product_ids' => new madBase(array( 
+                    'product_ids' => new madObject(array( 
                         2,
                         3,
                         4000,
@@ -248,7 +248,7 @@ class madModelTest extends PHPUnit_Framework_TestCase {
     public function testRefresh( $scenario, $fixture ) {
         $this->model->save( $fixture );
 
-        $result = new madBase( array(  
+        $result = new madObject( array(  
             'id' => $fixture['id'],
         ) );
         $this->model->refresh( $result );
@@ -259,28 +259,28 @@ class madModelTest extends PHPUnit_Framework_TestCase {
         return array( 
             array( 
                 'simplePropertyChange',
-                new madBase( array( 
+                new madObject( array( 
                     'author' => 'james',
                     'title'  => 'rhum',
                 )),
                 array( 
                     'title' => 'Mojito',
                 ),
-                new madBase( array( 
+                new madObject( array( 
                     'author' => 'james',
                     'title' => 'Mojito',
                 ) ),
             ),
             array( 
                 'propertyAdd',
-                new madBase( array( 
+                new madObject( array( 
                     'author' => 'james',
                     'title'  => 'rhum',
                 )),
                 array( 
                     'subtitle' => 'Mojito',
                 ),
-                new madBase( array( 
+                new madObject( array( 
                     'author' => 'james',
                     'title' => 'rhum',
                     'subtitle' => 'Mojito',
@@ -288,7 +288,7 @@ class madModelTest extends PHPUnit_Framework_TestCase {
             ),
             array( 
                 'simplePropertyChange+propertyAdd',
-                new madBase( array( 
+                new madObject( array( 
                     'author' => 'james',
                     'title'  => 'rhum',
                 )),
@@ -296,7 +296,7 @@ class madModelTest extends PHPUnit_Framework_TestCase {
                     'title' => 'Mojito',
                     'alcohol' => 'a lot',
                 ),
-                new madBase( array( 
+                new madObject( array( 
                     'author' => 'james',
                     'title' => 'Mojito',
                     'alcohol' => 'a lot',
@@ -329,7 +329,7 @@ class madModelTest extends PHPUnit_Framework_TestCase {
      * @expectedException madModelExceptedId
      */
     public function testRefreshSanity(  ) {
-        $this->model->refresh( new madBase(  ) );
+        $this->model->refresh( new madObject(  ) );
     }
 
 
@@ -359,12 +359,12 @@ class madModelTest extends PHPUnit_Framework_TestCase {
                      ),
                 ),
                 array( 
-                    12 => new madBase( array( 
+                    12 => new madObject( array( 
                         'id'     => 12,
                         'origin' => 'france',
                         'creator_email' => 'chris@mad.com',
                     ) ),
-                    13 => new madBase( array( 
+                    13 => new madObject( array( 
                         'id'     => 13,
                         'origin' => 'spain',
                         'creator_email' => 'james@mad.com',
@@ -386,24 +386,24 @@ class madModelTest extends PHPUnit_Framework_TestCase {
         return array( 
             array(
                 array(
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'france',
                         'withRhum' => 'no',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'france',
                         'withRhum' => 'yes',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'spain',
                         'withRhum' => 'yes',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'spain',
                         'withRhum' => 'no',
                     ) ),
                 ),
-                new madBase( array( 
+                new madObject( array( 
                     'origin' => 'spain',
                 ) ),
                 array(
@@ -413,24 +413,24 @@ class madModelTest extends PHPUnit_Framework_TestCase {
             ),
             array(
                 array(
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'france',
                         'withRhum' => 'no',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'france',
                         'withRhum' => 'yes',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'spain',
                         'withRhum' => 'yes',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'spain',
                         'withRhum' => 'no',
                     ) ),
                 ),
-                new madBase( array( 
+                new madObject( array( 
                     'withRhum' => 'no',
                 ) ),
                 array(
@@ -440,24 +440,24 @@ class madModelTest extends PHPUnit_Framework_TestCase {
             ),
             array(
                 array(
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'france',
                         'withRhum' => 'no',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'france',
                         'withRhum' => 'yes',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'spain',
                         'withRhum' => 'yes',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'spain',
                         'withRhum' => 'no',
                     ) ),
                 ),
-                new madBase( array( 
+                new madObject( array( 
                     'origin' => 'spain',
                     'withRhum' => 'no',
                 ) ),
@@ -493,9 +493,9 @@ class madModelTest extends PHPUnit_Framework_TestCase {
      */
     public function testImplicitFK(  ) {
         // create a recipe with multiple values in a key
-        $recipe = new madBase();
+        $recipe = new madObject();
         $recipe['title'] = 'This recipe promotes multiple products';
-        $recipe['productIds'] = new madBase( array(
+        $recipe['productIds'] = new madObject( array(
             12,
             12
         ) );
@@ -503,7 +503,7 @@ class madModelTest extends PHPUnit_Framework_TestCase {
         $this->model->save( $recipe );
 
         // lets fetch this recipe and ensure that it was saved properly
-        $freshRecipe = new madBase( array( 'id' => $recipe['id'] ) );
+        $freshRecipe = new madObject( array( 'id' => $recipe['id'] ) );
         $this->model->refresh( $freshRecipe );
 
         // now to assert
@@ -522,20 +522,20 @@ class madModelTest extends PHPUnit_Framework_TestCase {
      */
     public function testImplicitM2M(  ) {
         // create a recipe
-        $recipe = new madBase();
+        $recipe = new madObject();
         $recipe['title'] = 'Ti\'Punch';
 
         // add some related objects
-        $recipe['ingredientQuantities'] = new madBase();
-        $recipe['ingredientQuantities'][] = new madBase( array( 
+        $recipe['ingredientQuantities'] = new madObject();
+        $recipe['ingredientQuantities'][] = new madObject( array( 
             'name' => 'lime',
             'quantity' => '1 slice',
         ) );
-        $recipe['ingredientQuantities'][] = new madBase( array( 
+        $recipe['ingredientQuantities'][] = new madObject( array( 
             'name' => 'rhum',
             'quantity' => '8 cl',
         ) );
-        $recipe['ingredientQuantities'][] = new madBase( array( 
+        $recipe['ingredientQuantities'][] = new madObject( array( 
             'name' => 'sugar',
             'quantity' => '1 cl',
         ) );
@@ -544,7 +544,7 @@ class madModelTest extends PHPUnit_Framework_TestCase {
         $this->model->save( $recipe );
  
         // lets fetch this recipe and ensure that it was saved properly
-        $freshRecipe = new madBase( array( 'id' => $recipe['id'] ) );
+        $freshRecipe = new madObject( array( 'id' => $recipe['id'] ) );
         $this->model->refresh( $freshRecipe );
 
         // now to assert

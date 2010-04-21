@@ -13,18 +13,18 @@ require 'base.php';
  * @package MadBase
  * @subpackage Tests
  */
-class madBaseSuite extends PHPUnit_Framework_TestSuite
+class madObjectSuite extends PHPUnit_Framework_TestSuite
 {
     public function __construct()
     {
         parent::__construct();
         $this->setName('Base');
-        $this->addTest( madBaseTest::suite() );
+        $this->addTest( madObjectTest::suite() );
     }
 
     public static function suite()
     {
-        return new madBaseSuite();
+        return new madObjectSuite();
     }
 }
 ?>

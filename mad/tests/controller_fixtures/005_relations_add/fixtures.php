@@ -48,24 +48,24 @@ $request->variables['recipe']['ingredients'][2]['name']     = 'sugar';
 $request->variables['recipe']['ingredients'][2]['quantity'] = 'not that much';
 
 
-$form = new madBase( array( 
+$form = new madObject( array( 
     'title'     => 'tiponch',
     'namespace' => 'recipe',
     'id'        => '1FDB6574-3E40-11DF-8BB4-1B969F5BE980',
-    'ingredients' => new madBase( array( 
-        new madBase( array( 
+    'ingredients' => new madObject( array( 
+        new madObject( array( 
             'name'     => 'lime',
             'id'       => '2FDB6574-3E40-11DF-8BB4-1B969F5BE980',
             'quantity' => 'few',
             'namespace' => 'ingredient',
         ) ),
-        new madBase( array( 
+        new madObject( array( 
             'name'     => 'rhum',
             'id'       => '3FDB6574-3E40-11DF-8BB4-1B969F5BE980',
             'quantity' => 'not that much',
             'namespace' => 'ingredient',
         ) ),       
-        new madBase( array( 
+        new madObject( array( 
             'name'     => 'sugar',
             'quantity' => 'not that much',
             'namespace' => 'ingredient',

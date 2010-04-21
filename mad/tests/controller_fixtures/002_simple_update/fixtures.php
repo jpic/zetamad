@@ -24,7 +24,7 @@ $request->variables['id']              = '1FDB6574-3E40-11DF-8BB4-1B969F5BE980';
 $request->variables['recipe']          = array(  );
 $request->variables['recipe']['title'] = 'Ti\'Punch';
 
-$form = new madBase( array( 
+$form = new madObject( array( 
     'title'     => 'Ti\'Punch',
     'namespace' => 'recipe',
     'id'        => '1FDB6574-3E40-11DF-8BB4-1B969F5BE980',

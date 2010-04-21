@@ -23,7 +23,7 @@ $request->variables['successRoute']    = 'recipe.details';
 $request->variables['recipe']          = array(  );
 $request->variables['recipe']['title'] = 'TiPonch\'ôéûà';
 
-$form = new madBase( array( 
+$form = new madObject( array( 
     'title'     => 'TiPonch\'ôéûà',
     'namespace' => 'recipe',
     'id'        => '1FDB6574-3E40-11DF-8BB4-1B969F5BE980',

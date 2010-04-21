@@ -1,10 +1,10 @@
 <?php
 $model = madRegistry::instance(  )->model;
 
-$fixture = new madBase( array( 
+$fixture = new madObject( array( 
     'name'      => 'james',
     'namespace' => 'profile',
-    'products'  => new madBase( array( 
+    'products'  => new madObject( array( 
         1,
         4,
         9,

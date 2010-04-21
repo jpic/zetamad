@@ -33,11 +33,11 @@ $request->variables['profile']['products'][1]       = '4';
 $request->variables['profile']['products'][2]       = '9';
 $request->variables['profile']['products.DELETE'][] = '1';
                                                      
-$form = new madBase( array( 
+$form = new madObject( array( 
     'id'        => '1FDB6574-3E40-11DF-8BB4-1B969F5BE980',
     'name'      => 'james',
     'namespace' => 'profile',
-    'products'  => new madBase( array( 
+    'products'  => new madObject( array( 
         0 => '1',
         // value of offset 1 was deleted
         2 => '9',

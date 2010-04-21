@@ -13,17 +13,17 @@ class controller001 {
         $this->model = $model;
     }
     public function createRecipe( array $recipe ) {
-        $data = new madBase( $recipe );
+        $data = new madObject( $recipe );
         $data['namespace'] = self::RECIPE_NAMESPACE;
         return $this->model->save( $data );
     }
     public function listRecipes(  ) {
-        $data = new madBase();
+        $data = new madObject();
         $data['namespace'] = self::RECIPE_NAMESPACE;
         return $this->model->search( $data );
     }
     public function listRecipesOfCategory( string $category ) {
-        $data = new madBase();
+        $data = new madObject();
         $data['category']  = $category;
         $data['namespace'] = self::RECIPE_NAMESPACE;
         return $this->model->search( $data );
@@ -38,7 +38,7 @@ class controller002 extends controller001 {
     const INGREDIENT_NAMESPACE = 'ingredients';
 
     public function createIngredient( array $ingredient ) {
-        $data = new madBase( $ingredient );
+        $data = new madObject( $ingredient );
         $data['namespace'] = self::INGREDIENT_NAMESPACE;
         return $this->model->save( $data );
     }
@@ -49,7 +49,7 @@ class controller002 extends controller001 {
      * controller002.
      */
     public function listIngredients() {
-        $data = new madBase();
+        $data = new madObject();
         $data['namespace'] = self::INGREDIENT_NAMESPACE;
         return $this->model->search( $data );
     }

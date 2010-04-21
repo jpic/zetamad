@@ -188,19 +188,19 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
         return array( 
             array(
                 array(
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'france',
                         'withRhum' => 'no',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'france',
                         'withRhum' => 'yes',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'spain',
                         'withRhum' => 'yes',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'spain',
                         'withRhum' => 'no',
                     ) ),
@@ -210,7 +210,7 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
                         'origin' => 'spain',
                     ),
                 ),
-                new madBase( array( 
+                new madObject( array( 
                     'origin' => 'spain',
                 ) ),
                 array(
@@ -220,19 +220,19 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
             ),
             array(
                 array(
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'france',
                         'withRhum' => 'no',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'france',
                         'withRhum' => 'yes',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'spain',
                         'withRhum' => 'yes',
                     ) ),
-                    new madBase( array( 
+                    new madObject( array( 
                         'origin' => 'spain',
                         'withRhum' => 'no',
                     ) ),
@@ -240,7 +240,7 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
                 array(
                     'distinct' => 'origin',
                 ),
-                new madBase( array( 
+                new madObject( array( 
                 ) ),
                 array(
                     0,

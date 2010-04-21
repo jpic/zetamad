@@ -2,31 +2,31 @@
 /**
  * File containing the mad exceptions.
  * 
- * @todo move madBase exceptions to a madbase app
+ * @todo move madObject exceptions to a madbase app
  * @package MadBase
  * @version //autogen//
  * @copyright Copyright (C) 2010 MadeleineMarket.com. All rights reserved.
  * @license http://madeleinemarket.com/code/license
  */
 /**
- * madBaseException is a container from which all other exceptions in the Mad 
+ * madObjectException is a container from which all other exceptions in the Mad 
  * packages descent.
  * 
  * @package MadBase
  * @version //autogen//
  */
-class madBaseException extends Exception {}
+class madObjectException extends Exception {}
 
 /**
- * madBaseValueException is thrown whenever the type or value of the given
+ * madObjectValueException is thrown whenever the type or value of the given
  * variable is not as expected.
  *
  * @package MadBase
  * @version //autogen//
  */
-class madBaseValueException extends madBaseException {
+class madObjectValueException extends madObjectException {
     /**
-     * Constructs a new madBaseValueException on the $name variable.
+     * Constructs a new madObjectValueException on the $name variable.
      *
      * @param string  $settingName The name of the setting where something was
      *                wrong with.
@@ -51,16 +51,16 @@ class madBaseValueException extends madBaseException {
 }
 
 /**
- * madBasePropertyNotFoundException is thrown whenever a non existent property
+ * madObjectPropertyNotFoundException is thrown whenever a non existent property
  * is accessed in the mad library.
  *
  * @package MadBase
  * @version //autogen//
  */
-class madBasePropertyNotFoundException extends madBaseException
+class madObjectPropertyNotFoundException extends madObjectException
 {
     /**
-     * Constructs a new madBasePropertyNotFoundException for the property
+     * Constructs a new madObjectPropertyNotFoundException for the property
      * $name.
      *
      * @param string $name The name of the property
@@ -72,11 +72,11 @@ class madBasePropertyNotFoundException extends madBaseException
 }
 
 /**
- * madBaseMixedKeysException is thrown whenever a madBase has mixed keys.
+ * madObjectMixedKeysException is thrown whenever a madObject has mixed keys.
  *
- * For example, this bad madBase:
+ * For example, this bad madObject:
  * <code>
- * new madBase( array( 
+ * new madObject( array( 
  *    'foo',
  *    'bar',
  *    'example' => 'test',
@@ -86,17 +86,17 @@ class madBasePropertyNotFoundException extends madBaseException
  * @package MadBase
  * @version //autogen//
  */
-class madBaseMixedKeysException extends madBaseException
+class madObjectMixedKeysException extends madObjectException
 {
     /**
-     * Constructs a new madBaseMixedKeysException for the key $key.
+     * Constructs a new madObjectMixedKeysException for the key $key.
      *
      * @param string $name The name of the property
      */
     function __construct( $key )
     {
         parent::__construct( 
-            "'$key' is a string attribute key which shouldn't be in a non-entity madBase'"
+            "'$key' is a string attribute key which shouldn't be in a non-entity madObject'"
         );
     }
 }
@@ -108,10 +108,10 @@ class madBaseMixedKeysException extends madBaseException
  * @package MadModel
  * @version //autogen//
  */
-class madModelException extends madBaseException {}
+class madModelException extends madObjectException {}
 
 /**
- * madModelExceptedId is thrown when runtime needs a madBase object needs an id 
+ * madModelExceptedId is thrown when runtime needs a madObject object needs an id 
  * attribute value to continue.
  * 
  * @package MadModel

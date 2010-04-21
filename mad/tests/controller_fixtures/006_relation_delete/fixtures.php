@@ -45,13 +45,13 @@ $request->variables['recipe']['ingredients'][1] = array(  );
 $request->variables['recipe']['ingredients'][1]['name']     = 'rhum';
 $request->variables['recipe']['ingredients'][1]['quantity'] = 'not that much';
 
-$form = new madBase( array( 
+$form = new madObject( array( 
     'title'     => 'tiponch',
     'namespace' => 'recipe',
     'id'        => '1FDB6574-3E40-11DF-8BB4-1B969F5BE980',
-    'ingredients' => new madBase( array( 
+    'ingredients' => new madObject( array( 
         // relation 0 was deleted
-        1 => new madBase( array( 
+        1 => new madObject( array( 
             'name'     => 'rhum',
             'id'       => '3FDB6574-3E40-11DF-8BB4-1B969F5BE980',
             'quantity' => 'not that much',

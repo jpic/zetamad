@@ -1,15 +1,15 @@
 <?php
 $model = madRegistry::instance(  )->model;
 
-$model->save( new madBase( array( 
+$model->save( new madObject( array( 
     'title'       => 'tiponch',
     'namespace'   => 'recipe',
-    'ingredients' => new madBase( array( 
-        new madBase( array( 
+    'ingredients' => new madObject( array( 
+        new madObject( array( 
             'name'     => 'lime',
             'quantity' => 'few',
         ) ),
-        new madBase( array( 
+        new madObject( array( 
             'name'     => 'rhum',
             'quantity' => 'much',
         ) ),
