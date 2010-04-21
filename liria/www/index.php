@@ -90,7 +90,7 @@ foreach( $_FILES as $formName => $array ) {
  * argument.
  */
 $routes = $registry->configuration->settings['routes'];
-$router = new madCoreRouter( $request, $routes );
+$router = new madRouter( $request, $routes );
 
 /**
  * Store the router instance for later.
@@ -143,7 +143,7 @@ $result = $controller->createResult();
  *
  * This view class is also protocol and framework specific.
  */
-$view = new madCoreView( $request, $result, $routingInformation );
+$view = new madView( $request, $result, $routingInformation );
 
 /**
  * Run the view which returns a response object.

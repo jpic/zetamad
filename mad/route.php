@@ -1,6 +1,6 @@
 <?php
 
-class madCoreRoute extends ezcMvcRailsRoute {
+class madRoute extends ezcMvcRailsRoute {
     public $application = null;
     /**
      * Evaluates the URI against this route.
@@ -19,7 +19,7 @@ class madCoreRoute extends ezcMvcRailsRoute {
             $request->variables = array_merge( $this->defaultValues, $request->variables, $matches );
 
             // monkey patch
-            $return = new madCoreRoutingInformation( $this->pattern, $this->controllerClassName, $this->action );
+            $return = new madRoutingInformation( $this->pattern, $this->controllerClassName, $this->action );
             $return->route = $this;
             return $return;
         }
@@ -27,7 +27,7 @@ class madCoreRoute extends ezcMvcRailsRoute {
     }
 
     static public function __set_state( array $state = array(  ) ) {
-        $return = new madCoreRoute( 
+        $return = new madRoute( 
             $state['pattern'],
             $state['controllerClassName'],
             $state['action'],

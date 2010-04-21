@@ -1,6 +1,6 @@
 <?php
 
-class madCoreRouter extends ezcMvcRouter {
+class madRouter extends ezcMvcRouter {
     private $config = array(  );
 
     public function __construct( ezcMvcRequest $request, $config ) {
@@ -29,7 +29,7 @@ class madCoreRouter extends ezcMvcRouter {
         if ( substr( $this->request->uri, 0, 8 ) == '/static/' ) {
             $routingInformation = new ezcMvcRoutingInformation(
                  $this->request->uri,
-                 'madCoreDownloadController',
+                 'madDownloadController',
                  'download'
             );
             $routingInformation->router = $this;
@@ -50,7 +50,7 @@ class madCoreRouter extends ezcMvcRouter {
                 $routeArray['arguments'] = array(  );
             }
 
-            $route = new madCoreRoute( 
+            $route = new madRoute( 
                 $routeArray['rails'],
                 $routeArray['controller'],
                 $routeArray['action'],

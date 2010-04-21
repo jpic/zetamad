@@ -1,6 +1,6 @@
 <?php
 
-class madCoreViewHandler extends ezcMvcPhpViewHandler {
+class madViewHandler extends ezcMvcPhpViewHandler {
     public function generateUrl( $name, $arguments = array(  )) {
         $registry = madRegistry::instance();
         $prefix = $registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );

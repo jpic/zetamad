@@ -11,7 +11,7 @@ $request->date = new DateTime;
 $request->requestId = $request->host . $request->uri;
 
 $routes = $registry->configuration->settings['routes'];
-$router = new madCoreRouter( $request, $routes );
+$router = new madRouter( $request, $routes );
 $registry->router = $router;
 $routingInformation = $router->getRoutingInformation();
 
@@ -19,7 +19,7 @@ $controllerClass = $routingInformation->controllerClass;
 $controller = new $controllerClass( $routingInformation->action, $request );
 $result = $controller->createResult();
 
-$view = new madCoreView( $request, $result, $routingInformation );
+$view = new madView( $request, $result, $routingInformation );
 
 $response = $view->createResponse();
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing class madCoreView.
+ * File containing class madView.
  * 
  * @package MadCore
  * @version //autogen//
@@ -20,7 +20,7 @@
  * @package MadCore
  * @version //autogen//
  */
-class madCoreView extends ezcMvcView {
+class madView extends ezcMvcView {
     /**
      * Monkey patch ezcMvcView.
      * 
@@ -70,7 +70,7 @@ class madCoreView extends ezcMvcView {
             $zones[] = new ezcMvcPhpViewHandler( 'content', join( DIRECTORY_SEPARATOR, array( 
                 dirname( __FILE__ ),
                 'templates',
-                'madCoreDownloadController.download.php'
+                'madDownloadController.download.php'
             ) ) );
 
             // short circuit to avoid regular template rendering in the case of 
@@ -90,10 +90,10 @@ class madCoreView extends ezcMvcView {
             return $zones;
         }
 
-        $zones[] = new madCoreViewHandler( 'body', $this->getTemplate( ) );
+        $zones[] = new madViewHandler( 'body', $this->getTemplate( ) );
         
         if ( $layout && !$this->request->variables['ajaxRequest'] ) {
-            $zones[] = new madCoreViewHandler( 'site_base', APP_PATH . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'site_base.php' );
+            $zones[] = new madViewHandler( 'site_base', APP_PATH . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'site_base.php' );
         }
 
         return $zones;

@@ -13,19 +13,19 @@ require 'router.php';
  * @package MadCore
  * @subpackage Tests
  */
-class madCoreSuite extends PHPUnit_Framework_TestSuite
+class madSuite extends PHPUnit_Framework_TestSuite
 {
     public function __construct()
     {
         parent::__construct();
         $this->setName("Core");
-        $this->addTest( madCoreRouterTest::suite() );
+        $this->addTest( madRouterTest::suite() );
         $this->addTest( madConfigurationTest::suite() );
     }
 
     public static function suite()
     {
-        return new madCoreSuite();
+        return new madSuite();
     }
 }
 ?>

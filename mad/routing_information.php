@@ -1,6 +1,6 @@
 <?php
 
-class madCoreRoutingInformation extends ezcMvcRoutingInformation {
+class madRoutingInformation extends ezcMvcRoutingInformation {
     public $route = null;
 
     /**
@@ -14,11 +14,11 @@ class madCoreRoutingInformation extends ezcMvcRoutingInformation {
      * is parsed with PHP.
      *
      * @param array(string=>mixed) $array
-     * @return madCoreRoutingInformation
+     * @return madRoutingInformation
      */
     static public function __set_state( array $array )
     {
-        $return = new madCoreRoutingInformation( $array['matchedRoute'],
+        $return = new madRoutingInformation( $array['matchedRoute'],
             $array['controllerClass'], $array['action'], $array['router'] );
         if ( isset( $array['route'] ) ) {
             $return->route = $array['route'];

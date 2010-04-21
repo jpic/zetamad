@@ -1,6 +1,6 @@
-<?php $routeInfo = madCoreRoutingInformation::__set_state(array(
+<?php $routeInfo = madRoutingInformation::__set_state(array(
    'route' => 
-  madCoreRoute::__set_state(array(
+  madRoute::__set_state(array(
      'application' => 'recipe',
      'pattern' => '/recipes/list/',
      'controllerClassName' => 'madCrud',

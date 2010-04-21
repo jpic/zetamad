@@ -1,6 +1,6 @@
 <?php
 
-class madCoreDownloadController extends madController {
+class madDownloadController extends madController {
     public function doDownload() {
         $configuration = madRegistry::instance(  )->configuration;
 

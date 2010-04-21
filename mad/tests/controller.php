@@ -96,7 +96,7 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
 
     public function setUp() {
         $registry = madRegistry::instance();
-        $registry->router = $this->getMock( 'madCoreRouter', array(  ), array( new ezcMvcrequest(  ), array(  ) ));
+        $registry->router = $this->getMock( 'madRouter', array(  ), array( new ezcMvcrequest(  ), array(  ) ));
         $registry->router->expects( $this->any(  ) )
                          ->method( 'generateUrl' )
                          ->will( $this->returnValue( '/bar' ) );

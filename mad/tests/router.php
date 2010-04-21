@@ -6,9 +6,9 @@ class fooConfigurationManagerMock extends ezcConfigurationManager {
     }
 }
 
-class madCoreRouterTest extends ezcTestCase {
+class madRouterTest extends ezcTestCase {
     static public function suite(  ) {
-        return new PHPUnit_Framework_TestSuite( 'madCoreRouterTest' );
+        return new PHPUnit_Framework_TestSuite( 'madRouterTest' );
     }
 
     static public function getRoutingInformationProvider(  ) {
@@ -96,7 +96,7 @@ class madCoreRouterTest extends ezcTestCase {
      * @dataProvider getRoutingInformationProvider
      */
     public function testGetRoutingInformation( $scenario, $config, $request, $expected, $write ) {
-        $fixture = new madCoreRouter( $request, $config['settings'] );
+        $fixture = new madRouter( $request, $config['settings'] );
         $routeInfo = $fixture->getRoutingInformation();
         $requestVariables = $request->variables;
 
