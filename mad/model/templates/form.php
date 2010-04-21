@@ -165,6 +165,8 @@ table.formset {
 
 </form>
 
+<script type="text/javascript" src="<?php echo $this->getAbsoluteStaticUrl( 'js/jquery.form.js' ) ; ?>"></script>
+<script type="text/javascript" src="<?php echo $this->getAbsoluteStaticUrl( 'js/jquery.uni-form.js' ) ; ?>"></script>
 <?php if ( in_array( 'wysiwyg', $widgets ) ): ?>
 <script type="text/javascript" src="<?php echo $this->getAbsoluteStaticUrl( 'ckeditor/ckeditor.js' ) ; ?>"></script>
 <?php endif ?>
