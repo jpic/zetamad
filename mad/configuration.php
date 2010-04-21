@@ -51,8 +51,8 @@ class madConfiguration {
      * the configuration folder of your application:
      * <code>
      * $configuration = new madConfiguration( array( 
-     *     '/path/to/your-app/configuration',
-     *     '/path/to/my-app/configuration',
+     *     '/path/to/your-app/etc',
+     *     '/path/to/my-app/etc',
      * ) );
      * </code>
      *
@@ -68,7 +68,7 @@ class madConfiguration {
      * contains an 'applications.ini' configuration file.
      *
      * This factory assumes that all the applications store only ini configuration
-     * files in a subdirectory named "configuration".
+     * files in a subdirectory named "etc".
      * 
      * For example, to create a complete madConfiguration for application 'yourApp':
      * <code>
@@ -85,7 +85,7 @@ class madConfiguration {
             $path = join( DIRECTORY_SEPARATOR, array( 
                 $applicationPath,
                 'cache',
-                'configuration'
+                'etc'
             ) );
             $return = new madConfiguration( array( $path ) );
             $return->read(  );
@@ -95,7 +95,7 @@ class madConfiguration {
         # generate applications config that we need
         $reader = new ezcConfigurationIniReader( join( DIRECTORY_SEPARATOR, array( 
             $applicationPath,
-            'configuration',
+            'etc',
             'applications.ini'
         ) ) );
         $result = $reader->validate(  );
@@ -112,7 +112,7 @@ class madConfiguration {
         $paths = array( 
             join( DIRECTORY_SEPARATOR, array( 
                 $applicationPath,
-                'configuration',
+                'etc',
             ) ),
         );
 
@@ -124,7 +124,7 @@ class madConfiguration {
                         $configurationPath
                     ) ) );
 
-                    $out = shell_exec( "find $path -name configuration -type d \! -path \"*/tests/*\" \! -path \"*/cache/*\"" );
+                    $out = shell_exec( "find $path -name etc -type d \! -path \"*/tests/*\" \! -path \"*/cache/*\"" );
                     if ( $out ) {
                         foreach( explode( "\n", $out ) as $path ) {
                             if ( $path == dirname( __FILE__ ) ) {
@@ -151,7 +151,7 @@ class madConfiguration {
         $path = join( DIRECTORY_SEPARATOR, array( 
             $applicationPath,
             'cache',
-            'configuration'
+            'etc'
         ) );
         $writer->write( $path );
         $return = new madConfiguration( array( $path ) );
@@ -162,9 +162,9 @@ class madConfiguration {
     /**
      * Writes the configuration in PHP format in an arbitary directory.
      *
-     * For example, to write the configuration in /var/cache/configuration:
+     * For example, to write the configuration in /var/cache/etc:
      * <code>
-     * $configuration->write( '/var/cache/configuration' );
+     * $configuration->write( '/var/cache/etc' );
      * </code>
      *
      * @param string $path Output path
@@ -373,7 +373,7 @@ class madConfiguration {
             }
         }
 
-        throw new Exception( "Cannot find the name of the application containing class $className, does it contain a 'configuration' subdir?" );
+        throw new Exception( "Cannot find the name of the application containing class $className, does it contain a 'etc' subdir?" );
     }
 
     static public function getRelativePath( $path, $compareTo ) {
