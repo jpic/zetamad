@@ -120,7 +120,7 @@ a.btn-block:hover { background: #539893; }
                         -->
                 </div>
                 <?php 
-                if ( isset( $this->object['preparationTime'] ) || 
+                if ( isset( $this->object['prepTime'] ) || 
                      isset( $this->object['cookTime'] ) ||
                      isset( $this->object['numberOfPeople'] ) ||
                      isset( $this->object['recipeSteps'] )
@@ -131,14 +131,14 @@ a.btn-block:hover { background: #539893; }
                         <div class="recipe-title-steps">Pr&eacute;paration</div>
                         
                         <?php 
-                        if ( isset( $this->object['preparationTime'] ) || 
+                        if ( isset( $this->object['prepTime'] ) || 
                              isset( $this->object['cookTime'] ) ||
                              isset( $this->object['numberOfPeople'] )
                         ):
                         ?>
                         <div class="recipe-infos">
-                            <?php if ( isset( $this->object['preparationTime'] ) ): ?>
-                                <p class="recipe-infos-block">Pr&eacute;paration: <span class="bold"><?php $this->e( $this->object['preparationTime'] ) ?>min</span></p>
+                            <?php if ( isset( $this->object['prepTime'] ) ): ?>
+                                <p class="recipe-infos-block">Pr&eacute;paration: <span class="bold"><?php $this->e( $this->object['prepTime'] ) ?>min</span></p>
                             <?php endif ?>
                             <?php if ( isset( $this->object['cookTime'] ) ): ?>
                                 <p class="recipe-infos-block">Cuisson: <span class="bold"><?php $this->e( $this->object['cookTime'] ) ?>min</span></p>
