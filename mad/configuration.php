@@ -1,6 +1,6 @@
 <?php
 /**
- * File containing the madCoreConfiguration class.
+ * File containing the madConfiguration class.
  * 
  * @package MadConfiguration
  * @version //autogen//
@@ -9,16 +9,16 @@
  * @license http://madeleinemarket.com/code/license
  */
 /**
- * madCoreConfiguration is responsible for reading, merging and caching 
+ * madConfiguration is responsible for reading, merging and caching 
  * configuration from several folders.
  * 
  * See documentation of the factory() static method for an alternate way to 
- * instanciate madCoreConfiguration.
+ * instanciate madConfiguration.
  *
  * @package MadConfiguration
  * @version //autogen//
  */
-class madCoreConfiguration {
+class madConfiguration {
     /**
      * Array of paths to ini configuration.
      * 
@@ -41,7 +41,7 @@ class madCoreConfiguration {
     public $comments = array(  );
 
     /**
-     * Instanciates a madCoreConfiguration with an array of paths to configuration 
+     * Instanciates a madConfiguration with an array of paths to configuration 
      * files.
      *
      * The configuration paths array should order paths from the most important to 
@@ -50,7 +50,7 @@ class madCoreConfiguration {
      * For example, if you want to overload the configuration of my application in 
      * the configuration folder of your application:
      * <code>
-     * $configuration = new madCoreConfiguration( array( 
+     * $configuration = new madConfiguration( array( 
      *     '/path/to/your-app/configuration',
      *     '/path/to/my-app/configuration',
      * ) );
@@ -64,19 +64,19 @@ class madCoreConfiguration {
     }
    
     /**
-     * Instanciate a madCoreConfiguration with a path to an application that 
+     * Instanciate a madConfiguration with a path to an application that 
      * contains an 'applications.ini' configuration file.
      *
      * This factory assumes that all the applications store only ini configuration
      * files in a subdirectory named "configuration".
      * 
-     * For example, to create a complete madCoreConfiguration for application 'yourApp':
+     * For example, to create a complete madConfiguration for application 'yourApp':
      * <code>
-     * $configuration = madCoreConfiguration::factory( '/path/to/your-app' );
+     * $configuration = madConfiguration::factory( '/path/to/your-app' );
      * </code>
      *
      * @param string $applicationPath Absolute path to the application.
-     * @return madCoreConfiguration
+     * @return madConfiguration
      */
     static public function factory( $applicationPath, $refresh = false ) {
         $applicationName = substr( $applicationPath, strrpos( $applicationPath, DIRECTORY_SEPARATOR ) );
@@ -87,7 +87,7 @@ class madCoreConfiguration {
                 'cache',
                 'configuration'
             ) );
-            $return = new madCoreConfiguration( array( $path ) );
+            $return = new madConfiguration( array( $path ) );
             $return->read(  );
             return $return;
         }
@@ -144,7 +144,7 @@ class madCoreConfiguration {
             }
         }
 
-        $writer = new madCoreConfiguration( $paths );
+        $writer = new madConfiguration( $paths );
         $writer->read(  );
         $writer->clean(  );
 
@@ -154,7 +154,7 @@ class madCoreConfiguration {
             'configuration'
         ) );
         $writer->write( $path );
-        $return = new madCoreConfiguration( array( $path ) );
+        $return = new madConfiguration( array( $path ) );
         $return->read(  );
         return $return;
     }

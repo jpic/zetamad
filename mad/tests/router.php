@@ -61,7 +61,7 @@ class madCoreRouterTest extends ezcTestCase {
                         'conf',
                     ) );
                     shell_exec( "mkdir -p $confCachePath" );
-                    $conf = new madCoreConfiguration( $paths );
+                    $conf = new madConfiguration( $paths );
                     $conf->clean(  );
                     $conf->prefixRoutes(  );
                     $conf->write( $confCachePath );

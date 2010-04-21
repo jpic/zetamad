@@ -3,9 +3,9 @@
  * @package MadConfiguration
  * @subpackage Tests
  */
-class madCoreConfigurationTest extends ezcTestCase {
+class madConfigurationTest extends ezcTestCase {
     static public function suite(  ) {
-        return new PHPUnit_Framework_TestSuite( 'madCoreConfigurationTest' );
+        return new PHPUnit_Framework_TestSuite( 'madConfigurationTest' );
     }
 
     static public function getRelativePathProvider(  )  {
@@ -52,7 +52,7 @@ class madCoreConfigurationTest extends ezcTestCase {
      * @dataProvider getRelativePathProvider
      */
     public function testGetRelativePath( $path, $compareTo, $expected ) {
-        $result = madCoreConfiguration::getRelativePath( $path, $compareTo );
+        $result = madConfiguration::getRelativePath( $path, $compareTo );
         $this->assertEquals( $expected, $result );
     }
 
@@ -120,7 +120,7 @@ class madCoreConfigurationTest extends ezcTestCase {
      * @dataProvider configCacheFunctionnalProvider
      */
     public function testConfigCacheFunctionnal( $scenario, $paths, $expected, $write ) {
-        $config = new madCoreConfiguration( $paths );
+        $config = new madConfiguration( $paths );
         if ( $write ) {
             $config->write( $expected );
             $this->markTestSkipped(  );
