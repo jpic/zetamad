@@ -102,8 +102,6 @@ class madModel {
      * @return madObject
      */
     public function save( madObject $data, $useTransaction = true ) {
-        $args = func_get_args(  );
-
         if( $useTransaction ) {
             $this->pdo->beginTransaction();
         }
