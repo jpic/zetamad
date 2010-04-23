@@ -8,6 +8,7 @@ return array (
       'controller' => 'madModelController',
       'action' => 'list',
       'query' => 'select id from %(recipe_index)s order by updated',
+      'paginate' => 7,
       'application' => 'recipe',
     ),
     'recipe.create' => 
