@@ -8,23 +8,25 @@
  */
 
 require 'base.php';
+require 'model.php';
 
 /**
- * @package MadBase
+ * @package Framework
  * @subpackage Tests
  */
-class madObjectSuite extends PHPUnit_Framework_TestSuite
+class madTestSuite extends PHPUnit_Framework_TestSuite
 {
     public function __construct()
     {
         parent::__construct();
-        $this->setName('Base');
-        $this->addTest( madObjectTest::suite() );
+        $this->setName('Framework');
+        $this->addTest( madObjectTest::suite(  ) );
+        $this->addTest( madModelTest::suite(  ) );
     }
 
     public static function suite()
     {
-        return new madObjectSuite();
+        return new madTestSuite();
     }
 }
 ?>

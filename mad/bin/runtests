@@ -108,14 +108,7 @@ class madTestRunner extends PHPUnit_TextUI_Command
             );
         }
 
-        if ( isset( $this->arguments['colors'] ) && $this->arguments['colors'] === true )
-        {
-            $colors = true;
-        }
-        else
-        {
-            $colors = false;
-        }
+        $colors = true;
 
         if ( isset( $this->arguments['debug'] ) && $this->arguments['debug'] === true )
         {
@@ -147,8 +140,8 @@ class madTestRunner extends PHPUnit_TextUI_Command
             $entries = glob( "$directory/*" );
 
             foreach ( $entries as $entry )
-            {
-                if ( $this->isPackageDir( $entry ) )
+            { 
+                if ( is_dir( "$entry/tests" ) )
                 {
                     $packages[] = str_replace( $directory . '/', '', $entry );
                 }
@@ -176,48 +169,17 @@ class madTestRunner extends PHPUnit_TextUI_Command
 
         if ( file_exists( $suitePath ) )
         {
+            $className = shell_exec( "grep -o 'class [a-zA-Z]*Suite' $suitePath | grep -o '[a-zA-Z]*$'" );
+            $className = trim( $className );
+            
             include_once $suitePath;
 
-            $className = 'mad'. ucfirst( $package ) . 'Suite';
-            var_dump( $className, get_class( call_user_func(  array(
-                $className, 'suite' ) ) ) );
-            $suite     = call_user_func( array( $className, 'suite' ) );
+            $suite = call_user_func( array( $className, 'suite' ) );
 
             return $suite;
         }
 
         return null;
-    }
-
-    protected function handleDsn( $value )
-    {
-        try
-        {
-            $ts       = ezcTestSettings::getInstance();
-            $settings = ezcDbFactory::parseDSN( $value );
-
-            $ts->db->value = $value;
-        
-            try
-            {
-                $ts->setDatabaseSettings( $settings );
-                $db = ezcDbFactory::create( $settings );
-                ezcDbInstance::set( $db );
-            }
-            catch ( ezcDbException $e )
-            {
-                die( $e->getMessage() );
-            }
-        }
-        catch ( Exception $e )
-        {
-            die( "Database initialization error: {$e->getMessage()}\n" );
-        }
-    }
-
-    protected function handleRelease( $value )
-    {
-        $this->release = $value;
     }
 }
 
