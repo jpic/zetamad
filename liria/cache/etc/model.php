@@ -12,6 +12,14 @@ return array (
       array (
         'type' => 'varchar(255)',
       ),
+      'category' => 
+      array (
+        'type' => 'varchar(255)',
+      ),
+      'profile' => 
+      array (
+        'type' => 'varchar(44)',
+      ),
     ),
     'profile.profile' => 
     array (
