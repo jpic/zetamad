@@ -66,6 +66,10 @@
 
 </ul>
 
+<?php
+    include 'mad/templates/paginate.php';
+?>
+
 <!--
 <a href="<?php echo $this->generateUrl( 'recipe.create' ); ?>">create</a>
 -->

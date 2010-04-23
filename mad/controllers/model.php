@@ -9,10 +9,37 @@ class madModelController extends madController {
     }
 
     public function doList() {       
-        $objectList = $this->registry->model->queryLoad( $this->configuration['query'] );
-
         $result = new ezcMvcResult(  );
+        $query = $this->configuration['query'];
+        $paginate = isset( $this->configuration['paginate'] ) ? intval( $this->configuration['paginate'] ) : false;
+        
+        if ( $paginate ) {
+            $totalObjectsSql = preg_replace( '/^select (.*)? from/i', 'SELECT count(id) FROM', $query );
+            $totalObjects = $this->registry->model->query( $totalObjectsSql )->fetchColumn(  );
+            $lastPage = ceil( $totalObjects / $paginate );
+
+            $currentPage = isset( $this->request->variables['page'] ) ? intval( $this->request->variables['page'] ) : 1;
+            if ( $currentPage > $lastPage ) {
+                $currentPage = $lastPage;
+            }
+            if ( $currentPage < 1 ) {
+                $currentPage = 1;
+            }
+
+            $query .= sprintf( 
+                ' LIMIT %s, %s',
+                ( $currentPage - 1 ) * $paginate,
+                $paginate
+            );
+
+            $result->variables['paginate']    = $paginate;
+            $result->variables['currentPage'] = $currentPage;
+            $result->variables['lastPage']    = $lastPage;
+        } 
+        $objectList = $this->registry->model->queryLoad( $query );
+
         $result->variables['objectList'] = $objectList;
+
         return $result;
     }
 
