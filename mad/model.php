@@ -142,7 +142,13 @@ class madModel {
                 }
 
                 $updateParts[$name] = "$name = :$name";
-                $arguments[$name]   = $data[$name];
+                if ( ! $data[$name] instanceof madBase ) {
+                    $arguments[$name] = $data[$name];
+                } elseif ( $data[$name]->isEntity ) {
+                    $arguments[$name] = $data[$name]['id'];
+                } else {
+                    trigger_error( 'multivalue cache not implemented' );
+                }
             }
 
             $cacheSql = "INSERT INTO `$tableName` SET ";
