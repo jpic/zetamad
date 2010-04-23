@@ -44,8 +44,7 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
     <?php endif ?>
 
 <?php elseif ( $field->widget == 'autocomplete' ): ?>
-    <input autocomplete="off" value="<?php if ( isset( $form[$name] ) ) $this->e( $field->displayValue ) ?>" name="autocomplete_<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="text" class="textInput <?php $this->e( $htmlClasses ) ?>" />
-    <input value="<?php if ( isset( $form[$name] ) ) $this->e( $field->actualValue ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="hidden" class="textInput" />
+    <input autocomplete="off" value="<?php if ( isset( $form[$name] ) ) $this->e( $form[$name] ) ?>" name="<?php echo $inputName ?>" id="<?php echo $inputId ?>" type="text" class="textInput <?php $this->e( $htmlClasses ) ?>" />
     
     <script type="text/javascript">
     $(document).ready( function() {
@@ -57,17 +56,6 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
                 }
             }
         );
-
-        <?php if ( !isset( $field->createRoute ) ): ?>
-        $("form.uniForm input[name=\"autocomplete_<?php echo $inputName; ?>\"]").blur( function( e ) {
-            var display = $("form.uniForm input[name=\"autocomplete_<?php echo $inputName; ?>\"]");
-            var actual = $("form.uniForm input[name=\"<?php echo $inputName; ?>\"]");
-
-            if ( display.val() && !actual.val() ) {
-                actual.val( display.val(  ) );
-            }
-        });
-        <?php endif ?>
 
     });
     </script>
