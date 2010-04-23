@@ -64,24 +64,6 @@ class madModelController extends madController {
      * then that attribute value will be slugified and set to $form[$name], if 
      * it does not have a valeu.
      *
-     * If a field has a widget option with a class option set to 'autocomplete' 
-     * then it will set two widget options: actualValue and displayValue.
-     * The autocomplete has two input fields, a hidden one with the actual 
-     * value to save and a normal text input which is supposed to be convenient 
-     * for the user.
-     * An autocomplete widget *needs* a "route" option which should contain the 
-     * name of the route which will provide results. This controller also 
-     * provides an "autocomplete" action, see docblock of method 
-     * doAutocomplete() for more details.
-     * There are two ways to configure the autocomplete widget behaviour. If 
-     * you set the "attribute" option then it will just use the text value for 
-     * the displayValue and actualValue options, making the widget just behing 
-     * a basic helper for the user to fill the form.
-     * If the "actualAttribute" and "displayAttribute" are set, then it will 
-     * assume that $form[$name] is a related object, and use the value of its 
-     * attribute with name actualAttribute for the actualValue and its 
-     * attribute with name displayAttribute for the display field.
-     *
      * If the field widget class is "file" then the uploaded file will be 
      * copied to APP_PATH/upload, and its relative path will be set to $form[$name]. 
      * If a file with that name already exists, it will append an underscore to 
@@ -147,25 +129,7 @@ class madModelController extends madController {
             return true;
         }
 
-        // autocomplete have an "hidden" value
         if ( isset( $field->widget ) ) {
-            if ( $field->widget == 'autocomplete' ) {
-                if ( !isset( $form[$name] ) ) {
-                    $field->actualValue  = '';
-                    $field->displayValue = '';
-                } else {
-                    if ( isset( $field->attribute ) ) {
-                        $field->actualValue  = $form[$name];
-                        $field->displayValue = $form[$name];
-                    } else { // assume relation
-                        $field->actualValue  = $form[$name][$field->actualAttribute];
-                        $field->displayValue = $form[$name][$field->displayAttribute];
-                    }
-                }
-
-                return true;
-            }
-
             if ( $field->widget == 'file' && $this->request->protocol == 'http-post' ) {
                 $uploadDir = APP_PATH . DIRECTORY_SEPARATOR . 'upload';
 
