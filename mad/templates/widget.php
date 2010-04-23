@@ -33,7 +33,7 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
 <?php elseif ( $field->widget == 'select' ): ?>
     <select class="<?php $this->e( $htmlClasses ) ?>" name="<?php echo $inputName ?>" id="<?php echo $inputId ?>">
     <?php foreach( $field->choices as $value => $verbose ): ?>
-        <option value="<?php $this->e( $value ) ?>"><?php echo $verbose ?></option>
+        <option value="<?php $this->e( $value ) ?>" <?php if ( isset( $form[$name] ) && $value == $form[$name][$field->valueAttribute] ) echo 'selected="selected"' ?>><?php echo $verbose ?></option>
     <?php endforeach ?>
     </select>
 
