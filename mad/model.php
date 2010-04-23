@@ -741,8 +741,7 @@ class madModel {
         $filter = new madObject( array( 'namespace' => $namespace ) );
 
         foreach( $this->loadMatching( $filter ) as $object ) {
-            var_dump( $object );
             $this->save( $object );
         }
     }
-}
+};
