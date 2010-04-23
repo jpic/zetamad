@@ -485,9 +485,9 @@ class madModelController extends madController {
     public function doAutocomplete(  ) {
         $result = $this->doList(  );
 
-        if ( isset( $result->variables['attribute'] ) ) {
-            $result->variables['valueAttribute'] = $this->request->variables['attribute'];
-            $result->variables['displayAttribute'] = $this->request->variables['attribute'];
+        if ( isset( $this->configuration['attribute'] ) ) {
+            $result->variables['valueAttribute'] = $this->configuration['attribute'];
+            $result->variables['displayAttribute'] = $this->configuration['attribute'];
         } else {
             $result->variables['valueAttribute'] = $this->request->variables['valueAttribute'];
             $result->variables['displayAttribute'] = $this->request->variables['displayAttribute'];
