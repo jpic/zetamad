@@ -52,6 +52,10 @@ class madModel {
     }
 
     public function query( $sql, array $arguments = array(  ) ) {
+        foreach( $this->namespaceTableNames as $namespace => $table ) {
+            $sql = str_replace( "%({$namespace}_index)s", $table, $sql );
+        }
+
         //$args = func_get_args(  );
         //$final = $sql;
         //foreach ( $arguments as $key => $value ) {
@@ -133,15 +137,24 @@ class madModel {
             $tableName = $this->namespaceTableNames[$data['namespace']];
 
             $updateParts = array(  );
+            $arguments = array(  );
             foreach( $this->configurationTables[$tableName] as $name => $column ) {
-                $updateParts[$keys] = "$key = :$key";
+                if ( $name == 'id_index' ) {
+                    continue;
+                }
+
+                $updateParts[$name] = "$name = :$name";
+                $arguments[$name]   = $data[$name];
             }
 
             $cacheSql = "INSERT INTO `$tableName` SET ";
             $cacheSql.= implode( ', ', $updateParts );
-            $cacheSql.= "ON DUPLICATE KEY UPDATE ";
+            $cacheSql.= " ON DUPLICATE KEY UPDATE ";
+            
             unset( $updateParts['id'] );
             $cacheSql.= implode( ', ', $updateParts );
+            
+            $this->query( $cacheSql, ( array ) $arguments );
         }
 
         return $data;
@@ -220,6 +233,10 @@ class madModel {
      * @return array madObject instances
      */
     public function queryLoad( $sql, array $arguments = array(  ) ) {
+        foreach( $this->namespaceTableNames as $namespace => $table ) {
+            $sql = str_replace( "%({$namespace}_index)s", $table, $sql );
+        }
+
         $statement = $this->pdo->prepare( $sql );
         $statement->setFetchMode( PDO::FETCH_COLUMN );
         $statement->execute( $arguments );
@@ -249,14 +266,14 @@ class madModel {
                 , attribute_key
                 , attribute_value
             from mad_model 
-            where id in ( %s )',
+            where id in ( "%s" )',
             self::DECODE_ID_ENTITY,
-            join( ', ', $ids )
+            join( '", "', $ids )
         );
         
         $statement = $this->query( $sql );
 
-        return $this->reduce( $statement->fetchAll(  ), $data );
+        return $this->reduce( $statement->fetchAll(  ) );
     }
 
     /**
@@ -559,7 +576,7 @@ class madModel {
     public function readConfiguration(  ) {
         foreach( $this->schemaConfiguration as $name => $table ) {
             $tableName = $this->coreConfiguration['prefix'] . str_replace( '.', '_', $name );
-            $namespace = substr( $name, strpos( $name, '.' ) );
+            $namespace = substr( $name, strpos( $name, '.' ) + 1 );
             $this->namespaceTableNames[$namespace] = $tableName;
 
             foreach( $table as $fieldName => $field ) {
@@ -710,8 +727,8 @@ class madModel {
     }
 
     public function addIndexSql( $tableName, $columnName ) {
-        $index = strtoupper( $this->configurationTables[$tableName][$columnName]['primary'] );
-        $sql = "ALTER TABLE `$tableName` ADD $index $columnName";
+        $index = strtoupper( $this->configurationTables[$tableName][$columnName]['index'] );
+        $sql = "ALTER TABLE `$tableName` ADD $index ($columnName)";
         return $sql;
     }
 }

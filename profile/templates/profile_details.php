@@ -79,10 +79,12 @@ a.btn-block:hover { background: #539893; }
 			<p class="author-intro">
                 <?php echo htmlentities( $this->object['introduction'] ) ?>
 			</p>
+            <?php if ( isset( $this->object['presentation'] ) ): ?>
 			<h3>Profil</h3>
 			<p class="author-profil">
                 <?php echo htmlentities( $this->object['presentation'] ) ?>
 			</p>
+            <?php endif ?>
 	</div>
 </div>
 

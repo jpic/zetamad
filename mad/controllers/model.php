@@ -124,26 +124,49 @@ class madModelController extends madController {
             return true;
         }
 
+        // select fields need choices option
+        if ( isset( $field->widget ) && $field->widget == 'select' ) {
+            $choices = array(  );
+
+            // from query?
+            if ( isset( $field->query ) ) {
+                foreach( $this->registry->model->queryLoad( $field->query ) as $object ) {
+                    $choices[$object[$field->valueAttribute]] = $object[$field->displayAttribute];
+                }
+            }
+
+            $field->choices = $choices;
+
+            return true;
+        }
+
+        // handle date => now
+        if ( isset( $field->date ) && $field->date == 'now' ) {
+            $form[$name] = date( 'Y-m-d' );
+
+            return true;
+        }
+
         // autocomplete have an "hidden" value
-        if ( isset( $field->widget ) && isset( $field->widget->class ) ) {
-            if ( $field->widget->class == 'autocomplete' ) {
+        if ( isset( $field->widget ) ) {
+            if ( $field->widget == 'autocomplete' ) {
                 if ( !isset( $form[$name] ) ) {
-                    $field->widget->actualValue  = '';
-                    $field->widget->displayValue = '';
+                    $field->actualValue  = '';
+                    $field->displayValue = '';
                 } else {
-                    if ( isset( $field->widget->attribute ) ) {
-                        $field->widget->actualValue  = $form[$name];
-                        $field->widget->displayValue = $form[$name];
+                    if ( isset( $field->attribute ) ) {
+                        $field->actualValue  = $form[$name];
+                        $field->displayValue = $form[$name];
                     } else { // assume relation
-                        $field->widget->actualValue  = $form[$name][$field->widget->actualAttribute];
-                        $field->widget->displayValue = $form[$name][$field->widget->displayAttribute];
+                        $field->actualValue  = $form[$name][$field->actualAttribute];
+                        $field->displayValue = $form[$name][$field->displayAttribute];
                     }
                 }
 
                 return true;
             }
 
-            if ( $field->widget->class == 'file' && $this->request->protocol == 'http-post' ) {
+            if ( $field->widget == 'file' && $this->request->protocol == 'http-post' ) {
                 $uploadDir = APP_PATH . DIRECTORY_SEPARATOR . 'upload';
 
                 $file = $this->request->files[str_replace( '.', '_', $form->name )][$name];
@@ -421,7 +444,7 @@ class madModelController extends madController {
         $result       = new ezcMvcResult(  );
 
         $form         = new madObject(  );
-        $form->name   = $this->request->variables['form'];
+        $form->name   = $this->configuration['form'];
         $form->action = $this->request->uri;
         $form->model  = $this->registry->model;
         $form->valid  = true;
@@ -467,12 +490,20 @@ class madModelController extends madController {
                 // redirect to successRoute
                 $prefix = $this->registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
 
-                $result->status = new ezcMvcExternalRedirect( 
-                    $prefix . $this->registry->router->generateUrl( 
-                        $this->successRoute,
-                        (array) $form
-                    ) 
-                );
+                if ( isset( $this->request->variables['popup'] ) ) {
+                    $result->variables['responseBody'] = sprintf( 
+                        '<script type="text/javascript">opener.dismissAddAnotherPopup( window, "%s", "%s" );</script>',
+                        $form[$this->request->variables['valueAttribute']],
+                        $form[$this->request->variables['displayAttribute']]
+                    );
+                } else {
+                    $result->status = new ezcMvcExternalRedirect( 
+                        $prefix . $this->registry->router->generateUrl( 
+                            $this->configuration['successRoute'],
+                            (array) $form
+                        ) 
+                    );
+                }
             }
         }
 

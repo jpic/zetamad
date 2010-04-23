@@ -31,8 +31,8 @@ UniForm = function() {
      * @param string caption
      */
     required : function(field, caption) {
-      if(field.val() == '') {
-        return caption + ' value is required';
+      if(field.val() == ''  && !field.hasClass('hasValue')) {
+        return 'Veuillez saisir une valeur dans le champs ' + caption;
       } else {
         return true;
       }

@@ -66,6 +66,16 @@ class madView extends ezcMvcView {
     {
         $zones = array(  );
 
+        if ( isset( $this->result->variables['responseBody'] ) ) {
+            $zones[] = new ezcMvcPhpViewHandler( 'content', join( DIRECTORY_SEPARATOR, array( 
+                dirname( __FILE__ ),
+                'templates',
+                'responseBody.php',
+            ) ) );
+
+            return $zones;
+        }
+
         if ( isset( $this->result->variables['fileRequest'] ) ) {
             $zones[] = new ezcMvcPhpViewHandler( 'content', join( DIRECTORY_SEPARATOR, array( 
                 dirname( __FILE__ ),
