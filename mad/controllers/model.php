@@ -8,38 +8,11 @@ class madModelController extends madController {
         $this->registry = madRegistry::instance(  );
     }
 
-    public function doList() {
-        $filter = new madObject();
-
-        if ( isset( $this->request->variables['filter'] ) ) {
-            foreach( $this->request->variables['filter'] as $key => $value ) {
-                $filter[$key] = $value;
-            }
-        }
-        
-        $objectList = $this->registry->model->load( $filter );
-
-        if ( isset( $this->request->variables['distinct'] ) ) {
-            $attribute = $this->request->variables['distinct'];
-            $unst = array(  );
-            $seen = array(  );
-
-            foreach( $objectList as $key => $object ) {
-                if ( !in_array( $object[$attribute], $seen ) ) {
-                    $seen[] = $object[$attribute];
-                } else {
-                    $unst[] = $key;
-                }
-            }
-
-            foreach( $unst as $key ) {
-                unset( $objectList[$key] );
-            }
-        }
+    public function doList() {       
+        $objectList = $this->registry->model->queryLoad( $this->configuration['query'] );
 
         $result = new ezcMvcResult(  );
         $result->variables['objectList'] = $objectList;
-        $result->variables['filter']     = $filter;
         return $result;
     }
 
