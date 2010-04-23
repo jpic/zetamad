@@ -650,11 +650,11 @@ class madModel {
         foreach( $this->configurationTables[$tableName] as $columnName => $column ) {
             $columnsSql[] = $this->columnSql( $tableName, $columnName );
 
-            if ( $column['primary'] == 'unique' ) {
+            if ( $column['index'] == 'unique' ) {
                 $unique[] = "`$columnName`";
             }
 
-            if ( $column['primary'] == 'index' ) {
+            if ( $column['index'] == 'index' ) {
                 $index[] = "`$columnName`";
             }
         }
