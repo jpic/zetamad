@@ -29,8 +29,8 @@ set_include_path( join( PATH_SEPARATOR, array(
 
 error_reporting( E_ALL|E_STRICT );
 
-define( 'CACHE_REGEN', PHP_OS == 'Linux' && !strpos( $_SERVER['REQUEST_URI'], 'static' ) );
-define( 'MODEL_REGEN', !strpos( $_SERVER['REQUEST_URI'], 'static' ) );
+define( 'CACHE_REGEN', PHP_OS == 'Linux' && isset( $_SERVER['REQUEST_URI'] ) && !strpos( $_SERVER['REQUEST_URI'], 'static' ) );
+define( 'MODEL_REGEN', isset( $_SERVER['REQUEST_URI'] ) && !strpos( $_SERVER['REQUEST_URI'], 'static' ) );
 
 if ( CACHE_REGEN ) {
     $ocwd = getcwd();
@@ -76,7 +76,7 @@ if ( CACHE_REGEN ) {
 $registry = madRegistry::instance();
 
 # regenerate conf
-if ( PHP_OS == 'Linux' && !strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
+if ( CACHE_REGEN ) {
     $registry->configuration = madConfiguration::factory( APP_PATH, true );
 } else {
     $registry->configuration = madConfiguration::factory( APP_PATH );
