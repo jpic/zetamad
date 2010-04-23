@@ -138,6 +138,8 @@ foreach( $registry->configuration->settings['routes'] as $routeName => $routeCon
 }
 $result = $controller->createResult();
 
+$result->variables['request'] = $request;
+
 /**
  * Instanciate the view.
  *
