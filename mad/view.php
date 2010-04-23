@@ -322,6 +322,11 @@ class madView extends ezcMvcView {
             return $this->request->variables['filter']['namespace'];
         }
 
+        if ( isset( $this->result->variables['objectList'] ) ) {
+            $current = current( $this->result->variables['objectList'] );
+            return $current['namespace'];
+        }
+
         if ( isset( $this->result->variables['object'] ) ) {
             return $this->result->variables['object']['namespace'];
         }
