@@ -308,17 +308,18 @@ class madModel {
             self::DECODE_ID_ENTITY
         );
 
+        $whereParts = array(  );
         foreach( $data as $key => $value ) {
-            $sql .= " ( attribute_key = '$key' and attribute_value = :$key ) or ";
+            $whereParts[] = "( attribute_key = '$key' and attribute_value = :$key )";
         }
 
-        $sql = substr( $sql, 0, -4 );
+        $sql .= implode( ' or ', $whereParts );
 
         $statement = $this->query( $sql, (array) $data );
 
         $ids = array();
         while( $row = $statement->fetch(  ) ) {
-            $ids[] = str_replace( ':id', "'{$row['id']}'", self::ENCODE_ID_ENTITY );
+            $ids[] = $row['id'];
         }
 
         return $this->loadFromIds( $ids );
