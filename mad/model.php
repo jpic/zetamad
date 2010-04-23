@@ -736,4 +736,13 @@ class madModel {
         $sql = "ALTER TABLE `$tableName` ADD $index ($columnName)";
         return $sql;
     }
+
+    public function updateIndex( $namespace ) {
+        $filter = new madObject( array( 'namespace' => $namespace ) );
+
+        foreach( $this->loadMatching( $filter ) as $object ) {
+            var_dump( $object );
+            $this->save( $object );
+        }
+    }
 }
