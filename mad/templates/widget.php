@@ -49,10 +49,10 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
     <script type="text/javascript">
     $(document).ready( function() {
         // try not to mess with other input fields in the page
-        $("form.uniForm input[name=\"autocomplete_<?php echo $inputName; ?>\"]").autocomplete(
+        $("form.uniForm input#<?php echo $inputId ?>").autocomplete(
             "<?php echo $this->generateUrl( $field->route ) ?> ", {
                 onItemSelect: function( item ) {
-                    $("form.uniForm input[name=\"<?php echo $inputName; ?>\"]").val( item.extra[0] );
+                    $("form.uniForm input#<?php echo $inputId ?>").val( item.extra[0] );
                 }
             }
         );
