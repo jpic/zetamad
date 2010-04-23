@@ -3,5 +3,5 @@
 include $_ENV['MAD_BOOTSTRAP'];
 $registry = madRegistry::instance();
 
-var_dump( $registry->model->loadMatching( new madObject( array( 'namespace' => $argv[1] ) ) ) );
+var_export( $registry->model->loadMatching( new madObject( array( 'namespace' => $argv[1] ) ) ) );
 ?>
