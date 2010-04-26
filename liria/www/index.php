@@ -40,6 +40,8 @@ $requestParser->prefix = $registry->configuration->getSetting( 'core', 'dispatch
  */
 $request = $requestParser->createRequest();
 
+$registry->signals->send( 'requestParsed', array( $request ) );
+
 // append trailing slash if not a static file
 if ( substr( $request->uri, 0, 8) != '/static/' ) {
     if ( substr( $request->requestId, -1 ) != '/' ) {
