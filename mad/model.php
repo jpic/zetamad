@@ -10,7 +10,7 @@
 
 /**
  * madModel is the main runtime interface for manipulation of persistent 
- * madObject objects.
+ * madModelObject objects.
  * 
  * @package MadModel
  * @version //autogen//
@@ -40,7 +40,7 @@ class madModel {
      * Set the database instance private property.
      * 
      * @param PDO $pdo
-     * @throws madObjectValueException If the $pdo parameter is not given an 
+     * @throws madModelObjectValueException If the $pdo parameter is not given an 
      *                               PDO
      * @return void
      */
@@ -98,10 +98,10 @@ class madModel {
      * If $data['namespace'] is configured to have an index table, then it will 
      * be updated as well.
      * 
-     * @param madObject $data Model instance to save.
-     * @return madObject
+     * @param madModelObject $data Model instance to save.
+     * @return madModelObject
      */
-    public function save( madObject $data, $useTransaction = true ) {
+    public function save( madModelObject $data, $useTransaction = true ) {
         if( $useTransaction ) {
             $this->pdo->beginTransaction();
         }
@@ -173,14 +173,14 @@ class madModel {
      * In addition to insertAttribute(), it is able to manage attribute values 
      * with *are* related object, by pre-saving them.
      * 
-     * @param madObject $data 
+     * @param madModelObject $data 
      * @param string $key 
      * @param mixed $value 
      * @return void
      */
-    private function saveAttribute( madObject $data, $key, $value ) {
+    private function saveAttribute( madModelObject $data, $key, $value ) {
         // handle simple attributes
-        if ( ! ( $value instanceof madObject ) ) {
+        if ( ! ( $value instanceof madModelObject ) ) {
             return $this->insertAttribute( $data, $key, $value );
         }
 
@@ -192,7 +192,7 @@ class madModel {
 
         // handle multi value
         foreach( $value as $subvalue ) {
-            if ( ! ( $subvalue instanceof madObject ) ) { // handle simple multiVal
+            if ( ! ( $subvalue instanceof madModelObject ) ) { // handle simple multiVal
                 $this->insertAttribute( $data, $key, $subvalue );
             } else { // handle m2m
                 $this->save( $subvalue, false );
@@ -204,12 +204,12 @@ class madModel {
     /**
      * Insert an attribute in the database.
      * 
-     * @param madObject $data   Model instance
+     * @param madModelObject $data   Model instance
      * @param string   $key     Attribute key
      * @param mixed    $value   Attribute value
      * @return void
      */
-    private function insertAttribute( madObject $data, $key, $value ) {
+    private function insertAttribute( madModelObject $data, $key, $value ) {
         $sql = sprintf( 
             'insert into mad_model set 
                 attribute_key = :attribute_key
@@ -234,7 +234,7 @@ class madModel {
      * 
      * @param string $sql SQL query string which returns the id in first column.
      * @param array $arguments Array arguments of the query.
-     * @return array madObject instances
+     * @return array madModelObject instances
      */
     public function queryLoad( $sql, array $arguments = array(  ) ) {
         foreach( $this->namespaceTableNames as $namespace => $table ) {
@@ -257,7 +257,7 @@ class madModel {
      * Load all persistent objects which id is in $ids.
      * 
      * @param array $ids Array of ids.
-     * @return array madObject instances
+     * @return array madModelObject instances
      */
     public function loadFromIds( array $ids ) {
         if ( !$ids ) {
@@ -297,10 +297,10 @@ class madModel {
      * // $drinks will contain the list of all recipes in the 'Drink' category.
      * </code>
      * 
-     * @param madObject $data 
+     * @param madModelObject $data 
      * @return void
      */
-    public function loadMatching( madObject $data ) {
+    public function loadMatching( madModelObject $data ) {
         $arguments = array( );
 
         // part 1: fetch ids
@@ -392,7 +392,7 @@ class madModel {
             $value = $row['attribute_value'];
             
             if ( !array_key_exists( $id, $return ) ) {
-                $return[$id] = new madObject( array(  
+                $return[$id] = new madModelObject( array(  
                     'id' => $id,
                 ) );
             }
@@ -409,27 +409,27 @@ class madModel {
      * This private function appends the value if the attribute is an array, or 
      * set it normally otherwise.
      * 
-     * @param madObject $data 
+     * @param madModelObject $data 
      * @param string $key 
      * @param mixed $value 
      * @return void
      */
-    private function contributeAttribute( madObject $data, $key, $value ) {
+    private function contributeAttribute( madModelObject $data, $key, $value ) {
         // strip slashes
         $value = stripslashes( $value );
 
         // if the value is an uuid, fetch the object and replace $value with it
         if ( preg_match( '/[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{12}/', $value ) ) {
-            $value = new madObject( array(  
+            $value = new madModelObject( array(  
                 'id' => $value,
             ) );
             $this->refresh( $value );
         }
 
         if ( array_key_exists( $key, $data ) ) {
-            if( ! $data[$key] instanceof madObject or isset( $data[$key]['id'] ) ) {
+            if( ! $data[$key] instanceof madModelObject or isset( $data[$key]['id'] ) ) {
                 $backup = is_object( $data[$key] ) ? clone $data[$key] : $data[$key];
-                $data[$key] = new madObject( array( 
+                $data[$key] = new madModelObject( array( 
                     $backup,
                 ) );
             }
@@ -456,10 +456,10 @@ class madModel {
      * </code>
      * 
      * @throw madModelExceptedId If $data['id'] is not set.
-     * @param madObject $data 
-     * @return madObject
+     * @param madModelObject $data 
+     * @return madModelObject
      */
-    public function refresh( madObject $data ) {
+    public function refresh( madModelObject $data ) {
         if ( ! array_key_exists( 'id', $data ) ) {
             throw new madModelExceptedId(  );
         }
@@ -501,7 +501,7 @@ class madModel {
         return $data;
     }
 
-    public function delete( madObject $data, $cascade = true ) {
+    public function delete( madModelObject $data, $cascade = true ) {
         if ( !isset( $data['id'] ) ) {
             throw new madModelExceptedId(  );
         }
@@ -738,7 +738,7 @@ class madModel {
     }
 
     public function updateIndex( $namespace ) {
-        $filter = new madObject( array( 'namespace' => $namespace ) );
+        $filter = new madModelObject( array( 'namespace' => $namespace ) );
 
         foreach( $this->loadMatching( $filter ) as $object ) {
             $this->save( $object );

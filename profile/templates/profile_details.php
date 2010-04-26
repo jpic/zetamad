@@ -63,26 +63,22 @@ a.btn-block:hover { background: #539893; }
 		<div id="external-links">
 			<h3>Moi sur la toile...</h3>
 			<ul>
-                <?php if ( ! $this->object['sites'] instanceof madBase ): ?>
-    				<li><a href="http://<?php echo $this->object['sites'] ?>"><span style="color: #232323;">&bull;</span> <?php echo $this->object['sites'] ?></a></li>
-                <?php else: ?>
-                    <?php foreach( $this->object['sites'] as $site ): ?>
-    				<li><a href="http://<?php echo $site ?>"><span style="color: #232323;">&bull;</span> <?php echo $site ?></a></li>
-                    <?php endforeach ?>
-                <?php endif ?>
+                <?php foreach( $this->iterate( $this->object['sites'] ) as $site ): ?>
+				<li><a href="http://<?php echo $site ?>"><span style="color: #232323;">&bull;</span> <?php echo $site ?></a></li>
+                <?php endforeach ?>
 			</ul>
 		</div>
         <?php endif ?>
 	</div>
 	<div class="author-right">
-			<h2><?php echo htmlentities( $this->object['name'] ) ?></h2>
+			<h2><?php $this->e( $this->object['name'] ) ?></h2>
 			<p class="author-intro">
-                <?php echo htmlentities( $this->object['introduction'] ) ?>
+                <?php $this->e( $this->object['introduction'] ) ?>
 			</p>
             <?php if ( isset( $this->object['presentation'] ) ): ?>
 			<h3>Profil</h3>
 			<p class="author-profil">
-                <?php echo htmlentities( $this->object['presentation'] ) ?>
+                <?php $this->e( $this->object['presentation'] ) ?>
 			</p>
             <?php endif ?>
 	</div>
@@ -91,7 +87,7 @@ a.btn-block:hover { background: #539893; }
 <div id="recipe-column">
     <!--
 	<div class="block">
-		<p class="title-setmsg">&Agrave; <?php echo htmlentities( $this->object['name'] ) ?> :</p>
+		<p class="title-setmsg">&Agrave; <?php $this->e( $this->object['name'] ) ?> :</p>
         <form action="" method="post" class="msg-author-form">
 		    <textarea name="message" class="msg-author">Votre message</textarea>
 		    <a class="btn-block" href="#">Envoyer</a>
@@ -103,21 +99,28 @@ a.btn-block:hover { background: #539893; }
 		<h3>Produits favoris</h3>
 		<ul>
             <?php 
-            if ( ! $this->object['products'] instanceof madBase )
-                $this->object['products'] = new madBase( array( $this->object['products'] ) );
-            foreach( $this->object['products'] as $productId ): ?>
-	        
-            
+            foreach( $this->iterate( $this->object['products'] ) as $productId ): ?>
             <?php
             $product = new Product(intval( $productId ), true, 2);
             ?>
 			<li><a href="/mm/product.php?id_product=<?php echo $productId; ?>"><?php echo $product->name ?></a></li>
-            
-            
             <?php endforeach ?>
 		</ul>
 	</div>
     <?php endif ?>
+
+    <?php if ( count( $this->object->recipeSet ) ): ?>
+	<div class="block">
+		<h3>Recettes</h3>
+		<ul>
+            <?php
+            foreach( $this->iterate( $this->object->recipeSet ) as $recipe ): ?>
+			<li><a href="<?php echo $this->generateUrl( 'recipe.details', $recipe ) ?>"><?php $this->e( $recipe['title'] ) ?></a></li>
+            <?php endforeach ?>
+		</ul>
+	</div>
+    <?php endif ?>
+
 </div>
 
 <script type="text/javascript">
