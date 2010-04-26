@@ -130,14 +130,24 @@ $routingInformation = $router->getRoutingInformation();
  * abstraction, reusability and testing possible.
  */
 $controllerClass = $routingInformation->controllerClass;
+
 $controller = new $controllerClass( $routingInformation->action, $request );
+
 // get route configuration
 foreach( $registry->configuration->settings['routes'] as $routeName => $routeConfiguration ) {
     if ( $routeConfiguration['rails'] == $routingInformation->matchedRoute ) {
-        $controller->setConfiguration( $routeConfiguration );
         break;
     }
 }
+
+// get the controller application configuration
+$applicationName          = $registry->configuration->getClassApplicationName( $controllerClass );
+$applicationConfiguration = $registry->configuration->settings['applications'][$applicationName];
+
+// overload the application configuration with the route configuration
+$controllerConfiguration = madConfiguration::array_contribute( $routeConfiguration, $applicationConfiguration );
+$controller->setConfiguration( $controllerConfiguration );
+
 $result = $controller->createResult();
 
 $result->variables['request'] = $request;
