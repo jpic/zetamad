@@ -1,13 +1,6 @@
 <?php
 
-class madModelController extends madController {
-    public $registry = null;
-    
-    public function __construct( $action, ezcMvcRequest $request ) {
-        parent::__construct( $action, $request );
-        $this->registry = madRegistry::instance(  );
-    }
-
+class madModelController extends madFormController {
     public function doList() {       
         $result = new ezcMvcResult(  );
         $query = $this->configuration['query'];
