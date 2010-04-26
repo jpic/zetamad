@@ -36,261 +36,6 @@ class madModelController extends madFormController {
         return $result;
     }
 
-    /**
-     * Returns the configuration corresponding to the form name.
-     * 
-     * @param madModelObject $form 
-     * @return array
-     */
-    protected function getFormOptions( madModelObject $form ) {
-        return $this->registry->configuration->settings['forms'][$form->name];
-    }
-
-    /**
-     * Processes options for a named field of a form.
-     *
-     * If $field has a 'value' option, then $form[$name] is set to 
-     * $field->value and the function returns. Typically this may be used for a 
-     * namespace attribute which should have an arbitary value.
-     * 
-     * If a field has a 'slugify' option which corresponds to an attribute key, 
-     * then that attribute value will be slugified and set to $form[$name], if 
-     * it does not have a valeu.
-     *
-     * If the field widget class is "file" then the uploaded file will be 
-     * copied to APP_PATH/upload, and its relative path will be set to $form[$name]. 
-     * If a file with that name already exists, it will append an underscore to 
-     * its basename.
-     *
-     * @param madModelObject $form 
-     * @param mixed $name 
-     * @param madModelObject $field 
-     * @return void
-     */
-    public function processFormFieldOptions( madModelObject $form, $name, madModelObject $field ) {
-        // hard coded values
-        if ( isset( $field->value ) ) {
-            $form[$name] = $field->value;
-            return;
-        }
-
-        if ( isset( $field->slugify ) && isset( $form[$field->slugify] ) && !isset( $form[$name] ) ) {
-            $slug = preg_replace('~[^\\pL\d]+~u', '-', $form[$field->slugify]);
-            $slug = trim($slug, '-');
-            // transliterate
-            if (function_exists('iconv'))
-            {
-                $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
-            }
-            // lowercase
-            $slug = strtolower($slug);
-            // remove unwanted characters
-            $slug = preg_replace('~[^-\w]+~', '', $slug);
-
-            // ensure it is unique
-            $stmt = $this->registry->database->query( "select id from mad_model where attribute_key = '" . $name . "' and attribute_value = '" . $slug . "'" );
-            while( intval( $stmt->rowCount(  ) ) > 0 ) {
-                $slug .= '-';
-                $stmt = $this->registry->database->query( "select id from mad_model where attribute_key = '" . $name . "' and attribute_value = '" . $slug . "'" );
-            }
-
-            $form[$name] = $slug;
-
-            return true;
-        }
-
-        // select fields need choices option
-        if ( isset( $field->widget ) && $field->widget == 'select' ) {
-            $choices = array(  );
-
-            // from query?
-            if ( isset( $field->query ) ) {
-                foreach( $this->registry->model->queryLoad( $field->query ) as $object ) {
-                    $choices[$object[$field->valueAttribute]] = $object[$field->displayAttribute];
-                }
-            }
-
-            $field->choices = $choices;
-
-            return true;
-        }
-
-        // handle date => now
-        if ( isset( $field->date ) && $field->date == 'now' ) {
-            $form[$name] = date( 'Y-m-d' );
-
-            return true;
-        }
-
-        if ( isset( $field->widget ) ) {
-            if ( $field->widget == 'file' && $this->request->protocol == 'http-post' ) {
-                $uploadDir = APP_PATH . DIRECTORY_SEPARATOR . 'upload';
-
-                $file = $this->request->files[str_replace( '.', '_', $form->name )][$name];
-
-                if ( !$file->tmpPath ) { // check if a file was actually submitted
-                    // todo: move to validate(  );
-                    //if ( isset( $field->required ) && $field->required == true && !( isset( $form[$name] ) && $form[$name] ) ) {
-                        //// create the error if this field is required
-                        //$form->valid = false;
-                        
-                        //if ( !isset( $field->errors ) ) {
-                            //$field->errors = new madModelObject(  );
-                        //}
-
-                        //$field->errors['required'] = 'no file';
-                    //}
-
-                    return true;
-                }
-
-                if ( !file_exists( $file->tmpPath ) ) { // check if a file was already moved
-                    return true;
-                }
-
-                $relative = $file->name;
-                $uploadTo = $uploadDir . DIRECTORY_SEPARATOR . $relative;
-                
-                $i = 1;
-                while ( file_exists( $uploadTo ) ) {
-                    $info = pathinfo( $uploadTo );
-                    $relative = $info['filename'] . str_repeat( '_', $i ) . '.' . $info['extension'];
-                    $uploadTo = $uploadDir . DIRECTORY_SEPARATOR . $relative;
-                    $i++;
-                }
-                unset( $i );
-
-                if ( !move_uploaded_file( $file->tmpPath, $uploadTo ) ) {
-                    throw new Exception( "Could not move uploaded file to $uploadTo" );
-                }
-
-                $form[$name] = $relative;
-                return true;
-            }
-        }
-    }
-
-    /**
-     * Monkey fix formsets, multiFields, prepare fields, and call 
-     * processFormFieldOptions() on every fields - be it normal form fields, 
-     * formset fields or multipleFields.
-     * 
-     * @param madModelObject $form 
-     * @return void
-     */
-    public function processOptions( madModelObject $form ) {
-        foreach( $form->fields->options as $name => $field ) {
-            $this->processFormFieldOptions( $form, $name, $field );
-        }
-        
-        if ( isset( $form->formsets ) ) {
-            foreach( $form->formsets->options as $name => $formset ) {
-                if ( isset( $form[$name] ) && $form[$name]->isEntity ) {
-                    // there is only one related object, and the model couldn't 
-                    // know that it is supposed to be an M2M relation. 
-                    // Monkey-fix it.
-                    $form[$name] = new madModelObject( array( $form[$name] ) );
-                }
-
-                if ( !isset( $form[$name] ) || !$form[$name] ) {
-                    // there is no data bound to the formset
-                    // create an empty formset
-                    $emptyFormset = new madModelObject(  );
-                    $emptyFormset->empty = true;
-                    $form[$name]  = new madModelObject( array( $emptyFormset ) );
-                }
-
-                foreach( $form[$name] as $boundFormset ) {  
-                    // copy formset options to bound formset
-                    $boundFormset->setOptions( $formset->options );
-
-                    foreach( $boundFormset->fields->options as $name => $field ) {
-                        $this->processFormFieldOptions( $boundFormset, $name, $field );
-                    }
-                }
-            }
-        }
-
-        if ( isset( $form->multipleFields ) ) {
-            foreach( $form->multipleFields->options as $name => $multipleField ) {
-                if ( isset( $form[$name] ) && ! ( $form[$name] instanceof madModelObject && ! $form[$name]->isEntity ) ) {
-                    // there is only one value, and the model couldn't 
-                    // know that it is supposed to be a multi value field.
-                    // Monkey-fix it.
-                    $form[$name] = new madModelObject( array( $form[$name] ) );
-                }
-
-                if ( !isset( $form[$name] ) || !$form[$name] ) {
-                    // there is no data in the multiple field
-                    // create an empty one
-                    $emptyValue  = '';
-                    $form[$name] = new madModelObject( array( $emptyValue ) );
-                }
-
-                foreach( $form[$name] as $key => $value ) {
-                    // make a field for each value
-                    if ( !isset( $multipleField->fields ) ) {
-                        $multipleField->fields = new madModelObject(  );
-                    }
-
-                    if ( !isset( $multipleField->fields->$key ) ) {
-                        $multipleField->fields->$key = new madModelObject(  );
-                    }
-
-                    // copy options on the field
-                    $multipleField->fields->$key->setOptions( $multipleField->options );
-                    $this->processFormFieldOptions( $form[$name], $key, $multipleField->fields->$key );
-                }
-            }
-        }
-    }
-
-    public function validate( madModelObject $form ) {
-        // required fields
-        foreach( $form->fields->options as $fieldName => $field ) {
-            if ( isset( $field->required ) && $field->required == true ) {
-                if ( !isset( $form[$fieldName] ) || !$form[$fieldName] ) {
-                    $form->valid = false;
-
-                    if ( !isset( $field->errors ) ) {
-                        $field->errors = new madModelObject();
-                    }
-
-                    if ( !isset( $field->errors['required'] ) ) {
-                        $field->errors['required'] = 'empty value';
-                    }
-                }
-            }
-        }
-        if ( isset( $form->formsets ) ) {
-            foreach( $form->formsets->options as $name => $formset ) {
-                if ( isset( $form[$name] ) ) {
-                    foreach( $form[$name] as $boundFormset ) {
-                        if ( !$boundFormset->options ) {
-                            $boundFormset->options =& $formset->options;
-                        }
-
-                        foreach( $boundFormset->fields->options as $fieldName => $field ) {
-                            if ( isset( $field->required ) && $field->required == true ) {
-                                if ( !isset( $boundFormset[$fieldName] ) || !$boundFormset[$fieldName] ) {
-                                    $form->valid = false;
-            
-                                    if ( !isset( $field->errors ) ) {
-                                        $field->errors = new madModelObject();
-                                    }
-            
-                                    if ( !isset( $field->errors['required'] ) ) {
-                                        $field->errors['required'] = 'empty value';
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     public function processDeleteFields( madModelObject $form ) {
         if ( isset( $form->formsets ) ) {
             foreach( $form->formsets->options as $name => $formset ) {
@@ -329,6 +74,19 @@ class madModelController extends madFormController {
                 unset( $form[$name . '.DELETE'] );
             }
         }
+    }
+
+    public function slugify( $string ) {
+        $slug = parent::slugify( $string );
+
+        // ensure it is unique
+        $stmt = $this->registry->database->query( "select id from mad_model where attribute_key = '" . $name . "' and attribute_value = '" . $slug . "'" );
+        while( intval( $stmt->rowCount(  ) ) > 0 ) {
+            $slug .= '-';
+            $stmt = $this->registry->database->query( "select id from mad_model where attribute_key = '" . $name . "' and attribute_value = '" . $slug . "'" );
+        }
+
+        return $slug;
     }
 
     /**
@@ -469,39 +227,6 @@ class madModelController extends madFormController {
         return $result;
     }
 
-    public function clean( madModelObject $form ) {
-        // do normal clean, to wipe out empty values
-        $form->clean(  );
-
-        // remove any formset which only has hard coded value,
-        // thus: no input
-
-        if ( isset( $form->formsets ) ) {
-            foreach( $form->formsets->options as $name => $formset ) {
-                $unst = array(  );
-
-                foreach( $form[$name] as $boundFormsetKey => $boundFormset ) {
-                    $kill = true;
-                    foreach( $boundFormset as $key => $value ) {
-                        if ( !isset( $formset->fields->$key ) || !isset( $formset->fields->$key->value ) ) {
-                            $kill = false;
-                        }
-                    }
-                    if ( $kill ) {
-                        $unst[] = $boundFormsetKey;
-                    }
-                }
-
-                foreach( $unst as $key ) {
-                    unset( $form[$name][$key] );
-                }
-            }
-        }
-
-        // do normal clean, to wipe out empty formset containers
-        $form->clean(  );
-    }
-
     public function doAutocomplete(  ) {
         $result = $this->doList(  );
 
@@ -543,9 +268,6 @@ class madModelController extends madFormController {
         return $result;
     }
 
-    public function cleanFormsets( madModelObject $form ) {
-        // do nothing
-    }
 }
 
 ?>
