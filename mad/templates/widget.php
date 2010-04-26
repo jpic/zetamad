@@ -24,6 +24,9 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
 <?php if ( !isset( $field->widget ) ): ?>
     <input value="<?php if ( isset( $form[$name] ) ) $this->e( $form[$name] ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="text" class="textInput <?php $this->e( $htmlClasses ) ?>" />
 
+<?php elseif ( $field->widget == 'password' ): ?>
+    <input value="" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="password" class="textInput <?php $this->e( $htmlClasses ) ?>" />
+
 <?php elseif ( $field->widget == 'wysiwyg' ): ?>
     <textarea class="wysiwyg <?php $this->e( $htmlClasses ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>"><?php if ( isset( $form[$name] ) ) $this->e( $form[$name] ) ?></textarea>
 
