@@ -84,10 +84,23 @@ if ( CACHE_REGEN ) {
 $registry->database = new PDO( 'mysql:host=localhost;dbname=madmodel', 'root'); # , null, array( PDO::MYSQLI_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')); 
 $registry->database->query( 'set names "UTF-8"' );
 $registry->database->setAttribute( PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-$registry->model = new madModel( $registry->database, $registry->configuration->settings['model'], $registry->configuration->settings['core']['model'] );
+$registry->model   = new madModel( $registry->database, $registry->configuration->settings['model'], $registry->configuration->settings['core']['model'] );
+$registry->signals = new madSignals(  );
 
 if ( MODEL_REGEN ) {
     $registry->model->applyConfiguration(  );
+}
+
+foreach( $registry->configuration->settings['applications'] as $name => $application ) {
+    $bootstrap = realpath( join( DIRECTORY_SEPARATOR, array( 
+        APP_PATH,
+        $application['path'],
+        'bootstrap.php',
+    ) ) );
+
+    if ( file_exists( $bootstrap ) && $bootstrap != __FILE__ ) {
+        include $bootstrap;
+    }
 }
 
 unset( $registry );
