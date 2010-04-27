@@ -45,6 +45,14 @@ return array (
         2 => 'madAuthenticationPrestashopBackend',
       ),
     ),
+    'prestashop' => 
+    array (
+      'projectPath' => '../../',
+      'path' => '../mad/contrib/prestashop',
+      'classes' => 
+      array (
+      ),
+    ),
     'mad' => 
     array (
       'path' => '../mad',
@@ -169,13 +177,14 @@ return array (
         116 => 'madObjectMixedKeysException',
         117 => 'madModelException',
         118 => 'madModelExceptedId',
-        119 => 'madTestRunner',
-        120 => 'madModelObject',
-        121 => 'madConfiguration',
-        122 => 'madAuthenticationController',
-        123 => 'madAuthentication',
-        124 => 'madAuthenticationPrestashopBackend',
-        125 => 'madRouter',
+        119 => 'madBootstrapper',
+        120 => 'madTestRunner',
+        121 => 'madModelObject',
+        122 => 'madConfiguration',
+        123 => 'madAuthenticationController',
+        124 => 'madAuthentication',
+        125 => 'madAuthenticationPrestashopBackend',
+        126 => 'madRouter',
       ),
     ),
   ),
