@@ -24,9 +24,6 @@ set_include_path( join( PATH_SEPARATOR, array(
     PRESTASHOP_PATH,
 ) ) );
 
-//require 'mad/ezc/Base/base.php';
-//require 'mad/ezc/Base/options.php';
-
 error_reporting( E_ALL|E_STRICT );
 
 define( 'CACHE_REGEN', PHP_OS == 'Linux' && isset( $_SERVER['REQUEST_URI'] ) && !strpos( $_SERVER['REQUEST_URI'], 'static' ) );
