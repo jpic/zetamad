@@ -27,6 +27,17 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
 <?php elseif ( $field->widget == 'password' ): ?>
     <input value="" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="password" class="textInput <?php $this->e( $htmlClasses ) ?>" />
 
+<?php elseif ( $field->widget == 'checkbox' ): ?>
+    <input checked="<?php if ( isset( $form[$name] ) ): ?>checked<?php endif ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="text" class="<?php $this->e( $htmlClasses ) ?>" />
+
+<?php elseif ( $field->widget == 'radio' ): ?>
+    <?php
+    foreach( $field->choices as $key => $choice ):
+        $choiceInputId = $inputId . '__' . $key;
+    ?>
+    <input selected="<?php if ( isset( $form[$name] ) && $form[$name] == $choice ): ?>selected<?php endif ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="radio" class="<?php $this->e( $htmlClasses ) ?>" />
+    <?php endforeach ?>
+
 <?php elseif ( $field->widget == 'wysiwyg' ): ?>
     <textarea class="wysiwyg <?php $this->e( $htmlClasses ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>"><?php if ( isset( $form[$name] ) ) $this->e( $form[$name] ) ?></textarea>
 
