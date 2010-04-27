@@ -41,43 +41,30 @@ class madModelController extends madFormController {
             foreach( $form->formsets->options as $name => $formset ) {
                 $deletes = array(  );
 
-                foreach( $form[$name] as $key => $related ) {
-                    if ( isset( $related['DELETE'] ) ) {
-                        // unsetting the related object here would break 
-                        // the idiot php array pointer and raise a runtime 
-                        // exception
-                        $deletes[] = $key;
+                if ( isset( $form[$name] ) ) {
+                    foreach( $form[$name] as $key => $related ) {
+                        if ( isset( $related['DELETE'] ) ) {
+                            // unsetting the related object here would break 
+                            // the idiot php array pointer and raise a runtime 
+                            // exception
+                            $deletes[] = $key;
+                        }
+                    }
+                    
+                    foreach( $deletes as $key ) {
+                        $delete = $form[$name][$key];
+                        // delete from database
+                        $this->registry->model->delete( $delete );
+                        // delete from object
+                        unset( $form[$name][$key] );
                     }
                 }
-                
-                foreach( $deletes as $key ) {
-                    $delete = $form[$name][$key];
-                    // delete from database
-                    $this->registry->model->delete( $delete );
-                    // delete from object
-                    unset( $form[$name][$key] );
-                }
-            }
-        }
-
-        // handle delete of multiple values
-        if ( isset( $form->multipleFields ) ) {
-            foreach( $form->multipleFields->options as $name => $field ) {
-                if ( !isset( $form[$name . '.DELETE'] ) ) {
-                    continue;
-                }
-
-                foreach( $form[$name . '.DELETE'] as $key ) {
-                    unset( $form[$name][$key] );
-                }
-                
-                unset( $form[$name . '.DELETE'] );
             }
         }
     }
 
-    public function slugify( $string ) {
-        $slug = parent::slugify( $string );
+    public function slugify( $string, $name ) {
+        $slug = parent::slugify( $string, $name );
 
         // ensure it is unique
         $stmt = $this->registry->database->query( "select id from mad_model where attribute_key = '" . $name . "' and attribute_value = '" . $slug . "'" );
@@ -155,76 +142,54 @@ class madModelController extends madFormController {
      *
      * @return ezcMvcResult
      */
-    public function doForm(  ) {
-        $result       = new ezcMvcResult(  );
+    public function setFormOptions( madObject $form, $merged ) {
+        parent::setFormOptions( $form, $merged );
 
-        $form         = new madModelObject(  );
-        $form->name   = $this->configuration['form'];
-        $form->action = $this->request->uri;
-        $form->model  = $this->registry->model;
-        $form->valid  = true;
-        
-        // get and set the form configuration
-        $form->setOptions( $this->getFormOptions( $form ) );
-
-        // get the object
         if ( isset( $this->id ) ) {
             $form['id'] = $this->id;
             $this->registry->model->refresh( $form );
-        }
 
-        // process options
-        $this->processOptions( $form );
-
-        // save the form
-        if ( $this->request->protocol == 'http-post' ) {
-            $form->merge( $this->request->variables[str_replace( '.', '_', $form->name)] );
-
-            // handle special field names with "DELETE"
-            $this->processDeleteFields( $form );
-
-            // process options again with the new data, autocomplete, hard 
-            // coded values, slugs ...
-            $this->processOptions( $form );
-
-            // remove everything we don't want to save
-            $this->clean( $form );
-
-            // check for errors
-            // commented because it doesn't work well
-            // $this->validate( $form );
-
-            // check if something is *really* wrong ( prorgamming error )
-            $dirty = $form->dirtyAttributes(  );
-            if ( $dirty !== false ) {
-                var_dump( $dirty );
-
-            } else { // save if there is no errors
-                $this->registry->model->save( $form );
-
-                // redirect to successRoute
-                $prefix = $this->registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
-
-                if ( isset( $this->request->variables['popup'] ) ) {
-                    $result->variables['responseBody'] = sprintf( 
-                        '<script type="text/javascript">opener.dismissAddAnotherPopup( window, "%s", "%s" );</script>',
-                        $form[$this->request->variables['valueAttribute']],
-                        $form[$this->request->variables['displayAttribute']]
-                    );
-                } else {
-                    $result->status = new ezcMvcExternalRedirect( 
-                        $prefix . $this->registry->router->generateUrl( 
-                            $this->configuration['successRoute'],
-                            (array) $form
-                        ) 
-                    );
+            if ( $this->request->protocol == 'http-post' && !$merged ) {
+                // drop all multival
+                if ( isset( $form->multipleFields ) ) {
+                    foreach( $form->multipleFields as $name => $field ) {
+                        unset( $form[$name] );
+                    }
                 }
+
+                // @todo: drop all relations
             }
         }
+    }
 
-        // add the form to result variables for reuse in the template
-        $result->variables['form'] = $form;
-        return $result;
+    public function processOptions( madObject $form ) {
+        if ( $this->request->protocol == 'http-post' ) {
+            $this->processDeleteFields( $form );
+        }
+
+        parent::processOptions( $form );
+    }
+
+    public function formSuccess( $result, $form ) {
+        $this->registry->model->save( $form );
+
+        // redirect to successRoute
+        $prefix = $this->registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
+
+        if ( isset( $this->request->variables['popup'] ) ) {
+            $result->variables['responseBody'] = sprintf( 
+                '<script type="text/javascript">opener.dismissAddAnotherPopup( window, "%s", "%s" );</script>',
+                $form[$this->request->variables['valueAttribute']],
+                $form[$this->request->variables['displayAttribute']]
+            );
+        } else {
+            $result->status = new ezcMvcExternalRedirect( 
+                $prefix . $this->registry->router->generateUrl( 
+                    $this->configuration['successRoute'],
+                    (array) $form
+                ) 
+            );
+        }
     }
 
     public function doAutocomplete(  ) {
@@ -267,7 +232,6 @@ class madModelController extends madFormController {
         $result->variables['object'] = $object;
         return $result;
     }
-
 }
 
 ?>

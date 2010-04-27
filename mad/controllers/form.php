@@ -1,14 +1,55 @@
 <?php
 
 class madFormController extends madController {
-    /**
-     * Returns the configuration corresponding to the form name.
-     * 
-     * @param madObject $form 
-     * @return array
-     */
-    protected function getFormOptions( madObject $form ) {
-        return $this->registry->configuration->settings['forms'][$form->name];
+
+    public function setFormOptions( madObject $form, $merged ) {
+        $form->setOptions( $this->registry->configuration->settings['forms'][$form->name] );
+    }
+
+    public function doForm(  ) {
+        $result       = new ezcMvcResult(  );
+
+        $form         = new madModelObject(  );
+        $form->name   = $this->configuration['form'];
+        $form->action = $this->request->uri;
+        $form->model  = $this->registry->model;
+        $form->valid  = true;
+        
+        // add the form to result variables for reuse in the template
+        $result->variables['form'] = $form;
+        
+        // get and set the form configuration
+        $this->setFormOptions( $form, false );
+
+        // process options
+        $this->processOptions( $form );
+
+        // save the form
+        if ( $this->request->protocol == 'http-post' ) {
+            $form->merge( $this->request->variables[str_replace( '.', '_', $form->name)] );
+
+            // process options again with the new data, autocomplete, hard 
+            // coded values, slugs ...
+            $this->processOptions( $form, true );
+
+            // remove everything we don't want to save
+            $this->clean( $form );
+
+            // check for errors
+            // commented because it doesn't work well
+            // $this->validate( $form );
+
+            // check if something is *really* wrong ( prorgamming error )
+            $dirty = $form->dirtyAttributes(  );
+            if ( $dirty !== false ) {
+                var_dump( $dirty );
+
+            } else { // save if there is no errors
+                $this->formSuccess( $result, $form );
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -40,7 +81,7 @@ class madFormController extends madController {
         }
 
         if ( isset( $field->slugify ) && isset( $form[$field->slugify] ) && !isset( $form[$name] ) ) {
-            $form[$name] = $this->slugify( $form[$field->slugify] );
+            $form[$name] = $this->slugify( $form[$field->slugify], $name );
 
             return true;
         }
@@ -69,49 +110,53 @@ class madFormController extends madController {
         }
 
         if ( isset( $field->widget ) ) {
-            if ( $field->widget == 'file' && $this->request->protocol == 'http-post' ) {
-                $uploadDir = APP_PATH . DIRECTORY_SEPARATOR . 'upload';
+            if ( $field->widget == 'file' ) {
 
-                $file = $this->request->files[str_replace( '.', '_', $form->name )][$name];
-
-                if ( !$file->tmpPath ) { // check if a file was actually submitted
-                    // todo: move to validate(  );
-                    //if ( isset( $field->required ) && $field->required == true && !( isset( $form[$name] ) && $form[$name] ) ) {
-                        //// create the error if this field is required
-                        //$form->valid = false;
-                        
-                        //if ( !isset( $field->errors ) ) {
-                            //$field->errors = new madObject(  );
+                if ( $this->request->protocol == 'http-post' ) {
+                    $uploadDir = APP_PATH . DIRECTORY_SEPARATOR . 'upload';
+    
+                    $file = $this->request->files[str_replace( '.', '_', $form->name )][$name];
+    
+                    if ( !$file->tmpPath ) { // check if a file was actually submitted
+    
+                        // todo: move to validate(  );
+                        //if ( isset( $field->required ) && $field->required == true && !( isset( $form[$name] ) && $form[$name] ) ) {
+                            //// create the error if this field is required
+                            //$form->valid = false;
+                            
+                            //if ( !isset( $field->errors ) ) {
+                                //$field->errors = new madObject(  );
+                            //}
+    
+                            //$field->errors['required'] = 'no file';
                         //}
-
-                        //$field->errors['required'] = 'no file';
-                    //}
-
-                    return true;
-                }
-
-                if ( !file_exists( $file->tmpPath ) ) { // check if a file was already moved
-                    return true;
-                }
-
-                $relative = $file->name;
-                $uploadTo = $uploadDir . DIRECTORY_SEPARATOR . $relative;
-                
-                $i = 1;
-                while ( file_exists( $uploadTo ) ) {
-                    $info = pathinfo( $uploadTo );
-                    $relative = $info['filename'] . str_repeat( '_', $i ) . '.' . $info['extension'];
+    
+                        return true;
+                    }
+    
+                    if ( !file_exists( $file->tmpPath ) ) { // check if a file was already moved
+                        return true;
+                    }
+    
+                    $relative = $file->name;
                     $uploadTo = $uploadDir . DIRECTORY_SEPARATOR . $relative;
-                    $i++;
+                    
+                    $i = 1;
+                    while ( file_exists( $uploadTo ) ) {
+                        $info = pathinfo( $uploadTo );
+                        $relative = $info['filename'] . str_repeat( '_', $i ) . '.' . $info['extension'];
+                        $uploadTo = $uploadDir . DIRECTORY_SEPARATOR . $relative;
+                        $i++;
+                    }
+                    unset( $i );
+    
+                    if ( !move_uploaded_file( $file->tmpPath, $uploadTo ) ) {
+                        throw new Exception( "Could not move uploaded file to $uploadTo" );
+                    }
+    
+                    $form[$name] = $relative;
+                    return true;
                 }
-                unset( $i );
-
-                if ( !move_uploaded_file( $file->tmpPath, $uploadTo ) ) {
-                    throw new Exception( "Could not move uploaded file to $uploadTo" );
-                }
-
-                $form[$name] = $relative;
-                return true;
             }
         }
     }
@@ -270,7 +315,7 @@ class madFormController extends madController {
         $form->clean(  );
     }
 
-    public function slugify( $string ) {
+    public function slugify( $string, $name ) {
         $slug = preg_replace('~[^\\pL\d]+~u', '-', $string );
         $slug = trim($slug, '-');
         // transliterate
