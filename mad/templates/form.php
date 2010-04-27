@@ -236,6 +236,10 @@ $(document).ready( function(  ) {
     });
 
 
+    $( 'input.deleteRow' ).click( function(  ) {
+        $( this ).parents( 'tr' ).remove(  );
+    })
+
     $( '.add-another' ).click(function(e) {
         e.preventDefault(  );
         showAddAnotherPopup( $( this ) );
