@@ -209,7 +209,7 @@ class madConfiguration {
             if ( !isset( $this->settings['applications'][$application] ) ) {
                 $this->settings['applications'][$application] = array();
             }
-            $this->settings['applications'][$application]['path'] = self::getRelativePath( $applicationPath, APP_PATH );
+            $this->settings['applications'][$application]['path'] = self::getRelativePath( $applicationPath, ENTRY_APP_PATH );
 
             if ( !isset( $this->settings['applications'][$application]['classes'] ) ) {
                 $this->settings['applications'][$application]['classes'] = array();
@@ -229,7 +229,7 @@ class madConfiguration {
                 foreach( new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $staticPath ) ) as $fileInfo ) {
                     $absolutePath = $fileInfo->getRealPath(  );
                     $relativePath = substr( $absolutePath, strlen( $staticPath ) );
-                    $this->settings['staticFiles']['paths'][$relativePath] = self::getRelativePath( $absolutePath, APP_PATH );
+                    $this->settings['staticFiles']['paths'][$relativePath] = self::getRelativePath( $absolutePath, ENTRY_APP_PATH );
                 }
             }
 
@@ -419,6 +419,20 @@ class madConfiguration {
         }
 
         return implode( DIRECTORY_SEPARATOR, $relative );
+    }
+
+    public function getPathSetting( $group, $section, $name ) {
+        $path = $this->getSetting( $group, $section, $name );
+        $realPath = realpath( join( DIRECTORY_SEPARATOR, array( 
+            ENTRY_APP_PATH,
+            $path
+        ) ) );
+
+        if ( !$realPath ) {
+            trigger_error( "Configured path deos not exists $path" );
+        }
+
+        return $realPath;
     }
 }
 

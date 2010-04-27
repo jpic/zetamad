@@ -103,7 +103,7 @@ class madView extends ezcMvcView {
         $zones[] = new madViewHandler( 'body', $this->getTemplate( ) );
         
         if ( $layout && !$this->request->variables['ajaxRequest'] ) {
-            $zones[] = new madViewHandler( 'site_base', APP_PATH . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'site_base.php' );
+            $zones[] = new madViewHandler( 'site_base', ENTRY_APP_PATH . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'site_base.php' );
         }
 
         return $zones;
@@ -138,7 +138,7 @@ class madView extends ezcMvcView {
         $registry = madRegistry::instance(  );
         
         // path to the "entry point" application
-        $entryApplicationPath = APP_PATH;
+        $entryApplicationPath = ENTRY_APP_PATH;
         
         // path to the application defining the route
         $routeApplicationName = $this->routeInfo->route->application;
@@ -167,7 +167,7 @@ class madView extends ezcMvcView {
             $testPaths = array( 
                 // $entryAppPath/templates/$routeApp/$template
                 join( DIRECTORY_SEPARATOR, array( 
-                    APP_PATH,
+                    ENTRY_APP_PATH,
                     $entryApplicationPath,
                     'templates',
                     $routeApplicationName,
@@ -175,7 +175,7 @@ class madView extends ezcMvcView {
                 ) ),
                 // $routeAppPath/templates/$template
                 join( DIRECTORY_SEPARATOR, array( 
-                    APP_PATH,
+                    ENTRY_APP_PATH,
                     $routeApplicationPath,
                     'templates',
                     $templateName,
@@ -199,7 +199,7 @@ class madView extends ezcMvcView {
             $testPaths = array( 
                 // $entryAppPath/templates/$routeApp/$template
                 join( DIRECTORY_SEPARATOR, array( 
-                    APP_PATH,
+                    ENTRY_APP_PATH,
                     $entryApplicationPath,
                     'templates',
                     $routeApplicationName,
@@ -207,7 +207,7 @@ class madView extends ezcMvcView {
                 ) ),
                 // $routeAppPath/templates/$template
                 join( DIRECTORY_SEPARATOR, array( 
-                    APP_PATH,
+                    ENTRY_APP_PATH,
                     $routeApplicationPath,
                     'templates',
                     $templateName,
@@ -294,7 +294,7 @@ class madView extends ezcMvcView {
             // handle relative path
             if ( substr( $templatePath, 0, 1 ) != DIRECTORY_SEPARATOR ) {
                 $templatePath = realpath( implode( DIRECTORY_SEPARATOR, array( 
-                    APP_PATH,
+                    ENTRY_APP_PATH,
                     $templatePath,
                 ) ) );
             }

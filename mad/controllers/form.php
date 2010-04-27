@@ -64,7 +64,7 @@ class madFormController extends madController {
      * it does not have a valeu.
      *
      * If the field widget class is "file" then the uploaded file will be 
-     * copied to APP_PATH/upload, and its relative path will be set to $form[$name]. 
+     * copied to ENTRY_APP_PATH/upload, and its relative path will be set to $form[$name]. 
      * If a file with that name already exists, it will append an underscore to 
      * its basename.
      *
@@ -113,7 +113,7 @@ class madFormController extends madController {
             if ( $field->widget == 'file' ) {
 
                 if ( $this->request->protocol == 'http-post' ) {
-                    $uploadDir = APP_PATH . DIRECTORY_SEPARATOR . 'upload';
+                    $uploadDir = ENTRY_APP_PATH . DIRECTORY_SEPARATOR . 'upload';
     
                     $file = $this->request->files[str_replace( '.', '_', $form->name )][$name];
     

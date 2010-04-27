@@ -11,7 +11,7 @@ class madDownloadController extends madController {
         }
 
         $absolutePath = realpath( implode( DIRECTORY_SEPARATOR, array( 
-            APP_PATH,
+            ENTRY_APP_PATH,
             $configuration->getSetting( 'staticFiles', 'paths', $relativePath ),
         ) ) );
         $extension = substr(strrchr($absolutePath, '.'), 1);

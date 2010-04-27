@@ -131,7 +131,7 @@ class madConfigurationTest extends ezcTestCase {
             //$expectedDiffOutput = "Only in $expected: .svn\n";
             $expectedDiffOutput = null;
             $diffOutput = shell_exec( "diff $expected $result" );
-            $this->assertEquals( $expectedDiffOutput, $diffOutput, "diff -u $expected $result # APP_PATH: " . APP_PATH );
+            $this->assertEquals( $expectedDiffOutput, $diffOutput, "diff -u $expected $result # ENTRY_APP_PATH: " . ENTRY_APP_PATH );
         }
     }
 }
