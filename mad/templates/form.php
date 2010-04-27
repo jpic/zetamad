@@ -83,16 +83,50 @@ table.multipleField input[type=text].textInput {
             }
             ?>
 
-            <label for="<?php echo $name; ?>"><?php if ( isset( $field->required ) ): ?><em>*</em> <?php endif ?><?php echo ucfirst( $field->label ); ?></label>
+            <?php
+            if ( isset( $field->widget ) && $field->widget == 'checkbox' ): 
+                $inputName = sprintf( '%s[%s]', $form->name, $name );
+            ?>
+                <p>
+                <label class="inlineLabel" for="<?php echo $name; ?>">
+                    <input checked="<?php if ( isset( $form[$name] ) ): ?>checked<?php endif ?>" name="<?php echo $inputName ?>" id="<?php echo $inputId; ?>" type="text" class="<?php $this->e( $htmlClasses ) ?>" />
+                    <span><?php $this->e( $field->label ) ?> <?php if ( isset( $field->required ) ): ?><em>*</em><?php endif ?></span>
+                </label>
+                <p>
+
+            <?php
+                unset( $inputName );
+            elseif ( isset( $field->widget ) && $field->widget == 'radio' ):
+                $inputName = sprintf( '%s[%s]', $form->name, $name );
+            ?>
+                <p class="label"><?php $this->e( ucfirst( $field->label ) ) ?><?php if ( isset( $field->required ) ): ?><em>*</em><?php endif ?></p>
+                <div class="multiField">
+                <?php
+                foreach( $field->choices as $key => $choice ):
+                    $choiceInputId = $inputId . '__' . $key;
+                ?>
+                <label class="blocklabel" for="<?php echo $choiceInputId; ?>">
+                    <input selected="<?php if ( isset( $form[$name] ) && $form[$name] == $choice ): ?>selected<?php endif ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="radio" class="<?php $this->e( $htmlClasses ) ?>" />
+                    <?php echo ucfirst( $choice ) ?>
+                </label>
+                <?php endforeach ?>
+                </div>
 
             <?php 
-            $form = $this->form;
-            include 'widget.php';
-            unset( $form );
+                unset( $inputName );
+            else: 
             ?>
-
-            <?php if ( isset( $field->help ) ): ?>
-            <p class="formHint"><?php echo ucfirst( $field->help ); ?></p>
+                <label for="<?php echo $name; ?>"><?php if ( isset( $field->required ) ): ?><em>*</em> <?php endif ?><?php echo ucfirst( $field->label ); ?></label>
+    
+                <?php 
+                $form = $this->form;
+                include 'widget.php';
+                unset( $form );
+                ?>
+    
+                <?php if ( isset( $field->help ) ): ?>
+                <p class="formHint"><?php echo ucfirst( $field->help ); ?></p>
+                <?php endif ?>
             <?php endif ?>
         </div>
 
