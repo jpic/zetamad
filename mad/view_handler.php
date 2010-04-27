@@ -33,7 +33,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     }
 
     public function iterate( $value ) {
-        if ( is_array( $value ) || $value instanceof Traversable ) {
+        if ( is_array( $value ) || ( $value instanceof madObject && !$value->isEntity ) ) {
             return $value;
         } else {
             return array( $value );
