@@ -27,4 +27,9 @@ require PRESTASHOP_PATH . '/config/config.inc.php';
 $GLOBALS['smarty'] = $smarty;
 Configuration::loadConfiguration(  );
 
+if ( $registry->configuration->getSetting( 'applications', 'prestashop', 'instanciatePdo', false ) ) {
+    $database = new PDO( 'mysql:host=' . _DB_SERVER_ ';dbname=' . _DB_NAME_, _DB_USER_, _DB_PASSWD_ );
+    $registry->database = $database;
+}
+
 ?>

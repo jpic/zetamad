@@ -11,12 +11,12 @@ class madBootstrapper {
         $this->setupIncludePath(  );
         $this->setupAutoload(  );
         $this->setupConfiguration(  );
-        $this->setupDatabase(  );
-        $this->setupModel(  );
         $this->setupSignals(  );
         $this->refreshAutoload(  );
         $this->refreshBin(  );
         $this->setupApplications(  );
+        $this->setupDatabase(  );
+        $this->setupModel(  );
     }
 
     public function setupIncludePath(  ) {
@@ -75,6 +75,11 @@ class madBootstrapper {
     }
 
     public function setupDatabase(  ) {
+        if ( isset( $this->configuration['database']['skip'] ) && 
+            $this->configuration['database']['skip'] == true ) {
+            return true;
+        }
+
         $reflection = new ReflectionClass( $this->configuration['database']['class'] );
         
         $database = $reflection->newInstanceArgs( $this->configuration['database']['arguments'] );
@@ -144,6 +149,8 @@ class madBootstrapper {
         chdir( ENTRY_APP_PATH );
         shell_exec( 'bin/generate-autoload-file ../ > cache/autoload.php' );
         chdir( $ocwd );
+
+        $this->setupAutoload(  );
     }
 
     public function setupApplications(  ) {
