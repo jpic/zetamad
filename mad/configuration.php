@@ -362,7 +362,19 @@ class madConfiguration {
         return $array;
     }
 
-    public function getSetting( $group, $section, $name ) {
+    public function getSetting( $group, $section, $name, $default = null ) {
+        if ( !isset( $this->settings[$group] ) ) {
+            return $default;
+        }
+        
+        if ( !isset( $this->settings[$group][$section] ) ) {
+            return $default;
+        }
+
+        if ( !isset( $this->settings[$group][$section][$name] ) ) {
+            return $default;
+        }
+
         return $this->settings[$group][$section][$name];
     }
 
