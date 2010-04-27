@@ -201,6 +201,78 @@ return array (
         ),
       ),
     ),
+    'authentication.login' => 
+    array (
+      'label' => 'identifiez vous',
+      'fields' => 
+      array (
+        'username' => 
+        array (
+          'label' => 'votre nom d\'utilisateur',
+          'required' => true,
+          'minLength' => 3,
+          'maxLength' => 100,
+        ),
+        'password' => 
+        array (
+          'label' => 'votre mot de passe',
+          'widget' => 'password',
+          'required' => true,
+          'minLength' => 3,
+          'maxLength' => 100,
+        ),
+      ),
+    ),
+    'authentication.register' => 
+    array (
+      'label' => 'Vous êtes un nouveau client ?',
+      'help' => 'En vous inscrivant sur le site MadeleineMarket, vous pouvez passer commande, poster des commentaires et évaluer nos produits.',
+      'fields' => 
+      array (
+        'namespace' => 
+        array (
+          'value' => 'user',
+        ),
+        'updated' => 
+        array (
+          'date' => 'now',
+        ),
+        'title' => 
+        array (
+          'label' => 'civilité',
+          'widget' => 'radio',
+          'choices' => 
+          array (
+            0 => 'Mr.',
+            1 => 'Mme.',
+            2 => 'Mlle.',
+          ),
+          'required' => true,
+        ),
+        'firstName' => 
+        array (
+          'label' => 'prénom',
+          'required' => true,
+        ),
+        'lastName' => 
+        array (
+          'label' => 'prénom',
+          'required' => true,
+        ),
+        'password' => 
+        array (
+          'label' => 'mot de passe',
+          'help' => 'choisissez un mot de passe (5 caractères min.)',
+          'widget' => 'password',
+          'required' => true,
+        ),
+        'optin' => 
+        array (
+          'label' => 'Je souhaite recevoir la newsletter MadeleineMarket',
+          'widget' => 'checkbox',
+        ),
+      ),
+    ),
   ),
   'comments' => 
   array (
@@ -215,6 +287,16 @@ return array (
       ),
     ),
     'profile.profile' => 
+    array (
+      'fields' => 
+      array (
+        'namespace' => 
+        array (
+          'value' => ' automatic',
+        ),
+      ),
+    ),
+    'authentication.register' => 
     array (
       'fields' => 
       array (

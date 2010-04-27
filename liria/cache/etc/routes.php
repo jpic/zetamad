@@ -96,6 +96,30 @@ return array (
       'rails' => '/fatal/',
       'application' => 'mad',
     ),
+    'authentication.login' => 
+    array (
+      'rails' => '/auth/login/',
+      'controller' => 'madAuthenticationController',
+      'action' => 'login',
+      'form' => 'authentication.login',
+      'application' => 'authentication',
+    ),
+    'authentication.register' => 
+    array (
+      'rails' => '/auth/register/',
+      'controller' => 'madAuthenticationController',
+      'action' => 'form',
+      'form' => 'authentication.register',
+      'application' => 'authentication',
+    ),
+    'authentication.logout' => 
+    array (
+      'rails' => '/auth/logout/',
+      'controller' => 'madAuthenticationController',
+      'action' => 'logout',
+      'form' => 'authentication.logout',
+      'application' => 'authentication',
+    ),
   ),
   'comments' => 
   array (
