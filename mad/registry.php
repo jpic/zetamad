@@ -83,6 +83,10 @@ class madRegistry {
         $this->registry[$name] = $instance;
     }
     
+    public function __isset( $name ) {
+        return array_key_exists( $name, $array );
+    }
+
     /**
      * Gets an object from the registry.
      *
@@ -94,6 +98,11 @@ class madRegistry {
      * @return object
      */
     public function __get( $name ) {
+        $createMethod = $this, 'create' . ucfirst( $name );
+
+        if ( isset( $this->registry[$name] ) && method_exists( $createMethod ) ) {
+            $this->registry[$name] = $this->$createMethod(  );
+        }
         return $this->registry[$name];
     }
 
