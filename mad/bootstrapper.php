@@ -136,7 +136,7 @@ class madBootstrapper {
             $this->configuration['mad']
         );
 
-        if ( $this->configuration['mad']['refreshModel'] ) {
+        if ( $this->refresh ) {
             $registry->model->applyConfiguration(  );
         }
     }
