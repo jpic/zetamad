@@ -61,7 +61,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         if ($type=='string')
         {
           echo '('.strlen($value).')';
-          $value= dump($value,-1);
+          $value= self::dump($value,-1);
         }
         elseif ($type=='boolean') $value= ($value?'true':'false');
         elseif ($type=='object')
@@ -71,7 +71,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
           foreach($props as $key=>$val)
           {
             echo "\n".str_repeat("\t",$level+1).$key.' => ';
-            dump($value->$key,$level+1);
+            self::dump($value->$key,$level+1);
           }
           $value= '';
         }
@@ -80,11 +80,12 @@ class madViewHandler extends ezcMvcPhpViewHandler {
           echo '('.count($value).')';
           foreach($value as $key=>$val)
           {
-            echo "\n".str_repeat("\t",$level+1).dump($key,-1).' => ';
-            dump($val,$level+1);
+            echo "\n".str_repeat("\t",$level+1).self::dump($key,-1).' => ';
+            self::dump($val,$level+1);
           }
           $value= '';
         }
+        
         echo " <b>$value</b>";
         if ($level==0) echo '</pre>';
     }
