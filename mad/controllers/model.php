@@ -256,6 +256,38 @@ class madModelController extends madFormController {
         $result->variables['object'] = $object;
         return $result;
     }
+
+    static public function routeFormData( $routeName, $data ) {
+        $request = new ezcMvcRequest(  );
+        $request->protocol = 'http-post';
+        $request->variables[str_replace( '.', '_', $formName )] = $data;
+
+        $registry = madRegistry::instance();
+
+        $controllerClass = $registry->configuration->getSetting( 
+            'routes', 
+            $routeName,
+            'controller', 
+            __CLASS__ // default
+        );
+
+        $controllerAction = $registry->configuration->getSetting( 
+            'routes', 
+            $routeName,
+            'action',
+            'form' // default
+        );
+
+        $controller = $registry->dispatcher->createController( 
+            $controllerClass,
+            $controllerAction,
+            $request
+        );
+
+        $result = $controller->createResult(  );
+
+        return $result;
+    }
 }
 
 ?>
