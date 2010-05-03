@@ -1,6 +1,8 @@
 <?php
 
 class madViewHandler extends ezcMvcPhpViewHandler {
+    public $handlers = array(  );
+
     public function generateUrl( $name, $arguments = array(  )) {
         $registry = madRegistry::instance();
         $prefix = $registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
@@ -88,6 +90,14 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         
         echo " <b>$value</b>";
         if ($level==0) echo '</pre>';
+    }
+
+    public function __call( $method, $arguments ) {
+        foreach( $this->handlers as $handler ) {
+            if ( method_exists( $handler, $method ) ) {
+                return call_user_func_array( array( $handler, $method ), $arguments );
+            }
+        }
     }
 }
 

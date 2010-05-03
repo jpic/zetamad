@@ -28,6 +28,10 @@ class madView extends ezcMvcView {
      */
     private $routeInfo;
 
+    public $plugins = array(  );
+
+    public $configuration = array(  );
+
     /**
      * Instanciate a view object with a request, result and routing 
      * information. Typically called from the dispatcher.
@@ -41,6 +45,11 @@ class madView extends ezcMvcView {
         parent::__construct( $request, $result );
 
         $this->routeInfo = $routeInfo;
+    }
+
+    public function setConfiguration( array &$configuration ) {
+        $this->configuration =& $configuration;
+        $this->result->variables['configuration'] =& $this->configuration;
     }
 
     /**
@@ -104,6 +113,12 @@ class madView extends ezcMvcView {
         
         if ( $layout && !$this->request->variables['ajaxRequest'] ) {
             $zones[] = new madViewHandler( 'site_base', ENTRY_APP_PATH . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'site_base.php' );
+        }
+
+        foreach( $zones as $name => $zone ) {
+            if ( $zone instanceof madViewHandler ) {
+                $zone->handlers =& $this->plugins;
+            }
         }
 
         return $zones;

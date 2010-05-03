@@ -171,6 +171,13 @@ class madHttpDispatcher {
          */
         $view = new madView( $request, $result, $routingInformation );
         
+        $view->setConfiguration( $controllerConfiguration );
+
+        foreach( $registry->configuration->getSetting( 'core', 'viewHandler', 'plugins', array(  ) ) as $handlerClass ) {
+            $reflectionClass = new ReflectionClass( $handlerClass );
+            $view->plugins[] = $reflectionClass->newInstance(  );
+        }
+
         /**
          * Run the view which returns a response object.
          *
