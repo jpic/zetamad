@@ -2,12 +2,13 @@
 
 class madRoutingInformation extends ezcMvcRoutingInformation {
     public $route = null;
+    public $routeName = null;
 
     /**
      * Returns a new instance of this class with the data specified by $array.
      *
      * $array contains all the data members of this class in the form:
-     * array('member_name'=>value).
+     * array('member_routeName'=>value).
      *
      * __set_state makes this class exportable with var_export.
      * var_export() generates code, that calls this method when it
@@ -20,6 +21,9 @@ class madRoutingInformation extends ezcMvcRoutingInformation {
     {
         $return = new madRoutingInformation( $array['matchedRoute'],
             $array['controllerClass'], $array['action'], $array['router'] );
+        if ( isset( $array['routeName'] ) ) {
+            $return->routeName = $array['routeName'];
+        }
         if ( isset( $array['route'] ) ) {
             $return->route = $array['route'];
         }

@@ -4,16 +4,12 @@ class madDownloadController extends madController {
     public function doDownload() {
         $configuration = madRegistry::instance(  )->configuration;
 
-        $relativePath = substr( $this->request->uri, 7 );
+        $relativePath = $this->request->variables['path'];
 
         if( substr( $relativePath, -1 ) == '/' ) {
             $relativePath .= 'index.html';
         }
-
-        $absolutePath = realpath( implode( DIRECTORY_SEPARATOR, array( 
-            ENTRY_APP_PATH,
-            $configuration->getSetting( 'staticFiles', 'paths', $relativePath ),
-        ) ) );
+        $absolutePath = $configuration->getPathSetting( 'staticFiles', 'paths', $relativePath );
         $extension = substr(strrchr($absolutePath, '.'), 1);
 
         $ret = new ezcMvcResult;

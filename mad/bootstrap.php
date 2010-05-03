@@ -82,8 +82,16 @@ function prefixRoutes( $configuration ) {
     foreach( $configuration['routes'] as $name => $route ) {
         $applicationName   = substr( $name, 0, strrpos( $name, '.' ) );
         $applicationPrefix = $configuration['applications'][$applicationName]['routePrefix'];
-        // prepend slash to route rails
-        $configuration['routes'][$name]['rails'] = $applicationPrefix . $configuration['routes'][$name]['rails'];
+        if ( isset( $route['rails'] ) ) {
+            $configuration['routes'][$name]['rails'] = $applicationPrefix . $configuration['routes'][$name]['rails'];
+        } elseif ( isset( $route['regexp'] ) ) {
+            if ( substr( $route['regexp'], 0, 1 ) == '^' ) {
+                $route['regexp'] = substr( $route['regexp'], 1 );
+            }
+            $configuration['routes'][$name]['regexp'] = '@^' . $applicationPrefix . $route['regexp'] . '@';
+        }
+
+        $configuration['routes'][$name]['name'] = $name;
     }
 }
 $registry->signals->connect( 'configurationRefreshed', 'prefixRoutes' );
@@ -119,9 +127,9 @@ function findStaticFiles( $configuration ) {
     }
 
     foreach( $configuration['applications'] as $name => $application ) {
-        $path       = $application['path'];
+        $path       = $configuration->getPathSetting( 'applications', $name, 'path' );
         $staticPath = $path . '/static';
-
+        
         if ( is_dir( $staticPath ) ) {
             $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $staticPath ) );
 

@@ -26,21 +26,42 @@ class madRouter extends ezcMvcRouter {
      */
     public function getRoutingInformation()
     {
-        if ( substr( $this->request->uri, 0, 8 ) == '/static/' ) {
-            $routingInformation = new madRoutingInformation(
-                 $this->request->uri,
-                 'madDownloadController',
-                 'download'
-            );
-            $routingInformation->router = $this;
-        } else {
-            $routingInformation = parent::getRoutingInformation(  );
+        $routes = $this->createRoutes();
+
+        if ( ezcBase::inDevMode() && ( !is_array( $routes ) || !count( $routes ) ) )
+        {
+            throw new ezcMvcNoRoutesException();
         }
-        
-        return $routingInformation;
+
+        foreach ( $routes as $name => $route )
+        {
+            if ( ezcBase::inDevMode() && !$route instanceof ezcMvcRoute )
+            {
+                throw new ezcBaseValueException( 'route', $route, 'instance of ezcMvcRoute' );
+            }
+
+            $routingInformation = $route->matches( $this->request );
+            if ( $routingInformation !== null )
+            {
+                $routingInformation = new madRoutingInformation(
+                    $routingInformation->matchedRoute,
+                    $routingInformation->controllerClass,
+                    $routingInformation->action,
+                    $routingInformation->router
+                );
+                // Add the router to the routing information struct, so that
+                // can be passed to the controllers for reversed route
+                // generation.
+                $routingInformation->router    = $this;
+                $routingInformation->route     = $route;
+                $routingInformation->routeName = $name;
+
+                return $routingInformation;
+            }
+        }
+
+        throw new ezcMvcRouteNotFoundException( $this->request );
     }
-
-
 
     public function createRoutes(  ) {
         $routes = array(  );
@@ -50,12 +71,21 @@ class madRouter extends ezcMvcRouter {
                 $routeArray['arguments'] = array(  );
             }
 
-            $route = new madRoute( 
-                $routeArray['rails'],
-                $routeArray['controller'],
-                $routeArray['action'],
-                $routeArray['arguments']
-            );
+            if ( isset( $routeArray['rails'] ) ) {
+                $route = new ezcMvcRailsRoute( 
+                    $routeArray['rails'],
+                    $routeArray['controller'],
+                    $routeArray['action'],
+                    $routeArray['arguments']
+                );
+            } elseif ( isset( $routeArray['regexp'] ) ) {
+                 $route = new ezcMvcRegexpRoute( 
+                    $routeArray['regexp'],
+                    $routeArray['controller'],
+                    $routeArray['action'],
+                    $routeArray['arguments']
+                );           
+            }
 
             if ( !isset( $routeArray['application'] ) ) {
                 throw new Exception( "What application is that route comming from?" );
