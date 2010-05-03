@@ -1,15 +1,12 @@
 <?php
 
 class madHttpDispatcher {
-    public $registry;
-
-    public function __construct( madRegistry $registry ) {
-        $this->registry = $registry;
+    public function __construct( madConfiguration $configuration, madSignals $signals ) {
+        $this->configuration = $configuration;
+        $this->signals = $signals;
     }
 
     public function run(  ) {
-        $registry = $this->registry;
-
         /**
          * Create the http request parser.
          * 
@@ -35,7 +32,7 @@ class madHttpDispatcher {
          *
          * In this example, the prefix comes from a configuratio nvariable.
          */
-        $requestParser->prefix = $registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
+        $requestParser->prefix = $this->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
         
         /**
          * The http specific request request parser will consider PHP classic 
@@ -46,8 +43,6 @@ class madHttpDispatcher {
          * - the ability to make request fixtures for testing
          */
         $request = $requestParser->createRequest();
-        
-        $registry->signals->send( 'requestParsed', array( $request ) );
         
         // append trailing slash if not a static file
         if ( substr( $request->uri, 0, 8) != '/static/' ) {
@@ -92,28 +87,18 @@ class madHttpDispatcher {
             }
         }
         
+        $this->signals->send( 'requestParsed', array( $request ) );
+        
         /**
          * A router should be istnanciated with the request object.
          *
          * In our case, the router uses configuration as additionnal constructor 
          * argument.
          */
-        $routes = $registry->configuration->settings['routes'];
+        $routes = $this->configuration->settings['routes'];
         $router = new madRouter( $request, $routes );
         
-        /**
-         * Store the router instance for later.
-         *
-         * In our case, a registry class is responsible for holding objects which 
-         * should be reused in the different layers.
-         *
-         * It is useful to have the router instance available because it is the role of 
-         * the router to generate urls.
-         *
-         * It is a very bad practice to hardcode a url outside the router because it 
-         * will require a url change to be propagated all along the application code.
-         */
-        $registry->router = $router;
+        $this->signals->send( 'routerCreated', $router );
         
         /**
          * Run the router and get the routing information.
@@ -137,33 +122,15 @@ class madHttpDispatcher {
          * abstraction, reusability and testing possible.
          */
         $controllerClass = $routingInformation->controllerClass;
-        $controller = new $controllerClass( $routingInformation->action, $request );
-        
-        foreach( $registry->configuration->getSetting( 'core', 'dispatcher', 'controllerDecorators', array(  ) ) as $decoratorClass ) {
-            $decorator = new $decoratorClass( $routingInformation->action, $request );
-            $decorator->decorate( $controller );
-            $controller = $decorator;
-        }
-        
-        // get route configuration
-        foreach( $registry->configuration->settings['routes'] as $routeName => $routeConfiguration ) {
-            if ( $routeConfiguration['rails'] == $routingInformation->matchedRoute ) {
-                break;
-            }
-        }
-        
-        // get the controller application configuration
-        $applicationName          = $registry->configuration->getClassApplicationName( $controllerClass );
-        $applicationConfiguration = $registry->configuration->settings['applications'][$applicationName];
-        
-        // overload the application configuration with the route configuration
-        $controllerConfiguration = madConfiguration::array_contribute( $routeConfiguration, $applicationConfiguration );
-        $controller->setConfiguration( $controllerConfiguration );
-        
+        $action = $routingInformation->action;
+
+        $this->createController( $controllerClass, $action, $request );
         $result = $controller->createResult();
         
         $result->variables['request'] = $request;
         
+        $this->signals->send( 'resultCreated', array( $request, $result ) );
+
         /**
          * Instanciate the view.
          *
@@ -173,7 +140,7 @@ class madHttpDispatcher {
         
         $view->setConfiguration( $controllerConfiguration );
 
-        foreach( $registry->configuration->getSetting( 'core', 'viewHandler', 'plugins', array(  ) ) as $handlerClass ) {
+        foreach( $this->configuration->getSetting( 'core', 'viewHandler', 'plugins', array(  ) ) as $handlerClass ) {
             $reflectionClass = new ReflectionClass( $handlerClass );
             $view->plugins[] = $reflectionClass->newInstance(  );
         }
@@ -219,6 +186,33 @@ class madHttpDispatcher {
          * exists on http://github.com/jpic/ezc-framework-apps.
          */
 
+    }
+
+    public function createController( $class, $action, $request ) {
+        $controller = new $class( $action, $request );
+        
+        foreach( $this->configuration->getSetting( 'core', 'dispatcher', 'controllerDecorators', array(  ) ) as $decoratorClass ) {
+            $decorator = new $decoratorClass( $routingInformation->action, $request );
+            $decorator->decorate( $controller );
+            $controller = $decorator;
+        }
+        
+        // get route configuration
+        foreach( $this->configuration->settings['routes'] as $routeName => $routeConfiguration ) {
+            if ( $routeConfiguration['rails'] == $routingInformation->matchedRoute ) {
+                break;
+            }
+        }
+        
+        // get the controller application configuration
+        $applicationName          = $this->configuration->getClassApplicationName( $controllerClass );
+        $applicationConfiguration = $this->configuration->settings['applications'][$applicationName];
+        
+        // overload the application configuration with the route configuration
+        $controllerConfiguration = madConfiguration::array_contribute( $routeConfiguration, $applicationConfiguration );
+        $controller->setConfiguration( $controllerConfiguration );
+        
+        return $controller;
     }
 }
 
