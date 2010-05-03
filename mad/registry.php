@@ -98,9 +98,9 @@ class madRegistry {
      * @return object
      */
     public function __get( $name ) {
-        $createMethod = $this, 'create' . ucfirst( $name );
+        $createMethod = 'create' . ucfirst( $name );
 
-        if ( isset( $this->registry[$name] ) && method_exists( $createMethod ) ) {
+        if ( isset( $this->registry[$name] ) && method_exists( $this, $createMethod ) ) {
             $this->registry[$name] = $this->$createMethod(  );
         }
         return $this->registry[$name];
