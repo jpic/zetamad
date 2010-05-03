@@ -55,6 +55,7 @@ return array (
     ),
     'mad' => 
     array (
+      'routePrefix' => '/mad',
       'path' => '../mad',
       'classes' => 
       array (
@@ -181,10 +182,11 @@ return array (
         120 => 'madTestRunner',
         121 => 'madModelObject',
         122 => 'madConfiguration',
-        123 => 'madAuthenticationController',
-        124 => 'madAuthentication',
-        125 => 'madAuthenticationPrestashopBackend',
-        126 => 'madRouter',
+        123 => 'madHttpDispatcher',
+        124 => 'madAuthenticationController',
+        125 => 'madAuthentication',
+        126 => 'madAuthenticationPrestashopBackend',
+        127 => 'madRouter',
       ),
     ),
   ),
