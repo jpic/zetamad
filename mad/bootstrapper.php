@@ -1,36 +1,75 @@
 <?php
+require 'object.php';
+
 class madBootstrapper {
     static public $autoload;
     public $configuration;
+    public $entryApplicationPath;
+    public $refresh = false;
 
-    public function __construct( $configuration ) {
-        $this->configuration = $configuration['settings'];
+    public function __construct( $entryApplicationPath ) {
+        $this->entryApplicationPath = $entryApplicationPath;
+
+        $applicationsConfigurationPath = $entryApplicationPath . '/cache/etc/applications.php';
+        if ( file_exists( $applicationsConfigurationPath ) ) {
+            $this->configuration = require $applicationsConfigurationPath;
+            $this->refresh = $this->configuration['mad']['refresh'];
+        } else {
+            $this->configuration = parse_ini_file( $entryApplicationPath . '/etc/applications.ini', true );
+            $this->refresh = true;
+        }
+        
+        if ( PHP_OS != 'Linux' ) {
+            // refresh uses standard linux commands
+            $this->refresh = false;
+        }
+
+        if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
+            // dont refresh cache on static file hits
+            $this->refresh = false;
+        }
     }
 
     public function run(  ) {
-        $this->setupIncludePath(  );
-        $this->setupAutoload(  );
-        $this->setupConfiguration(  );
-        $this->setupSignals(  );
-        $this->refreshAutoload(  );
-        $this->refreshBin(  );
-        $this->setupApplications(  );
-        $this->setupDatabase(  );
-        $this->setupModel(  );
+        if ( $this->refresh ) {
+            $this->setupIncludePath(  );
+            $this->setupAutoload(  );
+            $this->setupSignals(  );
+            
+            $this->setupConfiguration( $this->entryApplicationPath . '/etc' );
+            $this->setupApplications(  );
+            $this->refreshConfiguration(  );
+            
+            $this->refreshBin(  );
+            $this->refreshAutoload(  );
+            
+            $this->setupDatabase(  );
+            $this->setupModel(  );
+        } else {
+            $this->setupIncludePath(  );
+            $this->setupAutoload(  );
+            $this->setupSignals(  );
+            $this->setupApplications(  );
+
+            $this->setupConfiguration( $this->entryApplicationPath . '/cache/etc' );
+            
+            $this->setupDatabase(  );
+            $this->setupModel(  );
+        }
     }
 
     public function setupIncludePath(  ) {
         $paths = array( 
-            ENTRY_APP_PATH,
+            $this->entryApplicationPath,
             get_include_path(  ),
         );
-
-        foreach( $this->configuration['bootstrap']['includePath'] as $relativePath ) {
+    
+        foreach( $this->configuration['mad']['includePath'] as $relativePath ) {
             if ( strpos( $relativePath, DIRECTORY_SEPARATOR ) !== 0 ) {
                 $relativePath = DIRECTORY_SEPARATOR . $relativePath;
             }
 
-            $paths[] = ENTRY_APP_PATH . $relativePath;
+            $paths[] = $this->entryApplicationPath . $relativePath;
         }
 
         set_include_path( join( PATH_SEPARATOR, $paths ) );
@@ -38,7 +77,7 @@ class madBootstrapper {
 
     public function setupAutoload(  ) {
         self::$autoload = require join( DIRECTORY_SEPARATOR, array(  
-            ENTRY_APP_PATH,
+            $this->entryApplicationPath,
             'cache',
             'autoload.php',
         ) );
@@ -56,33 +95,32 @@ class madBootstrapper {
         }
     }
 
-    public function setupConfiguration(  ) {
-        $refresh = isset( $this->configuration['bootstrap']['refreshCache'] ) ? $this->configuration['bootstrap']['refreshCache'] : true;
-
-        if ( PHP_OS != 'Linux' ) {
-            // refresh uses standard linux commands
-            $refresh = false;
-        }
-
-        if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
-            // dont refresh cache on static file hits
-            $refresh = false;
-        }
-
-        $configuration = madConfiguration::factory( ENTRY_APP_PATH, $refresh );
-
+    public function setupConfiguration( $path ) {
+        $configuration = new madConfiguration( $path, $this->configuration );
         madRegistry::instance()->configuration = $configuration;
     }
 
+    public function refreshConfiguration(  ) {
+        $registry = madRegistry::instance(  );
+        // parse all ini files again
+        $registry->configuration->refresh( $this->entryApplicationPath );
+        // allow connected functions to visit it
+        $registry->signals->send( 'configurationRefreshed', array( $registry->configuration ) );
+        // cache the parsed configuration for performances
+        $registry->configuration->write( $this->entryApplicationPath . '/cache/etc' );
+        // bootstrapper requires refreshed configuration with non-overloaded variables
+        $this->configuration = $registry->configuration['applications'];
+    }
+
     public function setupDatabase(  ) {
-        if ( isset( $this->configuration['database']['skip'] ) && 
-            $this->configuration['database']['skip'] == true ) {
+        if ( isset( $this->configuration['mad']['pdoSkip'] ) && 
+            $this->configuration['mad']['pdoSkip'] == true ) {
             return true;
         }
 
-        $reflection = new ReflectionClass( $this->configuration['database']['class'] );
+        $reflection = new ReflectionClass( $this->configuration['mad']['pdoClass'] );
         
-        $database = $reflection->newInstanceArgs( $this->configuration['database']['arguments'] );
+        $database = $reflection->newInstanceArgs( $this->configuration['mad']['pdoArguments'] );
         $database->query( 'set names "UTF-8"' );
         $database->setAttribute( PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
         
@@ -94,11 +132,11 @@ class madBootstrapper {
 
         $registry->model = new madModel( 
             $registry->database, 
-            $registry->configuration->settings['model'],
-            $registry->configuration->settings['core']['model']
+            $registry->configuration['model'],
+            $this->configuration['mad']
         );
 
-        if ( $this->configuration['bootstrap']['refreshModel'] ) {
+        if ( $this->configuration['mad']['refreshModel'] ) {
             $registry->model->applyConfiguration(  );
         }
     }
@@ -109,44 +147,24 @@ class madBootstrapper {
     }
 
     public function refreshBin(  ) {
-        if ( !$this->configuration['bootstrap']['refreshBin'] ) {
-            return true;
-        }
-
-        if ( PHP_OS != 'Linux' ) {
-            // refresh uses standard linux commands
-            return true;
-        }
-
-        if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
-            // dont refresh cache on static file hits
+        if ( !$this->refresh ) {
             return true;
         }
 
         $ocwd = getcwd();
-        chdir( ENTRY_APP_PATH );
+        chdir( $this->entryApplicationPath );
         chdir( 'bin' );
         shell_exec( './generate-bin ../../' );
         chdir( $ocwd );
     }
 
     public function refreshAutoload(  ) {
-        if ( !$this->configuration['bootstrap']['refreshAutoload'] ) {
-            return true;
-        }
-
-        if ( PHP_OS != 'Linux' ) {
-            // refresh uses standard linux commands
-            return true;
-        }
-
-        if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
-            // dont refresh cache on static file hits
+        if ( !$this->refresh ) {
             return true;
         }
 
         $ocwd = getcwd();
-        chdir( ENTRY_APP_PATH );
+        chdir( $this->entryApplicationPath );
         shell_exec( 'bin/generate-autoload-file ../ > cache/autoload.php' );
         chdir( $ocwd );
 
@@ -154,16 +172,16 @@ class madBootstrapper {
     }
 
     public function setupApplications(  ) {
-        $registry = madRegistry::instance();
-
-        foreach( $registry->configuration->settings['applications'] as $name => $application ) {
+        foreach( $this->configuration as $name => $application ) {
+            if ( !isset( $application['path'] ) ) continue;
+           
             $bootstrap = realpath( join( DIRECTORY_SEPARATOR, array( 
-                ENTRY_APP_PATH,
+                $this->entryApplicationPath,
                 $application['path'],
                 'bootstrap.php',
             ) ) );
-        
-            if ( file_exists( $bootstrap ) && $bootstrap != __FILE__  && $bootstrap != ENTRY_APP_PATH . DIRECTORY_SEPARATOR . 'bootstrap.php' ) {
+
+            if ( file_exists( $bootstrap ) && $bootstrap != __FILE__  && $bootstrap != $this->entryApplicationPath . DIRECTORY_SEPARATOR . 'bootstrap.php' ) {
                 require $bootstrap;
             }
         }

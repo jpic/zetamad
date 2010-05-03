@@ -20,16 +20,14 @@
  *
  * @credit Aikar@irc.freenode.net##php parse_ini_file works on 5.3
  */
-class madConfiguration implements ArrayAccess, Iterator, Countable {
-    public $path = null;
-
+class madConfiguration extends madObject {
     public function __construct( $path, array &$applicationsConfiguration = null ) {
-        $this->path = $path;
+        $this->path    = $path;
 
         if ( $applicationsConfiguration ) {
             $this['applications'] = $applicationsConfiguration;
         }
-        
+
         foreach( glob( "{$this->path}/*" ) as $file ) {
             // filename without extension
             $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
@@ -56,8 +54,16 @@ class madConfiguration implements ArrayAccess, Iterator, Countable {
         // figure the entry application name
         $entryApplicationName = substr( $entryApplicationPath, strrpos( $entryApplicationPath, '/' ) + 1 );
 
+        // save entry app repositories and installed applications because 'applications' 
+        // will be emptied
+        $repositories = $this['applications'][$entryApplicationName]['applicationRepositories'];
+        $installedApplications = array_keys( (array)$this['applications'] );
+        
+        // clean applications configuration
+        $this['applications'] = new madObject();
+
         // discover paths to applications in configured repositories
-        foreach( $this['applications'][$entryApplicationName]['applicationRepositories'] as $path ) {
+        foreach( $repositories as $path ) {
             // prepend / if necessary
             $path = $path[0] == '/' ? $path : '/' . $path;
             // prepend application path and get the absolute path
@@ -79,103 +85,35 @@ class madConfiguration implements ArrayAccess, Iterator, Countable {
                 $applicationName = substr( $applicationPath, strrpos( $applicationPath, '/' ) + 1 );
 
                 // skip uninstalled applications
-                if ( !in_array( $applicationName, array_keys( $this['applications'] ) ) ) continue;
-                
+                if ( !in_array( $applicationName, $installedApplications ) ) continue;
+
                 // fetch configuration of the application
                 $applicationConfiguration = new madConfiguration( $applicationPath . '/etc' );
 
-                // save application "path" for later use
-                $this->container['applications'][$applicationName]['path'] = $applicationPath;
+                if ( !isset( $this['applications'][$applicationName] ) ) {
+                    $this['applications'][$applicationName] = new madObject;
+                }
 
-                // contribute to this configuration
-                $this->merge( $applicationConfiguration->getArray(  ) );
+                // save application "path" for later use
+                $this['applications'][$applicationName]['path'] = $applicationPath;
+
+                // merge to this configuration
+                $this->merge( $applicationConfiguration );
              }
         }
-        die( 'lol2' );
     }
 
     public function write( $cacheDirectory ) {
-        foreach( $this as $name => $array ) {
+        foreach( $this as $name => $object ) {
             $body = sprintf(
                 '<?php return %s ?>',
-                var_export( $array, true )
+                var_export( $object->objectsToArray(), true )
             );
 
             $target = $cacheDirectory . "/$name.php";
             file_put_contents( $target, $body );
         }
     }
-
-    /**
-     * Merge two arrays recursively, without allowing the second to overload 
-     * the first one.
-     * 
-     * @param array $array 
-     * @param array $contributor 
-     * @return void
-     */
-    static public function array_contribute( &$array, $contributor ) {
-        foreach( $contributor as $key => $value ) {
-            if ( !array_key_exists( $key, $array ) ) {
-                $array[$key] = $value;
-            } elseif ( is_array( $value ) ) {
-                self::array_contribute( $array[$key], $value );
-            }
-        }
-        return $array;
-    }
-
-    public function merge( array $contributor ) {
-        $this->container = self::array_contribute( $this->container, $contributor );
-    }
-
-    public function &getArray(  ) {
-        return $this->container;
-    }
-
-    // {{{ basic implementation of countable, traversable and arrayaccess
-    public $container = array();
-
-    public function offsetSet($offset,$value) {
-        $this->container[$offset] = $value;
-    }
-
-    public function offsetExists($offset) {
-     return isset($this->container[$offset]);
-    }
-
-    public function offsetUnset($offset) {
-        unset($this->container[$offset]);
-    }
-
-    public function offsetGet($offset) {
-        return isset($this->container[$offset]) ? $this->container[$offset] : null;
-    }
-
-    public function rewind() {
-        reset($this->container);
-    }
-
-    public function current() {
-        return current($this->container);
-    }
-
-    public function key() {
-        return key($this->container);
-    }
-
-    public function next() {
-        return next($this->container);
-    }
-
-    public function valid() {
-        return $this->current() !== false;
-    }   
-
-    public function count() {
-        return count($this->container);
-    }
-    // }}}
     
     public function getSetting( $group, $section, $name, $default = null ) {
         if ( !isset( $this->settings[$group] ) ) {
@@ -266,28 +204,27 @@ class madConfiguration implements ArrayAccess, Iterator, Countable {
         $parser = new ezcConfigurationIniParser( ezcConfigurationIniParser::PARSE, $file );
         $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
 
-        foreach ( new NoRewindIterator( $parser ) as $element )
-        {
-            if ( $element instanceof ezcConfigurationIniItem )
-            {
-                switch ( $element->type )
-                {
-                    case ezcConfigurationIniItem::GROUP_HEADER:
-                        $this[$name][$element->group] = array();
-                        break;
+        if ( !isset( $this[$name] ) ) {
+            $this[$name] = new madObject();
+        }
 
+        foreach( new NoRewindIterator( $parser ) as $element ) {
+            if ( $element instanceof ezcConfigurationIniItem ) {
+                switch ( $element->type ) {
+                    case ezcConfigurationIniItem::GROUP_HEADER:
+                        if ( !isset( $this[$name][$element->group] ) ) {
+                            $this[$name][$element->group] = new madObject();
+                        }
+                        break;
                     case ezcConfigurationIniItem::SETTING:
                         eval( '$this[$name][$element->group][$element->setting]'. $element->dimensions. ' = $element->value;' );
                         break;
                 }
             }
-            if ( $element instanceof ezcConfigurationValidationItem )
-            {
+            if ( $element instanceof ezcConfigurationValidationItem ) {
                 throw new ezcConfigurationParseErrorException( $element->file, $element->line, $element->description );
             }
         }
-
-        var_dump( $name, $this[$name] );
     }
 
     public function parsePhp( $file ) {
