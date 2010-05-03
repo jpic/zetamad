@@ -137,8 +137,13 @@ class madHttpDispatcher {
          * abstraction, reusability and testing possible.
          */
         $controllerClass = $routingInformation->controllerClass;
-        
         $controller = new $controllerClass( $routingInformation->action, $request );
+        
+        foreach( $registry->configuration->getSetting( 'core', 'dispatcher', 'controllerDecorators', array(  ) ) as $decoratorClass ) {
+            $decorator = new $decoratorClass( $routingInformation->action, $request );
+            $decorator->decorate( $controller );
+            $controller = $decorator;
+        }
         
         // get route configuration
         foreach( $registry->configuration->settings['routes'] as $routeName => $routeConfiguration ) {
