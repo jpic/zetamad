@@ -258,29 +258,16 @@ class madModelController extends madFormController {
     }
 
     static public function routeFormData( $routeName, $data ) {
-        $request = new ezcMvcRequest(  );
-        $request->protocol = 'http-post';
-        $request->variables[str_replace( '.', '_', $formName )] = $data;
-
         $registry = madRegistry::instance();
 
-        $controllerClass = $registry->configuration->getSetting( 
-            'routes', 
-            $routeName,
-            'controller', 
-            __CLASS__ // default
-        );
+        $configuration = $registry->configuration->settings['routes'][$routeName];
 
-        $controllerAction = $registry->configuration->getSetting( 
-            'routes', 
-            $routeName,
-            'action',
-            'form' // default
-        );
+        $request = new ezcMvcRequest(  );
+        $request->protocol = 'http-post';
+        $request->variables[str_replace( '.', '_', $configuration['form'] )] = $data;
 
-        $controller = $registry->dispatcher->createController( 
-            $controllerClass,
-            $controllerAction,
+        $controller = $registry->dispatcher->createRouteController( 
+            $configuration,
             $request
         );
 

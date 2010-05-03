@@ -98,7 +98,7 @@ class madHttpDispatcher {
         $routes = $this->configuration->settings['routes'];
         $router = new madRouter( $request, $routes );
         
-        $this->signals->send( 'routerCreated', $router );
+        $this->signals->send( 'routerCreated', array( $router ) );
         
         /**
          * Run the router and get the routing information.
@@ -110,6 +110,13 @@ class madHttpDispatcher {
          */
         $routingInformation = $router->getRoutingInformation();
         
+        // get route routeConfiguration
+        foreach( $this->configuration->settings['routes'] as $routeName => $routeConfiguration ) {
+            if ( $routeConfiguration['rails'] == $routingInformation->matchedRoute ) {
+                break;
+            }
+        }
+
         /**
          * Instanciate the controller and run it.
          *
@@ -121,10 +128,7 @@ class madHttpDispatcher {
          * The controller should return a result object, again to make protocol 
          * abstraction, reusability and testing possible.
          */
-        $controllerClass = $routingInformation->controllerClass;
-        $action = $routingInformation->action;
-
-        $this->createController( $controllerClass, $action, $request );
+        $controller = $this->createRouteController( $routeConfiguration, $request );
         $result = $controller->createResult();
         
         $result->variables['request'] = $request;
@@ -138,7 +142,7 @@ class madHttpDispatcher {
          */
         $view = new madView( $request, $result, $routingInformation );
         
-        $view->setConfiguration( $controllerConfiguration );
+        $view->setConfiguration( $controller->configuration );
 
         foreach( $this->configuration->getSetting( 'core', 'viewHandler', 'plugins', array(  ) ) as $handlerClass ) {
             $reflectionClass = new ReflectionClass( $handlerClass );
@@ -188,27 +192,22 @@ class madHttpDispatcher {
 
     }
 
-    public function createController( $class, $action, $request ) {
+    public function createRouteController( $routeConfiguration, $request ) {
+        $class = $routeConfiguration['controller'];
+        $action = $routeConfiguration['action'];
         $controller = new $class( $action, $request );
         
         foreach( $this->configuration->getSetting( 'core', 'dispatcher', 'controllerDecorators', array(  ) ) as $decoratorClass ) {
-            $decorator = new $decoratorClass( $routingInformation->action, $request );
+            $decorator = new $decoratorClass( $action, $request );
             $decorator->decorate( $controller );
             $controller = $decorator;
         }
         
-        // get route configuration
-        foreach( $this->configuration->settings['routes'] as $routeName => $routeConfiguration ) {
-            if ( $routeConfiguration['rails'] == $routingInformation->matchedRoute ) {
-                break;
-            }
-        }
-        
-        // get the controller application configuration
-        $applicationName          = $this->configuration->getClassApplicationName( $controllerClass );
+        // get the controller application routeConfiguration
+        $applicationName          = $this->configuration->getClassApplicationName( $class );
         $applicationConfiguration = $this->configuration->settings['applications'][$applicationName];
         
-        // overload the application configuration with the route configuration
+        // overload the application routeConfiguration with the route routeConfiguration
         $controllerConfiguration = madConfiguration::array_contribute( $routeConfiguration, $applicationConfiguration );
         $controller->setConfiguration( $controllerConfiguration );
         
