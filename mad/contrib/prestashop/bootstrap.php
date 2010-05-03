@@ -14,7 +14,9 @@ function prestashopAuthentication( ezcMvcRequest $request ) {
         
         if ( !count( $users ) ) {
             $result = madModelController::routeFormData(
-                'authentication.register', 
+                // ideally we'd use authentication.register but we dont have it 
+                // defined yet
+                'authentication.userCreate', 
                 array( 
                     'firstName'    => $cookie->customer_firstname,
                     'lastName'     => $cookie->customer_firstname,
