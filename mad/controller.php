@@ -10,8 +10,8 @@ abstract class madController extends ezcMvcController {
         $this->registry = madRegistry::instance(  );
     }
 
-    public function setConfiguration( array $configuration ) {
-        $this->configuration = $configuration;
+    public function setConfiguration( array &$configuration ) {
+        $this->configuration =& $configuration;
     }
 }
 
