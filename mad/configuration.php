@@ -17,337 +17,92 @@
  *
  * @package MadConfiguration
  * @version //autogen//
+ *
+ * @credit Aikar@irc.freenode.net##php parse_ini_file works on 5.3
  */
-class madConfiguration {
-    /**
-     * Array of paths to ini configuration.
-     * 
-     * @var array
-     */
-    private $paths;  
-    
-    /**
-     * Settings array.
-     * 
-     * @var array
-     */
-    public $settings = array();
+class madConfiguration implements ArrayAccess, Iterator, Countable {
+    public $path = null;
 
-    /**
-     * Comments array.
-     * 
-     * @var array
-     */
-    public $comments = array(  );
+    public function __construct( $path, array &$applicationsConfiguration = null ) {
+        $this->path = $path;
 
-    /**
-     * Instanciates a madConfiguration with an array of paths to configuration 
-     * files.
-     *
-     * The configuration paths array should order paths from the most important to 
-     * the least important.
-     *
-     * For example, if you want to overload the configuration of my application in 
-     * the configuration folder of your application:
-     * <code>
-     * $configuration = new madConfiguration( array( 
-     *     '/path/to/your-app/etc',
-     *     '/path/to/my-app/etc',
-     * ) );
-     * </code>
-     *
-     * @param array $paths Array of full paths.
-     * @return void
-     */
-    public function __construct( $paths ) {
-        $this->paths = $paths;  
-    }
-   
-    /**
-     * Instanciate a madConfiguration with a path to an application that 
-     * contains an 'applications.ini' configuration file.
-     *
-     * This factory assumes that all the applications store only ini configuration
-     * files in a subdirectory named "etc".
-     * 
-     * For example, to create a complete madConfiguration for application 'yourApp':
-     * <code>
-     * $configuration = madConfiguration::factory( '/path/to/your-app' );
-     * </code>
-     *
-     * @param string $applicationPath Absolute path to the application.
-     * @return madConfiguration
-     */
-    static public function factory( $applicationPath, $refresh = false ) {
-        $applicationName = substr( $applicationPath, strrpos( $applicationPath, DIRECTORY_SEPARATOR ) );
-
-        if ( !$refresh ) {
-            $path = join( DIRECTORY_SEPARATOR, array( 
-                $applicationPath,
-                'cache',
-                'etc'
-            ) );
-            $return = new madConfiguration( array( $path ) );
-            $return->read(  );
-            return $return;
-        }
-
-        # generate applications config that we need
-        $reader = new ezcConfigurationIniReader( join( DIRECTORY_SEPARATOR, array( 
-            $applicationPath,
-            'etc',
-            'applications.ini'
-        ) ) );
-        $result = $reader->validate(  );
-        
-        foreach (  $result->getResultList( ) as $resultItem ) {
-            print $resultItem->file . ":" . $resultItem->line . ":" . $resultItem->column. ":"; 
-            print " " . $resultItem->details . "\n"; 
+        if ( $applicationsConfiguration ) {
+            $this['applications'] = $applicationsConfiguration;
         }
         
-        # load app settings
-        $cfg = $reader->load();
-        $settings = $cfg->getAllSettings(  );
+        foreach( glob( "{$this->path}/*" ) as $file ) {
+            // filename without extension
+            $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
 
-        $paths = array( 
-            join( DIRECTORY_SEPARATOR, array( 
-                $applicationPath,
-                'etc',
-            ) ),
-        );
-
-        foreach( $settings as $app => $config ) {
-            if ( isset( $config['configPaths'] ) ) {
-                foreach( $config['configPaths'] as $configurationPath ) {
-                    $path = realpath( join( DIRECTORY_SEPARATOR, array( 
-                        $applicationPath,
-                        $configurationPath
-                    ) ) );
-
-                    $out = shell_exec( "find $path -name etc -type d \! -path \"*/tests/*\" \! -path \"*/cache/*\"" );
-                    if ( $out ) {
-                        foreach( explode( "\n", $out ) as $path ) {
-                            if ( $path == dirname( __FILE__ ) ) {
-                                continue;
-                            }
-                            
-                            if ( !$path ) {
-                                continue;
-                            }
-
-                            // ignore apps not in applications.ini
-                            $parts = explode( DIRECTORY_SEPARATOR, $path );
-                            $slice = array_slice( $parts, -2, 1 );
-                            $appName = $slice[0];
-                            if ( !in_array( $appName, array_keys( $settings ) ) ) {
-                                continue;
-                            }
-
-                            if ( !in_array( $path, $paths ) ) {
-                                $paths[] = $path;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        $writer = new madConfiguration( $paths );
-        $writer->read(  );
-        $writer->clean(  );
-
-        $path = join( DIRECTORY_SEPARATOR, array( 
-            $applicationPath,
-            'cache',
-            'etc'
-        ) );
-        $writer->write( $path );
-        $return = new madConfiguration( array( $path ) );
-        $return->read(  );
-        return $return;
-    }
-
-    /**
-     * Writes the configuration in PHP format in an arbitary directory.
-     *
-     * For example, to write the configuration in /var/cache/etc:
-     * <code>
-     * $configuration->write( '/var/cache/etc' );
-     * </code>
-     *
-     * @param string $path Output path
-     * @return void
-     */
-    public function write( $path ) {
-        if ( !$this->settings ) {
-            $this->read();
-        }
-
-        foreach( array_keys( $this->settings ) as $confName ) {
-            $writer = new ezcConfigurationArrayWriter(  );
-            $writer->init(
-                $path,
-                $confName,
-                new ezcConfiguration( $this->settings[$confName], $this->comments[$confName] )
-            );
-            $writer->save(  );
-        }
-    }
-
-    /**
-     * Read the ini configuration files in all paths and fills $this->settings 
-     * and $this->comments.
-     * 
-     * @return void
-     */
-    public function read() {
-        $this->settings['staticFiles'] = array( 'paths' => array(  ));
-        $this->comments['staticFiles'] = array(  );
-        $this->settings['applications'] = array(  );
-        $this->comments['applications'] = array(  );
-        
-        foreach( $this->paths as $path ) {
-            if ( !$path ) {
+            // skip applications which is already set
+            if ( isset( $this['applications'] ) && $name == 'applications' ) {
                 continue;
             }
 
-            $explode = explode( DIRECTORY_SEPARATOR, $path );
-            $application = $explode[count( $explode )-2];
-            $applicationPath = realpath( $path . DIRECTORY_SEPARATOR . '..' );
-            if ( !isset( $this->settings['applications'][$application] ) ) {
-                $this->settings['applications'][$application] = array();
-            }
-            $this->settings['applications'][$application]['path'] = self::getRelativePath( $applicationPath, ENTRY_APP_PATH );
-
-            if ( !isset( $this->settings['applications'][$application]['classes'] ) ) {
-                $this->settings['applications'][$application]['classes'] = array();
-            }
-            $command = "grep --exclude-dir=tests --exclude-dir=.svn -o -r '^class [a-zA-Z0-9]*' $applicationPath | sed 's/.*class //'";
-            $out = shell_exec( $command );
-            foreach( explode( "\n", $out ) as $className ) {
-                if ( !$className ) { // skip empty className
+            switch( substr( $file, -3 ) ) {
+                case 'php':
+                    $this->parsePhp( $file );
+                    break;
+                case 'ini':
+                    $this->parseIni( $file );
+                    break;
+                default:
                     continue;
-                }
-                $this->settings['applications'][$application]['classes'][] = $className;
-            }
-
-
-            $staticPath = realpath( $applicationPath . DIRECTORY_SEPARATOR . 'static' );
-            if ( $staticPath ) {
-                foreach( new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $staticPath ) ) as $fileInfo ) {
-                    $absolutePath = $fileInfo->getRealPath(  );
-                    $relativePath = substr( $absolutePath, strlen( $staticPath ) );
-                    $this->settings['staticFiles']['paths'][$relativePath] = self::getRelativePath( $absolutePath, ENTRY_APP_PATH );
-                }
-            }
-
-            foreach( glob( $path . DIRECTORY_SEPARATOR . '*' ) as $file ) {
-                $name = substr( $file, strrpos( $file, DIRECTORY_SEPARATOR ) + 1, -4 );
-                $extension = substr( $file, -3 );
-
-                if ( !isset( $this->comments[$name] ) ) {
-                    $this->comments[$name] = array();
-                }
-                if ( !isset( $this->settings[$name] ) ) {
-                    $this->settings[$name] = array();
-                }
-                
-                if ( $extension == 'ini' ) {
-                    $reader = new ezcConfigurationIniReader( $file );
-                } elseif ( $extension == 'php' ) {
-                    $reader = new ezcConfigurationArrayReader( $file );
-                } else {
-                    trigger_error( "Cannot figure configuration file extension for $file" );
-                }
-
-                $result = $reader->validate(  );
-        
-                foreach (  $result->getResultList( ) as $resultItem ) {
-                    print $resultItem->file . ":" . $resultItem->line . ":" . $resultItem->column. ":"; 
-                    print " " . $resultItem->details . "\n"; 
-                }
-                
-                // load app settings
-                $cfg = $reader->load();
-                $settings = $cfg->getAllSettings(  );
-                $comments = $cfg->getAllComments(  );
-
-                if ( $name == 'routes' ) {
-                    foreach( $settings as $sectionName => $section ) {
-                        if ( !isset( $settings[$sectionName]['application'] ) ) {
-                            $settings[$sectionName]['application'] = $application;
-                        }
-                    }
-                }
-
-                $this->settings[$name] = self::array_contribute( $this->settings[$name], $settings );
-                $this->comments[$name] = self::array_contribute( $this->comments[$name], $comments );
             }
         }
     }
 
-    /**
-     * Cleans the 'routes' settings array.
-     *
-     * This method ensures all routes are prefixed and suffixed by a slash, and 
-     * that routes have a 'rails' attribute.
-     * 
-     * @return void
-     */
-    public function clean(  ) {
-        if ( !isset( $this->settings['routes'] ) ) {
-            return;
-        }
+    public function refresh( $entryApplicationPath ) {
+        // figure the entry application name
+        $entryApplicationName = substr( $entryApplicationPath, strrpos( $entryApplicationPath, '/' ) + 1 );
 
-        foreach( $this->settings['routes'] as $name => $config ) {
-            if ( isset( $config['rails'] ) ) {
-                # todo: better to clean silently than to throw an exception?
-                # route must be slash prefixed
-                if ( substr( $config['rails'], 0, 1 ) != '/' ) {
-                    $this->settings['routes'][$name]['rails'] = '/' . $config['rails'];
-                }
+        // discover paths to applications in configured repositories
+        foreach( $this['applications'][$entryApplicationName]['applicationRepositories'] as $path ) {
+            // prepend / if necessary
+            $path = $path[0] == '/' ? $path : '/' . $path;
+            // prepend application path and get the absolute path
+            $path = realpath( $entryApplicationPath . $path );
+
+            // find all configuration paths in this repository path
+            $find = shell_exec( "find $path -name etc -type d \! -path \"*/tests/*\" \! -path \"*/cache/*\"" );
+            // trim shell output
+            $find = trim( $find );
+
+            foreach( explode( "\n", $find ) as $configurationPath ) {
+                // strip trailing / if necessary
+                $configurationPath = substr( $configurationPath, -1 ) == '/' ? substr( $configurationPath, 0, -1 ) : $configurationPath;
+
+                // get application path
+                $applicationPath = realpath( $configurationPath . '/..' );
+
+                // get current application name
+                $applicationName = substr( $applicationPath, strrpos( $applicationPath, '/' ) + 1 );
+
+                // skip uninstalled applications
+                if ( !in_array( $applicationName, array_keys( $this['applications'] ) ) ) continue;
                 
-                # route must be slash suffixed
-                if ( substr( $config['rails'], -1 ) != '/' ) {
-                    $this->settings['routes'][$name]['rails'] = $config['rails'] . '/';
-                }
-            } else {
-                trigger_error( "Route $name has no 'rails' attribute!" );
-            }
+                // fetch configuration of the application
+                $applicationConfiguration = new madConfiguration( $applicationPath . '/etc' );
+
+                // save application "path" for later use
+                $this->container['applications'][$applicationName]['path'] = $applicationPath;
+
+                // contribute to this configuration
+                $this->merge( $applicationConfiguration->getArray(  ) );
+             }
         }
+        die( 'lol2' );
+    }
 
-        if ( !isset( $this->settings['applications'] ) ) {
-            return ;
-        }
+    public function write( $cacheDirectory ) {
+        foreach( $this as $name => $array ) {
+            $body = sprintf(
+                '<?php return %s ?>',
+                var_export( $array, true )
+            );
 
-        foreach( $this->settings['applications'] as $applicationName => $config ) {
-            if ( isset( $config['routePrefix'] ) ) {
-                foreach( $this->settings['routes'] as $routeName => $routeConfig ) {
-                    $routeAppName = substr( $routeName, 0, strpos( $routeName, '.' ) );
-                    if ( $routeAppName != $applicationName ) {
-                        continue;
-                    }
-
-                    if ( isset( $routeConfig['rails'] ) ) {
-                        # todo: better to clean silently than to throw an exception?
-                        # route prefix must by slash prefixed
-                        if ( substr( $config['routePrefix'], 0, 1 ) != '/' ) {
-                            $this->settings['applications'][$applicationName]['routePrefix'] = '/' . $config['routePrefix'];
-                        }
-
-                        # route prefix must *NOT* be slash suffixed
-                        if ( substr( $config['routePrefix'], -1 ) == '/' ) {
-                            $this->settings['applications'][$applicationName]['routePrefix'] = substr( $config['routePrefix'], 0, -1 );
-                        }
-
-                        $newRoute = $this->settings['applications'][$applicationName]['routePrefix'] . $routeConfig['rails'];
-
-                        // full path to setting, no need to thrust php "array 
-                        // pass by reference"
-                        $this->settings['routes'][$routeName]['rails'] = $newRoute;
-                    }
-                }
-            }
+            $target = $cacheDirectory . "/$name.php";
+            file_put_contents( $target, $body );
         }
     }
 
@@ -370,6 +125,58 @@ class madConfiguration {
         return $array;
     }
 
+    public function merge( array $contributor ) {
+        $this->container = self::array_contribute( $this->container, $contributor );
+    }
+
+    public function &getArray(  ) {
+        return $this->container;
+    }
+
+    // {{{ basic implementation of countable, traversable and arrayaccess
+    public $container = array();
+
+    public function offsetSet($offset,$value) {
+        $this->container[$offset] = $value;
+    }
+
+    public function offsetExists($offset) {
+     return isset($this->container[$offset]);
+    }
+
+    public function offsetUnset($offset) {
+        unset($this->container[$offset]);
+    }
+
+    public function offsetGet($offset) {
+        return isset($this->container[$offset]) ? $this->container[$offset] : null;
+    }
+
+    public function rewind() {
+        reset($this->container);
+    }
+
+    public function current() {
+        return current($this->container);
+    }
+
+    public function key() {
+        return key($this->container);
+    }
+
+    public function next() {
+        return next($this->container);
+    }
+
+    public function valid() {
+        return $this->current() !== false;
+    }   
+
+    public function count() {
+        return count($this->container);
+    }
+    // }}}
+    
     public function getSetting( $group, $section, $name, $default = null ) {
         if ( !isset( $this->settings[$group] ) ) {
             return $default;
@@ -453,6 +260,39 @@ class madConfiguration {
         }
 
         return $realPath;
+    }
+
+    public function parseIni( $file ) {
+        $parser = new ezcConfigurationIniParser( ezcConfigurationIniParser::PARSE, $file );
+        $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
+
+        foreach ( new NoRewindIterator( $parser ) as $element )
+        {
+            if ( $element instanceof ezcConfigurationIniItem )
+            {
+                switch ( $element->type )
+                {
+                    case ezcConfigurationIniItem::GROUP_HEADER:
+                        $this[$name][$element->group] = array();
+                        break;
+
+                    case ezcConfigurationIniItem::SETTING:
+                        eval( '$this[$name][$element->group][$element->setting]'. $element->dimensions. ' = $element->value;' );
+                        break;
+                }
+            }
+            if ( $element instanceof ezcConfigurationValidationItem )
+            {
+                throw new ezcConfigurationParseErrorException( $element->file, $element->line, $element->description );
+            }
+        }
+
+        var_dump( $name, $this[$name] );
+    }
+
+    public function parsePhp( $file ) {
+        $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
+        $this[$name] = require $file;
     }
 }
 
