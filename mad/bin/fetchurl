@@ -10,7 +10,7 @@ $request->host = trim( `hostname -f` );
 $request->date = new DateTime;
 $request->requestId = $request->host . $request->uri;
 
-$routes = $registry->configuration->settings['routes'];
+$routes = $registry->configuration['routes'];
 $router = new madRouter( $request, $routes );
 $registry->router = $router;
 $routingInformation = $router->getRoutingInformation();
