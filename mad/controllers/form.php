@@ -92,8 +92,26 @@ class madFormController extends madController {
             return;
         }
 
-        if ( isset( $field->slugify ) && isset( $form[$field->slugify] ) && !isset( $form[$name] ) ) {
-            $form[$name] = $this->slugify( $form[$field->slugify], $name );
+        if ( isset( $field->slugify ) && ( !isset( $form[$name] ) || !strlen( $form[$name] ) ) ) {
+            
+            if ( $field->slugify instanceof Traversable || is_array( $field->slugify ) ) {
+                $parts = array(  );
+                foreach( $field->slugify->options as $attribute ) {
+                    if ( !isset( $form[$attribute] ) ) {
+                        continue;
+                    }
+
+                    $parts[] = $form[$attribute];
+                }
+
+                $string = join( ' ', $parts );
+            } else {
+                if ( isset( $form[$field->slugify] ) ) {
+                    $string = $form[$field->slugify];
+                }
+            }
+
+            $form[$name] = $this->slugify( $string, $name );
 
             return true;
         }
