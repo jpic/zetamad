@@ -124,6 +124,88 @@ class madView extends ezcMvcView {
         return $zones;
     }
 
+    public function getTemplatePath( $template ) {
+        $registry = madRegistry::instance(  );
+        
+        // path to the "entry point" application
+        $entryApplicationPath = ENTRY_APP_PATH;
+        
+        // path to the application defining the route
+        $routeApplicationName = $this->routeInfo->route->application;
+        $routeApplicationPath = $registry->configuration->getSetting( 
+            'applications', $routeApplicationName, 'path' ) ;
+        
+        // path to the application defining the controller
+        $controllerApplicationName = $registry->configuration->getClassApplicationName( $this->routeInfo->controllerClass );
+        $controllerApplicationPath = $registry->configuration->getSetting( 'applications', $controllerApplicationName, 'path' );
+
+        // also check parent controller
+        // TODO make this recursive
+        $parentControllerClass = get_parent_class( $this->routeInfo->controllerClass );
+        // todo: catch proper exception
+        try {
+            $parentControllerApplicationName = $registry->configuration->getClassApplicationName( $parentControllerClass );
+            $parentControllerApplicationPath = $registry->configuration->getSetting( 'applications', $parentControllerApplicationName, 'path' );
+        } catch( Exception $e ) {
+            // pass
+        }
+
+        // $entryAppPath/templates/$routeApp/$action.php
+        $testPaths[] = join( DIRECTORY_SEPARATOR, array(
+            $entryApplicationPath,
+            'templates',
+            $routeApplicationName,
+            $template,
+        ) );
+
+        // $entryAppPath/templates/$action.php
+        $testPaths[] = join( DIRECTORY_SEPARATOR, array(
+            $entryApplicationPath,
+            'templates',
+            $template,
+        ) );
+
+        // $routeAppPath/templates/$action.php
+        $testPaths[] = join( DIRECTORY_SEPARATOR, array(
+            $routeApplicationPath,
+            'templates',
+            $template,
+        ) );
+
+        // $controllerAppPath/templates/$action.php
+        $testPaths[] = join( DIRECTORY_SEPARATOR, array(
+            $controllerApplicationPath,
+            'templates',
+            $template,
+        ) );
+
+        if ( isset( $parentControllerApplicationPath ) ) {
+            // $parentControllerAppPath/templates/$action.php
+            $testPaths[] = join( DIRECTORY_SEPARATOR, array(
+                $parentControllerApplicationPath,
+                'templates',
+                $template,
+            ) );
+        }
+
+        // return the first guessed template or die!
+        foreach( $testPaths as $templatePath ) {
+            // handle relative path
+            if ( substr( $templatePath, 0, 1 ) != DIRECTORY_SEPARATOR ) {
+                $templatePath = realpath( implode( DIRECTORY_SEPARATOR, array( 
+                    ENTRY_APP_PATH,
+                    $templatePath,
+                ) ) );
+            }
+
+            if ( file_exists( $templatePath ) ) {
+                return $templatePath;
+            }
+        }
+
+        trigger_error( "Can't figure a template path for " . join( "<br />", $testPaths ) );
+    }
+
     /**
      * Try to figure the template path for this request/result.
      *
@@ -266,45 +348,6 @@ class madView extends ezcMvcView {
             ) );
         }
         
-        // $entryAppPath/templates/$routeApp/$action.php
-        $testPaths[] = join( DIRECTORY_SEPARATOR, array(
-            $entryApplicationPath,
-            'templates',
-            $routeApplicationName,
-            $actionName . '.php',
-        ) );
-
-        // $entryAppPath/templates/$action.php
-        $testPaths[] = join( DIRECTORY_SEPARATOR, array(
-            $entryApplicationPath,
-            'templates',
-            $actionName . '.php',
-        ) );
-
-        // $routeAppPath/templates/$action.php
-        $testPaths[] = join( DIRECTORY_SEPARATOR, array(
-            $routeApplicationPath,
-            'templates',
-            $actionName . '.php',
-        ) );
-
-        // $controllerAppPath/templates/$action.php
-        $testPaths[] = join( DIRECTORY_SEPARATOR, array(
-            $controllerApplicationPath,
-            'templates',
-            $actionName . '.php',
-        ) );
-
-        if ( isset( $parentControllerApplicationPath ) ) {
-            // $parentControllerAppPath/templates/$action.php
-            $testPaths[] = join( DIRECTORY_SEPARATOR, array(
-                $parentControllerApplicationPath,
-                'templates',
-                $actionName . '.php',
-            ) );
-        }
-
-        // return the first guessed template or die!
         foreach( $testPaths as $templatePath ) {
             // handle relative path
             if ( substr( $templatePath, 0, 1 ) != DIRECTORY_SEPARATOR ) {
@@ -319,7 +362,7 @@ class madView extends ezcMvcView {
             }
         }
         
-        trigger_error( "Can't figure a template path for " . join( "<br />", $testPaths ) );
+        return $this->getTemplatePath( $actionName . '.php' );    
     }
 
     /**
