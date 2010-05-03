@@ -3,7 +3,7 @@
 $registry = madRegistry::instance(  );
 
 function setRegistryRouter( $router ) {
-    $registry->router = $router;
+    madRegistry::instance(  )->router = $router;
 }
 
 $registry->signals->connect( 'routerCreated', 'setRegistryRouter' );
