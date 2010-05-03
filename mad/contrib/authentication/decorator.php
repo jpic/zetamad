@@ -3,18 +3,32 @@
 class madAuthenticationControllerDecorator extends madControllerDecorator {
     public function createResult(  ) {
         if ( $this->isLoginRequired(  ) && !$this->isAuthenticated(  ) ) {
-            return $this->doLoginRedirect();
+            $result = new ezcMvcResult(  );
+    
+            $result->status = new ezcMvcExternalRedirect(
+                $this->registry->configuration->getSetting( 'applications', 'authentication', 'loginUrl' )
+            );
+    
+            return $result;
         }
 
-        if ( $this->isRoleRequired(  ) && !$this->hasRole( $this->configuration['roleRequired'] ) ) {
-            return $this->doRoleError();
+        if ( $this->isRoleRequired(  ) && !$this->hasAnyRole( $this->configuration['acceptedRoles'] ) ) {
+            $result = new ezcMvcResult(  );
+            $prefix = $this->registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
+    
+            $result->status = new ezcMvcExternalRedirect(
+                $prefix . $this->registry->configuration->getSetting( 'routes', 'core.fatal', 'rails' )
+            );
+    
+            return $result;
         }
 
-        return $this->decorated->createResult();
+        $result = $this->decorated->createResult();
+        return $result;
     }
 
     public function isAuthenticated(  ) {
-        if ( isset( $request->variables['user'] ) && isset( $request->variables['user']['id'] ) ) {
+        if ( isset( $this->request->variables['user'] ) && isset( $this->request->variables['user']['id'] ) ) {
             return true;
         }
 
@@ -22,7 +36,7 @@ class madAuthenticationControllerDecorator extends madControllerDecorator {
     }
 
     public function isRoleRequired(  ) {
-        if ( isset( $this->configuration['roleRequired'] ) ) {
+        if ( isset( $this->configuration['acceptedRoles'] ) ) {
             return true;
         }
     }
@@ -39,12 +53,12 @@ class madAuthenticationControllerDecorator extends madControllerDecorator {
         return false;
     }
 
-    public function hasRole( $role ) {
+    public function hasAnyRole( $roles ) {
         if ( !isset( $this->request->variables['user']['role'] ) ) {
             return false;
         }
 
-        if ( $this->request->variables['user']['role'] != $role ) {
+        if ( !in_array( $this->request->variables['user']['role'], $roles ) ) {
             return false;
         }
 
@@ -53,7 +67,7 @@ class madAuthenticationControllerDecorator extends madControllerDecorator {
 
     public function doRoleError(  ) {
         $result = new ezcMvcResult(  );
-        $result->variables['role'] = $this->configuration['roleRequired'];
+        $result->variables['role'] = $this->configuration['acceptedRoles'];
         return $result;
     }
 
