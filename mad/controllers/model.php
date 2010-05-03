@@ -193,9 +193,23 @@ class madModelController extends madFormController {
     }
 
     public function doAutocomplete(  ) {
-        $result = $this->doList(  );
+        if ( isset( $this->configuration['column'] ) ) {
+            // simple query case
+            $result = new ezcMvcResult(  );
+            $result->variables['objectList'] = array(  );
 
-        if ( isset( $this->configuration['attribute'] ) ) {
+            $statement = $this->registry->model->query( $this->configuration['query'] );
+            foreach( $statement->fetch(  ) as $row ) {
+                $result->variables['objectList'][] = $row;
+            }
+        } else {
+            $result = $this->doList(  );
+        }
+
+        if ( isset( $this->configuration['column'] ) ) {
+            $result->variables['valueAttribute'] = $this->configuration['column'];
+            $result->variables['displayAttribute'] = $this->configuration['column'];
+        } elseif ( isset( $this->configuration['attribute'] ) ) {
             $result->variables['valueAttribute'] = $this->configuration['attribute'];
             $result->variables['displayAttribute'] = $this->configuration['attribute'];
         } else {
@@ -215,10 +229,20 @@ class madModelController extends madFormController {
                 where ',
                 madModel::DECODE_ID_ENTITY
             );
-            $sql.= "attribute_key = 'slug' and attribute_value = :slug";
+
+            $arguments = $where = array(  );
+            foreach( explode( '/', $this->configuration['rails'] ) as $part ) {
+                if ( substr( $part, 0, 1 ) == ':' ) {
+                    $attributeName = substr( $part, 1 );
+                    break;
+                }
+            }
+
+            $sql.= "attribute_key = '$attributeName' and attribute_value = :$attributeName";
             $stmt = $this->registry->database->prepare( $sql );
-            $stmt->execute( array( 'slug' => $this->slug ) );
+            $stmt->execute( array( $attributeName => $this->$attributeName ) );
             $id = $stmt->fetchColumn( 0 );
+
         } else {
             $id = $this->id;
         }
