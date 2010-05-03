@@ -141,6 +141,10 @@ class madModel {
                     continue;
                 }
 
+                if ( !isset( $data[$name] ) ) {
+                    continue;
+                }
+
                 $updateParts[$name] = "$name = :$name";
                 if ( ! $data[$name] instanceof madBase ) {
                     $arguments[$name] = $data[$name];
