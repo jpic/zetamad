@@ -85,11 +85,23 @@ table.multipleField input[type=text].textInput {
 
             <?php
             if ( isset( $field->widget ) && $field->widget == 'checkbox' ): 
-                $inputName = sprintf( '%s[%s]', $form->name, $name );
+                $inputName = sprintf( '%s[%s]', $this->form->name, $name );
+
+                if ( !isset( $inputId ) ) {
+                    $inputId = 'id_' . str_replace( 
+                        array( '.', '-', '[', ']' ), 
+                        array( '__dot__', '__dash__', '__braceleft__', '__braceright__'), 
+                        $inputName
+                    );
+                }
+                
+                $htmlClasses = "";
+                if ( isset( $field->required ) ) $htmlClasses .= "required ";
+
             ?>
                 <p>
                 <label class="inlineLabel" for="<?php echo $name; ?>">
-                    <input checked="<?php if ( isset( $form[$name] ) ): ?>checked<?php endif ?>" name="<?php echo $inputName ?>" id="<?php echo $inputId; ?>" type="text" class="<?php $this->e( $htmlClasses ) ?>" />
+                    <input value="1" checked="<?php if ( isset( $form[$name] ) ): var_dump( $form[$name] ) ?>checked<?php endif ?>" name="<?php echo $inputName ?>" id="<?php echo $inputId; ?>" type="checkbox" class="<?php $this->e( $htmlClasses ) ?>" />
                     <span><?php $this->e( $field->label ) ?> <?php if ( isset( $field->required ) ): ?><em>*</em><?php endif ?></span>
                 </label>
                 <p>
@@ -97,16 +109,31 @@ table.multipleField input[type=text].textInput {
             <?php
                 unset( $inputName );
             elseif ( isset( $field->widget ) && $field->widget == 'radio' ):
-                $inputName = sprintf( '%s[%s]', $form->name, $name );
+                $inputName = sprintf( '%s[%s]', $this->form->name, $name );
+
+                if ( !isset( $inputId ) ) {
+                    $inputId = 'id_' . str_replace( 
+                        array( '.', '-', '[', ']' ), 
+                        array( '__dot__', '__dash__', '__braceleft__', '__braceright__'), 
+                        $inputName
+                    );
+                }
+                
+                $htmlClasses = "";
+                if ( isset( $field->required ) ) $htmlClasses .= "required ";
             ?>
                 <p class="label"><?php $this->e( ucfirst( $field->label ) ) ?><?php if ( isset( $field->required ) ): ?><em>*</em><?php endif ?></p>
                 <div class="multiField">
                 <?php
-                foreach( $field->choices as $key => $choice ):
+                foreach( $field->choices->options as $key => $choice ):
                     $choiceInputId = $inputId . '__' . $key;
                 ?>
                 <label class="blocklabel" for="<?php echo $choiceInputId; ?>">
-                    <input selected="<?php if ( isset( $form[$name] ) && $form[$name] == $choice ): ?>selected<?php endif ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="radio" class="<?php $this->e( $htmlClasses ) ?>" />
+                    <?php if ( is_numeric( $key ) ): ?>
+                    <input value="<?php $this->e( $choice ) ?>" checked="<?php if ( isset( $form[$name] ) && $form[$name] == $choice ): ?>checked<?php endif ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="radio" class="<?php $this->e( $htmlClasses ) ?>" />
+                    <?php else: ?>
+                    <input value="<?php $this->e( $key ) ?>" checked="<?php if ( isset( $form[$name] ) && $form[$name] == $key ): ?>checked<?php endif ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="radio" class="<?php $this->e( $htmlClasses ) ?>" />
+                    <?php endif ?>
                     <?php echo ucfirst( $choice ) ?>
                 </label>
                 <?php endforeach ?>
