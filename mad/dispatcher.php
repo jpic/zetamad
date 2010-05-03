@@ -8,6 +8,8 @@ class madHttpDispatcher {
     }
 
     public function run(  ) {
+        $registry = $this->registry;
+
         /**
          * Create the http request parser.
          * 
