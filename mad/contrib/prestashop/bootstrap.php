@@ -1,10 +1,42 @@
 <?php
 $registry = madRegistry::instance(  );
+
+// authentication backend
+function prestashopAuthentication( ezcMvcRequest $request ) {
+    $registry = madRegistry::instance(  );
+    $cookie = new Cookie( 'ps' );
+
+    if ( $cookie->isLogged(  ) ) {
+        $users = $registry->model->queryLoad( 
+            'select id from %(user_index)s where prestashopId = :id', 
+            array( 'id' => $cookie->id_customer )
+        );
+        
+        if ( !count( $users ) ) {
+            $user = new madModelObject( array( 
+                'firstName'    => $cookie->customer_firstname,
+                'lastName'     => $cookie->customer_firstname,
+                'email'        => $cookie->email,
+                'password'     => $cookie->passwd,
+                'prestashopId' => intval( $cookie->id_customer ),
+                'namespace'    => 'user',
+            ) );
+            $registry->model->save( $user );
+            $request->variables['user'] = $user;
+        } else {
+            $request->variables['user'] = current( $users );
+        }
+    }
+}
+
+$registry->signals->connect( 'requestParsed', 'prestashopAuthentication' );
+
 define(
     'PRESTASHOP_PATH',
     $registry->configuration->getPathSetting( 'applications', 'prestashop', 'projectPath' )
 );
 
+// fix autoload
 function prestashopAutoload( $class ) {
     $registry = madRegistry::instance(  );
 
@@ -21,15 +53,14 @@ function prestashopAutoload( $class ) {
 
 spl_autoload_register( 'prestashopAutoload' );
 
-$registry = madRegistry::instance(  );
-
+// bootstrap prestashop
 require PRESTASHOP_PATH . '/config/config.inc.php';
 $GLOBALS['smarty'] = $smarty;
 Configuration::loadConfiguration(  );
 
+// set the database with prestashop settings
 if ( $registry->configuration->getSetting( 'applications', 'prestashop', 'instanciatePdo', false ) ) {
     $database = new PDO( 'mysql:host=' . _DB_SERVER_ . ';dbname=' . _DB_NAME_, _DB_USER_, _DB_PASSWD_ );
     $registry->database = $database;
 }
-
 ?>
