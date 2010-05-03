@@ -81,8 +81,8 @@ class madFormController extends madController {
      * @return void
      */
     public function processFormFieldOptions( madObject $form, $name, madObject $field ) {
-        // default values
-        if ( isset( $field->default ) && !isset( $form[$name] ) ) {
+        // hard set default values unless an input widget was specified
+        if ( isset( $field->default ) && !isset( $form[$name] ) && !isset( $field->widget ) ) {
             $form[$name] = $field->default;
         }
 
