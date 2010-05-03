@@ -3,31 +3,15 @@
 class madViewHandler extends ezcMvcPhpViewHandler {
     public $handlers = array(  );
 
-    public function generateUrl( $name, $arguments = array(  )) {
+    public function url( $name, $arguments = array(  ) ) {
         $registry = madRegistry::instance();
-        $prefix = $registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
+        $prefix = $registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
         return $prefix . $registry->router->generateUrl( $name, (array) $arguments );
-    }
-
-    public function getAbsoluteStaticUrl( $url ) {
-        $registry = madRegistry::instance();
-        $prefix = $registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
-
-        if ( substr( $url, 0, 1 ) != '/' ) {
-            $url = '/' . $url;
-        }
-
-        //$oldMmarket = '/themes/mmarket';
-        //if ( strpos( $url, $oldMmarket ) === 0 ) {
-            //return $url;
-        //}
-
-        return $prefix . '/static' . $url;
     }
 
     public function getAbsoluteUploadUrl( $relativePath ) {
         $registry = madRegistry::instance();
-        return $registry->configuration->getSetting( 'core', 'upload', 'url' ) . '/' . $relativePath;
+        return $registry->configuration->getSetting( 'applications', 'mad', 'uploadUrl' ) . '/' . $relativePath;
     }
 
     public function e( $val ) {

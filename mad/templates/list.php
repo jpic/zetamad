@@ -6,7 +6,7 @@
 
 <?php if ( isset( $this->configuration['createRoute'] ) ): ?>
     <p>
-        <a href="<?php echo $this->generateUrl( $this->configuration['createRoute'] ) ?>">
+        <a href="<?php echo $this->url( $this->configuration['createRoute'] ) ?>">
         <?php $this->e( isset( $this->configuration['createLabel'] ) ? ucfirst( $this->configuration['createLabel'] ) : 'Nouvelle saisie' ) ?>
         </a>
     </p>
@@ -38,7 +38,7 @@
 
             <?php foreach( $this->configuration['tableLinkColumns'] as $route => $label ): ?>
             <td>
-                <a href="<?php echo $this->generateUrl( $route, $object ) ?>" title="<?php $this->e( ucfirst( $label ) ) ?>">
+                <a href="<?php echo $this->url( $route, $object ) ?>" title="<?php $this->e( ucfirst( $label ) ) ?>">
                     <?php $this->e( ucfirst( $label ) ) ?>
                 </a>
             </td>

@@ -37,29 +37,29 @@
 	<!--<p class="link">remipathier.cookingfor.com</p>-->
 	<div class="recipe-details">
         <?php if ( isset( $object['picture'] ) ): ?>
-	    <a href="<?php echo $this->generateUrl( 'recipe.details', $object ) ?>">
+	    <a href="<?php echo $this->url( 'recipe.details', $object ) ?>">
 		    <img class="picture" width="226" height="226" src="<?php echo $this->getAbsoluteUploadUrl( $object['picture'] ) ?>" />
         </a>
         <?php endif ?>
 
 		<p class="infos">
-			<a href="<?php echo $this->generateUrl( 'recipe.details', $object ) ?>">
+			<a href="<?php echo $this->url( 'recipe.details', $object ) ?>">
 				<?php echo $object['title']; ?>
 			</a>
 		</p>
 
         <?php if ( isset( $object['profile'] ) ): ?>
 		<p class="author">
-            <a href="<?php echo $this->generateUrl( 'profile.details', $object['profile'] ) ?>">
+            <a href="<?php echo $this->url( 'profile.details', $object['profile'] ) ?>">
             <?php echo $object['profile']['name'] ?> &bull;
             </a>
         </p>
         <?php endif ?>
 
         <?php if ( isset( $object['profile'] ) ): ?>
-        <a href="<?php echo $this->generateUrl( 'profile.edit', $object['profile'] ) ?>">Modifier le profil</a>
+        <a href="<?php echo $this->url( 'profile.edit', $object['profile'] ) ?>">Modifier le profil</a>
         <?php endif ?>
-        <a href="<?php echo $this->generateUrl( 'recipe.edit', $object ) ?>">Modifier la recette</a>
+        <a href="<?php echo $this->url( 'recipe.edit', $object ) ?>">Modifier la recette</a>
 	</div>
 </div>
 <?php $forloopCounter++; endforeach; ?>
@@ -71,5 +71,5 @@
 ?>
 
 <!--
-<a href="<?php echo $this->generateUrl( 'recipe.create' ); ?>">create</a>
+<a href="<?php echo $this->url( 'recipe.create' ); ?>">create</a>
 -->

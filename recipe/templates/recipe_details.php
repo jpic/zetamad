@@ -75,7 +75,7 @@ a.btn-block:hover { background: #539893; }
             <?php endif ?>
                 <!--
                 <div id="recipe-video">
-                        <a href="#link" title="Jouer la vid&eacute;o"><img src="<?php echo $this->getAbsoluteStaticUrl( 'recipe/img/btn-play.png '); ?>" /></a>
+                        <a href="#link" title="Jouer la vid&eacute;o"><img src="<?php echo $this->url( 'mad.static', array( 'path' => '/recipe/img/btn-play.png ') ) ?>" /></a>
                         <div id="background-video">
                         </div>
                 </div>
@@ -87,7 +87,7 @@ a.btn-block:hover { background: #539893; }
                                 <img class="author-photo" src="<?php echo $this->getAbsoluteUploadUrl( $this->object['profile']['picture'] ); ?>" width="87" height="87" title="Photo profil X" />
                                 <?php $this->e( $this->object['profile']['introduction'] ) ?>
                         </p>
-                        <a href="<?php echo $this->generateUrl( 'profile.details', $this->object['profile'] ) ?>" class="btn-block" style="width: 100%;">Voir le profil</a>
+                        <a href="<?php echo $this->url( 'profile.details', $this->object['profile'] ) ?>" class="btn-block" style="width: 100%;">Voir le profil</a>
                         <?php elseif ( isset( $this->object['source'] ) ): ?>
                         <p class="author-description">
                             <?php $this->e( $this->object['source'] ) ?>
@@ -99,7 +99,7 @@ a.btn-block:hover { background: #539893; }
                 <div class="recipe-header">
                         <h2><?php $this->e( $this->object['title'] ) ?></h2>
                         <?php if ( isset( $this->object['profile'] ) ): ?>
-                        <p class="recipe-author">Par&nbsp;<a href="<?php echo $this->generateUrl( 'profile.details', $this->object['profile'] ) ?>"><?php $this->e( $this->object['profile']['name'] ) ?></a></p>
+                        <p class="recipe-author">Par&nbsp;<a href="<?php echo $this->url( 'profile.details', $this->object['profile'] ) ?>"><?php $this->e( $this->object['profile']['name'] ) ?></a></p>
                         <?php endif ?>
                         <?php if ( isset( $this->object['summary'] ) ): ?>
                         <p class="recipe-intro">
@@ -238,5 +238,5 @@ a.btn-block:hover { background: #539893; }
 </div>
 
 <!--
-<a href="<?php echo $this->generateUrl( 'recipe.edit', $this->object ) ?>">edit</a>
+<a href="<?php echo $this->url( 'recipe.edit', $this->object ) ?>">edit</a>
 -->

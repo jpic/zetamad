@@ -115,7 +115,7 @@ a.btn-block:hover { background: #539893; }
 		<ul>
             <?php
             foreach( $this->iterate( $this->object->recipeSet ) as $recipe ): ?>
-			<li><a href="<?php echo $this->generateUrl( 'recipe.details', $recipe ) ?>"><?php $this->e( $recipe['title'] ) ?></a></li>
+			<li><a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>"><?php $this->e( $recipe['title'] ) ?></a></li>
             <?php endforeach ?>
 		</ul>
 	</div>

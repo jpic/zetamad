@@ -53,7 +53,7 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
 
     <?php if ( isset( $field->createRoute ) ): ?>
     <p class="formHint">
-        <a class="add-another" id="add_<?php $this->e( $inputId ) ?>" href="<?php echo $this->generateUrl( $field->createRoute ) ?>?displayAttribute=<?php $this->e( $field->displayAttribute ) ?>&valueAttribute=<?php $this->e( $field->valueAttribute ) ?>" >Cliquez ici pour en créer un nouveau</a>, si votre choix n'est pas dans la liste.
+        <a class="add-another" id="add_<?php $this->e( $inputId ) ?>" href="<?php echo $this->url( $field->createRoute ) ?>?displayAttribute=<?php $this->e( $field->displayAttribute ) ?>&valueAttribute=<?php $this->e( $field->valueAttribute ) ?>" >Cliquez ici pour en créer un nouveau</a>, si votre choix n'est pas dans la liste.
     </p>
     <?php endif ?>
 
@@ -64,7 +64,7 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
     $(document).ready( function() {
         // try not to mess with other input fields in the page
         $("form.uniForm input#<?php echo $inputId ?>").autocomplete(
-            "<?php echo $this->generateUrl( $field->route ) ?> ", {
+            "<?php echo $this->url( $field->route ) ?> ", {
                 onItemSelect: function( item ) {
                     $("form.uniForm input#<?php echo $inputId ?>").val( item.extra[0] );
                 }
@@ -76,7 +76,7 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
 
     <?php if ( isset( $field->createRoute ) ): ?>
     <p class="formHint">
-        <a class="add_<?php $this->e( $inputId ) ?>" href="<?php echo $this->generateUrl( $field->createRoute ) ?>" >Cliquez ici pour en créer un nouveau</a>, si votre choix n'est pas dans la liste.
+        <a class="add_<?php $this->e( $inputId ) ?>" href="<?php echo $this->url( $field->createRoute ) ?>" >Cliquez ici pour en créer un nouveau</a>, si votre choix n'est pas dans la liste.
     </p>
     <?php endif ?>
 

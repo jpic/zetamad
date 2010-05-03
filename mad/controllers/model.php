@@ -174,7 +174,7 @@ class madModelController extends madFormController {
         $this->registry->model->save( $form );
 
         // redirect to successRoute
-        $prefix = $this->registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
+        $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
 
         if ( isset( $this->request->variables['popup'] ) ) {
             $result->variables['responseBody'] = sprintf( 

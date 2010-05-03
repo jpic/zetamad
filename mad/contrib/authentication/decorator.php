@@ -14,10 +14,10 @@ class madAuthenticationControllerDecorator extends madControllerDecorator {
 
         if ( $this->isRoleRequired(  ) && !$this->hasAnyRole( $this->configuration['acceptedRoles'] ) ) {
             $result = new ezcMvcResult(  );
-            $prefix = $this->registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
+            $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
     
             $result->status = new ezcMvcExternalRedirect(
-                $prefix . $this->registry->configuration->getSetting( 'routes', 'core.fatal', 'rails' )
+                $prefix . $this->registry->configuration->getSetting( 'routes', 'mad.fatal', 'rails' )
             );
     
             return $result;
@@ -73,7 +73,7 @@ class madAuthenticationControllerDecorator extends madControllerDecorator {
 
     public function doLoginRedirect(  ) {
         $result = new ezcMvcResult(  );
-        $prefix = $this->registry->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
+        $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
 
         $result->status = new ezcMvcExternalRedirect(
             $this->registry->configuration->getSetting( 'applications', 'authentication', 'loginUrl' )

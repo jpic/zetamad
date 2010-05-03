@@ -103,20 +103,7 @@ class madHttpDispatcher {
         $routingInformation = $router->getRoutingInformation();
         
         // get route routeConfiguration
-        if ( substr( $request->uri, 0, 8 ) == '/static/' ) {
-            $routeConfiguration = array( 
-                'controller'  => $routingInformation->controllerClass,
-                'action'      => $routingInformation->action,
-                'application' => 'mad',
-                'view'        => 'madView',
-            );
-        } else {
-            foreach( $this->configuration['routes'] as $routeName => $routeConfiguration ) {
-                if ( $routeConfiguration['rails'] == $routingInformation->matchedRoute ) {
-                    break;
-                }
-            }
-        }
+        $routeConfiguration = $this->configuration['routes'][$routingInformation->routeName];
 
         /**
          * Instanciate the controller and run it.
@@ -146,7 +133,7 @@ class madHttpDispatcher {
         
         $view->setConfiguration( $controller->configuration );
 
-        foreach( $this->configuration->getSetting( 'core', 'viewHandler', 'plugins', array(  ) ) as $handlerClass ) {
+        foreach( $this->configuration->getSetting( 'applications', 'mad', 'viewPlugins', array(  ) ) as $handlerClass ) {
             $reflectionClass = new ReflectionClass( $handlerClass );
             $view->plugins[] = $reflectionClass->newInstance(  );
         }
@@ -200,7 +187,7 @@ class madHttpDispatcher {
         $controller = new $class( $action, $request );
         
         if ( substr( $request->uri, 0, 8 ) != '/static/' ) {
-            foreach( $this->configuration->getSetting( 'core', 'dispatcher', 'controllerDecorators', array(  ) ) as $decoratorClass ) {
+            foreach( $this->configuration->getSetting( 'applications', 'mad', 'controllerDecorators', array(  ) ) as $decoratorClass ) {
                 $decorator = new $decoratorClass( $action, $request );
                 $decorator->decorate( $controller );
                 $controller = $decorator;

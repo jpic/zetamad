@@ -1,5 +1,5 @@
-<link rel="stylesheet" type="text/css" href="<?php echo $this->getAbsoluteStaticUrl( 'css/uni-form.css' ) ; ?>" />
-<script type="text/javascript" src="<?php echo $this->getAbsoluteStaticUrl( 'js/uni-form.jquery.js' ) ; ?>"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->url( 'mad.static', array( 'path' => '/css/uni-form.css' ) ) ; ?>" />
+<script type="text/javascript" src="<?php echo $this->url( 'mad.static', array( 'path' => '/js/uni-form.jquery.js' ) ) ; ?>"></script>
 
 <style type="text/css">
 .uniForm .formset .textInput, 
@@ -88,7 +88,7 @@ table.multipleField input[type=text].textInput {
                 $inputName = sprintf( '%s[%s]', $this->form->name, $name );
 
                 if ( !isset( $inputId ) ) {
-                    $inputId = 'id_' . str_replace( 
+                    $inputId = 'id_' . str_replace(
                         array( '.', '-', '[', ']' ), 
                         array( '__dot__', '__dash__', '__braceleft__', '__braceright__'), 
                         $inputName
@@ -243,15 +243,15 @@ table.multipleField input[type=text].textInput {
 
 </form>
 
-<script type="text/javascript" src="<?php echo $this->getAbsoluteStaticUrl( 'js/jquery.form.js' ) ; ?>"></script>
-<script type="text/javascript" src="<?php echo $this->getAbsoluteStaticUrl( 'js/jquery.uni-form.js' ) ; ?>"></script>
+<script type="text/javascript" src="<?php echo $this->url( 'mad.static', array( 'path' => '/js/jquery.form.js' ) ) ; ?>"></script>
+<script type="text/javascript" src="<?php echo $this->url( 'mad.static', array( 'path' => '/js/jquery.uni-form.js' ) ) ; ?>"></script>
 <?php if ( in_array( 'wysiwyg', $widgets ) ): ?>
-<script type="text/javascript" src="<?php echo $this->getAbsoluteStaticUrl( 'ckeditor/ckeditor.js' ) ; ?>"></script>
+<script type="text/javascript" src="<?php echo $this->url( 'mad.static', array( 'path' => '/ckeditor/ckeditor.js' ) ) ; ?>"></script>
 <?php endif ?>
 <!--
 <?php if ( in_array( 'autocomplete', $widgets ) ): ?>
-<link rel="stylesheet" type="text/css" href="<?php echo $this->getAbsoluteStaticUrl( 'jquery-autocomplete/jquery.autocomplete.css' ) ; ?>" />
-<script type="text/javascript" src="<?php echo $this->getAbsoluteStaticUrl( 'jquery-autocomplete/jquery.autocomplete.pack.js' ) ; ?>"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->url( 'mad.static', array( 'path' => '/jquery-autocomplete/jquery.autocomplete.css' ) ) ; ?>" />
+<script type="text/javascript" src="<?php echo $this->url( 'mad.static', array( 'path' => '/jquery-autocomplete/jquery.autocomplete.pack.js' ) ) ; ?>"></script>
 <?php endif ?>
 -->
 
