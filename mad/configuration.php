@@ -99,7 +99,7 @@ class madConfiguration {
             'applications.ini'
         ) ) );
         $result = $reader->validate(  );
-            
+        
         foreach (  $result->getResultList( ) as $resultItem ) {
             print $resultItem->file . ":" . $resultItem->line . ":" . $resultItem->column. ":"; 
             print " " . $resultItem->details . "\n"; 
@@ -132,6 +132,14 @@ class madConfiguration {
                             }
                             
                             if ( !$path ) {
+                                continue;
+                            }
+
+                            // ignore apps not in applications.ini
+                            $parts = explode( DIRECTORY_SEPARATOR, $path );
+                            $slice = array_slice( $parts, -2, 1 );
+                            $appName = $slice[0];
+                            if ( !in_array( $appName, array_keys( $settings ) ) ) {
                                 continue;
                             }
 
