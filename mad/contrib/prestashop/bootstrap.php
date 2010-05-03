@@ -19,7 +19,7 @@ function prestashopAuthentication( ezcMvcRequest $request ) {
                 'authentication.userCreate', 
                 array( 
                     'firstName'    => $cookie->customer_firstname,
-                    'lastName'     => $cookie->customer_firstname,
+                    'lastName'     => $cookie->customer_lastname,
                     'email'        => $cookie->email,
                     'password'     => $cookie->passwd,
                     'prestashopId' => intval( $cookie->id_customer ),
