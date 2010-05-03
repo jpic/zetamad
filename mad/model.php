@@ -533,7 +533,7 @@ class madModel {
         }
 
         foreach( array_keys( $this->databaseTables ) as $table ) {
-            if ( strpos( $table, $this->coreConfiguration['tablePrefi'] ) !== 0 ) {
+            if ( strpos( $table, $this->coreConfiguration['tablePrefix'] ) !== 0 ) {
                 continue;
             }
 
