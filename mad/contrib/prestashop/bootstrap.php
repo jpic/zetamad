@@ -13,16 +13,19 @@ function prestashopAuthentication( ezcMvcRequest $request ) {
         );
         
         if ( !count( $users ) ) {
-            $user = new madModelObject( array( 
-                'firstName'    => $cookie->customer_firstname,
-                'lastName'     => $cookie->customer_firstname,
-                'email'        => $cookie->email,
-                'password'     => $cookie->passwd,
-                'prestashopId' => intval( $cookie->id_customer ),
-                'namespace'    => 'user',
-            ) );
-            $registry->model->save( $user );
-            $request->variables['user'] = $user;
+            $result = madModelController::routeFormData(
+                'authentication.register', 
+                array( 
+                    'firstName'    => $cookie->customer_firstname,
+                    'lastName'     => $cookie->customer_firstname,
+                    'email'        => $cookie->email,
+                    'password'     => $cookie->passwd,
+                    'prestashopId' => intval( $cookie->id_customer ),
+                    'namespace'    => 'user',
+                )
+            );
+
+            $request->variables['user'] = $result['form'];
         } else {
             $request->variables['user'] = current( $users );
         }
