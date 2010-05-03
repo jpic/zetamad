@@ -260,7 +260,7 @@ class madModelController extends madFormController {
     static public function routeFormData( $routeName, $data ) {
         $registry = madRegistry::instance();
 
-        $configuration = $registry->configuration->settings['routes'][$routeName];
+        $configuration = $registry->configuration['routes'][$routeName];
 
         $request = new ezcMvcRequest(  );
         $request->protocol = 'http-post';

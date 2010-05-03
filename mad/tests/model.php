@@ -37,13 +37,6 @@ class madModelTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals( 0, count( $s->fetchAll(  ) ) );
     }
 
-    /**
-     * @expectedException madObjectValueException
-     */
-    public function testConstructorSanity(  ) {
-        new madModel( 'fail' );
-    }
-
     static public function fixtureProvider( ) {
         return array( 
             array(

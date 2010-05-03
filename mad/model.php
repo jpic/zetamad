@@ -131,7 +131,7 @@ class madModel {
             }
         }
             
-        if ( isset( $this->namespaceTableNames[$data['namespace']] ) ) {
+        if ( isset( $data['namespace'] ) && isset( $this->namespaceTableNames[$data['namespace']] ) ) {
             $tableName = $this->namespaceTableNames[$data['namespace']];
 
             $updateParts = array(  );
@@ -533,7 +533,7 @@ class madModel {
         }
 
         foreach( array_keys( $this->databaseTables ) as $table ) {
-            if ( strpos( $table, $this->coreConfiguration['prefix'] ) !== 0 ) {
+            if ( strpos( $table, $this->coreConfiguration['tablePrefi'] ) !== 0 ) {
                 continue;
             }
 
@@ -583,8 +583,12 @@ class madModel {
     }
 
     public function readConfiguration(  ) {
+        if ( !$this->schemaConfiguration ) {
+            return true;
+        }
+
         foreach( $this->schemaConfiguration as $name => $table ) {
-            $tableName = $this->coreConfiguration['prefix'] . str_replace( '.', '_', $name );
+            $tableName = $this->coreConfiguration['tablePrefix'] . str_replace( '.', '_', $name );
             $namespace = substr( $name, strpos( $name, '.' ) + 1 );
             $this->namespaceTableNames[$namespace] = $tableName;
 

@@ -84,7 +84,7 @@ class madView extends ezcMvcView {
 
             return $zones;
         }
-
+        
         if ( isset( $this->result->variables['fileRequest'] ) ) {
             $zones[] = new ezcMvcPhpViewHandler( 'content', join( DIRECTORY_SEPARATOR, array( 
                 dirname( __FILE__ ),
@@ -109,19 +109,33 @@ class madView extends ezcMvcView {
             return $zones;
         }
 
+        if ( isset( $this->configuration['views'] ) ) {
+            foreach( $this->configuration['name'] as $class ) {
+                $view = new $class( $request, $result, $routeInfo );
+
+                foreach( $view->createZones( false ) as $zone ) {
+                    $zones[] = $zone;
+                }
+            }
+        }
+
         $zones[] = new madViewHandler( 'body', $this->getTemplate( ) );
         
         if ( $layout && !$this->request->variables['ajaxRequest'] ) {
             $zones[] = new madViewHandler( 'site_base', ENTRY_APP_PATH . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'site_base.php' );
         }
 
+        $this->addHandlerPlugins( $zones );
+
+        return $zones;
+    }
+
+    public function addHandlerPlugins( $zones ) {
         foreach( $zones as $name => $zone ) {
             if ( $zone instanceof madViewHandler ) {
                 $zone->handlers =& $this->plugins;
             }
         }
-
-        return $zones;
     }
 
     public function getTemplatePath( $template ) {

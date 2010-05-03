@@ -7,9 +7,6 @@
  * @license http://ez.no/licenses/new_bsd New BSD License
  */
 
-require 'base.php';
-require 'model.php';
-
 /**
  * @package Framework
  * @subpackage Tests
@@ -20,8 +17,9 @@ class madTestSuite extends PHPUnit_Framework_TestSuite
     {
         parent::__construct();
         $this->setName('Framework');
-        $this->addTest( madObjectTest::suite(  ) );
-        $this->addTest( madModelTest::suite(  ) );
+        //$this->addTest( madObjectTest::suite(  ) );
+        //$this->addTest( madModelTest::suite(  ) );
+        $this->addTest( madConfigurationTest::suite(  ) );
     }
 
     public static function suite()

@@ -32,7 +32,7 @@ class madHttpDispatcher {
          *
          * In this example, the prefix comes from a configuratio nvariable.
          */
-        $requestParser->prefix = $this->configuration->getSetting( 'core', 'dispatcher', 'prefix' );
+        $requestParser->prefix = $this->configuration->getSetting( 'applications', 'mad', 'urlPrefix', '' );
         
         /**
          * The http specific request request parser will consider PHP classic 
@@ -44,15 +44,7 @@ class madHttpDispatcher {
          */
         $request = $requestParser->createRequest();
         
-        // append trailing slash if not a static file
-        if ( substr( $request->uri, 0, 8) != '/static/' ) {
-            if ( substr( $request->requestId, -1 ) != '/' ) {
-                $request->requestId .= '/';
-            }
-            if ( substr( $request->uri, -1 ) != '/' ) {
-                $request->uri .= '/';
-            }
-        }
+        $request->uri = substr( $request->uri, -1 ) == '/' ? substr( $request->uri, 0, -1 ) : $request->uri;
         
         // check if ajax
         $request->variables['ajaxRequest'] = isset( $request->raw['HTTP_X_REQUESTED_WITH'] ) &&
@@ -95,7 +87,7 @@ class madHttpDispatcher {
          * In our case, the router uses configuration as additionnal constructor 
          * argument.
          */
-        $routes = $this->configuration->settings['routes'];
+        $routes = $this->configuration['routes'];
         $router = new madRouter( $request, $routes );
         
         $this->signals->send( 'routerCreated', array( $router ) );
@@ -111,9 +103,18 @@ class madHttpDispatcher {
         $routingInformation = $router->getRoutingInformation();
         
         // get route routeConfiguration
-        foreach( $this->configuration->settings['routes'] as $routeName => $routeConfiguration ) {
-            if ( $routeConfiguration['rails'] == $routingInformation->matchedRoute ) {
-                break;
+        if ( substr( $request->uri, 0, 8 ) == '/static/' ) {
+            $routeConfiguration = array( 
+                'controller'  => $routingInformation->controllerClass,
+                'action'      => $routingInformation->action,
+                'application' => 'mad',
+                'view'        => 'madView',
+            );
+        } else {
+            foreach( $this->configuration['routes'] as $routeName => $routeConfiguration ) {
+                if ( $routeConfiguration['rails'] == $routingInformation->matchedRoute ) {
+                    break;
+                }
             }
         }
 
@@ -140,7 +141,8 @@ class madHttpDispatcher {
          *
          * This view class is also protocol and framework specific.
          */
-        $view = new madView( $request, $result, $routingInformation );
+        $viewClass = $routeConfiguration['view'];
+        $view = new $viewClass( $request, $result, $routingInformation );
         
         $view->setConfiguration( $controller->configuration );
 
@@ -197,20 +199,15 @@ class madHttpDispatcher {
         $action = $routeConfiguration['action'];
         $controller = new $class( $action, $request );
         
-        foreach( $this->configuration->getSetting( 'core', 'dispatcher', 'controllerDecorators', array(  ) ) as $decoratorClass ) {
-            $decorator = new $decoratorClass( $action, $request );
-            $decorator->decorate( $controller );
-            $controller = $decorator;
+        if ( substr( $request->uri, 0, 8 ) != '/static/' ) {
+            foreach( $this->configuration->getSetting( 'core', 'dispatcher', 'controllerDecorators', array(  ) ) as $decoratorClass ) {
+                $decorator = new $decoratorClass( $action, $request );
+                $decorator->decorate( $controller );
+                $controller = $decorator;
+            }
+
+            $controller->setConfiguration( $routeConfiguration );
         }
-        
-        // get the controller application routeConfiguration
-        $applicationName          = $this->configuration->getClassApplicationName( $class );
-        $applicationConfiguration = $this->configuration->settings['applications'][$applicationName];
-        
-        // overload the application routeConfiguration with the route routeConfiguration
-        $controllerConfiguration = madConfiguration::array_contribute( $routeConfiguration, $applicationConfiguration );
-        $controller->setConfiguration( $controllerConfiguration );
-        
         return $controller;
     }
 }

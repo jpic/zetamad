@@ -296,12 +296,24 @@ class madObject extends ArrayObject {
      * @param array $data 
      * @return void
      */
-    public function merge( array $data ) {
+    public function merge( $data ) {
         foreach( $data as $key => $value ) {
-            if ( is_array( $value ) ) {
-                if ( !isset( $this[$key] ) ) {
-                    $this[$key] = new madObject();
+            if ( is_array( $value ) || $value instanceof madObject ) {
+                // recursive merge required
+            
+                if ( is_array( $value ) ) {
+                    $value = new madObject( $value );
                 }
+
+                if ( $value instanceof madObject && !isset( $this[$key] ) ) {
+                    $this[$key] = $value;
+                    continue;
+                }
+
+                if ( is_array( $this[$key] ) ) {
+                    $this[$key] = new madObject( $this[$key] );
+                }
+                
                 $this[$key]->merge( $value );
             } else {
                 $this[$key] = $value;
@@ -372,5 +384,15 @@ class madObject extends ArrayObject {
         foreach( $unst as $key ) {
             unset( $this[$key] );
         }
+    }
+
+    public function objectsToArray(  ) {
+        foreach( $this as $key => $value ) {
+            if ( is_object( $value ) ) {
+                $this[$key] = $value->objectsToArray();
+            }
+        }
+
+        return (array) $this;
     }
 }

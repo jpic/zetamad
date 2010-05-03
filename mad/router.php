@@ -27,7 +27,7 @@ class madRouter extends ezcMvcRouter {
     public function getRoutingInformation()
     {
         if ( substr( $this->request->uri, 0, 8 ) == '/static/' ) {
-            $routingInformation = new ezcMvcRoutingInformation(
+            $routingInformation = new madRoutingInformation(
                  $this->request->uri,
                  'madDownloadController',
                  'download'
@@ -36,7 +36,7 @@ class madRouter extends ezcMvcRouter {
         } else {
             $routingInformation = parent::getRoutingInformation(  );
         }
-
+        
         return $routingInformation;
     }
 

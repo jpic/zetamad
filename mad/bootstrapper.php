@@ -1,6 +1,13 @@
 <?php
-require 'object.php';
 
+/**
+ *
+ * FEATURE FROZEN WARNING
+ *
+ * The only reason you may touch this before it is automatically testable is to 
+ * send signals.
+ *
+ */
 class madBootstrapper {
     static public $autoload;
     public $configuration;
@@ -37,8 +44,20 @@ class madBootstrapper {
             $this->setupSignals(  );
             
             $this->setupConfiguration( $this->entryApplicationPath . '/etc' );
+            
+            $registry = madRegistry::instance(  );
+            // parse all ini files again, with overload support, that will 
+            // update the core configuration (applications.ini)
+            $registry->configuration->refresh( $this->entryApplicationPath );
+            // bootstrapper requires refreshed configuration with non-overloaded variables
+            $this->configuration = $registry->configuration['applications'];
+            // call bootstrap.php from all installed application path to 
+            // connect signals
             $this->setupApplications(  );
-            $this->refreshConfiguration(  );
+            // allow connected functions to visit it befoere it is written
+            $registry->signals->send( 'configurationRefreshed', array( $registry->configuration ) );
+            // cache the parsed configuration for performances
+            $registry->configuration->write( $this->entryApplicationPath . '/cache/etc' );
             
             $this->refreshBin(  );
             $this->refreshAutoload(  );
@@ -56,6 +75,10 @@ class madBootstrapper {
             $this->setupDatabase(  );
             $this->setupModel(  );
         }
+
+        $registry = madRegistry::instance(  );
+
+        $registry->signals->send( 'postBootstrap', array( $this ) );
     }
 
     public function setupIncludePath(  ) {
@@ -98,18 +121,6 @@ class madBootstrapper {
     public function setupConfiguration( $path ) {
         $configuration = new madConfiguration( $path, $this->configuration );
         madRegistry::instance()->configuration = $configuration;
-    }
-
-    public function refreshConfiguration(  ) {
-        $registry = madRegistry::instance(  );
-        // parse all ini files again
-        $registry->configuration->refresh( $this->entryApplicationPath );
-        // allow connected functions to visit it
-        $registry->signals->send( 'configurationRefreshed', array( $registry->configuration ) );
-        // cache the parsed configuration for performances
-        $registry->configuration->write( $this->entryApplicationPath . '/cache/etc' );
-        // bootstrapper requires refreshed configuration with non-overloaded variables
-        $this->configuration = $registry->configuration['applications'];
     }
 
     public function setupDatabase(  ) {
@@ -173,8 +184,6 @@ class madBootstrapper {
 
     public function setupApplications(  ) {
         foreach( $this->configuration as $name => $application ) {
-            if ( !isset( $application['path'] ) ) continue;
-           
             $bootstrap = realpath( join( DIRECTORY_SEPARATOR, array( 
                 $this->entryApplicationPath,
                 $application['path'],

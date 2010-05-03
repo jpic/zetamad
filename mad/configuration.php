@@ -12,8 +12,11 @@
  * madConfiguration is responsible for reading, merging and caching 
  * configuration from several folders.
  * 
- * See documentation of the factory() static method for an alternate way to 
- * instanciate madConfiguration.
+ *
+ * FEATURE FROZEN WARNING
+ *
+ * You shall not edit this file before it is automatically tested.
+ *
  *
  * @package MadConfiguration
  * @version //autogen//
@@ -95,7 +98,7 @@ class madConfiguration extends madObject {
                 }
 
                 // save application "path" for later use
-                $this['applications'][$applicationName]['path'] = $applicationPath;
+                $this['applications'][$applicationName]['path'] = self::getRelativePath( $applicationPath, $entryApplicationPath );
 
                 // merge to this configuration
                 $this->merge( $applicationConfiguration );
@@ -105,6 +108,9 @@ class madConfiguration extends madObject {
 
     public function write( $cacheDirectory ) {
         foreach( $this as $name => $object ) {
+            if ( !is_object( $object ) ) {
+                var_dump($name, $object );
+            }
             $body = sprintf(
                 '<?php return %s ?>',
                 var_export( $object->objectsToArray(), true )
@@ -116,23 +122,23 @@ class madConfiguration extends madObject {
     }
     
     public function getSetting( $group, $section, $name, $default = null ) {
-        if ( !isset( $this->settings[$group] ) ) {
+        if ( !isset( $this[$group] ) ) {
             return $default;
         }
         
-        if ( !isset( $this->settings[$group][$section] ) ) {
+        if ( !isset( $this[$group][$section] ) ) {
             return $default;
         }
 
-        if ( !isset( $this->settings[$group][$section][$name] ) ) {
+        if ( !isset( $this[$group][$section][$name] ) ) {
             return $default;
         }
 
-        return $this->settings[$group][$section][$name];
+        return $this[$group][$section][$name];
     }
 
     public function getClassApplicationName( $className ) {
-        foreach( $this->settings['applications'] as $name => $settings ) {
+        foreach( $this['applications'] as $name => $settings ) {
             if ( isset( $settings['classes'] ) && in_array( $className, $settings['classes'] ) ) {
                 return $name;
             }
@@ -230,6 +236,10 @@ class madConfiguration extends madObject {
     public function parsePhp( $file ) {
         $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
         $this[$name] = require $file;
+    }
+
+    public function renameSection( $name, $newName ) {
+
     }
 }
 

@@ -46,6 +46,12 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         include $template;
     }
 
+    public function includeApplicationTemplate( $application, $template ) {
+        $registry = madRegistry::instance();
+        $applicationPath = $registry->configuration->getPathSetting( 'applications', $application, 'path' );
+        include "$applicationPath/$template";
+    }
+
     static public function dump( $value, $level = 0 ) {
         if ($level==-1)
         {

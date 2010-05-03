@@ -1,6 +1,39 @@
 <?php
-
 $registry = madRegistry::instance(  );
+
+function configurationInheritance( $configuration ) {
+    foreach( $configuration as $groupName => $group ) {
+        $unst = false;
+
+        foreach( $group as $sectionName => $section ) {
+            if ( strpos( $sectionName, '..' ) === false ) {
+                continue;
+            }
+
+            $sectionNameParts = explode( '..', $sectionName );
+            $sectionName = array_shift( $sectionNameParts );
+
+            foreach( $sectionNameParts as $part ) {
+
+                if ( !isset( $configuration[$groupName][$sectionName] ) ) {
+                    $configuration[$groupName][$sectionName] = $configuration[$groupName][$sectionName . '..' . implode( '..', $sectionNameParts ) ];
+                }
+
+                $configuration[$groupName][$sectionName]->merge( 
+                    $configuration[$groupName][$part]
+                );
+
+            }
+
+            $unst = true;
+        }
+        
+        if ( $unst ) {
+            unset( $configuration[$groupName][$sectionName . '..' . implode( '..', $sectionNameParts ) ] );
+        }
+    }
+}
+$registry->signals->connect( 'configurationRefreshed', 'configurationInheritance' );
 
 function setRegistryRouter( $router ) {
     madRegistry::instance(  )->router = $router;
@@ -12,7 +45,7 @@ function stripTrailingSlashes( &$array ) {
         if ( is_array( $value ) || $value instanceof Traversable ) {
             stripTrailingSlashes( $value );
         } else {
-            $value = substr( $value, -1 ) == '/' : substr( $value, 0, -1 ) ? $value;
+            $value = substr( $value, -1 ) == '/' ? substr( $value, 0, -1 ) : $value;
         }
     }
 }
@@ -21,8 +54,8 @@ $registry->signals->connect( 'configurationRefreshed', 'stripTrailingSlashes' );
 function setRoutesApplication( $configuration ) {
     foreach( $configuration['routes'] as $name => $route ) {
         $applicationName = substr( $name, 0, strrpos( $name, '.' ) );
-
         $configuration['routes'][$name]['application'] = $applicationName;
+        $configuration['routes'][$name]->merge( $configuration['applications'][$applicationName] );
     }
 }
 $registry->signals->connect( 'configurationRefreshed', 'setRoutesApplication' );
@@ -50,24 +83,27 @@ function prefixRoutes( $configuration ) {
         $applicationName   = substr( $name, 0, strrpos( $name, '.' ) );
         $applicationPrefix = $configuration['applications'][$applicationName]['routePrefix'];
         // prepend slash to route rails
-        $routeRails        = $routeRails[0] == '/' ? $routeRails : '/' . $routeRails;
-        $configuration['routes'][$name]['rails'] = $applicationPrefix . $routeRails;
+        $configuration['routes'][$name]['rails'] = $applicationPrefix . $configuration['routes'][$name]['rails'];
     }
 }
 $registry->signals->connect( 'configurationRefreshed', 'prefixRoutes' );
 
 function findClasses( $configuration ) {
     foreach( $configuration['applications'] as $name => $application ) {
-        $path = $application['path'];
+        $path = $configuration->getPathSetting( 'applications', $name, 'path' );
 
         if ( !isset( $configuration['applications'][$name]['classes'] ) ) {
-            $configuration['applications'][$name]['classes'] = array(  );
+            $configuration['applications'][$name]['classes'] = new madObject;
         }
 
-        $grep = "grep --exclude-dir=tests --exclude-dir=.svn -o -r '^class [a-zA-Z0-9]*' '$path' | sed 's/.*class //'";
+        $grep = "grep --exclude-dir=tests --exclude-dir=.svn -o -r '^class [a-zA-Z0-9]*' '$path' | sed 's/^.*class //'";
         $grep = trim( shell_exec( $grep ) );
 
-        foreach( $grep as $class ) {
+        if ( !$grep ) {
+            continue;
+        }
+
+        foreach( explode( "\n", $grep ) as $class ) {
             $configuration['applications'][$name]['classes'][] = $class;
         }
     }
@@ -76,10 +112,10 @@ $registry->signals->connect( 'configurationRefreshed', 'findClasses' );
 
 function findStaticFiles( $configuration ) {
     if ( !isset( $configuration['staticFiles'] ) ) {
-        $configuration['staticFiles'] = array(  );
+        $configuration['staticFiles'] = new madObject;
     }
     if ( !isset( $configuration['staticFiles']['paths'] ) ) {
-        $configuration['staticFiles']['paths'] = array(  );
+        $configuration['staticFiles']['paths'] = new madObject;
     }
 
     foreach( $configuration['applications'] as $name => $application ) {
@@ -101,24 +137,17 @@ function findStaticFiles( $configuration ) {
 }
 $registry->signals->connect( 'configurationRefreshed', 'findStaticFiles' );
 
-function configurationInheritance( $configuration ) {
-    foreach( $configuration as $groupName => $group ) {
-        foreach( $group as $sectionName => $section ) {
-            if ( strpos( $sectionName, '..' ) === false ) {
-                continue;
-            }
-
-            $sectionNameParts = explode( '..', $sectionName );
-            $sectionName = array_shift( $sectionNameParts );
-
-            foreach( $sectionNameParts as $part ) {
-                trigger_error( "$sectionName inherits from $part" );
-                $configuration[$groupName][$sectionName]->merge( 
-                    $configuration[$groupName][$part]
-                );
+function allPathsRelative( &$configuration ) {
+    foreach( $configuration as $key => $value ) {
+        if ( is_array( $value ) || $value instanceof madObject ) {
+            allPathsRelative( $value );
+        } else {
+            if ( strlen( $value ) && $value[0] == '/' && file_exists( $value ) ) {
+                $value = madConfiguration::getRelativePath( $value, ENTRY_APP_PATH );
             }
         }
     }
 }
-$registry->signals->connect( 'configurationRefreshed', 'configurationInheritance' );
+$registry->signals->connect( 'configurationRefreshed', 'allPathsRelative' );
+
 ?>
