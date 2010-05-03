@@ -162,8 +162,7 @@ class madHttpDispatcher {
         
         $result = $controller->createResult();
         
-        $result->variables['request']       = $request;
-        $result->variables['configuration'] = $controllerConfiguration;
+        $result->variables['request'] = $request;
         
         /**
          * Instanciate the view.
