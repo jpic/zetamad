@@ -40,7 +40,11 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         }
     }
 
-    static public function dump( $values, $level = 0 ) {
+    public function includeTemplate( $template ) {
+        include $template;
+    }
+
+    static public function dump( $value, $level = 0 ) {
         if ($level==-1)
         {
             $trans[' ']='&there4;';
