@@ -111,7 +111,9 @@ class madFormController extends madController {
                 }
             }
 
-            $form[$name] = $this->slugify( $string, $name );
+            if ( isset( $string ) && trim( $string ) ) {
+                $form[$name] = $this->slugify( $string, $name );
+            }
 
             return true;
         }
