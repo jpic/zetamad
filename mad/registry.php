@@ -109,9 +109,10 @@ class madRegistry {
     // starting here we start coupling the framework
     public function createDispatcher(  ) {
         $dispatcher = new madHttpDispatcher(
-            $registry->configuration,
-            $registry->signals
+            $this->configuration,
+            $this->signals
         );
+        return $dispatcher;
     }
 }
 
