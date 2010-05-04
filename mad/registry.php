@@ -84,7 +84,7 @@ class madRegistry {
     }
     
     public function __isset( $name ) {
-        return array_key_exists( $name, $array );
+        return array_key_exists( $name, $this->registry );
     }
 
     /**
