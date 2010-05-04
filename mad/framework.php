@@ -262,7 +262,7 @@ class madFramework {
 
         file_put_contents( 
             $autoloadPath, 
-            '<?php return ' . var_export( self::$autoload, true ) . ' ?>' 
+            '<?php return ' . var_export( self::$autoload, true ) . ' ?>' // <?php /* syntax highlight hack */
         );
     }
 
