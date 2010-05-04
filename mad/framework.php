@@ -205,7 +205,8 @@ class madFramework {
         }
 
         $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( 
-            $this->entryApplicationPath . '/..'
+            $this->entryApplicationPath . '/..',
+            RecursiveDirectoryIterator::FOLLOW_SYMLINKS
         ) );
 
         foreach( $fileIterator as $fileInfo ) {

@@ -132,7 +132,11 @@ function findClasses( $configuration ) {
         }
 
         $classes = array(  );
-        $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $path ) );
+        $fileIterator = new RecursiveIteratorIterator( 
+            new RecursiveDirectoryIterator( $path ),
+            RecursiveDirectoryIterator::FOLLOW_SYMLINKS
+        );
+        
         foreach( $fileIterator as $fileInfo ) {
             if ( $fileInfo->isDir(  ) ) {
                 continue;
@@ -194,7 +198,10 @@ function findStaticFiles( $configuration ) {
         $staticPath = $path . '/static';
         
         if ( is_dir( $staticPath ) ) {
-            $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $staticPath ) );
+            $fileIterator = new RecursiveIteratorIterator( 
+                new RecursiveDirectoryIterator( $staticPath ),
+                RecursiveDirectoryIterator::FOLLOW_SYMLINKS
+            );
 
             foreach( $fileIterator as $fileInfo ) {
                 $absolutePath = $fileInfo->getRealPath(  );
