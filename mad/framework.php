@@ -24,6 +24,10 @@ class madFramework {
             $this->configuration = parse_ini_file( $entryApplicationPath . '/etc/applications.ini', true );
             $this->configuration['mad']['refreshConfiguration'] = true;
         }
+
+        if ( $this->configuration['mad']['refreshConfiguration'] ) {
+            $this->configuration = parse_ini_file( $entryApplicationPath . '/etc/applications.ini', true );
+        }
         
         if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
             // dont refresh cache on static file hits
