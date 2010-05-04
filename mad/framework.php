@@ -8,7 +8,7 @@
  * send signals.
  *
  */
-class madBootstrapper {
+class madFramework {
     static public $autoload;
     public $configuration;
     public $entryApplicationPath;
@@ -133,7 +133,7 @@ class madBootstrapper {
             'autoload.php',
         ) );
 
-        spl_autoload_register( array( 'madBootstrapper', 'autoload' ) );
+        spl_autoload_register( array( 'madFramework', 'autoload' ) );
     }
 
     static public function autoload( $class ) {
@@ -217,7 +217,7 @@ class madBootstrapper {
                 continue;
             }
 
-            $relativePath = madConfiguration::getRelativePath( $fileInfo->getPath(  ) . '/' . $fileInfo->getBaseName(), $this->entryApplicationPath );
+            $relativePath = madFramework::getRelativePath( $fileInfo->getPath(  ) . '/' . $fileInfo->getBaseName(), $this->entryApplicationPath );
              
             // skip tests
             if ( strpos( $relativePath, 'tests' ) !== false ) {
@@ -276,5 +276,52 @@ class madBootstrapper {
             }
         }
     }
+
+    static public function getRelativePath( $path, $compareTo ) {
+        // clean arguments by removing trailing and prefixing slashes
+        if ( substr( $path, -1 ) == DIRECTORY_SEPARATOR ) {
+            $path = substr( $path, 0, -1 );
+        }
+        if ( substr( $path, 0, 1 ) == DIRECTORY_SEPARATOR ) {
+            $path = substr( $path, 1 );
+        }
+
+        if ( substr( $compareTo, -1 ) == DIRECTORY_SEPARATOR ) {
+            $compareTo = substr( $compareTo, 0, -1 );
+        }
+        if ( substr( $compareTo, 0, 1 ) == DIRECTORY_SEPARATOR ) {
+            $compareTo = substr( $compareTo, 1 );
+        }
+
+        // simple case: $compareTo is in $path
+        if ( strpos( $path, $compareTo ) === 0 ) {
+            $offset = strlen( $compareTo ) + 1;
+            return substr( $path, $offset );
+        }
+
+        $relative  = array(  );
+        $pathParts = explode( DIRECTORY_SEPARATOR, $path );
+        $compareToParts = explode( DIRECTORY_SEPARATOR, $compareTo );
+
+        foreach( $compareToParts as $index => $part ) {
+            if ( isset( $pathParts[$index] ) && $pathParts[$index] == $part ) {
+                continue;
+            }
+
+            $relative[] = '..';
+        }
+
+        foreach( $pathParts as $index => $part ) {
+            if ( isset( $compareToParts[$index] ) && $compareToParts[$index] == $part ) {
+                continue;
+            }
+
+            $relative[] = $part;
+        }
+
+        return implode( DIRECTORY_SEPARATOR, $relative );
+    }
+
+
 }
 ?>

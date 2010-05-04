@@ -82,7 +82,7 @@ class madConfiguration extends madObject {
                     continue;
                 }
                 
-                $relativePath = self::getRelativePath( $fileInfo->getPath(  ), $path );
+                $relativePath = madFramework::getRelativePath( $fileInfo->getPath(  ), $path );
                 
                 // if the relative path contains "tests" then its in unit 
                 // tests, skip.
@@ -125,7 +125,7 @@ class madConfiguration extends madObject {
                 }
 
                 // save application "path" for later use
-                $this['applications'][$applicationName]['path'] = self::getRelativePath( $applicationPath, $entryApplicationPath );
+                $this['applications'][$applicationName]['path'] = madFramework::getRelativePath( $applicationPath, $entryApplicationPath );
 
                 // merge to this configuration
                 $this->merge( $applicationConfiguration );
@@ -172,51 +172,6 @@ class madConfiguration extends madObject {
         }
 
         throw new Exception( "Cannot find the name of the application containing class $className, does it contain a 'etc' subdir?" );
-    }
-
-    static public function getRelativePath( $path, $compareTo ) {
-        // clean arguments by removing trailing and prefixing slashes
-        if ( substr( $path, -1 ) == DIRECTORY_SEPARATOR ) {
-            $path = substr( $path, 0, -1 );
-        }
-        if ( substr( $path, 0, 1 ) == DIRECTORY_SEPARATOR ) {
-            $path = substr( $path, 1 );
-        }
-
-        if ( substr( $compareTo, -1 ) == DIRECTORY_SEPARATOR ) {
-            $compareTo = substr( $compareTo, 0, -1 );
-        }
-        if ( substr( $compareTo, 0, 1 ) == DIRECTORY_SEPARATOR ) {
-            $compareTo = substr( $compareTo, 1 );
-        }
-
-        // simple case: $compareTo is in $path
-        if ( strpos( $path, $compareTo ) === 0 ) {
-            $offset = strlen( $compareTo ) + 1;
-            return substr( $path, $offset );
-        }
-
-        $relative  = array(  );
-        $pathParts = explode( DIRECTORY_SEPARATOR, $path );
-        $compareToParts = explode( DIRECTORY_SEPARATOR, $compareTo );
-
-        foreach( $compareToParts as $index => $part ) {
-            if ( isset( $pathParts[$index] ) && $pathParts[$index] == $part ) {
-                continue;
-            }
-
-            $relative[] = '..';
-        }
-
-        foreach( $pathParts as $index => $part ) {
-            if ( isset( $compareToParts[$index] ) && $compareToParts[$index] == $part ) {
-                continue;
-            }
-
-            $relative[] = $part;
-        }
-
-        return implode( DIRECTORY_SEPARATOR, $relative );
     }
 
     public function getPathSetting( $group, $section, $name ) {

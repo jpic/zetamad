@@ -6,7 +6,7 @@ define( 'ENTRY_APP_PATH', realpath(
 
 require ENTRY_APP_PATH . '/../mad/bootstrapper.php';
 
-$bootstraper = new madBootstrapper( require 'cache/etc/core.php' );
+$bootstraper = new madFramework( require 'cache/etc/core.php' );
 $bootstraper->run(  );
 
 ?>

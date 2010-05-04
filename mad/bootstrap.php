@@ -143,7 +143,7 @@ function findClasses( $configuration ) {
             }
 
             // skip tests
-            $relativePath = madConfiguration::getRelativePath( $fileInfo->getPath(  ), ENTRY_APP_PATH );
+            $relativePath = madFramework::getRelativePath( $fileInfo->getPath(  ), ENTRY_APP_PATH );
             if ( strpos( $relativePath, 'tests' ) !== false ) {
                 continue;
             }
@@ -201,7 +201,7 @@ function findStaticFiles( $configuration ) {
                 $relativePath = substr( $absolutePath, strlen( $staticPath ) );
 
                 $configuration['staticFiles']['paths'][$relativePath] = 
-                    madConfiguration::getRelativePath( $absolutePath, ENTRY_APP_PATH );
+                    madFramework::getRelativePath( $absolutePath, ENTRY_APP_PATH );
             }
         }
     }
@@ -214,7 +214,7 @@ function allPathsRelative( &$configuration ) {
             allPathsRelative( $value );
         } else {
             if ( strlen( $value ) && $value[0] == '/' && file_exists( $value ) ) {
-                $value = madConfiguration::getRelativePath( $value, ENTRY_APP_PATH );
+                $value = madFramework::getRelativePath( $value, ENTRY_APP_PATH );
             }
         }
     }
