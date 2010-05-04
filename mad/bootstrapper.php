@@ -170,16 +170,68 @@ class madBootstrapper {
     }
 
     public function refreshAutoload(  ) {
-        if ( !$this->refresh ) {
-            return true;
+        $autoloadPath = $this->entryApplicationPath . '/cache/autoload.php';
+        if ( !is_writable( $autoloadPath ) ) {
+            trigger_error( "$autoloadPath is not writable", E_USER_ERROR );
         }
 
-        $ocwd = getcwd();
-        chdir( $this->entryApplicationPath );
-        shell_exec( 'bin/generate-autoload-file ../ > cache/autoload.php' );
-        chdir( $ocwd );
+        $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( 
+            $this->entryApplicationPath . '/..'
+        ) );
 
-        $this->setupAutoload(  );
+        foreach( $fileIterator as $fileInfo ) {
+            if ( $fileInfo->isDir(  ) ) {
+                continue;
+            }
+
+            if ( substr( $fileInfo->getFilename(  ), -4) != '.php' ) {
+                continue;
+            }
+
+            $relativePath = madConfiguration::getRelativePath( $fileInfo->getPath(  ) . '/' . $fileInfo->getBaseName(), $this->entryApplicationPath );
+             
+            // skip tests
+            if ( strpos( $relativePath, 'tests' ) !== false ) {
+                continue;
+            }
+
+            // skip cache
+            if ( strpos( $relativePath, 'cache' ) !== false ) {
+                continue;
+            }
+
+            $fileObject = $fileInfo->openFile(  );
+
+            if ( !$fileObject->isReadable(  ) ) {
+                trigger_error( "$fileInfo is not readable", E_USER_ERROR );
+            }
+
+            while( !$fileObject->eof(  ) ) {
+                // this pattern does not work FFS
+                // $pattern = '/^(class)|(abstract class)|(interface) ([a-zA-Z0-9_]+)/';
+                $line = $fileObject->fgets(  );
+
+                $pattern = '/^class (?P<className>[a-zA-Z0-9_]+)/';
+                if ( preg_match( $pattern, $line, $matches ) ) {
+                    self::$autoload[$matches['className']] = $relativePath;
+                }
+
+                $pattern = '/^abstract class (?P<className>[a-zA-Z0-9_]+)/';
+                if ( preg_match( $pattern, $line, $matches ) ) {
+                    self::$autoload[$matches['className']] = $relativePath;
+                }
+
+                $pattern = '/^interface (?P<className>[a-zA-Z0-9_]+)/';
+                if ( preg_match( $pattern, $line, $matches ) ) {
+                    self::$autoload[$matches['className']] = $relativePath;
+                }
+            }
+        }
+
+        file_put_contents( 
+            $autoloadPath, 
+            '<?php return ' . var_export( self::$autoload, true ) . ' ?>' 
+        );
     }
 
     public function setupApplications(  ) {
