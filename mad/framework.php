@@ -281,18 +281,22 @@ class madFramework {
     }
 
     static public function getRelativePath( $path, $compareTo ) {
+        // support any kind of directory separator
+        $compareTo = str_replace( DIRECTORY_SEPARATOR, '/', $compareTo );
+        $path      = str_replace( DIRECTORY_SEPARATOR, '/', $path );
+
         // clean arguments by removing trailing and prefixing slashes
-        if ( substr( $path, -1 ) == DIRECTORY_SEPARATOR ) {
+        if ( substr( $path, -1 ) == '/' ) {
             $path = substr( $path, 0, -1 );
         }
-        if ( substr( $path, 0, 1 ) == DIRECTORY_SEPARATOR ) {
+        if ( substr( $path, 0, 1 ) == '/' ) {
             $path = substr( $path, 1 );
         }
 
-        if ( substr( $compareTo, -1 ) == DIRECTORY_SEPARATOR ) {
+        if ( substr( $compareTo, -1 ) == '/' ) {
             $compareTo = substr( $compareTo, 0, -1 );
         }
-        if ( substr( $compareTo, 0, 1 ) == DIRECTORY_SEPARATOR ) {
+        if ( substr( $compareTo, 0, 1 ) == '/' ) {
             $compareTo = substr( $compareTo, 1 );
         }
 
@@ -303,8 +307,8 @@ class madFramework {
         }
 
         $relative  = array(  );
-        $pathParts = explode( DIRECTORY_SEPARATOR, $path );
-        $compareToParts = explode( DIRECTORY_SEPARATOR, $compareTo );
+        $pathParts = explode( '/', $path );
+        $compareToParts = explode( '/', $compareTo );
 
         foreach( $compareToParts as $index => $part ) {
             if ( isset( $pathParts[$index] ) && $pathParts[$index] == $part ) {
@@ -322,7 +326,7 @@ class madFramework {
             $relative[] = $part;
         }
 
-        return implode( DIRECTORY_SEPARATOR, $relative );
+        return implode( '/', $relative );
     }
 
 
