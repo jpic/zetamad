@@ -4,9 +4,9 @@ define( 'ENTRY_APP_PATH', realpath(
         dirname( __FILE__ ),
 ) ) ) );
 
-require ENTRY_APP_PATH . '/../mad/bootstrapper.php';
+require ENTRY_APP_PATH . '/../mad/framework.php';
 
-$bootstraper = new madBootstrapper( ENTRY_APP_PATH );
+$bootstraper = new madFramework( ENTRY_APP_PATH );
 $bootstraper->run(  );
 
 ?>
