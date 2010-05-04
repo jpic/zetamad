@@ -11,15 +11,15 @@ function configurationInheritance( $configuration ) {
             }
 
             $sectionNameParts = explode( '..', $sectionName );
-            $sectionName = array_shift( $sectionNameParts );
+            $realSectionName = array_shift( $sectionNameParts );
 
             foreach( $sectionNameParts as $part ) {
 
-                if ( !isset( $configuration[$groupName][$sectionName] ) ) {
-                    $configuration[$groupName][$sectionName] = $configuration[$groupName][$sectionName . '..' . implode( '..', $sectionNameParts ) ];
+                if ( !isset( $configuration[$groupName][$realSectionName] ) ) {
+                    $configuration[$groupName][$realSectionName] = $configuration[$groupName][$sectionName];
                 }
 
-                $configuration[$groupName][$sectionName]->merge( 
+                $configuration[$groupName][$realSectionName]->merge( 
                     $configuration[$groupName][$part]
                 );
 
@@ -29,7 +29,7 @@ function configurationInheritance( $configuration ) {
         }
         
         if ( $unst ) {
-            unset( $configuration[$groupName][$sectionName . '..' . implode( '..', $sectionNameParts ) ] );
+            unset( $configuration[$groupName][$sectionName] );
         }
     }
 }
@@ -104,16 +104,50 @@ function findClasses( $configuration ) {
             $configuration['applications'][$name]['classes'] = new madObject;
         }
 
-        $grep = "grep --exclude-dir=tests --exclude-dir=.svn -o -r '^class [a-zA-Z0-9]*' '$path' | sed 's/^.*class //'";
-        $grep = trim( shell_exec( $grep ) );
+        $classes = array(  );
+        $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $path ) );
+        foreach( $fileIterator as $fileInfo ) {
+            if ( $fileInfo->isDir(  ) ) {
+                continue;
+            }
 
-        if ( !$grep ) {
-            continue;
+            if ( substr( $fileInfo->getFilename(  ), -4) != '.php' ) {
+                continue;
+            }
+
+            // skip tests
+            $relativePath = madConfiguration::getRelativePath( $fileInfo->getPath(  ), ENTRY_APP_PATH );
+            if ( strpos( $relativePath, 'tests' ) !== false ) {
+                continue;
+            }
+
+            $fileObject = $fileInfo->openFile(  );
+
+            if ( !$fileObject->isReadable(  ) ) {
+                trigger_error( "$fileInfo is not readable", E_USER_ERROR );
+            }
+
+            while( $line = $fileObject->fgets(  ) ) {
+                // this pattern does not work FFS
+                // $pattern = '/^(class)|(abstract class)|(interface) ([a-zA-Z0-9_]+)/';
+
+                $pattern = '/^class (?P<className>[a-zA-Z0-9_]+)/';
+                if ( preg_match( $pattern, $line, $matches ) ) {
+                    $configuration['applications'][$name]['classes'][] = $matches['className'];
+                }
+
+                $pattern = '/^abstract class (?P<className>[a-zA-Z0-9_]+)/';
+                if ( preg_match( $pattern, $line, $matches ) ) {
+                    $configuration['applications'][$name]['classes'][] = $matches['className'];
+                }
+
+                $pattern = '/^interface (?P<className>[a-zA-Z0-9_]+)/';
+                if ( preg_match( $pattern, $line, $matches ) ) {
+                    $configuration['applications'][$name]['classes'][] = $matches['className'];
+                }
+            }
         }
 
-        foreach( explode( "\n", $grep ) as $class ) {
-            $configuration['applications'][$name]['classes'][] = $class;
-        }
     }
 }
 $registry->signals->connect( 'configurationRefreshed', 'findClasses' );
