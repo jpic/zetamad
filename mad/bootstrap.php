@@ -82,6 +82,11 @@ function setRoutesApplication( $configuration ) {
     foreach( $configuration['routes'] as $name => $route ) {
         $applicationName = substr( $name, 0, strrpos( $name, '.' ) );
         $configuration['routes'][$name]['application'] = $applicationName;
+
+        if ( !isset( $configuration['applications'][$applicationName] ) ) {
+            continue;
+        }
+
         $configuration['routes'][$name]->merge( $configuration['applications'][$applicationName] );
     }
 }
@@ -108,6 +113,11 @@ $registry->signals->connect( 'configurationRefreshed', 'defaultView' );
 function prefixRoutes( $configuration ) {
     foreach( $configuration['routes'] as $name => $route ) {
         $applicationName   = substr( $name, 0, strrpos( $name, '.' ) );
+
+        if ( !isset( $configuration['applications'][$applicationName] ) ) {
+            continue;
+        }
+
         $applicationPrefix = $configuration['applications'][$applicationName]['routePrefix'];
         if ( isset( $route['rails'] ) ) {
             $configuration['routes'][$name]['rails'] = $applicationPrefix . $configuration['routes'][$name]['rails'];
