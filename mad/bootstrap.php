@@ -217,6 +217,10 @@ function findStaticFiles( $configuration ) {
             );
 
             foreach( $fileIterator as $fileInfo ) {
+                if ( substr( $fileInfo->path, -4 ) == '.svn' ) {
+                    continue;
+                }
+
                 $absolutePath = $fileInfo->getRealPath(  );
                 $relativePath = substr( $absolutePath, strlen( $staticPath ) );
 
