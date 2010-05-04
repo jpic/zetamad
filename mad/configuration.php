@@ -73,11 +73,38 @@ class madConfiguration extends madObject {
             $path = realpath( $entryApplicationPath . $path );
 
             // find all configuration paths in this repository path
-            $find = shell_exec( "find $path -name etc -type d \! -path \"*/tests/*\" \! -path \"*/cache/*\"" );
-            // trim shell output
-            $find = trim( $find );
+            $configurationPaths = array(  );
+            
+            $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $path ) );
+            foreach( $fileIterator as $fileInfo ) {
+                // searching for directories named etc
+                if ( substr( $fileInfo->getPath(  ), -3 ) != 'etc' ) {
+                    continue;
+                }
+                
+                $relativePath = self::getRelativePath( $fileInfo->getPath(  ), $path );
+                
+                // if the relative path contains "tests" then its in unit 
+                // tests, skip.
+                if ( strpos( $relativePath, 'tests' ) !== false ) {
+                    continue;
+                }
 
-            foreach( explode( "\n", $find ) as $configurationPath ) {
+                // if the relative path contains "cache" then its a cached 
+                // configuration, skip
+                if ( strpos( $relativePath, 'cache' ) !== false ) {
+                    continue;
+                }
+
+                // don't add paths twice
+                if ( in_array( $fileInfo->getPath(  ), $configurationPaths ) ) {
+                    continue;
+                }
+
+                $configurationPaths[] = $fileInfo->getPath(  );
+            }
+
+            foreach( $configurationPaths as $configurationPath ) {
                 // strip trailing / if necessary
                 $configurationPath = substr( $configurationPath, -1 ) == '/' ? substr( $configurationPath, 0, -1 ) : $configurationPath;
 
