@@ -220,7 +220,7 @@ class madFramework {
                 continue;
             }
 
-            $relativePath = madFramework::getRelativePath( $fileInfo->getPath(  ) . '/' . $fileInfo->getBaseName(), $this->entryApplicationPath );
+            $relativePath = madFramework::getRelativePath( $fileInfo->getPath(  ) . DIRECTORY_SEPARATOR . $fileInfo->getBaseName(), $this->entryApplicationPath );
              
             // skip tests
             if ( strpos( $relativePath, 'tests' ) !== false ) {
