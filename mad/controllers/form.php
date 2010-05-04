@@ -4,12 +4,6 @@ class madFormController extends madController {
 
     public function setFormOptions( madObject $form, $merged ) {
         $options = $this->registry->configuration['forms'][$form->name];
-
-        if ( isset( $options['inherit'] ) ) {
-            $contributor = $this->registry->configuration['forms'][$options['inherit']];
-            $options = madConfiguration::array_contribute( $options, $contributor );
-        }
-
         $form->setOptions( $options );
     }
 
