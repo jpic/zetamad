@@ -52,7 +52,7 @@ class madConfigurationTest extends ezcTestCase {
      * @dataProvider getRelativePathProvider
      */
     public function testGetRelativePath( $path, $compareTo, $expected ) {
-        $result = madConfiguration::getRelativePath( $path, $compareTo );
+        $result = madFramework::getRelativePath( $path, $compareTo );
         $this->assertEquals( $expected, $result );
     }
 }
