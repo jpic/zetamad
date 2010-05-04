@@ -110,10 +110,11 @@ class madView extends ezcMvcView {
         }
 
         if ( isset( $this->configuration['views'] ) ) {
-            foreach( $this->configuration['name'] as $class ) {
-                $view = new $class( $request, $result, $routeInfo );
+            foreach( $this->configuration['views'] as $class ) {
+                $view = new $class( $this->request, $this->result, $this->routeInfo );
+                $viewZones = $view->createZones( false );
 
-                foreach( $view->createZones( false ) as $zone ) {
+                foreach( $viewZones as $zone ) {
                     $zones[] = $zone;
                 }
             }
