@@ -336,7 +336,7 @@ class madFramework {
             $relative[] = $part;
         }
 
-        return implode( '/', $relative );
+        return implode( DIRECTORY_SEPARATOR, $relative );
     }
 
 
