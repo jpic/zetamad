@@ -7,6 +7,7 @@ class madAuthenticationControllerDecorator extends madControllerDecorator {
     
             $result->status = new ezcMvcExternalRedirect(
                 $this->registry->configuration->getSetting( 'applications', 'authentication', 'loginUrl' )
+                    . '?back=' . urlencode( $this->request->uri )
             );
     
             return $result;
