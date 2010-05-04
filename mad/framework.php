@@ -280,10 +280,20 @@ class madFramework {
         }
     }
 
-    static public function getRelativePath( $path, $compareTo ) {
-        // support any kind of directory separator
-        $compareTo = str_replace( DIRECTORY_SEPARATOR, '/', $compareTo );
-        $path      = str_replace( DIRECTORY_SEPARATOR, '/', $path );
+    static public function getRelativePath( $path, $compareTo, $separator = DIRECTORY_SEPARATOR ) {
+        // support windows
+        if ( $separator == '\\' ) {
+            if ( preg_match( '/^[a-zA-Z]:\\\\/', $compareTo ) ) {
+                $compareTo = substr( $compareTo, 3 );
+            }
+            
+            if ( preg_match( '/^[a-zA-Z]:\\\\/', $path ) ) {
+                $path = substr( $path, 3 );
+            }
+
+            $compareTo = str_replace( '\\', '/', $compareTo );
+            $path      = str_replace( '\\', '/', $path );
+        }
 
         // clean arguments by removing trailing and prefixing slashes
         if ( substr( $path, -1 ) == '/' ) {
