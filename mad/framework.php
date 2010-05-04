@@ -24,10 +24,6 @@ class madFramework {
             $this->configuration = parse_ini_file( $entryApplicationPath . '/etc/applications.ini', true );
             $this->configuration['mad']['refreshConfiguration'] = true;
         }
-
-        if ( $this->configuration['mad']['refreshConfiguration'] ) {
-            $this->configuration = parse_ini_file( $entryApplicationPath . '/etc/applications.ini', true );
-        }
         
         if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
             // dont refresh cache on static file hits
@@ -35,6 +31,9 @@ class madFramework {
             $this->configuration['mad']['refreshDatabase']      = false;
             $this->configuration['mad']['refreshBin']           = false;
             $this->configuration['mad']['refreshConfiguration'] = false;
+        } elseif ( $this->configuration['mad']['refreshConfiguration'] ) {
+            // force configuration reload
+            $this->configuration = parse_ini_file( $entryApplicationPath . '/etc/applications.ini', true );
         }
 
         // auto make cache director
