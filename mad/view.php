@@ -91,7 +91,7 @@ class madView extends ezcMvcView {
                 'templates',
                 'madDownloadController.download.php'
             ) ) );
-
+            
             // short circuit to avoid regular template rendering in the case of 
             // a file download request
             return $zones;
@@ -139,7 +139,7 @@ class madView extends ezcMvcView {
         }
     }
 
-    public function getTemplatePath( $template ) {
+    public function getTemplatePath( $template, $defaultApplication = null ) {
         $registry = madRegistry::instance(  );
         
         // path to the "entry point" application
@@ -163,6 +163,11 @@ class madView extends ezcMvcView {
             $parentControllerApplicationPath = $registry->configuration->getSetting( 'applications', $parentControllerApplicationName, 'path' );
         } catch( Exception $e ) {
             // pass
+        }
+
+        if ( !is_null( $defaultApplication ) ) {
+            // $defaultApplication/templates/$template
+            $testPaths[] = $registry->configuration->getPathSetting( 'applications', $defaultApplication, 'path' ) . "/templates/$template";
         }
 
         // $entryAppPath/templates/$routeApp/$action.php
