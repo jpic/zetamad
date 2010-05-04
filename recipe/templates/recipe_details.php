@@ -237,6 +237,8 @@ a.btn-block:hover { background: #539893; }
         -->
 </div>
 
+<?php echo $this->comments ?>
+
 <!--
 <a href="<?php echo $this->url( 'recipe.edit', $this->object ) ?>">edit</a>
 -->
