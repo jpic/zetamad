@@ -90,16 +90,15 @@ class madFramework {
             $this->refreshBin(  );
         }
 
-        if ( $this->signals->send( 'preSetupDatabase', array( $this ) ) ) {
+        if ( $registry->signals->send( 'preSetupDatabase', array( $this ) ) ) {
             $this->setupDatabase(  );
         } else {
-            die( 'lol' );
             if ( !isset( $registry->database ) ) {
                 trigger_error( 'Signal preSetupDatabase returned false, but $registry->database was not set', E_USER_ERROR );
             }
         }
         
-        $this->registry->signals->send( 'preSetupModel' );
+        $registry->signals->send( 'preSetupModel', array( $this ) );
         $this->setupModel(  );
 
         if ( $this->configuration['mad']['refreshDatabase'] ) {
@@ -206,7 +205,7 @@ class madFramework {
 
         $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( 
             $this->entryApplicationPath . '/..',
-            RecursiveDirectoryIterator::FOLLOW_SYMLINKS
+            RecursiveDirectoryIterator::FOLLOW_SYMLINKS|RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST
         ) );
 
         foreach( $fileIterator as $fileInfo ) {
