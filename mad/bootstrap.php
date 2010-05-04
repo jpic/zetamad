@@ -67,9 +67,11 @@ function setRegistryRouter( $router ) {
 }
 $registry->signals->connect( 'routerCreated', 'setRegistryRouter' );
 
-function stripTrailingSlashes( &$array ) {
+function stripTrailingSlashes( $array ) {
     foreach( $array as $name => $value ) {
-        if ( is_array( $value ) || $value instanceof Traversable ) {
+        if ( is_array( $value ) ) {
+            stripTrailingSlashes( new madObject( $value ) );
+        } elseif ( $value instanceof Traversable ) {
             stripTrailingSlashes( $value );
         } else {
             $value = substr( $value, -1 ) == DIRECTORY_SEPARATOR ? substr( $value, 0, -1 ) : $value;
