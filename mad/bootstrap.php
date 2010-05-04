@@ -217,7 +217,7 @@ function findStaticFiles( $configuration ) {
             );
 
             foreach( $fileIterator as $fileInfo ) {
-                if ( substr( $fileInfo->path, -4 ) == '.svn' ) {
+                if ( substr( $fileInfo->getPath(  ), -4 ) == '.svn' ) {
                     continue;
                 }
 
