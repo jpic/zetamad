@@ -114,6 +114,11 @@ class madBootstrapper {
                 ENTRY_APP_PATH,
                 self::$autoload[$class]
             ) ) );
+
+            if ( !file_exists( $path ) ) {
+                trigger_error( "Cannot load $class from $path which does not exists", E_USER_ERROR );
+            }
+
             require $path;
         }
     }
