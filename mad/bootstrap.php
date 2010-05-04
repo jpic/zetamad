@@ -24,7 +24,7 @@ function autoCreateMadModelTable( $bootstrap ) {
       `attribute_key` varchar(50) NOT NULL,
       `attribute_value` text
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8
-    ' ) );
+    ' );
 }
 $registry->signals->connect( 'preSetupModel', 'autoCreateMadModelTable' );
 
@@ -133,21 +133,23 @@ function findClasses( $configuration ) {
 
         $classes = array(  );
         $fileIterator = new RecursiveIteratorIterator( 
-            new RecursiveDirectoryIterator( $path ),
-            RecursiveDirectoryIterator::FOLLOW_SYMLINKS
+            new RecursiveDirectoryIterator( 
+                $path,
+                RecursiveDirectoryIterator::FOLLOW_SYMLINKS|RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST
+            )
         );
         
         foreach( $fileIterator as $fileInfo ) {
-            if ( $fileInfo->isDir(  ) ) {
-                continue;
-            }
-
             if ( substr( $fileInfo->getFilename(  ), -4) != '.php' ) {
                 continue;
             }
 
             // skip tests
-            $relativePath = madFramework::getRelativePath( $fileInfo->getPath(  ), ENTRY_APP_PATH );
+            $relativePath = madFramework::getRelativePath( 
+                $fileInfo->getPath(  ) . '/' . $fileInfo->getBasename(  ) , 
+                ENTRY_APP_PATH
+            );
+
             if ( strpos( $relativePath, 'tests' ) !== false ) {
                 continue;
             }
@@ -180,7 +182,6 @@ function findClasses( $configuration ) {
                 }
             }
         }
-
     }
 }
 $registry->signals->connect( 'configurationRefreshed', 'findClasses' );
@@ -199,8 +200,10 @@ function findStaticFiles( $configuration ) {
         
         if ( is_dir( $staticPath ) ) {
             $fileIterator = new RecursiveIteratorIterator( 
-                new RecursiveDirectoryIterator( $staticPath ),
-                RecursiveDirectoryIterator::FOLLOW_SYMLINKS
+                new RecursiveDirectoryIterator( 
+                    $staticPath,
+                    RecursiveDirectoryIterator::FOLLOW_SYMLINKS|RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST
+                )
             );
 
             foreach( $fileIterator as $fileInfo ) {
