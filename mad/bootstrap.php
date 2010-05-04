@@ -1,6 +1,33 @@
 <?php
 $registry = madRegistry::instance(  );
 
+function autoCreateMadModelTable( $bootstrap ) {
+    if ( !$bootstrap->configuration['mad']['refreshModel'] ) {
+        return true;
+    }
+    
+    $registry = madRegistry::instance(  );
+
+    $statement = $registry->database->prepare( 'show tables' );
+    $statement->setFetchMode( PDO::FETCH_NUM );
+    $statement->execute();
+    $tables = $statement->fetchAll(  );
+
+    if ( in_array( 'mad_model', $tables ) ) {
+        return true;
+    }
+
+    $registry->database->query( '
+    CREATE TABLE `mad_model` (
+      `id_attribute` int(15) DEFAULT NULL,
+      `id` varchar(44) DEFAULT NULL,
+      `attribute_key` varchar(50) NOT NULL,
+      `attribute_value` text
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
+    ' ) );
+}
+$registry->signals->connect( 'preSetupModel', 'autoCreateMadModelTable' );
+
 function configurationInheritance( $configuration ) {
     foreach( $configuration as $groupName => $group ) {
         $unst = false;
@@ -193,5 +220,4 @@ function allPathsRelative( &$configuration ) {
     }
 }
 $registry->signals->connect( 'configurationRefreshed', 'allPathsRelative' );
-
 ?>

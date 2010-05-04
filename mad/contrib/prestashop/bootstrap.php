@@ -52,23 +52,22 @@ function prestashopAutoload( $class ) {
 
 spl_autoload_register( 'prestashopAutoload' );
 
-function bootstrapPrestashop( $bootstrap ) {
-    $registry = madRegistry::instance(  );
-
-    define(
-        'PRESTASHOP_PATH',
-        $registry->configuration->getPathSetting( 'applications', 'prestashop', 'projectPath' )
-    );
-    
+function prestashopDatabaseSettings( $bootstrap ) {
+    define( 'PRESTASHOP_PATH', $bootstrap->configuration['prestashop']['projectPath'] );
     require PRESTASHOP_PATH . '/config/config.inc.php';
+
+    // set the database with prestashop settings
+    $database = new PDO( 'mysql:host=' . _DB_SERVER_ . ';dbname=' . _DB_NAME_, _DB_USER_, _DB_PASSWD_ );
+    madRegistry::instance(  )->database = $database;
+
+    return false; // will prevent normal setting of $registery->database
+}
+$registry->signals->connect( 'preSetupDatabase', 'prestashopDatabaseSettings' );
+
+function bootstrapPrestashop( $bootstrap ) {
     $GLOBALS['smarty'] = $smarty;
     Configuration::loadConfiguration(  );
-    
-    // set the database with prestashop settings
-    if ( $registry->configuration->getSetting( 'applications', 'prestashop', 'instanciatePdo', false ) ) {
-        $database = new PDO( 'mysql:host=' . _DB_SERVER_ . ';dbname=' . _DB_NAME_, _DB_USER_, _DB_PASSWD_ );
-        $registry->database = $database;
-    }
 }
+
 $registry->signals->connect( 'postBootstrap', 'bootstrapPrestashop' );
 ?>

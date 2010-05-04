@@ -20,32 +20,52 @@ class madBootstrapper {
         $applicationsConfigurationPath = $entryApplicationPath . '/cache/etc/applications.php';
         if ( file_exists( $applicationsConfigurationPath ) ) {
             $this->configuration = require $applicationsConfigurationPath;
-            $this->refresh = $this->configuration['mad']['refresh'];
         } else {
             $this->configuration = parse_ini_file( $entryApplicationPath . '/etc/applications.ini', true );
-            $this->refresh = true;
+            $this->configuration['mad']['refreshConfiguration'] = true;
         }
         
-        if ( PHP_OS != 'Linux' ) {
-            // refresh uses standard linux commands
-            $this->refresh = false;
-        }
-
         if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
             // dont refresh cache on static file hits
-            $this->refresh = false;
+            $this->configuration['mad']['refreshAutoload']      = false;
+            $this->configuration['mad']['refreshDatabase']      = false;
+            $this->configuration['mad']['refreshBin']           = false;
+            $this->configuration['mad']['refreshConfiguration'] = false;
+        }
+
+        // auto make cache director
+        if ( !is_dir( $this->entryApplicationPath . '/cache' ) ) {
+            mkdir( $this->entryApplicationPath . '/cache' );
+        }
+
+        // force autoload refresh
+        if ( !file_exists( $this->entryApplicationPath . '/cache/autoload.php' ) ) {
+            $this->configuration['mad']['refreshAutoload'] = true;
+        }
+
+        // force cache refresh
+        if ( !is_dir( $this->entryApplicationPath . '/cache/etc' ) ) {
+            mkdir( $this->entryApplicationPath . '/cache/etc' );
+            $this->configuration['mad']['refreshConfiguration'] = true;
         }
     }
 
     public function run(  ) {
-        if ( $this->refresh ) {
-            $this->setupIncludePath(  );
-            $this->setupAutoload(  );
-            $this->setupSignals(  );
-            
+        $this->setupIncludePath(  );
+
+        if ( $this->configuration['mad']['refreshAutoload'] ) {
+            $this->refreshAutoload(  );
+        }
+
+        $this->setupAutoload(  );
+        
+        $registry = madRegistry::instance(  );
+
+        $this->setupSignals(  );
+        
+        if ( $this->configuration['mad']['refreshConfiguration'] ) {
             $this->setupConfiguration( $this->entryApplicationPath . '/etc' );
             
-            $registry = madRegistry::instance(  );
             // parse all ini files again, with overload support, that will 
             // update the core configuration (applications.ini)
             $registry->configuration->refresh( $this->entryApplicationPath );
@@ -59,24 +79,32 @@ class madBootstrapper {
             // cache the parsed configuration for performances
             $registry->configuration->write( $this->entryApplicationPath . '/cache/etc' );
             
-            $this->refreshBin(  );
-            $this->refreshAutoload(  );
-            
             $this->setupDatabase(  );
             $this->setupModel(  );
         } else {
-            $this->setupIncludePath(  );
-            $this->setupAutoload(  );
-            $this->setupSignals(  );
             $this->setupApplications(  );
-
             $this->setupConfiguration( $this->entryApplicationPath . '/cache/etc' );
-            
-            $this->setupDatabase(  );
-            $this->setupModel(  );
         }
 
-        $registry = madRegistry::instance(  );
+        if ( $this->configuration['mad']['refreshBin'] ) {
+            $this->refreshBin(  );
+        }
+
+        if ( $this->signals->send( 'preSetupDatabase', array( $this ) ) ) {
+            $this->setupDatabase(  );
+        } else {
+            die( 'lol' );
+            if ( !isset( $registry->database ) ) {
+                trigger_error( 'Signal preSetupDatabase returned false, but $registry->database was not set', E_USER_ERROR );
+            }
+        }
+        
+        $this->registry->signals->send( 'preSetupModel' );
+        $this->setupModel(  );
+
+        if ( $this->configuration['mad']['refreshDatabase'] ) {
+            $registry->model->applyConfiguration(  );
+        }
 
         $registry->signals->send( 'postBootstrap', array( $this ) );
     }
@@ -151,10 +179,6 @@ class madBootstrapper {
             $registry->configuration['model'],
             $this->configuration['mad']
         );
-
-        if ( $this->refresh ) {
-            $registry->model->applyConfiguration(  );
-        }
     }
 
     public function setupSignals(  ) {
@@ -176,7 +200,7 @@ class madBootstrapper {
 
     public function refreshAutoload(  ) {
         $autoloadPath = $this->entryApplicationPath . '/cache/autoload.php';
-        if ( !is_writable( $autoloadPath ) ) {
+        if ( file_exists( $autoloadPath ) && !is_writable( $autoloadPath ) ) {
             trigger_error( "$autoloadPath is not writable", E_USER_ERROR );
         }
 
