@@ -127,7 +127,9 @@ function findClasses( $configuration ) {
                 trigger_error( "$fileInfo is not readable", E_USER_ERROR );
             }
 
-            while( $line = $fileObject->fgets(  ) ) {
+            while( !$fileObject->eof() ) {
+                $line = $fileObject->fgets(  );
+
                 // this pattern does not work FFS
                 // $pattern = '/^(class)|(abstract class)|(interface) ([a-zA-Z0-9_]+)/';
 
