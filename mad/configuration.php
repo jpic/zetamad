@@ -190,7 +190,7 @@ class madConfiguration extends madObject {
 
     public function parseIni( $file ) {
         $parser = new ezcConfigurationIniParser( ezcConfigurationIniParser::PARSE, $file );
-        $name = substr( substr( $file, strrpos( $file, DIRECTORY_SEPARATOR ) + 1 ), 0, -4 );
+        $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
 
         if ( !isset( $this[$name] ) ) {
             $this[$name] = new madObject();
