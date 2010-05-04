@@ -12,8 +12,8 @@ abstract class madControllerDecorator extends madController {
     }
     
     public function setConfiguration( array &$configuration ) {
-        parent::setConfiguration( &$configuration );
-        $this->decorated->setConfiguration( &$configuration );
+        parent::setConfiguration( $configuration );
+        $this->decorated->setConfiguration( $configuration );
     }
 }
 
