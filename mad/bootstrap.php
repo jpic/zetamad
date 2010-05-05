@@ -67,14 +67,12 @@ function setRegistryRouter( $router ) {
 }
 $registry->signals->connect( 'routerCreated', 'setRegistryRouter' );
 
-function stripTrailingSlashes( $array ) {
+function stripTrailingSlashes( &$array ) {
     foreach( $array as $name => $value ) {
-        if ( is_array( $value ) ) {
-            stripTrailingSlashes( new madObject( $value ) );
-        } elseif ( $value instanceof Traversable ) {
+        if ( is_array( $value ) || $value instanceof Traversable ) {
             stripTrailingSlashes( $value );
         } else {
-            $value = substr( $value, -1 ) == '/' ? substr( $value, 0, -1 ) : $value;
+            $value = substr( $value, -1 ) == DIRECTORY_SEPARATOR ? substr( $value, 0, -1 ) : $value;
         }
     }
 }
@@ -158,7 +156,7 @@ function findClasses( $configuration ) {
 
             // skip tests
             $relativePath = madFramework::getRelativePath( 
-                $fileInfo->getPath(  ) . '/' . $fileInfo->getBasename(  ) , 
+                $fileInfo->getPath(  ) . DIRECTORY_SEPARATOR . $fileInfo->getBasename(  ) , 
                 ENTRY_APP_PATH
             );
 
@@ -219,10 +217,6 @@ function findStaticFiles( $configuration ) {
             );
 
             foreach( $fileIterator as $fileInfo ) {
-                if ( substr( $fileInfo->getPath(  ), -4 ) == '.svn' ) {
-                    continue;
-                }
-
                 $absolutePath = $fileInfo->getRealPath(  );
                 $relativePath = substr( $absolutePath, strlen( $staticPath ) );
 
@@ -239,7 +233,7 @@ function allPathsRelative( &$configuration ) {
         if ( is_array( $value ) || $value instanceof madObject ) {
             allPathsRelative( $value );
         } else {
-            if ( strlen( $value ) && $value[0] == '/' && file_exists( $value ) ) {
+            if ( strlen( $value ) && $value[0] == DIRECTORY_SEPARATOR && file_exists( $value ) ) {
                 $value = madFramework::getRelativePath( $value, ENTRY_APP_PATH );
             }
         }

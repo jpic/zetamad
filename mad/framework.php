@@ -21,7 +21,7 @@ class madFramework {
         if ( file_exists( $applicationsConfigurationPath ) ) {
             $this->configuration = require $applicationsConfigurationPath;
         } else {
-            $this->loadIniConfiguration( $entryApplicationPath . '/etc/applications.ini' );
+            $this->configuration = parse_ini_file( $entryApplicationPath . '/etc/applications.ini', true );
             $this->configuration['mad']['refreshConfiguration'] = true;
         }
         
@@ -33,7 +33,7 @@ class madFramework {
             $this->configuration['mad']['refreshConfiguration'] = false;
         } elseif ( $this->configuration['mad']['refreshConfiguration'] ) {
             // force configuration reload
-            $this->loadIniConfiguration( $entryApplicationPath . '/etc/applications.ini' );
+            $this->configuration = parse_ini_file( $entryApplicationPath . '/etc/applications.ini', true );
         }
 
         // auto make cache director
@@ -118,8 +118,8 @@ class madFramework {
         );
     
         foreach( $this->configuration['mad']['includePath'] as $relativePath ) {
-            if ( strpos( $relativePath, '/' ) !== 0 ) {
-                $relativePath = '/' . $relativePath;
+            if ( strpos( $relativePath, DIRECTORY_SEPARATOR ) !== 0 ) {
+                $relativePath = DIRECTORY_SEPARATOR . $relativePath;
             }
 
             $paths[] = $this->entryApplicationPath . $relativePath;
@@ -129,7 +129,7 @@ class madFramework {
     }
 
     public function setupAutoload(  ) {
-        self::$autoload = require join( '/', array(  
+        self::$autoload = require join( DIRECTORY_SEPARATOR, array(  
             $this->entryApplicationPath,
             'cache',
             'autoload.php',
@@ -140,7 +140,7 @@ class madFramework {
 
     static public function autoload( $class ) {
         if ( isset( self::$autoload[$class] ) ) {
-            $path = realpath( join( '/', array( 
+            $path = realpath( join( DIRECTORY_SEPARATOR, array( 
                 ENTRY_APP_PATH,
                 self::$autoload[$class]
             ) ) );
@@ -220,7 +220,7 @@ class madFramework {
                 continue;
             }
 
-            $relativePath = madFramework::getRelativePath( $fileInfo->getPath(  ) . '/' . $fileInfo->getBaseName(), $this->entryApplicationPath );
+            $relativePath = madFramework::getRelativePath( $fileInfo->getPath(  ) . DIRECTORY_SEPARATOR . $fileInfo->getBaseName(), $this->entryApplicationPath );
              
             // skip tests
             if ( strpos( $relativePath, 'tests' ) !== false ) {
@@ -268,45 +268,31 @@ class madFramework {
 
     public function setupApplications(  ) {
         foreach( $this->configuration as $name => $application ) {
-            $bootstrap = realpath( join( '/', array( 
+            $bootstrap = realpath( join( DIRECTORY_SEPARATOR, array( 
                 $this->entryApplicationPath,
                 $application['path'],
                 'bootstrap.php',
             ) ) );
 
-            if ( file_exists( $bootstrap ) && $bootstrap != __FILE__  && $bootstrap != $this->entryApplicationPath . '/' . 'bootstrap.php' ) {
+            if ( file_exists( $bootstrap ) && $bootstrap != __FILE__  && $bootstrap != $this->entryApplicationPath . DIRECTORY_SEPARATOR . 'bootstrap.php' ) {
                 require $bootstrap;
             }
         }
     }
 
-    static public function getRelativePath( $path, $compareTo, $separator = '/' ) {
-        // support windows
-        if ( $separator == '\\' ) {
-            if ( preg_match( '/^[a-zA-Z]:\\\\/', $compareTo ) ) {
-                $compareTo = substr( $compareTo, 3 );
-            }
-            
-            if ( preg_match( '/^[a-zA-Z]:\\\\/', $path ) ) {
-                $path = substr( $path, 3 );
-            }
-
-            $compareTo = str_replace( '\\', '/', $compareTo );
-            $path      = str_replace( '\\', '/', $path );
-        }
-
+    static public function getRelativePath( $path, $compareTo ) {
         // clean arguments by removing trailing and prefixing slashes
-        if ( substr( $path, -1 ) == '/' ) {
+        if ( substr( $path, -1 ) == DIRECTORY_SEPARATOR ) {
             $path = substr( $path, 0, -1 );
         }
-        if ( substr( $path, 0, 1 ) == '/' ) {
+        if ( substr( $path, 0, 1 ) == DIRECTORY_SEPARATOR ) {
             $path = substr( $path, 1 );
         }
 
-        if ( substr( $compareTo, -1 ) == '/' ) {
+        if ( substr( $compareTo, -1 ) == DIRECTORY_SEPARATOR ) {
             $compareTo = substr( $compareTo, 0, -1 );
         }
-        if ( substr( $compareTo, 0, 1 ) == '/' ) {
+        if ( substr( $compareTo, 0, 1 ) == DIRECTORY_SEPARATOR ) {
             $compareTo = substr( $compareTo, 1 );
         }
 
@@ -317,8 +303,8 @@ class madFramework {
         }
 
         $relative  = array(  );
-        $pathParts = explode( '/', $path );
-        $compareToParts = explode( '/', $compareTo );
+        $pathParts = explode( DIRECTORY_SEPARATOR, $path );
+        $compareToParts = explode( DIRECTORY_SEPARATOR, $compareTo );
 
         foreach( $compareToParts as $index => $part ) {
             if ( isset( $pathParts[$index] ) && $pathParts[$index] == $part ) {
@@ -336,32 +322,9 @@ class madFramework {
             $relative[] = $part;
         }
 
-        return implode( '/', $relative );
+        return implode( DIRECTORY_SEPARATOR, $relative );
     }
 
 
-    static public function fixForWindows( $array ) {
-        foreach( $array as $key => $value ) {
-            if ( is_array( $value ) ) {
-                self::fixForWindows( new ArrayObject( $array ) );
-            } elseif ( is_object( $value ) ) {
-                self::fixForWindows( $value );
-            } else {
-                $array[$key] = str_replace( '\\', '/', $value );
-            }
-        }
-    }
-
-    static public function isWindows(  ) {
-        return PHP_OS=='WINNT' or PHP_OS=='WIN32' or PHP_OS=='Windows';
-    }
-
-    public function loadIniConfiguration( $file ) {
-        $this->configuration = new madObject( parse_ini_file( $file, true ) );
-
-        if ( self::isWindows(  ) ) {
-            self::fixForWindows( $this->configuration );
-        }
-    }
 }
 ?>
