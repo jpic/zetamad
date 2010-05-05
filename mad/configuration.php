@@ -205,7 +205,12 @@ class madConfiguration extends madObject {
                         }
                         break;
                     case ezcConfigurationIniItem::SETTING:
-                        eval( '$this[$name][$element->group][$element->setting]'. $element->dimensions. ' = $element->value;' );
+                        $isPath = stripos( $element->dimensions, 'path' ) !== false || stripos( $element->setting, 'path' ) !== false;
+                        if ( $isPath = madFramework::isWindows(  ) ) {
+                            $value = str_replace( '\\', '/' );
+                        }
+
+                        eval( '$this[$name][$element->group][$element->setting]'. $element->dimensions. ' = $value;' );
                         break;
                 }
             }

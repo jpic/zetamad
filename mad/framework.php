@@ -21,7 +21,7 @@ class madFramework {
         if ( file_exists( $applicationsConfigurationPath ) ) {
             $this->configuration = require $applicationsConfigurationPath;
         } else {
-            $this->configuration = parse_ini_file( $entryApplicationPath . '/etc/applications.ini', true );
+            $this->loadIniConfiguration( $entryApplicationPath . '/etc/applications.ini' );
             $this->configuration['mad']['refreshConfiguration'] = true;
         }
         
@@ -33,7 +33,7 @@ class madFramework {
             $this->configuration['mad']['refreshConfiguration'] = false;
         } elseif ( $this->configuration['mad']['refreshConfiguration'] ) {
             // force configuration reload
-            $this->configuration = parse_ini_file( $entryApplicationPath . '/etc/applications.ini', true );
+            $this->loadIniConfiguration( $entryApplicationPath . '/etc/applications.ini' );
         }
 
         // auto make cache director
@@ -340,5 +340,28 @@ class madFramework {
     }
 
 
+    static public function fixForWindows( $array ) {
+        foreach( $array as $key => $value ) {
+            if ( is_array( $value ) ) {
+                self::fixForWindows( new ArrayObject( $array ) );
+            } elseif ( is_object( $value ) ) {
+                self::fixForWindows( $value );
+            } else {
+                $array[$key] = str_replace( '\\', '/', $value );
+            }
+        }
+    }
+
+    static public function isWindows(  ) {
+        return PHP_OS=='WINNT' or PHP_OS=='WIN32' or PHP_OS=='Windows';
+    }
+
+    public function loadIniConfiguration( $file ) {
+        $this->configuration = new madObject( parse_ini_file( $file, true ) );
+
+        if ( self::isWindows(  ) ) {
+            self::fixForWindows( $this->configuration );
+        }
+    }
 }
 ?>
