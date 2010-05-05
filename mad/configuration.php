@@ -33,7 +33,7 @@ class madConfiguration extends madObject {
 
         foreach( glob( "{$this->path}/*" ) as $file ) {
             // filename without extension
-            $name = substr( substr( $file, strrpos( $file, DIRECTORY_SEPARATOR ) + 1 ), 0, -4 );
+            $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
 
             // skip applications which is already set
             if ( isset( $this['applications'] ) && $name == 'applications' ) {
@@ -55,7 +55,7 @@ class madConfiguration extends madObject {
 
     public function refresh( $entryApplicationPath ) {
         // figure the entry application name
-        $entryApplicationName = substr( $entryApplicationPath, strrpos( $entryApplicationPath, DIRECTORY_SEPARATOR ) + 1 );
+        $entryApplicationName = substr( $entryApplicationPath, strrpos( $entryApplicationPath, '/' ) + 1 );
 
         // save entry app repositories and installed applications because 'applications' 
         // will be emptied
@@ -67,22 +67,22 @@ class madConfiguration extends madObject {
 
         // discover paths to applications in configured repositories
         foreach( $repositories as $path ) {
-            // prepend / if necessary
-            $path = $path[0] == DIRECTORY_SEPARATOR ? $path : DIRECTORY_SEPARATOR . $path;
             // prepend application path and get the absolute path
-            $path = realpath( $entryApplicationPath . $path );
+            $path = $entryApplicationPath . '/' . $path;
 
             // find all configuration paths in this repository path
             $configurationPaths = array(  );
             
             $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $path ) );
             foreach( $fileIterator as $fileInfo ) {
+                $filePath = madFramework::fixPath( $file->getPath(  ) );
+
                 // searching for directories named etc
-                if ( substr( $fileInfo->getPath(  ), -3 ) != 'etc' ) {
+                if ( substr( $filePath, -3 ) != 'etc' ) {
                     continue;
                 }
                 
-                $relativePath = madFramework::getRelativePath( $fileInfo->getPath(  ), $path );
+                $relativePath = madFramework::getRelativePath( $filePath, $path );
                 
                 // if the relative path contains "tests" then its in unit 
                 // tests, skip.
@@ -97,22 +97,22 @@ class madConfiguration extends madObject {
                 }
 
                 // don't add paths twice
-                if ( in_array( $fileInfo->getPath(  ), $configurationPaths ) ) {
+                if ( in_array( $filePath, $configurationPaths ) ) {
                     continue;
                 }
 
-                $configurationPaths[] = $fileInfo->getPath(  );
+                $configurationPaths[] = $filePath;
             }
 
             foreach( $configurationPaths as $configurationPath ) {
                 // strip trailing / if necessary
-                $configurationPath = substr( $configurationPath, -1 ) == DIRECTORY_SEPARATOR ? substr( $configurationPath, 0, -1 ) : $configurationPath;
+                $configurationPath = substr( $configurationPath, -1 ) == '/' ? substr( $configurationPath, 0, -1 ) : $configurationPath;
 
                 // get application path
-                $applicationPath = realpath( $configurationPath . '/..' );
+                $applicationPath = $configurationPath . '/..';
 
                 // get current application name
-                $applicationName = substr( $applicationPath, strrpos( $applicationPath, DIRECTORY_SEPARATOR ) + 1 );
+                $applicationName = substr( $applicationPath, strrpos( $applicationPath, '/' ) + 1 );
 
                 // skip uninstalled applications
                 if ( !in_array( $applicationName, $installedApplications ) ) continue;
@@ -149,19 +149,15 @@ class madConfiguration extends madObject {
     }
     
     public function getSetting( $group, $section, $name, $default = null ) {
-        if ( !isset( $this[$group] ) ) {
-            return $default;
+        if ( isset( $this[$group] ) && isset( $this[$group][$section] ) && isset( $this[$group][$section][$name] ) ) {
+            return $this[$group][$section][$name];
         }
-        
-        if ( !isset( $this[$group][$section] ) ) {
+
+        if ( !is_null( $default ) ) {
             return $default;
         }
 
-        if ( !isset( $this[$group][$section][$name] ) ) {
-            return $default;
-        }
-
-        return $this[$group][$section][$name];
+        trigger_error( "Setting [$group][$section][$name] does not exist, and no default setting was set.", E_USER_ERROR );
     }
 
     public function getClassApplicationName( $className ) {
@@ -176,10 +172,8 @@ class madConfiguration extends madObject {
 
     public function getPathSetting( $group, $section, $name ) {
         $path = $this->getSetting( $group, $section, $name );
-        $realPath = realpath( join( DIRECTORY_SEPARATOR, array( 
-            ENTRY_APP_PATH,
-            $path
-        ) ) );
+
+        $realPath = ENTRY_APP_PATH . '/' . $path;
 
         if ( !$realPath ) {
             trigger_error( "Configured path deos not exists $path" );
@@ -190,7 +184,7 @@ class madConfiguration extends madObject {
 
     public function parseIni( $file ) {
         $parser = new ezcConfigurationIniParser( ezcConfigurationIniParser::PARSE, $file );
-        $name = substr( substr( $file, strrpos( $file, DIRECTORY_SEPARATOR ) + 1 ), 0, -4 );
+        $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
 
         if ( !isset( $this[$name] ) ) {
             $this[$name] = new madObject();
@@ -213,10 +207,12 @@ class madConfiguration extends madObject {
                 throw new ezcConfigurationParseErrorException( $element->file, $element->line, $element->description );
             }
         }
+
+        madFramework::fixPathArray( $this[$name] );
     }
 
     public function parsePhp( $file ) {
-        $name = substr( substr( $file, strrpos( $file, DIRECTORY_SEPARATOR ) + 1 ), 0, -4 );
+        $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
         $this[$name] = require $file;
     }
 

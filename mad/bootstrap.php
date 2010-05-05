@@ -72,7 +72,7 @@ function stripTrailingSlashes( &$array ) {
         if ( is_array( $value ) || $value instanceof Traversable ) {
             stripTrailingSlashes( $value );
         } else {
-            $value = substr( $value, -1 ) == DIRECTORY_SEPARATOR ? substr( $value, 0, -1 ) : $value;
+            $value = substr( $value, -1 ) == '/' ? substr( $value, 0, -1 ) : $value;
         }
     }
 }
@@ -156,7 +156,7 @@ function findClasses( $configuration ) {
 
             // skip tests
             $relativePath = madFramework::getRelativePath( 
-                $fileInfo->getPath(  ) . DIRECTORY_SEPARATOR . $fileInfo->getBasename(  ) , 
+                $fileInfo->getPath(  ) . '/' . $fileInfo->getBasename(  ) , 
                 ENTRY_APP_PATH
             );
 
@@ -217,7 +217,7 @@ function findStaticFiles( $configuration ) {
             );
 
             foreach( $fileIterator as $fileInfo ) {
-                $absolutePath = $fileInfo->getRealPath(  );
+                $absolutePath = madFramework::fixPath( $fileInfo->getRealPath(  ) );
                 $relativePath = substr( $absolutePath, strlen( $staticPath ) );
 
                 $configuration['staticFiles']['paths'][$relativePath] = 
@@ -233,7 +233,7 @@ function allPathsRelative( &$configuration ) {
         if ( is_array( $value ) || $value instanceof madObject ) {
             allPathsRelative( $value );
         } else {
-            if ( strlen( $value ) && $value[0] == DIRECTORY_SEPARATOR && file_exists( $value ) ) {
+            if ( strlen( $value ) && $value[0] == '/' && file_exists( $value ) ) {
                 $value = madFramework::getRelativePath( $value, ENTRY_APP_PATH );
             }
         }

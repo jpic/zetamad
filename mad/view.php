@@ -212,10 +212,10 @@ class madView extends ezcMvcView {
         foreach( $testPaths as $templatePath ) {
             // handle relative path
             if ( substr( $templatePath, 0, 1 ) != DIRECTORY_SEPARATOR ) {
-                $templatePath = realpath( implode( DIRECTORY_SEPARATOR, array( 
+                $templatePath = implode( '/', array( 
                     ENTRY_APP_PATH,
                     $templatePath,
-                ) ) );
+                ) );
             }
 
             if ( file_exists( $templatePath ) ) {
@@ -371,10 +371,10 @@ class madView extends ezcMvcView {
         foreach( $testPaths as $templatePath ) {
             // handle relative path
             if ( substr( $templatePath, 0, 1 ) != DIRECTORY_SEPARATOR ) {
-                $templatePath = realpath( implode( DIRECTORY_SEPARATOR, array( 
+                $templatePath = implode( '/', array( 
                     ENTRY_APP_PATH,
                     $templatePath,
-                ) ) );
+                ) );
             }
 
             if ( file_exists( $templatePath ) ) {

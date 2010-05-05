@@ -15,13 +15,15 @@ class madFramework {
     public $refresh = false;
 
     public function __construct( $entryApplicationPath ) {
-        $this->entryApplicationPath = $entryApplicationPath;
+        $this->entryApplicationPath = madFramework::fixPath( $entryApplicationPath );
 
-        $applicationsConfigurationPath = $entryApplicationPath . '/cache/etc/applications.php';
+        define( 'ENTRY_APP_PATH', $entryApplicationPath );
+
+        $applicationsConfigurationPath = $this->entryApplicationPath . '/cache/etc/applications.php';
         if ( file_exists( $applicationsConfigurationPath ) ) {
             $this->configuration = require $applicationsConfigurationPath;
         } else {
-            $this->configuration = parse_ini_file( $entryApplicationPath . '/etc/applications.ini', true );
+            $this->configuration = parse_ini_file( $this->entryApplicationPath . '/etc/applications.ini', true );
             $this->configuration['mad']['refreshConfiguration'] = true;
         }
         
@@ -33,7 +35,7 @@ class madFramework {
             $this->configuration['mad']['refreshConfiguration'] = false;
         } elseif ( $this->configuration['mad']['refreshConfiguration'] ) {
             // force configuration reload
-            $this->configuration = parse_ini_file( $entryApplicationPath . '/etc/applications.ini', true );
+            $this->configuration = parse_ini_file( $this->entryApplicationPath . '/etc/applications.ini', true );
         }
 
         // auto make cache director
@@ -81,9 +83,6 @@ class madFramework {
             $registry->signals->send( 'configurationRefreshed', array( $registry->configuration ) );
             // cache the parsed configuration for performances
             $registry->configuration->write( $this->entryApplicationPath . '/cache/etc' );
-            
-            $this->setupDatabase(  );
-            $this->setupModel(  );
         } else {
             $this->setupApplications(  );
             $this->setupConfiguration( $this->entryApplicationPath . '/cache/etc' );
@@ -118,8 +117,8 @@ class madFramework {
         );
     
         foreach( $this->configuration['mad']['includePath'] as $relativePath ) {
-            if ( strpos( $relativePath, DIRECTORY_SEPARATOR ) !== 0 ) {
-                $relativePath = DIRECTORY_SEPARATOR . $relativePath;
+            if ( strpos( $relativePath, '/' ) !== 0 ) {
+                $relativePath = '/' . $relativePath;
             }
 
             $paths[] = $this->entryApplicationPath . $relativePath;
@@ -129,7 +128,7 @@ class madFramework {
     }
 
     public function setupAutoload(  ) {
-        self::$autoload = require join( DIRECTORY_SEPARATOR, array(  
+        self::$autoload = require join( '/', array(  
             $this->entryApplicationPath,
             'cache',
             'autoload.php',
@@ -140,10 +139,7 @@ class madFramework {
 
     static public function autoload( $class ) {
         if ( isset( self::$autoload[$class] ) ) {
-            $path = realpath( join( DIRECTORY_SEPARATOR, array( 
-                ENTRY_APP_PATH,
-                self::$autoload[$class]
-            ) ) );
+            $path = ENTRY_APP_PATH . '/' . self::$autoload[$class];
 
             if ( !file_exists( $path ) ) {
                 trigger_error( "Cannot load $class from $path which does not exists", E_USER_ERROR );
@@ -220,7 +216,8 @@ class madFramework {
                 continue;
             }
 
-            $relativePath = madFramework::getRelativePath( $fileInfo->getPath(  ) . DIRECTORY_SEPARATOR . $fileInfo->getBaseName(), $this->entryApplicationPath );
+            $path = madFramework::fixPath( $fileInfo->getPath(  ) . '/' . $fileInfo->getBaseName() );
+            $relativePath = madFramework::getRelativePath( $path, $this->entryApplicationPath );
              
             // skip tests
             if ( strpos( $relativePath, 'tests' ) !== false ) {
@@ -268,13 +265,9 @@ class madFramework {
 
     public function setupApplications(  ) {
         foreach( $this->configuration as $name => $application ) {
-            $bootstrap = realpath( join( DIRECTORY_SEPARATOR, array( 
-                $this->entryApplicationPath,
-                $application['path'],
-                'bootstrap.php',
-            ) ) );
+            $bootstrap = $application['path'] . '/bootstrap.php';
 
-            if ( file_exists( $bootstrap ) && $bootstrap != __FILE__  && $bootstrap != $this->entryApplicationPath . DIRECTORY_SEPARATOR . 'bootstrap.php' ) {
+            if ( file_exists( $bootstrap ) && $bootstrap != $this->entryApplicationPath . '/bootstrap.php' ) {
                 require $bootstrap;
             }
         }
@@ -282,17 +275,17 @@ class madFramework {
 
     static public function getRelativePath( $path, $compareTo ) {
         // clean arguments by removing trailing and prefixing slashes
-        if ( substr( $path, -1 ) == DIRECTORY_SEPARATOR ) {
+        if ( substr( $path, -1 ) == '/' ) {
             $path = substr( $path, 0, -1 );
         }
-        if ( substr( $path, 0, 1 ) == DIRECTORY_SEPARATOR ) {
+        if ( substr( $path, 0, 1 ) == '/' ) {
             $path = substr( $path, 1 );
         }
 
-        if ( substr( $compareTo, -1 ) == DIRECTORY_SEPARATOR ) {
+        if ( substr( $compareTo, -1 ) == '/' ) {
             $compareTo = substr( $compareTo, 0, -1 );
         }
-        if ( substr( $compareTo, 0, 1 ) == DIRECTORY_SEPARATOR ) {
+        if ( substr( $compareTo, 0, 1 ) == '/' ) {
             $compareTo = substr( $compareTo, 1 );
         }
 
@@ -303,8 +296,8 @@ class madFramework {
         }
 
         $relative  = array(  );
-        $pathParts = explode( DIRECTORY_SEPARATOR, $path );
-        $compareToParts = explode( DIRECTORY_SEPARATOR, $compareTo );
+        $pathParts = explode( '/', $path );
+        $compareToParts = explode( '/', $compareTo );
 
         foreach( $compareToParts as $index => $part ) {
             if ( isset( $pathParts[$index] ) && $pathParts[$index] == $part ) {
@@ -322,9 +315,31 @@ class madFramework {
             $relative[] = $part;
         }
 
-        return implode( DIRECTORY_SEPARATOR, $relative );
+        return implode( '/', $relative );
     }
 
+    static public function fixPath( $path ) {
+        if ( DIRECTORY_SEPARATOR == '\\' ) {
+            $path = str_replace( DIRECTORY_SEPARATOR, '/', $path );
+        }
+        return $path;
+    }
 
+    static public function fixPathArray( ArrayObject $array ) {
+        if ( DIRECTORY_SEPARATOR == '/' ) {
+            retrun true;
+        }
+
+        foreach( $array as $key => $value ) {
+            if ( is_array( $value ) ) {
+                $this[$key] = new ArrayObject( $array );
+                self::fixPathArray( $this[$key] );
+            } elseif ( $value instanceof Traversable ) {
+                self::fixPathArray( $this[$key] );
+            } else {
+                $this[$key] = str_replace( DIRECTORY_SEPARATOR, '/', $value );
+            }
+        }
+    }
 }
 ?>
