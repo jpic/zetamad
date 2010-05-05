@@ -118,8 +118,8 @@ class madFramework {
         );
     
         foreach( $this->configuration['mad']['includePath'] as $relativePath ) {
-            if ( strpos( $relativePath, DIRECTORY_SEPARATOR ) !== 0 ) {
-                $relativePath = DIRECTORY_SEPARATOR . $relativePath;
+            if ( strpos( $relativePath, '/' ) !== 0 ) {
+                $relativePath = '/' . $relativePath;
             }
 
             $paths[] = $this->entryApplicationPath . $relativePath;
@@ -129,7 +129,7 @@ class madFramework {
     }
 
     public function setupAutoload(  ) {
-        self::$autoload = require join( DIRECTORY_SEPARATOR, array(  
+        self::$autoload = require join( '/', array(  
             $this->entryApplicationPath,
             'cache',
             'autoload.php',
@@ -140,7 +140,7 @@ class madFramework {
 
     static public function autoload( $class ) {
         if ( isset( self::$autoload[$class] ) ) {
-            $path = realpath( join( DIRECTORY_SEPARATOR, array( 
+            $path = realpath( join( '/', array( 
                 ENTRY_APP_PATH,
                 self::$autoload[$class]
             ) ) );
@@ -220,7 +220,7 @@ class madFramework {
                 continue;
             }
 
-            $relativePath = madFramework::getRelativePath( $fileInfo->getPath(  ) . DIRECTORY_SEPARATOR . $fileInfo->getBaseName(), $this->entryApplicationPath );
+            $relativePath = madFramework::getRelativePath( $fileInfo->getPath(  ) . '/' . $fileInfo->getBaseName(), $this->entryApplicationPath );
              
             // skip tests
             if ( strpos( $relativePath, 'tests' ) !== false ) {
@@ -268,19 +268,19 @@ class madFramework {
 
     public function setupApplications(  ) {
         foreach( $this->configuration as $name => $application ) {
-            $bootstrap = realpath( join( DIRECTORY_SEPARATOR, array( 
+            $bootstrap = realpath( join( '/', array( 
                 $this->entryApplicationPath,
                 $application['path'],
                 'bootstrap.php',
             ) ) );
 
-            if ( file_exists( $bootstrap ) && $bootstrap != __FILE__  && $bootstrap != $this->entryApplicationPath . DIRECTORY_SEPARATOR . 'bootstrap.php' ) {
+            if ( file_exists( $bootstrap ) && $bootstrap != __FILE__  && $bootstrap != $this->entryApplicationPath . '/' . 'bootstrap.php' ) {
                 require $bootstrap;
             }
         }
     }
 
-    static public function getRelativePath( $path, $compareTo, $separator = DIRECTORY_SEPARATOR ) {
+    static public function getRelativePath( $path, $compareTo, $separator = '/' ) {
         // support windows
         if ( $separator == '\\' ) {
             if ( preg_match( '/^[a-zA-Z]:\\\\/', $compareTo ) ) {
@@ -336,7 +336,7 @@ class madFramework {
             $relative[] = $part;
         }
 
-        return implode( DIRECTORY_SEPARATOR, $relative );
+        return implode( '/', $relative );
     }
 
 

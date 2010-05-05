@@ -33,7 +33,7 @@ class madConfiguration extends madObject {
 
         foreach( glob( "{$this->path}/*" ) as $file ) {
             // filename without extension
-            $name = substr( substr( $file, strrpos( $file, DIRECTORY_SEPARATOR ) + 1 ), 0, -4 );
+            $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
 
             // skip applications which is already set
             if ( isset( $this['applications'] ) && $name == 'applications' ) {
@@ -55,7 +55,7 @@ class madConfiguration extends madObject {
 
     public function refresh( $entryApplicationPath ) {
         // figure the entry application name
-        $entryApplicationName = substr( $entryApplicationPath, strrpos( $entryApplicationPath, DIRECTORY_SEPARATOR ) + 1 );
+        $entryApplicationName = substr( $entryApplicationPath, strrpos( $entryApplicationPath, '/' ) + 1 );
 
         // save entry app repositories and installed applications because 'applications' 
         // will be emptied
@@ -68,7 +68,7 @@ class madConfiguration extends madObject {
         // discover paths to applications in configured repositories
         foreach( $repositories as $path ) {
             // prepend / if necessary
-            $path = $path[0] == DIRECTORY_SEPARATOR ? $path : DIRECTORY_SEPARATOR . $path;
+            $path = $path[0] == '/' ? $path : '/' . $path;
             // prepend application path and get the absolute path
             $path = realpath( $entryApplicationPath . $path );
 
@@ -106,13 +106,13 @@ class madConfiguration extends madObject {
 
             foreach( $configurationPaths as $configurationPath ) {
                 // strip trailing / if necessary
-                $configurationPath = substr( $configurationPath, -1 ) == DIRECTORY_SEPARATOR ? substr( $configurationPath, 0, -1 ) : $configurationPath;
+                $configurationPath = substr( $configurationPath, -1 ) == '/' ? substr( $configurationPath, 0, -1 ) : $configurationPath;
 
                 // get application path
                 $applicationPath = realpath( $configurationPath . '/..' );
 
                 // get current application name
-                $applicationName = substr( $applicationPath, strrpos( $applicationPath, DIRECTORY_SEPARATOR ) + 1 );
+                $applicationName = substr( $applicationPath, strrpos( $applicationPath, '/' ) + 1 );
 
                 // skip uninstalled applications
                 if ( !in_array( $applicationName, $installedApplications ) ) continue;
@@ -176,7 +176,7 @@ class madConfiguration extends madObject {
 
     public function getPathSetting( $group, $section, $name ) {
         $path = $this->getSetting( $group, $section, $name );
-        $realPath = realpath( join( DIRECTORY_SEPARATOR, array( 
+        $realPath = realpath( join( '/', array( 
             ENTRY_APP_PATH,
             $path
         ) ) );
@@ -221,7 +221,7 @@ class madConfiguration extends madObject {
     }
 
     public function parsePhp( $file ) {
-        $name = substr( substr( $file, strrpos( $file, DIRECTORY_SEPARATOR ) + 1 ), 0, -4 );
+        $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
         $this[$name] = require $file;
     }
 
