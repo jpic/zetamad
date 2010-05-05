@@ -250,7 +250,7 @@ class madModel {
         $statement->execute( $arguments );
 
         $ids = array();
-        while( $id = $statement->fetchColumn(  ) ) {
+        while( $id = $statement->fetchColumn( 0 ) ) {
             $ids[] = $id;
         }
 
