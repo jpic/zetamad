@@ -1,11 +1,11 @@
 <link rel="stylesheet" type="text/css" href="<?php echo $this->url( 'mad.static', array( 'path' => '/css/uni-form.css' ) ) ; ?>" />
-<script type="text/javascript" src="<?php echo $this->url( 'mad.static', array( 'path' => '/js/uni-form.jquery.js' ) ) ; ?>"></script>
-
 <style type="text/css">
+.uniForm fieldset { margin: 0; padding: 0; }
+.uniForm label { font-size: 11px; color: #000; }
 .uniForm .formset .textInput, 
 .uniForm .formset .blockLabels .textInput, 
 .uniForm .formset .blockLabels .fileUpload {
-    width: 98%;
+    width: 200px !important;
 }
 .formsetDeleteColumn {
     text-align: center;
@@ -19,6 +19,7 @@
 }
 .uniForm .inlineLabels .formHint {
     margin-left:27%;
+    line-height: 21px;
 }
 .uniForm .inlineLabels textarea {
     height:12em;
@@ -32,13 +33,8 @@ table.formset {
     width: 99%;
 }
 
-.uniForm table.formset  textarea {
-    height:18em;
-    width:99%;
-}
-
 form.uniForm .required {
-    font-size: 16.35px;
+    font-size: 12px;
 }
 
 table.multipleField {
@@ -55,18 +51,17 @@ table.multipleField input[type=text].textInput {
 }
 
 </style>
-
+<script type="text/javascript" src="<?php echo $this->url( 'mad.static', array( 'path' => '/js/uni-form.jquery.js' ) ) ; ?>"></script>
 <?php $widgets = array(  ) ?>
 
 <form action="" method="post" class="uniForm" enctype="multipart/form-data">
     <?php if ( isset( $this->form->valid ) && !$this->form->valid ): ?>
     <div id="errorMsg">
-        <h3>Pour enregistrer, révisez les valeurs des champs entourés de rouge.</h3>
+        <h2>Pour enregistrer, révisez les valeurs des champs entourés de rouge.</h2>
     </div>
     <?php endif ?>
 
-    <fieldset class="inlineLabels">
-        <legend><?php echo ucfirst( $this->form->label ) ?></legend>
+        <h2><?php echo ucfirst( $this->form->label ) ?></h2>
         <?php foreach( $this->form->fields->options as $name => $field ):
             // skip fields without label which should not be displayed
             if ( !isset( $field->label ) ) continue;
@@ -74,6 +69,7 @@ table.multipleField input[type=text].textInput {
             if ( $field instanceof madForm ) continue;
         ?>
     
+        <fieldset class="inlineLabels">
         <div class="ctrlHolder <?php if ( isset( $field->errors ) ) echo 'error' ?>">
             <?php 
             if ( isset( $field->errors ) ) {
@@ -198,8 +194,8 @@ table.multipleField input[type=text].textInput {
     if ( isset( $this->form->formsets ) ):
         foreach( $this->form->formsets->options as $formsetName => $formset ):
     ?>
+    <h2><?php echo ucfirst( $formset->label ) ?></h2>
     <fieldset class="formset_<?php echo $formsetName; ?> formset">
-        <legend><?php echo ucfirst( $formset->label ) ?></legend>
         <table class="formset">
             <thead>
                 <tr>

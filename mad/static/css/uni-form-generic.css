@@ -99,12 +99,10 @@
     .uniForm label em,
     .uniForm .label em,
     .uniForm .blockLabels label em,
-    .uniForm .blockLabels .label em{ position: absolute; left: -7px; }
-    
-    /* Required fields asterisk styling for .inlineLabels */
+    .uniForm .blockLabels .label em,
+    .uniForm .inlineLabels .label em,
     .uniForm .inlineLabels label em,
-    .uniForm .inlineLabels .label em{ display: block; position: absolute; left: auto; right: 0; font-style: normal; font-weight: bold; }
-    .uniForm .inlineLabel em{ position: absolute; left: 7px; }
+    .uniForm .inlineLabel em { color:#FF0000; font-size:11px; vertical-align:super;}
 
 /* ------------------------------------------------------------------------------ */
 
