@@ -1,11 +1,11 @@
-<?php if ( !count( $this->object->commentSet ) ): ?>
+<?php if ( count( $this->object->commentSet ) ): ?>
 <div class="product-tab">
     <div style="clear: left; width: 735px; overflow: auto; margin: 15px 0pt;">
         <div class="title-tab" style="padding-bottom: 5px; margin-bottom: 0px;">Commentaires clients</div>
         <?php if ( !isset( $this->object['comments'] ) ): ?>
         <p>Aucun commentaire n'a &eacute;t&eacute; publi&eacute; pour le moment.</p>
         <?php else: ?>
-            <?php foreach( $this->iterate( $this->object['comments'] ) as $comment ): ?>
+            <?php foreach( $this->object->commentSet as $comment ): ?>
             <p><?php $this->e( $comment['comment'] ) ?></p>
             <p><?php $this->e( $comment['user']['firstName'] . ' ' . $comment['user']['lastName'] ) ?></p>
             <?php endforeach ?>
@@ -24,3 +24,4 @@
         <?php endif ?>
     </div>
 </div>
+<?php endif ?>
