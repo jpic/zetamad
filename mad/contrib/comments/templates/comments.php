@@ -1,9 +1,7 @@
-<?php var_dump( $this->object->commentSet ) ?>
-
-<?php if ( !isset( $this->object['comments'] ) ): ?>
+<?php if ( !count( $this->object->commentSet ) ): ?>
 <p>Pas encore de commentaire</p>
 <?php else: ?>
-    <?php foreach( $this->iterate( $this->object['comments'] ) as $comment ): ?>
+    <?php foreach( $this->iterate( $this->object->commentSet ) as $comment ): ?>
     <p><?php $this->e( $comment['comment'] ) ?></p>
     <p><?php $this->e( $comment['user']['firstName'] . ' ' . $comment['user']['lastName'] ) ?></p>
     <?php endforeach ?>
