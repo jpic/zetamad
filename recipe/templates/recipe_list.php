@@ -14,8 +14,9 @@
 .recipe-block { font-size: 11px; width: 238px; float: left; padding: 0 9px 15px 0; }
 .recipe-block .infos a { text-decoration: underline; }
 .recipe-details a { color: #b0aaac; }
-.recipe-details a.edit { color: #DE5161; font-size: 10px; text-decoration: underline; font-weight: normal;}
-.recipe-details a.editrecipe { color: #DE5161;padding: 10px 0; border-top: 1px solid #dadada; font-size: 10px; text-decoration: underline; font-weight: normal;}
+.recipe-details a.edit { text-decoration: underline; color: #DE5161; font-size: 10px; text-decoration: underline; font-weight: normal;}
+.recipe-details a.editrecipe { text-decoration: underline; dislay: block; color: #DE5161;padding: 5px 0; border-top: 1px solid #dadada; font-size: 10px; text-decoration: underline; font-weight: normal; margin-top: 5px }
+.recipe-details a.editrecipe:hover { background: #f6f6f6; }
 .recipe-block p.link { padding: 5px 0; color: #b0aaac; font-size: 10px; font-family: Verdana;}
 .recipe-details { border: 1px solid #d3d3d3; padding: 5px; }
 .recipe-details img.picture { width: 226px; height: 226px; vertical-align: bottom; }
@@ -58,7 +59,7 @@
 			<?php echo $object['profile']['name'] ?> &bull;
 		</a>
 		<?php if ( isset( $object['profile'] ) ): ?>
-			<a class="edit" href="<?php echo $this->url( 'profile.edit', $object['profile'] ) ?>">( Modifier le profil )</a>
+			<a class="edit" href="<?php echo $this->url( 'profile.edit', $object['profile'] ) ?>">( Modifier le profil? )</a>
 		<?php endif ?>
         </p>
         <?php endif ?>
