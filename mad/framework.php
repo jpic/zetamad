@@ -342,12 +342,12 @@ class madFramework {
 
         foreach( $array as $key => $value ) {
             if ( is_array( $value ) ) {
-                $this[$key] = new ArrayObject( $array );
-                self::fixPathArray( $this[$key] );
+                $array[$key] = new ArrayObject( $array );
+                self::fixPathArray( $array[$key] );
             } elseif ( $value instanceof Traversable ) {
-                self::fixPathArray( $this[$key] );
+                self::fixPathArray( $array[$key] );
             } else {
-                $this[$key] = str_replace( DIRECTORY_SEPARATOR, '/', $value );
+                $array[$key] = str_replace( DIRECTORY_SEPARATOR, '/', $value );
             }
         }
     }
