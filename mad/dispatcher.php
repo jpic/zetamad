@@ -135,7 +135,12 @@ class madHttpDispatcher {
 
         foreach( $this->configuration->getSetting( 'applications', 'mad', 'viewPlugins', array(  ) ) as $handlerClass ) {
             $reflectionClass = new ReflectionClass( $handlerClass );
-            $view->plugins[] = $reflectionClass->newInstance(  );
+            $plugin = $reflectionClass->newInstance();
+            $plugin->request = $request;
+            $plugin->result = $result;
+            $plugin->routeConfiguration = $routeConfiguration;
+            $plugin->routingInformation = $routingInformation;
+            $view->plugins[] = $plugin;
         }
 
         /**
