@@ -145,9 +145,6 @@ class madConfiguration extends madObject {
 
     public function write( $cacheDirectory ) {
         foreach( $this as $name => $object ) {
-            if ( !is_object( $object ) ) {
-                var_dump($name, $object );
-            }
             $body = sprintf(
                 '<?php return %s ?>',
                 var_export( $object->objectsToArray(), true )

@@ -12,10 +12,12 @@ class madFramework {
     static public $autoload;
     public $configuration;
     public $entryApplicationPath;
+    public $entryApplicationName;
     public $refresh = false;
 
     public function __construct( $entryApplicationPath ) {
         $this->entryApplicationPath = madFramework::fixPath( $entryApplicationPath );
+        $this->entryApplicationName = substr( $this->entryApplicationPath, strrpos( $this->entryApplicationPath, '/' ) + 1 );
 
         define( 'ENTRY_APP_PATH', $entryApplicationPath );
 
@@ -265,9 +267,13 @@ class madFramework {
 
     public function setupApplications(  ) {
         foreach( $this->configuration as $name => $application ) {
-            $bootstrap = $this->entryApplicationPath . '/' . $application['path'] . '/bootstrap.php';
+            if ( $name == $this->entryApplicationName ) {
+                continue;
+            }
 
-            if ( file_exists( $bootstrap ) && $bootstrap != $this->entryApplicationPath . '/bootstrap.php' ) {
+            $bootstrap = $this->entryApplicationPath . '/' . $application['path'] . '/bootstrap.php';
+        
+            if ( file_exists( $bootstrap ) ) {
                 require $bootstrap;
             }
         }
@@ -321,6 +327,10 @@ class madFramework {
     static public function fixPath( $path ) {
         if ( DIRECTORY_SEPARATOR == '\\' ) {
             $path = str_replace( DIRECTORY_SEPARATOR, '/', $path );
+        }
+
+        if ( substr( $path, -1 ) == '/' ) {
+            $path = substr( $path, 0, -1 );
         }
         return $path;
     }

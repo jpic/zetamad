@@ -67,17 +67,6 @@ function setRegistryRouter( $router ) {
 }
 $registry->signals->connect( 'routerCreated', 'setRegistryRouter' );
 
-function stripTrailingSlashes( &$array ) {
-    foreach( $array as $name => $value ) {
-        if ( is_array( $value ) || $value instanceof Traversable ) {
-            stripTrailingSlashes( $value );
-        } else {
-            $value = substr( $value, -1 ) == '/' ? substr( $value, 0, -1 ) : $value;
-        }
-    }
-}
-$registry->signals->connect( 'configurationRefreshed', 'stripTrailingSlashes' );
-
 function setRoutesApplication( $configuration ) {
     foreach( $configuration['routes'] as $name => $route ) {
         $applicationName = substr( $name, 0, strrpos( $name, '.' ) );
@@ -141,8 +130,6 @@ function findClasses( $configuration ) {
             $configuration['applications'][$name]['classes'] = new madObject;
         }
 
-        var_dump( $path );
-
         $fileIterator = new RecursiveIteratorIterator( 
             new RecursiveDirectoryIterator( 
                 $path,
@@ -197,6 +184,17 @@ function findClasses( $configuration ) {
 }
 $registry->signals->connect( 'configurationRefreshed', 'findClasses' );
 
+function stripTrailingSlashes( &$array ) {
+    foreach( $array as $name => $value ) {
+        if ( is_array( $value ) || $value instanceof Traversable ) {
+            stripTrailingSlashes( $value );
+        } else {
+            $value = substr( $value, -1 ) == '/' ? substr( $value, 0, -1 ) : $value;
+        }
+    }
+}
+$registry->signals->connect( 'configurationRefreshed', 'stripTrailingSlashes' );
+
 function findStaticFiles( $configuration ) {
     if ( !isset( $configuration['staticFiles'] ) ) {
         $configuration['staticFiles'] = new madObject;
@@ -207,7 +205,7 @@ function findStaticFiles( $configuration ) {
 
     foreach( $configuration['applications'] as $name => $application ) {
         $path       = $configuration->getPathSetting( 'applications', $name, 'path' );
-        $staticPath = $path . '/static';
+        $staticPath = madFramework::fixPath( realpath( $path . '/static' ) );
         
         if ( is_dir( $staticPath ) ) {
             $fileIterator = new RecursiveIteratorIterator( 
