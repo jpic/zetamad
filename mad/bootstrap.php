@@ -141,7 +141,8 @@ function findClasses( $configuration ) {
             $configuration['applications'][$name]['classes'] = new madObject;
         }
 
-        $classes = array(  );
+        var_dump( $path );
+
         $fileIterator = new RecursiveIteratorIterator( 
             new RecursiveDirectoryIterator( 
                 $path,

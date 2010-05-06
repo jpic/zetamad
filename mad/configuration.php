@@ -73,10 +73,14 @@ class madConfiguration extends madObject {
             // find all configuration paths in this repository path
             $configurationPaths = array(  );
             
-            $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $path ) );
-            foreach( $fileIterator as $fileInfo ) {
-                $filePath = madFramework::fixPath( $file->getPath(  ) );
+            $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( 
+                $path,
+                RecursiveDirectoryIterator::FOLLOW_SYMLINKS
+            ) );
 
+            foreach( $fileIterator as $fileInfo ) {
+                $filePath = madFramework::fixPath( $fileInfo->getPath(  ) );
+                
                 // searching for directories named etc
                 if ( substr( $filePath, -3 ) != 'etc' ) {
                     continue;
@@ -110,6 +114,12 @@ class madConfiguration extends madObject {
 
                 // get application path
                 $applicationPath = $configurationPath . '/..';
+
+                // remove all ..
+                $applicationPath = realpath( $applicationPath );
+
+                // fix path
+                $applicationPath = madFramework::fixPath( $applicationPath );
 
                 // get current application name
                 $applicationName = substr( $applicationPath, strrpos( $applicationPath, '/' ) + 1 );

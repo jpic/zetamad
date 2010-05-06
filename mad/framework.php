@@ -265,7 +265,7 @@ class madFramework {
 
     public function setupApplications(  ) {
         foreach( $this->configuration as $name => $application ) {
-            $bootstrap = $application['path'] . '/bootstrap.php';
+            $bootstrap = $this->entryApplicationPath . '/' . $application['path'] . '/bootstrap.php';
 
             if ( file_exists( $bootstrap ) && $bootstrap != $this->entryApplicationPath . '/bootstrap.php' ) {
                 require $bootstrap;
@@ -327,7 +327,7 @@ class madFramework {
 
     static public function fixPathArray( ArrayObject $array ) {
         if ( DIRECTORY_SEPARATOR == '/' ) {
-            retrun true;
+            return true;
         }
 
         foreach( $array as $key => $value ) {
