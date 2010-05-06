@@ -11,17 +11,19 @@
 #nav-recipe li a.selected { color: #000; }
 #nav-recipe li.sep { font-size: 9px; padding: 0px 8px; }
 
-.recipe-block { font-size: 11px; width: 238px; float: left; padding: 0 9px 15px 0; }
-.recipe-block .infos a { text-decoration: underline; }
-.recipe-details a { color: #b0aaac; }
-.recipe-details a.edit { text-decoration: underline; color: #DE5161; font-size: 10px; text-decoration: underline; font-weight: normal;}
-.recipe-details a.editrecipe { text-decoration: underline; dislay: block; color: #DE5161;padding: 5px 0; border-top: 1px solid #dadada; font-size: 10px; text-decoration: underline; font-weight: normal; margin-top: 5px }
-.recipe-details a.editrecipe:hover { background: #f6f6f6; }
-.recipe-block p.link { padding: 5px 0; color: #b0aaac; font-size: 10px; font-family: Verdana;}
-.recipe-details { border: 1px solid #d3d3d3; padding: 5px; }
-.recipe-details img.picture { width: 226px; height: 226px; vertical-align: bottom; }
-.recipe-details .infos {line-height: 19px; font-weight: bold; font-family: Verdana; padding: 10px 0; }
-.recipe-details .author { color: #656565; font-size: 10px; font-family: Verdana; font-weight: bold; }
+#center_column .recipe-block { font-size: 11px; width: 238px; float: left; padding: 0 9px 15px 0; }
+#center_column .recipe-block .infos a { text-decoration: underline; }
+#center_column .recipe-details a { color: #b0aaac; }
+#center_column .recipe-details a:hover { text-decoration: underline; color: #000; }
+#center_column .recipe-details a.editprofil { float: left; color: #DE5161; font-size: 10px; font-weight: normal;}
+#center_column .recipe-details a.editrecipe { float: right; color: #DE5161; font-size: 10px; font-weight: normal; }
+#center_column .recipe-details a.editrecipe:hover, #center_column .recipe-details a.editprofil:hover { text-decoration: underline; }
+#center_column .recipe-block p.link { padding: 5px 0; color: #b0aaac; font-size: 10px; font-family: Verdana;}
+#center_column .recipe-block div.adminpanel { margin: 5px 0; padding-top: 5px; border-top: 1px solid #dadada;}
+#center_column .recipe-details { border: 1px solid #d3d3d3; padding: 5px; overflow: auto; }
+#center_column .recipe-details img.picture { width: 226px; height: 226px; vertical-align: bottom; }
+#center_column .recipe-details .infos {line-height: 19px; font-weight: bold; font-family: Verdana; padding: 10px 0; }
+#center_column .recipe-details .author { color: #656565; font-size: 10px; font-family: Verdana; font-weight: bold; }
 </style>
 
 <!--
@@ -41,30 +43,31 @@
 <div class="recipe-block" <?php if( $forloopCounter == count( $this->objectList ) ): ?> style="padding-right: 0;"<?php endif; ?>>
 	<!--<p class="link">remipathier.cookingfor.com</p>-->
 	<div class="recipe-details">
-        <?php if ( isset( $object['picture'] ) ): ?>
-	    <a href="<?php echo $this->url( 'recipe.details', $object ) ?>">
-		    <img class="picture" width="226" height="226" src="<?php echo $this->getAbsoluteUploadUrl( $object['picture'] ) ?>" />
-        </a>
-        <?php endif ?>
-
-		<p class="infos">
-			<a href="<?php echo $this->url( 'recipe.details', $object ) ?>">
-				<?php echo $object['title']; ?>
+		<?php if ( isset( $object['picture'] ) ): ?>
+		    <a href="<?php echo $this->url( 'recipe.details', $object ) ?>">
+			    <img class="picture" width="226" height="226" src="<?php echo $this->getAbsoluteUploadUrl( $object['picture'] ) ?>" />
+		</a>
+		<?php endif ?>
+	
+			<p class="infos">
+				<a href="<?php echo $this->url( 'recipe.details', $object ) ?>">
+					<?php echo $object['title']; ?>
+				</a>
+			</p>
+	
+		<?php if ( isset( $object['profile'] ) ): ?>
+		<p class="author">
+			<a href="<?php echo $this->url( 'profile.details', $object['profile'] ) ?>">
+				<?php echo $object['profile']['name'] ?> &bull;
 			</a>
 		</p>
-
-        <?php if ( isset( $object['profile'] ) ): ?>
-		<p class="author">
-		<a href="<?php echo $this->url( 'profile.details', $object['profile'] ) ?>">
-			<?php echo $object['profile']['name'] ?> &bull;
-		</a>
-		<?php if ( isset( $object['profile'] ) ): ?>
-			<a class="edit" href="<?php echo $this->url( 'profile.edit', $object['profile'] ) ?>">( Modifier le profil? )</a>
 		<?php endif ?>
-        </p>
-        <?php endif ?>
-
-        <a class="editrecipe" href="<?php echo $this->url( 'recipe.edit', $object ) ?>">Modifier la recette</a>
+		<div class="adminpanel">
+		<?php if ( isset( $object['profile'] ) ): ?>
+			<a class="editprofil" href="<?php echo $this->url( 'profile.edit', $object['profile'] ) ?>">Modifier le profil</a>
+		<?php endif ?>
+		<a class="editrecipe" href="<?php echo $this->url( 'recipe.edit', $object ) ?>">Modifier la recette</a>
+	</div>
 	</div>
 </div>
 <?php $forloopCounter++; endforeach; ?>
