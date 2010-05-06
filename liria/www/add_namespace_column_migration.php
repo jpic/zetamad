@@ -1,9 +1,11 @@
 <?php
-include '../bootstrap.php';
+if ( !defined( 'ENTRY_APP_PATH' ) ) {
+    include '../bootstrap.php';
+}
+
 $registry = madRegistry::instance(  );
 
-
-foreach( $registry->query( 'describe mad_model' )->fetchAll(  ) as $row ) {
+foreach( $registry->model->query( 'describe mad_model' )->fetchAll(  ) as $row ) {
     if ( $row['Field'] == 'namespace' ) {
         return true;
     }
