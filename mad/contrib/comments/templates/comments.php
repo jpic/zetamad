@@ -8,7 +8,7 @@
         <p>Aucun commentaire n'a &eacute;t&eacute; publi&eacute; pour le moment.</p>
         <?php else: ?>
             <?php foreach( $this->object->commentSet as $comment ): ?>
-                <?php if ( !$comment['moderated'] ) ) continue /* skip non moderated comments */ ?>
+                <?php if ( !$comment['moderated'] ) continue /* skip non moderated comments */ ?>
             <p><?php $this->e( $comment['comment'] ) ?></p>
             <p><?php $this->e( $comment['user']['firstName'] . ' ' . $comment['user']['lastName'] ) ?></p>
             <?php endforeach ?>
