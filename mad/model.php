@@ -146,12 +146,12 @@ class madModel {
                 }
 
                 $updateParts[$name] = "$name = :$name";
-                if ( ! $data[$name] instanceof madBase ) {
+                if ( ! $data[$name] instanceof madObject ) {
                     $arguments[$name] = $data[$name];
                 } elseif ( $data[$name]->isEntity ) {
                     $arguments[$name] = $data[$name]['id'];
                 } else {
-                    trigger_error( 'multivalue cache not implemented' );
+                    trigger_error( "multivalue cache not implemented, cannot cache $name" );
                 }
             }
 
@@ -161,7 +161,6 @@ class madModel {
             
             unset( $updateParts['id'] );
             $cacheSql.= implode( ', ', $updateParts );
-            
             $this->query( $cacheSql, ( array ) $arguments );
         }
 
@@ -227,6 +226,11 @@ class madModel {
             ':attribute_key'   => $key,
             ':attribute_value' => $value,
         );
+
+        if ( isset( $data['namespace'] ) ) {
+            $sql .= ', namespace = :namespace';
+            $arguments['namespace'] = $data['namespace'];
+        }
 
         $statement = $this->query( $sql, $arguments );
 

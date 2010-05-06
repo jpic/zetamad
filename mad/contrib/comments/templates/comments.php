@@ -1,3 +1,5 @@
+<?php var_dump( $this->object->commentSet ) ?>
+
 <?php if ( !isset( $this->object['comments'] ) ): ?>
 <p>Pas encore de commentaire</p>
 <?php else: ?>
@@ -11,6 +13,7 @@
 <form action="<?php echo $this->url( 'comments.post', array( 'id' => $this->object ) ) ?>" method="post">
     <textarea name="comment"></textarea>
     <input type="hidden" name="object" value="<?php $this->e( $this->object['id'] ) ?>" />
+    <input type="submit" value="Envoyer" />
 </form>
 <?php else: ?>
 Pour envoyer votre commentaire, <a href="<?php echo $this->loginUrl(  ) ?>">authentifiez vous ici</a>
