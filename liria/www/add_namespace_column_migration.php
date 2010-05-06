@@ -5,7 +5,7 @@ $registry = madRegistry::instance(  );
 
 foreach( $registry->query( 'describe mad_model' )->fetchAll(  ) as $row ) {
     if ( $row['Field'] == 'namespace' ) {
-        die( 'Upgrade already applied' );
+        return true;
     }
 }
 
