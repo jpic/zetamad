@@ -18,10 +18,13 @@ class madModelObject extends madObject {
     }
 
     public function getRelatedObjects( $namespace ) {
-        $this->relations[$namespace] = madRegistry::instance(  )->model->queryLoad(
-            "select id from %({$namespace}_index)s where {$this['namespace']} = :id",
+        $model = madRegistry::instance(  )->model;
+
+        $this->relations[$namespace] = $model->queryLoad(
+            "select distinct(id) from mad_model where namespace = :ns and attribute_value = :id",
             array(
                 'id' => $this['id'],
+                'ns' => $namespace,
             )
         );
 
