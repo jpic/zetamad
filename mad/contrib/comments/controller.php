@@ -5,7 +5,7 @@ class madCommentsController extends madController {
         $comment = new madModelObject( array(
             'updated'   => date( 'Y-m-d' ),
             'user'      => $this->user['id'],
-            'comment'   => htmlentities( $this->comment, ENT_COMPAT, 'UTF-8' ),
+            'comment'   => $this->comment,
             'object'    => $this->object,
             'namespace' => 'comment',
         ) );
