@@ -342,7 +342,7 @@ class madFramework {
 
         foreach( $array as $key => $value ) {
             if ( is_array( $value ) ) {
-                $array[$key] = new ArrayObject( $array );
+                $array[$key] = new madObject( $value );
                 self::fixPathArray( $array[$key] );
             } elseif ( $value instanceof Traversable ) {
                 self::fixPathArray( $array[$key] );
