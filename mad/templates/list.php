@@ -47,8 +47,10 @@
 <?php foreach( $this->objectList as $object ): ?>
         <!--<tr onClick='document.location.href="";'>-->
         <tr>
-            <?php foreach( $this->configuration['tableColumns'] as $name => $label ): ?>
-            <td class="row_name"><?php $this->e( isset( $object[$name] ) ? $object[$name] : '' ) ?></td>
+            <?php foreach( $this->configuration['tableColumns'] as $key => $label ): ?>
+            <td class="row_name">
+                <?php $this->e( $this->getValueString( $object, $key ) ) ?>
+            </td>
             <?php endforeach ?>
             
             <?php if ( isset( $this->configuration['tableLinkColumns'] ) ): ?>

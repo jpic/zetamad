@@ -89,6 +89,26 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             }
         }
     }
+
+    public function getValueString( $array, $key ) {
+        if ( !isset( $array[$key] ) ) {
+            return '';
+        }
+        
+        $value = $array[$key];
+
+        if ( is_array( $value ) || $value instanceof Traversable ) {
+            $value =  implode( ', ', (array)$value );
+        } elseif ( is_bool( $value ) ) {
+            $value = $value ? 'Oui' : 'Non';
+        }
+
+        if ( strlen( $value ) > 100 ) {
+            $value = substr( $value, 0, 100 );
+        }
+
+        return $value;
+    }
 }
 
 ?>

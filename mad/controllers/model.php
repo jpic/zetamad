@@ -31,6 +31,18 @@ class madModelController extends madFormController {
         } 
         $objectList = $this->registry->model->queryLoad( $query );
 
+        if ( $objectList && !isset( $this->configuration['tableColumns'] ) ) {
+            $this->configuration['tableColumns'] = array(  );
+
+            foreach( current( $objectList ) as $key => $value ) {
+                if ( $value instanceof madObject && $value->isEntity ) {
+                    continue;
+                }
+                
+                $this->configuration['tableColumns'][$key] = $key;
+            }
+        }
+        
         $result->variables['objectList'] = $objectList;
 
         return $result;
