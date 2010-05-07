@@ -65,13 +65,13 @@ class madConfiguration extends madObject {
         // clean applications configuration
         $this['applications'] = new madObject();
 
+        // find all configuration paths in this repository path
+        $applicationPaths = array(  );
+
         // discover paths to applications in configured repositories
         foreach( $repositories as $path ) {
             // prepend application path and get the absolute path
             $path = $entryApplicationPath . '/' . $path;
-
-            // find all configuration paths in this repository path
-            $configurationPaths = array(  );
             
             $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( 
                 $path,
@@ -79,7 +79,7 @@ class madConfiguration extends madObject {
             ) );
 
             foreach( $fileIterator as $fileInfo ) {
-                $filePath = madFramework::fixPath( $fileInfo->getPath(  ) );
+                $filePath = madFramework::fixPath( realpath( $fileInfo->getPath(  ) ) );
                 
                 // searching for directories named etc
                 if ( substr( $filePath, -3 ) != 'etc' ) {
@@ -100,46 +100,36 @@ class madConfiguration extends madObject {
                     continue;
                 }
 
-                // don't add paths twice
-                if ( in_array( $filePath, $configurationPaths ) ) {
-                    continue;
-                }
-
-                $configurationPaths[] = $filePath;
-            }
-
-            foreach( $configurationPaths as $configurationPath ) {
-                // strip trailing / if necessary
-                $configurationPath = substr( $configurationPath, -1 ) == '/' ? substr( $configurationPath, 0, -1 ) : $configurationPath;
-
-                // get application path
-                $applicationPath = $configurationPath . '/..';
-
-                // remove all ..
-                $applicationPath = realpath( $applicationPath );
-
-                // fix path
-                $applicationPath = madFramework::fixPath( $applicationPath );
+                // get current application path
+                $applicationPath = substr( $filePath, 0, strrpos( $filePath, '/etc' ) );
 
                 // get current application name
                 $applicationName = substr( $applicationPath, strrpos( $applicationPath, '/' ) + 1 );
 
-                // skip uninstalled applications
-                if ( !in_array( $applicationName, $installedApplications ) ) continue;
-
-                // fetch configuration of the application
-                $applicationConfiguration = new madConfiguration( $applicationPath . '/etc' );
-
-                if ( !isset( $this['applications'][$applicationName] ) ) {
-                    $this['applications'][$applicationName] = new madObject;
+                // don't add paths twice
+                if ( in_array( $applicationName, array_keys( $applicationPaths ) ) ) {
+                    continue;
                 }
 
-                // save application "path" for later use
-                $this['applications'][$applicationName]['path'] = madFramework::getRelativePath( $applicationPath, $entryApplicationPath );
+                // store the path because we'll parse application config in the 
+                // order of sections in applications.ini
+                $applicationPaths[$applicationName] = $applicationPath;
+            }
+        }
 
-                // merge to this configuration
-                $this->merge( $applicationConfiguration );
-             }
+        // applications.ini apps order is from the most specific to the less 
+        // specific. Our merge overrides, so configuration must be parsed from 
+        // the less specific to the most specific
+        foreach( array_reverse( $installedApplications ) as $applicationName ) {
+            $applicationPath = $applicationPaths[$applicationName];
+            
+            // fetch and override this application configuration
+            foreach( glob( "$applicationPath/etc/*.ini" ) as $file ) {
+                $this->parseIni( madFramework::fixPath( $file ) );
+            }
+
+            // save application "path" for later use
+            $this['applications'][$applicationName]['path'] = madFramework::getRelativePath( $applicationPath, $entryApplicationPath );
         }
     }
 
@@ -206,7 +196,7 @@ class madConfiguration extends madObject {
                         }
                         break;
                     case ezcConfigurationIniItem::SETTING:
-                        eval( '$this[$name][$element->group][$element->setting]'. $element->dimensions. ' = $element->value;' );
+                        eval( '$this[$name][$element->group][$element->setting]'. $element->dimensions . ' = $element->value;' );
                         break;
                 }
             }
