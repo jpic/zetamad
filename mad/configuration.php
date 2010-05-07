@@ -244,10 +244,6 @@ class madConfiguration extends madObject {
         $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
         $this[$name] = require $file;
     }
-
-    public function renameSection( $name, $newName ) {
-
-    }
 }
 
 ?>
