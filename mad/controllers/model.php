@@ -38,6 +38,10 @@ class madModelController extends madFormController {
                 if ( $value instanceof madObject && $value->isEntity ) {
                     continue;
                 }
+
+                if ( $key == 'namespace' || $key == 'id' ) {
+                    continue;
+                }
                 
                 $this->configuration['tableColumns'][$key] = $key;
             }
