@@ -1,10 +1,12 @@
 <style>
-    h2.title { float: left; border:medium none; color: #000000; font-family:'Times','Helvetica',serif; font-size:35px; font-weight:100; line-height:40px; margin: 15px 0 15px 0; }
+    h2.title { float: left; color: #000000; font-family:'Times','Helvetica',serif; font-size:35px; font-weight:100; line-height:40px; margin: 15px 0 15px 0; }
     a.add_user { color: #DE5161; font-size: 11px; font-weight: bold; float: right; line-height: 40px; display: block; margin: 15px 0 15px 0; }
-    .object_table { margin: 0 auto; width: 95%; border-collapse: collapse; }
+    .object_table { margin: 0 auto; width: 95%; }
     .object_head { background: #f6f6f6; }
-    .object_table thead.object_head { font-size: 14px; line-height: 25px; font-family: "Lucida", "Lucida Sans", Arial, sans-serif; }
+    .object_table thead.object_head { font-size: 14px; line-height: 25px; font-family: Lucida, "Lucida Sans", Arial, sans-serif; }
     .object_table tbody { font-size: 12px; line-height: 21px; }
+    .object_table tbody tr:hover { background: #f6f6f6; cursor: pointer; }
+    .object_table tbody tr:active { background: #f1f1f1;}
     .object_table tbody .row_name { padding-left: 4px; }
     .object_table tbody .row_details { text-align: center; }
     .object_table tbody .row_details a { color: #000; }
@@ -27,7 +29,7 @@
     <?php $this->e( isset( $this->configuration['ifEmpty'] ) ? ucfirst( $this->configuration['ifEmpty'] ) : 'Aucun objet trouvé' ) ?>
 </p>
 <?php else: ?>
-<table class="object_table" border="1" bordercolor="#dadada">
+<table class="object_table">
     <thead class="object_head" >
         <tr>
             <?php foreach( $this->configuration['tableColumns'] as $name => $label ): ?>
@@ -41,7 +43,7 @@
     </thead>
     <tbody>
 <?php foreach( $this->objectList as $object ): ?>
-        <tr>
+        <tr onClick='document.location.href="<?php echo $this->url( $route, $object ) ?>";'>
             <?php foreach( $this->configuration['tableColumns'] as $name => $label ): ?>
             <td class="row_name"><?php $this->e( isset( $object[$name] ) ? $object[$name] : '' ) ?></td>
             <?php endforeach ?>

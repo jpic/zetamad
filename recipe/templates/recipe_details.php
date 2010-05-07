@@ -6,7 +6,7 @@
 
 #nav-recipe { color: #b0aaac; width: 980px; height: 30px; list-style: none; margin-bottom: 10px; }
 #nav-recipe li { display: block; float: left; line-height: 30px; height: 30px; }
-#nav-recipe li.browseby { font-size: 10px; font-family: Verdana; padding-right: 8px; }
+#nav-recipe li.browseby { font-size: 10px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; padding-right: 8px; }
 #nav-recipe li a { font: bold 15px Times, Arial; color: #b0aaac; text-transform: uppercase; }
 #nav-recipe li a.selected { color: #000; }
 #nav-recipe li.sep { font-size: 9px; padding: 0px 8px; }
@@ -19,33 +19,32 @@
 .recipe .recipe-left #recipe-video #background-video { opacity: 0.5; filter : alpha(opacity=50); position: absolute; background: url('http://storage.canalblog.com/21/51/314534/43401831_p.jpg') center center no-repeat; width: 240px; height: 130px; -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; }
 
 .recipe .recipe-right { float: right; width: 480px;}
-.recipe .recipe-right .recipe-header { height: 360px; position: relative; border-top: 1px solid #dadada; border-bottom: 1px solid #dadada; padding: 9px 0; }
+.recipe .recipe-right .recipe-header { position: relative; border-top: 1px solid #dadada; border-bottom: 1px solid #dadada; padding: 9px 0; }
 .recipe .recipe-right .recipe-header h2 { color: #232323; font-size: 26px; font-family: Times, Georgia, Arial; font-weight: normal;}
 .recipe .recipe-right .recipe-header .recipe-author { color: #232323; font-size: 18px; font-family: Times; padding-top: 10px;}
 .recipe .recipe-right .recipe-header .recipe-author a { color: #b49135; }
 .recipe .recipe-right .recipe-header .recipe-author a:hover { color: #232323; }
-.recipe .recipe-right .recipe-header .recipe-intro { text-align: justify; margin-top: 10px; font-family: Verdana; font-size: 11px; color: #969696; word-spacing: 0.5px; line-height: 18px;}
-.recipe .recipe-right .recipe-header .links-intro a { font-weight: bold; font-family: Verdana; font-size: 11px; color: #539893; border-bottom: 1px solid #969696; display: block; float: left; margin-right: 20px; margin-top: 10px;}
+.recipe .recipe-right .recipe-header .recipe-intro { text-align: justify; margin-top: 10px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 11px; color: #969696; word-spacing: 0.5px; line-height: 18px;}
+.recipe .recipe-right .recipe-header .links-intro a { font-weight: bold; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 11px; color: #539893; border-bottom: 1px solid #969696; display: block; float: left; margin-right: 20px; margin-top: 10px;}
 .recipe .recipe-right .recipe-header .links-intro a:hover { color: #c21123; border-bottom: 1px solid #cf6875;}
-.recipe .recipe-right .recipe-header .share-recipe p.lovedit { background: url('themes/mmarket/img/recipe-love.jpg') 0 1px no-repeat; padding-left: 15px; font-style: italic; font-family: Verdana; font-size: 11px; color: #969696; padding-bottom: 10px;}
+.recipe .recipe-right .recipe-header .share-recipe p.lovedit { background: url('themes/mmarket/img/recipe-love.jpg') 0 1px no-repeat; padding-left: 15px; font-style: italic; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 11px; color: #969696; padding-bottom: 10px;}
 .recipe .recipe-right .recipe-header .share-recipe { position: absolute; bottom: 10px; left: 0; }
 
-.recipe .recipe-left .recipe-author, .recipe .recipe-right .recipe-description { margin-top: 40px; }
+.recipe .recipe-left .recipe-author, .recipe .recipe-right .recipe-description { margin-top: 20px; }
 .recipe .recipe-left .recipe-author .author-name, .recipe .recipe-right .recipe-title-steps { font-size: 18px; color: #969696; font-family: Times; border-bottom: 1px solid #dadada; margin-bottom: 7px; padding-bottom: 7px; }
 .recipe .recipe-left .recipe-author .author-photo { float: left; margin-right: 7px; margin-bottom: 2px; border: 1px solid #dadada; vertical-align: bottom; width: 87px; height: 87px; }
-.recipe .recipe-left .recipe-author .author-description { line-height: 19px; font-size: 11px; color: #969696; font-family: Verdana; text-align: justify;}
+.recipe .recipe-left .recipe-author .author-description { line-height: 19px; font-size: 11px; color: #969696; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; text-align: justify;}
 
-.recipe .recipe-right .recipe-description .step-title { text-transform:uppercase; font-weight: bold; font-family: Verdana; font-size: 11px; color: #232323; padding-bottom: 10px;}
-.recipe .recipe-right .recipe-description .step-desc { font-family: Verdana; font-size: 11px; color: #969696; line-height: 19px; padding-bottom: 20px;}
-
+.recipe .recipe-right .recipe-description .step-title { text-transform:uppercase; font-weight: bold; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 15px; color: #232323; padding-bottom: 10px;}
+.recipe .recipe-right .recipe-description .step-desc { color:#666666; font-family:Lucida,"Lucida Sans",Arial,sans-serif; font-size:12px; line-height:21px; padding-bottom:20px; }
 .recipe .recipe-right .recipe-infos { overflow: auto; border-bottom: 1px dashed #dadada; margin-bottom: 20px; padding-bottom: 7px; }
-.recipe .recipe-right .recipe-infos-block { float: left; margin-right: 15px; color: #AB1D37; font-size: 11px; font-family: Verdana; padding: 5px; }
+.recipe .recipe-right .recipe-infos-block { float: left; margin-right: 15px; color: #AB1D37; font-size: 11px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; padding: 5px; }
 
 #recipe-column { float: right; width: 220px; }
 #recipe-column .block {  border: 1px solid #dadada; padding: 10px; }
 #recipe-column .block h3 { font-size: 22px; font-family: Times; color: #232323; font-weight: normal; border-bottom: 1px solid #dadada; padding-bottom: 10px; margin-bottom: 10px; }
 #recipe-column .block ul { margin: 0; padding: 0; }
-#recipe-column .block li { padding: 0; margin: 0; font-size: 11px; font-family: Verdana; color: #969696; line-height: 21px;}
+#recipe-column .block li { padding: 0; margin: 0; font-size: 11px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; color: #969696; line-height: 21px;}
 #recipe-column .block li .att { color: #ab1d37; }
 #recipe-column .block li .recipe-step { text-transform: uppercase; font-weight:bold; }
 
