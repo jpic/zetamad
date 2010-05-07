@@ -1,0 +1,43 @@
+# Création d'utilisateur
+
+Les utilisateurs se créent automatiquement, lorsqu'on visite une page de /xp et qu'on est authentifié via Presta.
+
+Chaque utilisateur peut avoir un role.
+
+## Changement de role
+
+Pour donner un role à un utilisateur, un administrateur doit le chercher sur /xp/auth/user/list/ et cliquer sur modifier. Ensuite, cliquer sur le nouveau role puis sur le bouton d'enregistrement. Les changements de role prennent effet immédiatement.
+
+## Création du premier administrateur
+
+Pour donner le role d'administrateur aux utilisateurs de la base de données, executer les requetes SQL suivante:
+
+UPDATE mad_model SET attribute_value = 'administrator' WHERE attribute_key = 'role';
+UPDATE mad_authentication_user SET role = 'administrator';
+
+Attention, cette requete n'est à utiliser uniquement dans le cadre de l'installation pour créer le premier administateur.
+
+# Templates
+
+## Bases
+
+La liste des routes est dans xp/liria/cache/etc/routes.php. Ce fichier contient la liste exhaustive des urls actives.
+
+Le template de liste par défaut est: xp/mad/templates/list.php
+Il est possible d'utiliser un template spécifique, par exemple, le template de liste de recipe est xp/recipe/templates/recipe_list.php
+
+Le template de détails par défaut est: xp/mad/templates/details.php
+Il est possible d'utiliser un template spécifique, par exemple, le template de détails d'une recipe est xp/recipe/templates/recipe_details.php
+
+Le template de formulaire par défaut est: xp/mad/templates/form.php
+Il est possible d'utiliser un template spécifique, par exemple, le template de formulaire de recipe pourrait etre xp/recipe/templates/recipe_form.php
+
+Le template de la page d'erreur fatale est: xp/mad/templates/fatal.php
+
+## Comments
+
+La vue de commentaire peut etre utilisée pour n'importe quelle page de détais.
+
+Le template de la vue est: xp/mad/contrib/comments/comments.php
+
+Le template d'action du formulaire est: xp/mad/contrib/comments/post.php
