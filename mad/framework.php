@@ -351,5 +351,19 @@ class madFramework {
             }
         }
     }
+
+    static public function dictionnaryReplace( $string, $dictionnary ) {
+        $finalDictionnary = array(  );
+
+        foreach( $dictionnary as $key => $value ) {
+            $finalDictionnary["%($key)s"] = $value;
+        }
+
+        return str_replace( 
+            array_keys( $finalDictionnary ), 
+            array_values( $finalDictionnary ), 
+            $string
+        );
+    }
 }
 ?>
