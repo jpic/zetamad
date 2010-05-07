@@ -93,7 +93,7 @@ function findClasses( $configuration ) {
         $path = $configuration->getPathSetting( 'applications', $name, 'path' );
 
         if ( !isset( $configuration['applications'][$name]['classes'] ) ) {
-            $configuration['applications'][$name]['classes'] = new madObject;
+            $configuration['applications'][$name]['classes'] = array(  );
         }
 
         $fileIterator = new RecursiveIteratorIterator( 
