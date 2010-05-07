@@ -1,6 +1,8 @@
 <style>
 .button { cursor: pointer; }
 </style>
+<?php if ( count( $this->object->commentSet ) ): ?>
+
 <div class="product-tab">
     <div style="clear: left; width: 735px; overflow: auto; margin: 15px 0pt;">
         <div class="title-tab" style="padding-bottom: 5px; margin-bottom: 0px;">Commentaires clients</div>
