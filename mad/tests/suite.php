@@ -17,9 +17,9 @@ class madTestSuite extends PHPUnit_Framework_TestSuite
     {
         parent::__construct();
         $this->setName('Framework');
-        //$this->addTest( madObjectTest::suite(  ) );
+        $this->addTest( madObjectTest::suite(  ) );
         //$this->addTest( madModelTest::suite(  ) );
-        $this->addTest( madConfigurationTest::suite(  ) );
+        //$this->addTest( madConfigurationTest::suite(  ) );
     }
 
     public static function suite()

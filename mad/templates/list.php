@@ -36,18 +36,22 @@
             <th><?php $this->e( ucfirst( $label ) ) ?></th>
             <?php endforeach ?>
 
+            <?php if ( isset( $this->configuration['tableLinkColumns'] ) ): ?>
             <?php foreach( $this->configuration['tableLinkColumns'] as $route => $label ): ?>
             <th><?php $this->e( ucfirst( $label ) ) ?></th>
             <?php endforeach ?>
+            <?php endif ?>
         </tr>
     </thead>
     <tbody>
 <?php foreach( $this->objectList as $object ): ?>
-        <tr onClick='document.location.href="<?php echo $this->url( $route, $object ) ?>";'>
+        <!--<tr onClick='document.location.href="";'>-->
+        <tr>
             <?php foreach( $this->configuration['tableColumns'] as $name => $label ): ?>
             <td class="row_name"><?php $this->e( isset( $object[$name] ) ? $object[$name] : '' ) ?></td>
             <?php endforeach ?>
             
+            <?php if ( isset( $this->configuration['tableLinkColumns'] ) ): ?>
             <?php foreach( $this->configuration['tableLinkColumns'] as $route => $label ): ?>
             <td class="row_details">
                 <a href="<?php echo $this->url( $route, $object ) ?>" title="<?php $this->e( ucfirst( $label ) ) ?>">
@@ -55,6 +59,7 @@
                 </a>
             </td>
             <?php endforeach ?>
+            <?php endif ?>
         </tr>
 <?php endforeach ?>
     </tbody>

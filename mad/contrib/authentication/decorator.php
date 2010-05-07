@@ -17,6 +17,17 @@ class madAuthenticationControllerDecorator extends madControllerDecorator {
             $result = new ezcMvcResult(  );
             $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
     
+            $_SESSION['fatalRequest'] = $this->request;
+
+            $messages = $this->configuration['messages'];
+            $_SESSION['fatalMessage'] = madFramework::dictionnaryReplace( 
+                $messages['insuficientRolePlural'],
+                array( 
+                    'userRole'      => $this->request->variables['user']->role,
+                    'acceptedRoles' => implode( ', ', $this->configuration['acceptedRoles'] ),
+                )
+            );
+
             $result->status = new ezcMvcExternalRedirect(
                 $prefix . $this->registry->configuration->getSetting( 'routes', 'mad.fatal', 'rails' )
             );
