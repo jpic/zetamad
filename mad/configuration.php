@@ -187,12 +187,40 @@ class madConfiguration extends madObject {
             $this[$name] = new madObject();
         }
 
+        $unsetGroups = array(  );
+
         foreach( new NoRewindIterator( $parser ) as $element ) {
             if ( $element instanceof ezcConfigurationIniItem ) {
                 switch ( $element->type ) {
                     case ezcConfigurationIniItem::GROUP_HEADER:
                         if ( !isset( $this[$name][$element->group] ) ) {
                             $this[$name][$element->group] = new madObject();
+                        }
+
+                        // a little heavy on performances, but its the safest 
+                        if ( strpos( $element->group, '..' ) ) {
+                            $groupParts = explode( '..', $element->group );
+                            $realGroup = array_shift( $groupParts );
+
+                            // hardlink the real group to its false name for 
+                            // the parsed variables to be set in both.
+                            $this[$name][$realGroup] = $this[$name][$element->group];
+
+                            // the configuration section with the false name 
+                            // will be dereferenced later.
+                            $unsetGroups[] = $element->group;
+
+                            // the order of parents should be defined from 
+                            // the most specific to the less specific, but our 
+                            // merge does override, so the order is reversed to 
+                            // start by the least specific.
+                            foreach( array_reverse( $groupParts ) as $parentGroup ) {
+                                if ( !isset( $this[$name][$parentGroup] ) ) {
+                                    trigger_error( "Can't inherit from a section that was not defined! Happenned with: " . $element->group, E_USER_ERROR );
+                                }
+
+                                $this[$name][$realGroup]->merge( $this[$name][$parentGroup] );
+                            }
                         }
                         break;
                     case ezcConfigurationIniItem::SETTING:
@@ -203,6 +231,10 @@ class madConfiguration extends madObject {
             if ( $element instanceof ezcConfigurationValidationItem ) {
                 throw new ezcConfigurationParseErrorException( $element->file, $element->line, $element->description );
             }
+        }
+
+        foreach( $unsetGroups as $group ) {
+            unset( $this[$name][$group] );
         }
 
         madFramework::fixPathArray( $this[$name] );

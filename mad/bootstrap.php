@@ -28,40 +28,6 @@ function autoCreateMadModelTable( $bootstrap ) {
 }
 $registry->signals->connect( 'preSetupModel', 'autoCreateMadModelTable' );
 
-function configurationInheritance( $configuration ) {
-    foreach( $configuration as $groupName => $group ) {
-        $unst = false;
-
-        foreach( $group as $sectionName => $section ) {
-            if ( strpos( $sectionName, '..' ) === false ) {
-                continue;
-            }
-
-            $sectionNameParts = explode( '..', $sectionName );
-            $realSectionName = array_shift( $sectionNameParts );
-
-            foreach( $sectionNameParts as $part ) {
-
-                if ( !isset( $configuration[$groupName][$realSectionName] ) ) {
-                    $configuration[$groupName][$realSectionName] = $configuration[$groupName][$sectionName];
-                }
-
-                $configuration[$groupName][$realSectionName]->merge( 
-                    $configuration[$groupName][$part]
-                );
-
-            }
-
-            $unst = true;
-        }
-        
-        if ( $unst ) {
-            unset( $configuration[$groupName][$sectionName] );
-        }
-    }
-}
-$registry->signals->connect( 'configurationRefreshed', 'configurationInheritance' );
-
 function setRegistryRouter( $router ) {
     madRegistry::instance(  )->router = $router;
 }
