@@ -2,8 +2,14 @@
 
 class madFatalController extends madController {
     public function doFatal(  ) {
-        $ret = new ezcMvcResult;
-        return $ret;
+        $result = new ezcMvcResult;
+        
+        if ( isset( $_SESSION['fatalRequest'] ) ) {
+            $result->variables['fatalRequest'] = $_SESSION['fatalRequest'];
+            unset( $_SESSION['fatalRequest'] );
+        }
+
+        return $result;
     }
 }
 

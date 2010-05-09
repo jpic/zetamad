@@ -2,12 +2,13 @@
 
 class madAuthenticationControllerDecorator extends madControllerDecorator {
     public function createResult(  ) {
+        $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix', '' );
+
         if ( $this->isLoginRequired(  ) && !$this->isAuthenticated(  ) ) {
             $result = new ezcMvcResult(  );
     
             $result->status = new ezcMvcExternalRedirect(
                 $this->registry->configuration->getSetting( 'applications', 'authentication', 'loginUrl' )
-                    . '?back=' . urlencode( $this->request->uri )
             );
     
             return $result;
@@ -15,18 +16,28 @@ class madAuthenticationControllerDecorator extends madControllerDecorator {
 
         if ( $this->isRoleRequired(  ) && !$this->hasAnyRole( $this->configuration['acceptedRoles'] ) ) {
             $result = new ezcMvcResult(  );
-            $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
-    
+            
             $_SESSION['fatalRequest'] = $this->request;
+            $dictionnary = array_merge(
+                array(
+                    'acceptedRoles' => implode( ', ', $this->configuration['acceptedRoles'] ),
+                ),
+                (array)$this->request->variables['user']
+            );
 
-            $messages = $this->configuration['messages'];
+            $messages = $this->registry->configuration->getSetting( 'applications', 'authentication', 'messages' );
             $_SESSION['fatalMessage'] = madFramework::dictionnaryReplace( 
                 $messages['insuficientRolePlural'],
-                array( 
-                    'userRole'      => $this->request->variables['user']->role,
-                    'acceptedRoles' => implode( ', ', $this->configuration['acceptedRoles'] ),
-                )
+                $dictionnary
             );
+
+            $_SESSION['fatalSolutions'] = array();
+            foreach( $messages['insuficientRoleSolutions'] as $message ) {
+                $_SESSION['fatalSolutions'][] = madFramework::dictionnaryReplace( 
+                    $message,
+                    $dictionnary
+                );
+            }
 
             $result->status = new ezcMvcExternalRedirect(
                 $prefix . $this->registry->configuration->getSetting( 'routes', 'mad.fatal', 'rails' )
