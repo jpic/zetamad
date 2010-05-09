@@ -15,7 +15,7 @@ if ( !isset( $inputId ) ) {
 }
 
 $htmlClasses = "";
-if ( isset( $field->required ) ) $htmlClasses .= "required ";
+if ( isset( $field->required ) && $field->required ) $htmlClasses .= "required ";
 if ( isset( $field->minLength ) ) $htmlClasses.= "validate_minlength {$field->minLength} ";
 if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->maxLength} ";
 
