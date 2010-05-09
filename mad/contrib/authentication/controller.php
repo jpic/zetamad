@@ -1,7 +1,7 @@
 <?php
 
-class madAuthenticationControllerDecorator extends madControllerDecorator {
-    public function createResult(  ) {
+class madAuthenticationController extends madController {
+    public function preCreateResult(  ) {
         $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix', '' );
 
         if ( $this->isLoginRequired(  ) && !$this->isAuthenticated(  ) ) {
@@ -45,9 +45,6 @@ class madAuthenticationControllerDecorator extends madControllerDecorator {
     
             return $result;
         }
-
-        $result = $this->decorated->createResult();
-        return $result;
     }
 
     public function isAuthenticated(  ) {

@@ -189,16 +189,12 @@ class madHttpDispatcher {
     public function createRouteController( $routeConfiguration, $request ) {
         $class = $routeConfiguration['controller'];
         $action = $routeConfiguration['action'];
-        $controller = new $class( $action, $request );
+        $controller = new $class( $action, $request, $routeConfiguration );
         
         if ( substr( $request->uri, 0, 8 ) != '/static/' ) {
-            foreach( $this->configuration->getSetting( 'applications', 'mad', 'controllerDecorators', array(  ) ) as $decoratorClass ) {
-                $decorator = new $decoratorClass( $action, $request );
-                $decorator->decorate( $controller );
-                $controller = $decorator;
+            foreach( $this->configuration->getSetting( 'applications', 'mad', 'controllers', array(  ) ) as $name => $class ) {
+                $controller->compose( $name, new $class( $action, $request, $routeConfiguration ) );
             }
-
-            $controller->setConfiguration( $routeConfiguration );
         }
         return $controller;
     }
