@@ -110,6 +110,10 @@ class madFramework {
         }
 
         $registry->signals->send( 'postBootstrap', array( $this ) );
+
+        if ( !isset( $_SESSION ) ) {
+            session_start(  );
+        }
     }
 
     public function setupIncludePath(  ) {
