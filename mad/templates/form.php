@@ -139,7 +139,7 @@ table.multipleField input[type=text].textInput {
                 unset( $inputName );
             else: 
             ?>
-                <label for="<?php echo $name; ?>"><?php if ( isset( $field->required ) ): ?><em>*</em> <?php endif ?><?php echo ucfirst( $field->label ); ?></label>
+                <label for="<?php echo $name; ?>"><?php if ( isset( $field->required ) && $field->required ): ?><em>*</em> <?php endif ?><?php echo ucfirst( $field->label ); ?></label>
     
                 <?php 
                 $form = $this->form;
