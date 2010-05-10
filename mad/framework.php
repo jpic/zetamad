@@ -86,8 +86,8 @@ class madFramework {
             // cache the parsed configuration for performances
             $registry->configuration->write( $this->entryApplicationPath . '/cache/etc' );
         } else {
-            $this->setupApplications(  );
             $this->setupConfiguration( $this->entryApplicationPath . '/cache/etc' );
+            $this->setupApplications(  );
         }
 
         if ( $this->configuration['mad']['refreshBin'] ) {
