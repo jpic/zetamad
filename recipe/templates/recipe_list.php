@@ -45,7 +45,7 @@
 	<div class="recipe-details">
 		<?php if ( isset( $object['picture'] ) ): ?>
 		    <a href="<?php echo $this->url( 'recipe.details', $object ) ?>">
-			    <img class="picture" width="226" height="226" src="<?php echo $this->getAbsoluteUploadUrl( $object['picture'] ) ?>" />
+			    <img class="picture" width="226" height="226" src="<?php echo $this->thumbnail( $object['picture'], 100, 100, 'ratio' ) ?>" />
 		</a>
 		<?php endif ?>
 	

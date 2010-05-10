@@ -3,6 +3,99 @@
 class madViewHandler extends ezcMvcPhpViewHandler {
     public $handlers = array(  );
 
+    public function thumbnail( $path, $newWidth, $newHeight, $force = false ) {
+        $path = ENTRY_APP_PATH . '/upload/' . $path;
+        $info = pathinfo( $path );
+
+        $thumbnailName = sprintf( '%s_%sx%s_%s.%s',
+            $info['filename'],
+            $newWidth,
+            $newHeight,
+            $force,
+            $info['extension']
+        );
+
+        $thumbnailPath = sprintf( '%s/%s/%s',
+            ENTRY_APP_PATH,
+            'upload',
+            $thumbnailName
+        );
+
+        if ( file_exists( $thumbnailPath ) ) {
+            return $this->getAbsoluteUploadUrl( $thumbnailName );
+        }
+
+        if ( !$src = @imageCreateFromJpeg( $path ) ) {
+            if ( !$src = @imageCreateFromPng( $path ) ) {
+                if ( !$src = @imageCreateFromGif( $path ) ) {
+
+                }
+            }
+        }
+
+        $tmpFile = tempnam( sys_get_temp_dir(  ), 'mad' );
+        imagegd2( $src, $tmpFile );
+        imagedestroy( $src );
+        $src = imageCreateFromGd2( $tmpFile );
+
+        switch( $info['extension'] ) {
+            case 'jpg':
+            case 'jpeg':
+                $src = imagecreatefromjpeg( $path );
+                break;
+            case 'png':
+                $src = imagecreatefrompng( $path );
+                break;
+            default:
+                trigger_error( "Thumbnailing of " . $info['extension'] . " is not supported", E_USER_ERROR );
+                break;
+        }
+
+        $oldWidth  = imageSX( $src );
+        $oldHeight = imageSY( $src );
+        
+        if ( $oldWidth == $oldHeight ) {
+            $newHeight = $newWidth;
+        } elseif ( $force == 'height' || ( $force == 'ratio' && $oldWidth > $oldHeight ) ) {
+            $newHeight = $oldHeight * ( $newHeight / $oldWidth );
+        } elseif ( $force == 'width' || ( $force == 'ratio' && $oldWidth < $oldHeight ) ) {
+            $newWidth = $oldWidth * ( $newWidth / $oldHeight );
+        }
+
+        $image = ImageCreateTrueColor(
+            $newWidth,
+            $newHeight
+        );
+
+        imagecopyresampled( 
+            $image, 
+            $src, 
+            0,
+            0,
+            0,
+            0,
+            $newWidth,
+            $newHeight,
+            $oldWidth,
+            $oldHeight
+        );
+
+        imagedestroy( $src );
+
+        switch( $info['extension'] ) {
+            case 'jpg':
+            case 'jpeg':
+                imagejpeg( $image, $thumbnailPath );
+                break;
+            case 'png':
+                imagepng( $image, $thumbnailPath );
+                break;
+        }
+
+        imagedestroy( $image );
+        
+        return $this->getAbsoluteUploadUrl( $thumbnailName );
+    }
     public function url( $name, $arguments = array(  ) ) {
         $registry = madRegistry::instance();
         $prefix = $registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
@@ -15,7 +108,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     }
 
     public function e( $val ) {
-        echo nl2br( stripslashes( htmlentities( $val, ENT_COMPAT, 'UTF-8' ) ) );
+        echo nl2br( htmlentities( stripslashes( $val ), ENT_COMPAT, 'UTF-8' ) );
     }
 
     public function iterate( $value ) {
