@@ -1,4 +1,3 @@
-<<<<<<< .mine
 <table class="pagination" align="center">
     <tbody>
         <tr>

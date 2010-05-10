@@ -40,7 +40,7 @@
 .recipe .recipe-right .recipe-infos { overflow: auto; border-bottom: 1px dashed #dadada; margin-bottom: 20px; padding-bottom: 7px; }
 .recipe .recipe-right .recipe-infos-block { float: left; margin-right: 15px; color: #AB1D37; font-size: 11px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; padding: 5px; }
 
-#recipe-column { float: right; width: 220px; }
+#recipe-column { float: right; }
 #recipe-column .block {  border: 1px solid #dadada; padding: 10px; }
 #recipe-column .block h3 { font-size: 22px; font-family: Times; color: #232323; font-weight: normal; border-bottom: 1px solid #dadada; padding-bottom: 10px; margin-bottom: 10px; }
 #recipe-column .block ul { margin: 0; padding: 0; }
