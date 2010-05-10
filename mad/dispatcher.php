@@ -119,6 +119,7 @@ class madHttpDispatcher {
         $result = $controller->createResult();
         
         $result->variables['request'] = $request;
+        $result->variables['configuration'] =& $routeConfiguration;
         
         $this->signals->send( 'postCreateResult', array( $request, $result ) );
 
@@ -176,7 +177,11 @@ class madHttpDispatcher {
         $viewClass = $routeConfiguration['view'];
         $view = new $viewClass( $request, $result, $routingInformation, $routeConfiguration );
 
-        foreach( $this->configuration->getSetting( 'applications', 'mad', 'views', array(  ) ) as $name => $class ) {
+        if ( !isset( $routeConfiguration['views'] ) ) {
+            $routeConfiguration['views'] = array();
+        }
+
+        foreach( $routeConfiguration['views'] as $name => $class ) {
             $view->compose( $name, new $class( $request, $result, $routingInformation, $routeConfiguration ) );
         }
 
