@@ -166,6 +166,7 @@ class madFormController extends madController {
     
                     $relative = $file->name;
                     $uploadTo = $uploadDir . DIRECTORY_SEPARATOR . $relative;
+                    $uploadTo = iconv('utf-8', 'us-ascii//TRANSLIT', $uploadTo);
                     
                     $i = 1;
                     while ( file_exists( $uploadTo ) ) {
@@ -344,11 +345,7 @@ class madFormController extends madController {
     public function slugify( $string, $name ) {
         $slug = preg_replace('~[^\\pL\d]+~u', '-', $string );
         $slug = trim($slug, '-');
-        // transliterate
-        if (function_exists('iconv'))
-        {
-            $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
-        }
+        $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
         // lowercase
         $slug = strtolower($slug);
         // remove unwanted characters
