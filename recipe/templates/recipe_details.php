@@ -83,7 +83,9 @@ a.btn-block:hover { background: #539893; }
                         <?php if ( isset( $this->object['profile'] ) ): ?>
                         <p class="author-name"><?php $this->e( $this->object['profile']['name'] ) ?></p>
                         <p class="author-description">
+                                <?php if ( isset( $this->object['profile']['picture'] ) ): ?>
                                 <img class="author-photo" src="<?php echo $this->getAbsoluteUploadUrl( $this->object['profile']['picture'] ); ?>" width="87" height="87" title="Photo profil X" />
+                                <?php endif ?>
                                 <?php $this->e( $this->object['profile']['introduction'] ) ?>
                         </p>
                         <a href="<?php echo $this->url( 'profile.details', $this->object['profile'] ) ?>" class="btn-block" style="width: 100%;">Voir le profil</a>
