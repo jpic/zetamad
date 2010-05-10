@@ -395,4 +395,15 @@ class madObject extends ArrayObject {
 
         return (array) $this;
     }
+    public function forceListAttribute( $name ) {
+        if ( !isset( $this[$name] ) ) {
+            return false;
+        }
+
+        if ( $this[$name] instanceof madObject && $this[$name]->isEntity ) {
+            $this[$name] = new madObject( array( $this[$name] ) );
+        }
+
+        return $this[$name];
+    }
 }
