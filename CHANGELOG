@@ -1,0 +1,9 @@
+Release 2010-05-10.0
+
+- Bugfix: images with non ascii filenames
+- Design upgrade
+- Authentication/ACL
+- Prestashop authentication support
+- Comments (alpha)
+- Support Windows
+- Controller debload

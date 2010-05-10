@@ -1,9 +1,39 @@
-Release alpha1, 16/04/10
+# Release 2010-05-17.0
 
-- unit test/reglage de l'autocomplete particulierement au cas ou ils demandent de donner vie aux ingrédients,
-- ajout de relation par popup à la django (je peux te faire une demo sur une appli django)
-- dump/restore de data pour faciliter les migrations
-- route d'autocomplete de products
-- commande de package pour release: genere une archive "light", sans tests
+## Dev:
 
-Release alpha0, 12/04/10
+* More ACL
+* More delete object links
+* BRs in old recipes
+* Ingredients without quantities
+* Pagination url bug
+* Prestashop globals
+* Thumbnail template tag
+* Categories page
+* Set paginate to 12
+
+## Design:
+
+* Add padding-right +1px on 2 last recipes in list tpl
+* Label radios/checkbox (form.php)
+* Fatal template
+* Profile list template
+* Comments template (add dates)
+* Categories tempate
+
+# Later
+
+* Route list page
+* Administrator navigation
+* Comment with moderation
+* Flash messages support
+* Flash messages design
+* Votes
+* Contact form in fatal?
+* Notifications
+* CSRF protection
+* Brute force protection
+* Error logging
+* Error reproduction
+* Template debug
+* Xphprof integration
