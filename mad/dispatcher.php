@@ -79,7 +79,7 @@ class madHttpDispatcher {
             }
         }
         
-        $this->signals->send( 'requestParsed', array( $request ) );
+        $this->signals->send( 'postParseRequest', array( $request ) );
         
         /**
          * A router should be istnanciated with the request object.
@@ -89,8 +89,7 @@ class madHttpDispatcher {
          */
         $routes = $this->configuration['routes'];
         $router = new madRouter( $request, $routes );
-        
-        $this->signals->send( 'routerCreated', array( $router ) );
+        madRegistry::instance(  )->router = $router;
         
         /**
          * Run the router and get the routing information.
@@ -121,7 +120,7 @@ class madHttpDispatcher {
         
         $result->variables['request'] = $request;
         
-        $this->signals->send( 'resultCreated', array( $request, $result ) );
+        $this->signals->send( 'postCreateResult', array( $request, $result ) );
 
         /**
          * Instanciate the view.

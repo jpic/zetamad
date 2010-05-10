@@ -8,6 +8,6 @@ function setResultComments( ezcMvcRequest $request, ezcMvcResult $result ) {
     }
 }
 
-$registry->signals->connect( 'resultCreated', 'setResultComments' );
+$registry->signals->connect( 'postCreateResult', 'setResultComments' );
 
 ?>

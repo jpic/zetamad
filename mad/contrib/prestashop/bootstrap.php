@@ -33,7 +33,7 @@ function prestashopAuthentication( ezcMvcRequest $request ) {
         }
     }
 }
-$registry->signals->connect( 'requestParsed', 'prestashopAuthentication' );
+$registry->signals->connect( 'postParseRequest', 'prestashopAuthentication' );
 
 // fix autoload
 function prestashopAutoload( $class ) {

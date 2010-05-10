@@ -82,7 +82,7 @@ class madFramework {
             // connect signals
             $this->setupApplications(  );
             // allow connected functions to visit it befoere it is written
-            $registry->signals->send( 'configurationRefreshed', array( $registry->configuration ) );
+            $registry->signals->send( 'postConfigurationRefresh', array( $registry->configuration ) );
             // cache the parsed configuration for performances
             $registry->configuration->write( $this->entryApplicationPath . '/cache/etc' );
         } else {

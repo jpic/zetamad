@@ -28,11 +28,6 @@ function autoCreateMadModelTable( $bootstrap ) {
 }
 $registry->signals->connect( 'preSetupModel', 'autoCreateMadModelTable' );
 
-function setRegistryRouter( $router ) {
-    madRegistry::instance(  )->router = $router;
-}
-$registry->signals->connect( 'routerCreated', 'setRegistryRouter' );
-
 function setRoutesApplication( $configuration ) {
     foreach( $configuration['routes'] as $name => $route ) {
         $applicationName = substr( $name, 0, strrpos( $name, '.' ) );
@@ -45,7 +40,7 @@ function setRoutesApplication( $configuration ) {
         $configuration['routes'][$name]->merge( $configuration['applications'][$applicationName] );
     }
 }
-$registry->signals->connect( 'configurationRefreshed', 'setRoutesApplication' );
+$registry->signals->connect( 'postConfigurationRefresh', 'setRoutesApplication' );
 
 function defaultController( $configuration ) {
     foreach( $configuration['routes'] as $name => $route ) {
@@ -54,7 +49,7 @@ function defaultController( $configuration ) {
         }
     }
 }
-$registry->signals->connect( 'configurationRefreshed', 'defaultController' );
+$registry->signals->connect( 'postConfigurationRefresh', 'defaultController' );
 
 function defaultView( $configuration ) {
     foreach( $configuration['routes'] as $name => $route ) {
@@ -63,7 +58,7 @@ function defaultView( $configuration ) {
         }
     }
 }
-$registry->signals->connect( 'configurationRefreshed', 'defaultView' );
+$registry->signals->connect( 'postConfigurationRefresh', 'defaultView' );
 
 function prefixRoutes( $configuration ) {
     foreach( $configuration['routes'] as $name => $route ) {
@@ -86,7 +81,7 @@ function prefixRoutes( $configuration ) {
         $configuration['routes'][$name]['name'] = $name;
     }
 }
-$registry->signals->connect( 'configurationRefreshed', 'prefixRoutes' );
+$registry->signals->connect( 'postConfigurationRefresh', 'prefixRoutes' );
 
 function findClasses( $configuration ) {
     foreach( $configuration['applications'] as $name => $application ) {
@@ -148,7 +143,7 @@ function findClasses( $configuration ) {
         }
     }
 }
-$registry->signals->connect( 'configurationRefreshed', 'findClasses' );
+$registry->signals->connect( 'postConfigurationRefresh', 'findClasses' );
 
 function stripTrailingSlashes( &$array ) {
     foreach( $array as $name => $value ) {
@@ -159,7 +154,7 @@ function stripTrailingSlashes( &$array ) {
         }
     }
 }
-$registry->signals->connect( 'configurationRefreshed', 'stripTrailingSlashes' );
+$registry->signals->connect( 'postConfigurationRefresh', 'stripTrailingSlashes' );
 
 function findStaticFiles( $configuration ) {
     if ( !isset( $configuration['staticFiles'] ) ) {
@@ -191,7 +186,7 @@ function findStaticFiles( $configuration ) {
         }
     }
 }
-$registry->signals->connect( 'configurationRefreshed', 'findStaticFiles' );
+$registry->signals->connect( 'postConfigurationRefresh', 'findStaticFiles' );
 
 function allPathsRelative( &$configuration ) {
     foreach( $configuration as $key => $value ) {
@@ -204,5 +199,5 @@ function allPathsRelative( &$configuration ) {
         }
     }
 }
-$registry->signals->connect( 'configurationRefreshed', 'allPathsRelative' );
+$registry->signals->connect( 'postConfigurationRefresh', 'allPathsRelative' );
 ?>
