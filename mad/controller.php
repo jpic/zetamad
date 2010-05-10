@@ -9,7 +9,7 @@ abstract class madController extends ezcMvcController {
     public function __construct( $action, ezcMvcRequest $request, &$configuration = null ) {
         parent::__construct( $action, $request );
         $this->registry = madRegistry::instance(  );
-        $this->configuration = $configuration;
+        $this->configuration =& $configuration;
     }
 
     public function compose( $name, $controller ) {

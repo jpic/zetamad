@@ -116,7 +116,7 @@ class madHttpDispatcher {
          * The controller should return a result object, again to make protocol 
          * abstraction, reusability and testing possible.
          */
-        $controller = $this->createRouteController( $routeConfiguration, $request );
+        $controller = $this->createRouteController( $request, $routeConfiguration );
         $result = $controller->createResult();
         
         $result->variables['request'] = $request;
@@ -128,20 +128,7 @@ class madHttpDispatcher {
          *
          * This view class is also protocol and framework specific.
          */
-        $viewClass = $routeConfiguration['view'];
-        $view = new $viewClass( $request, $result, $routingInformation );
-        
-        $view->setConfiguration( $controller->configuration );
-
-        foreach( $this->configuration->getSetting( 'applications', 'mad', 'viewPlugins', array(  ) ) as $handlerClass ) {
-            $reflectionClass = new ReflectionClass( $handlerClass );
-            $plugin = $reflectionClass->newInstance();
-            $plugin->request = $request;
-            $plugin->result = $result;
-            $plugin->routeConfiguration = $routeConfiguration;
-            $plugin->routingInformation = $routingInformation;
-            $view->plugins[] = $plugin;
-        }
+        $view = $this->createRouteView( $request, $result, $routingInformation, $routeConfiguration );
 
         /**
          * Run the view which returns a response object.
@@ -186,16 +173,26 @@ class madHttpDispatcher {
 
     }
 
-    public function createRouteController( $routeConfiguration, $request ) {
+    public function createRouteView( $request, $result, $routingInformation, &$routeConfiguration ) {
+        $viewClass = $routeConfiguration['view'];
+        $view = new $viewClass( $request, $result, $routingInformation, $routeConfiguration );
+
+        foreach( $this->configuration->getSetting( 'applications', 'mad', 'views', array(  ) ) as $name => $class ) {
+            $view->compose( $name, new $class( $request, $result, $routingInformation, $routeConfiguration ) );
+        }
+
+        return $view;
+    }
+
+    public function createRouteController( $request, &$routeConfiguration ) {
         $class = $routeConfiguration['controller'];
         $action = $routeConfiguration['action'];
         $controller = new $class( $action, $request, $routeConfiguration );
         
-        if ( substr( $request->uri, 0, 8 ) != '/static/' ) {
-            foreach( $this->configuration->getSetting( 'applications', 'mad', 'controllers', array(  ) ) as $name => $class ) {
-                $controller->compose( $name, new $class( $action, $request, $routeConfiguration ) );
-            }
+        foreach( $this->configuration->getSetting( 'applications', 'mad', 'controllers', array(  ) ) as $name => $class ) {
+            $controller->compose( $name, new $class( $action, $request, $routeConfiguration ) );
         }
+
         return $controller;
     }
 }

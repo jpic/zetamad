@@ -283,8 +283,8 @@ class madModelController extends madFormController {
         $request->variables[str_replace( '.', '_', $configuration['form'] )] = $data;
 
         $controller = $registry->dispatcher->createRouteController( 
-            $configuration,
-            $request
+            $request,
+            $configuration
         );
 
         $result = $controller->createResult(  );

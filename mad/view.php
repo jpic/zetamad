@@ -17,6 +17,8 @@
  * - deciding which templates to use,
  * - in which order to render them
  * 
+ * This class is responsible for creating the response object.
+ *
  * @package MadCore
  * @version //autogen//
  */
@@ -32,6 +34,9 @@ class madView extends ezcMvcView {
 
     public $configuration = array(  );
 
+    public $composite = null;
+    public $views = array(  );
+
     /**
      * Instanciate a view object with a request, result and routing 
      * information. Typically called from the dispatcher.
@@ -41,36 +46,17 @@ class madView extends ezcMvcView {
      * @param ezcMvcRoutingInformation $routeInfo 
      * @return void
      */
-    public function __construct( ezcMvcRequest $request, ezcMvcResult $result, ezcMvcRoutingInformation $routeInfo ) {
+    public function __construct( ezcMvcRequest $request, ezcMvcResult $result, ezcMvcRoutingInformation $routeInfo, &$configuration = null ) {
         parent::__construct( $request, $result );
-
         $this->routeInfo = $routeInfo;
-    }
-
-    public function setConfiguration( array &$configuration ) {
         $this->configuration =& $configuration;
-        $this->result->variables['configuration'] =& $this->configuration;
     }
 
-    /**
-     * The user-implemented that returns the zones.
-     *
-     * This method creates all the zones that are needed to render a view. A
-     * zone is an array of elements that implement a view handler. The view
-     * handlers do not have to be of the same type, as long as they implement
-     * the ezcMvcViewHandler interface.
-     *
-     * The $layout parameter can be used to determine whether a "page layout" should
-     * be added to the list of zones. This can be useful in case you're incorporating
-     * many different applications. The $layout parameter will be set to true automatically
-     * for the top level createZones() method, which can then chose to add zones from
-     * other views as well. The createZones() methods from those other views should
-     * have the $layout parameter set to false.
-     *
-     * @param bool $layout
-     *
-     * @return array(ezcMvcViewHandler)
-     */
+    public function compose( $name, $view ) {
+        $view->composite = $this;
+        $this->views[$name] = $view;
+    }
+
     public function createZones( $layout )
     {
         $zones = array(  );
@@ -109,14 +95,9 @@ class madView extends ezcMvcView {
             return $zones;
         }
 
-        if ( isset( $this->configuration['views'] ) ) {
-            foreach( $this->configuration['views'] as $class ) {
-                $view = new $class( $this->request, $this->result, $this->routeInfo );
-                $viewZones = $view->createZones( false );
-
-                foreach( $viewZones as $zone ) {
-                    $zones[] = $zone;
-                }
+        foreach( $this->views as $name => $class ) {
+            foreach( $view->createZones( false ) as $zone ) {
+                $zones[] = $zone;
             }
         }
 
@@ -126,20 +107,10 @@ class madView extends ezcMvcView {
             $zones[] = new madViewHandler( 'site_base', ENTRY_APP_PATH . DIRECTORY_SEPARATOR . 'templates' . DIRECTORY_SEPARATOR . 'site_base.php' );
         }
 
-        $this->addHandlerPlugins( $zones );
-
         return $zones;
     }
 
-    public function addHandlerPlugins( $zones ) {
-        foreach( $zones as $name => $zone ) {
-            if ( $zone instanceof madViewHandler ) {
-                $zone->handlers =& $this->plugins;
-            }
-        }
-    }
-
-    public function getTemplatePath( $template, $defaultApplication = null ) {
+    public function getTemplatePath( $template, $defaultApplication = null ) { // {{{
         $registry = madRegistry::instance(  );
         
         // path to the "entry point" application
@@ -224,7 +195,7 @@ class madView extends ezcMvcView {
         }
 
         trigger_error( "Can't figure a template path for " . join( "<br />", $testPaths ) );
-    }
+    } // }}}
 
     /**
      * Try to figure the template path for this request/result.
@@ -249,7 +220,7 @@ class madView extends ezcMvcView {
      *
      * @return string template path
      */
-    public function getTemplate(  ) {
+    public function getTemplate(  ) { // {{{
         $actionName = $this->routeInfo->action;
 
         $registry = madRegistry::instance(  );
@@ -383,7 +354,7 @@ class madView extends ezcMvcView {
         }
         
         return $this->getTemplatePath( $actionName . '.php' );    
-    }
+    } // }}}
 
     /**
      * Try to figure the namespace of the content object(s) concerned by the 
@@ -395,7 +366,7 @@ class madView extends ezcMvcView {
      * 
      * @return string Persistent object namespace attribute.
      */
-    public function getNamespace(  ) {
+    public function getNamespace(  ) { // {{{
         if ( isset( $this->request->variables['filter']['namespace'] ) ) {
             return $this->request->variables['filter']['namespace'];
         }
@@ -410,7 +381,7 @@ class madView extends ezcMvcView {
         }
 
         return false;
-    }
+    } // }}}
 }
 
 ?>
