@@ -84,7 +84,7 @@ a.btn-block:hover { background: #539893; }
                         <p class="author-name"><?php $this->e( $this->object['profile']['name'] ) ?></p>
                         <p class="author-description">
                                 <?php if ( isset( $this->object['profile']['picture'] ) ): ?>
-                                <img class="author-photo" src="<?php echo $this->thumbnail( $this->object['profile']['picture'], 87, 87 ); ?>" title="<?php $this->e( $this->object['profie']['firstName'] . ' ' . $this->object['profile']['lastName'] ) ?>" />
+                                <img class="author-photo" src="<?php echo $this->thumbnail( $this->object['profile']['picture'], 87, 87 ); ?>" title="<?php $this->e( $this->object['profile']['firstName'] . ' ' . $this->object['profile']['lastName'] ) ?>" />
                                 <?php endif ?>
                                 <?php $this->e( $this->object['profile']['introduction'] ) ?>
                         </p>
