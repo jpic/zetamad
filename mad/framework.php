@@ -166,6 +166,10 @@ class madFramework {
             return true;
         }
 
+        if ( ! $this->configuration['mad']['pdoClass'] ) {
+            die( 'Did you change refreshConfiguration and did not remove the cache dir?' );
+        }
+
         $reflection = new ReflectionClass( $this->configuration['mad']['pdoClass'] );
         
         $database = $reflection->newInstanceArgs( $this->configuration['mad']['pdoArguments'] );
