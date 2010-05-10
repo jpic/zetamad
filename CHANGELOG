@@ -1,3 +1,7 @@
+Release 2010-05-17.0
+
+- Pagination url bug fixed
+
 Release 2010-05-10.0
 
 - Bugfix: images with non ascii filenames

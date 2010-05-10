@@ -7,6 +7,8 @@ class madHttpDispatcher {
     }
 
     public function run(  ) {
+        $registry = madRegistry::instance();
+
         /**
          * Create the http request parser.
          * 
@@ -45,6 +47,7 @@ class madHttpDispatcher {
         $request = $requestParser->createRequest();
         
         $request->uri = substr( $request->uri, -1 ) == '/' ? substr( $request->uri, 0, -1 ) : $request->uri;
+        $request->variables['prefixedUrl'] = $registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' ) . $request->uri;
         
         // check if ajax
         $request->variables['ajaxRequest'] = isset( $request->raw['HTTP_X_REQUESTED_WITH'] ) &&
