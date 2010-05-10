@@ -11,7 +11,7 @@
 #nav-recipe li a.selected { color: #000; }
 #nav-recipe li.sep { font-size: 9px; padding: 0px 8px; }
 
-#center_column .recipe-block { font-size: 11px; width: 238px; float: left; padding: 0 9px 9px 0; }
+#center_column .recipe-block { font-size: 11px; width: 238px; float: left; padding: 0 12px 12px 0; }
 #center_column .recipe-block .infos a { text-decoration: underline; }
 #center_column .recipe-details a { color: #b0aaac; }
 #center_column .recipe-details a:hover { text-decoration: underline; color: #000; }
@@ -40,7 +40,7 @@
 -->
 
 <?php $forloopCounter = 1; foreach( $this->objectList as $object ): ?>
-<div class="recipe-block" <?php if( $forloopCounter == count( $this->objectList ) ): ?> style="padding-right: 0;"<?php endif; ?>>
+<div class="recipe-block" <?php if( $forloopCounter % 4 == 0 ): ?> style="padding-right: 0;"<?php endif; ?>>
 	<!--<p class="link">remipathier.cookingfor.com</p>-->
 	<div class="recipe-details">
 		<?php if ( isset( $object['picture'] ) ): ?>
