@@ -1,7 +1,7 @@
 <link rel="stylesheet" type="text/css" href="<?php echo $this->url( 'mad.static', array( 'path' => '/css/uni-form.css' ) ) ; ?>" />
 <style type="text/css">
 .uniForm fieldset { margin: 0; padding: 0; }
-.uniForm label { font-size: 11px; color: #000; }
+.uniForm label, .label { font-size: 11px; color: #000; }
 .uniForm .formset .textInput, 
 .uniForm .formset .blockLabels .textInput, 
 .uniForm .formset .blockLabels .fileUpload {
@@ -97,8 +97,8 @@ table.multipleField input[type=text].textInput {
             ?>
                 <p>
                 <label class="inlineLabel" for="<?php echo $name; ?>">
-                    <input value="1" checked="<?php if ( isset( $form[$name] ) ): var_dump( $form[$name] ) ?>checked<?php endif ?>" name="<?php echo $inputName ?>" id="<?php echo $inputId; ?>" type="checkbox" class="<?php $this->e( $htmlClasses ) ?>" />
-                    <span><?php $this->e( $field->label ) ?> <?php if ( isset( $field->required ) ): ?><em>*</em><?php endif ?></span>
+                    <?php if ( isset( $field->required ) ): ?><em>*</em><?php endif ?> <input value="1" checked="<?php if ( isset( $form[$name] ) ): var_dump( $form[$name] ) ?>checked<?php endif ?>" name="<?php echo $inputName ?>" id="<?php echo $inputId; ?>" type="checkbox" class="<?php $this->e( $htmlClasses ) ?>" />
+                    <span><?php $this->e( $field->label ) ?></span>
                 </label>
                 <p>
 
@@ -118,7 +118,7 @@ table.multipleField input[type=text].textInput {
                 $htmlClasses = "";
                 if ( isset( $field->required ) ) $htmlClasses .= "required ";
             ?>
-                <p class="label"><?php $this->e( ucfirst( $field->label ) ) ?><?php if ( isset( $field->required ) ): ?><em>*</em><?php endif ?></p>
+                <p class="label"><?php if ( isset( $field->required ) ): ?><em>*</em><?php endif ?> <?php $this->e( ucfirst( $field->label ) ) ?></p>
                 <div class="multiField">
                 <?php
                 foreach( $field->choices->options as $key => $choice ):
