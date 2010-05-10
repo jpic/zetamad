@@ -95,7 +95,7 @@ class madView extends ezcMvcView {
             return $zones;
         }
 
-        foreach( $this->views as $name => $class ) {
+        foreach( $this->views as $name => $view ) {
             foreach( $view->createZones( false ) as $zone ) {
                 $zones[] = $zone;
             }
