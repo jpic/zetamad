@@ -68,6 +68,12 @@ class madConfiguration extends madObject {
         // find all configuration paths in this repository path
         $applicationPaths = array(  );
 
+        if ( defined( 'RecursiveDirectoryIterator::FOLLOW_SYMLINKS' ) ) {
+            $flags = RecursiveDirectoryIterator::FOLLOW_SYMLINKS|RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST;
+        } else { // php 5.2.6 support
+            $flags = RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST;
+        }
+
         // discover paths to applications in configured repositories
         foreach( $repositories as $path ) {
             // prepend application path and get the absolute path
@@ -75,7 +81,7 @@ class madConfiguration extends madObject {
             
             $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( 
                 $path,
-                RecursiveDirectoryIterator::FOLLOW_SYMLINKS
+                $flags
             ) );
 
             foreach( $fileIterator as $fileInfo ) {

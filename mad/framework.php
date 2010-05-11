@@ -212,9 +212,15 @@ class madFramework {
             trigger_error( "$autoloadPath is not writable", E_USER_ERROR );
         }
 
+        if ( defined( 'RecursiveDirectoryIterator::FOLLOW_SYMLINKS' ) ) {
+            $flags = RecursiveDirectoryIterator::FOLLOW_SYMLINKS|RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST;
+        } else { // php 5.2.6 support
+            $flags = RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST;
+        }
+
         $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( 
             $this->entryApplicationPath . '/..',
-            RecursiveDirectoryIterator::FOLLOW_SYMLINKS|RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST
+            $flags
         ) );
 
         foreach( $fileIterator as $fileInfo ) {

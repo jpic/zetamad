@@ -84,6 +84,12 @@ function prefixRoutes( $configuration ) {
 $registry->signals->connect( 'postConfigurationRefresh', 'prefixRoutes' );
 
 function findClasses( $configuration ) {
+    if ( defined( 'RecursiveDirectoryIterator::FOLLOW_SYMLINKS' ) ) {
+        $flags = RecursiveDirectoryIterator::FOLLOW_SYMLINKS|RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST;
+    } else { // php 5.2.6 support
+        $flags = RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST;
+    }
+
     foreach( $configuration['applications'] as $name => $application ) {
         $path = $configuration->getPathSetting( 'applications', $name, 'path' );
 
@@ -94,7 +100,7 @@ function findClasses( $configuration ) {
         $fileIterator = new RecursiveIteratorIterator( 
             new RecursiveDirectoryIterator( 
                 $path,
-                RecursiveDirectoryIterator::FOLLOW_SYMLINKS|RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST
+                $flags
             )
         );
         
@@ -164,6 +170,13 @@ function findStaticFiles( $configuration ) {
         $configuration['staticFiles']['paths'] = new madObject;
     }
 
+    if ( defined( 'RecursiveDirectoryIterator::FOLLOW_SYMLINKS' ) ) {
+        $flags = RecursiveDirectoryIterator::FOLLOW_SYMLINKS|RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST;
+    } else { // php 5.2.6 support
+        $flags = RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST;
+    }
+
+
     foreach( $configuration['applications'] as $name => $application ) {
         $path       = $configuration->getPathSetting( 'applications', $name, 'path' );
         $staticPath = madFramework::fixPath( realpath( $path . '/static' ) );
@@ -172,7 +185,7 @@ function findStaticFiles( $configuration ) {
             $fileIterator = new RecursiveIteratorIterator( 
                 new RecursiveDirectoryIterator( 
                     $staticPath,
-                    RecursiveDirectoryIterator::FOLLOW_SYMLINKS|RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST
+                    $flags
                 )
             );
 
