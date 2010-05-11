@@ -1,7 +1,10 @@
-Release 2010-05-17.0
+Release 2010-05-10.1
 
 - Pagination url bug fixed
 - Set paginate to 12
+- Implemented thumbnailing
+- Fixed compat with PHP 5.6.2
+- Fixed bug caused by ingredients without quantities
 
 Release 2010-05-10.0
 
