@@ -69,7 +69,7 @@ a.btn-block:hover { background: #539893; }
         <div class="recipe-left">
             <?php if ( isset( $this->object['picture'] ) ): ?>
                 <div id="recipe-photo">
-			            <img src="<?php echo $this->getAbsoluteUploadUrl( $this->object['picture'] ); ?>" alt="<?php $this->e( $this->object['title'] ) ?>" height="240" width="240" />
+			            <img src="<?php echo $this->thumbnail( $this->object['picture'], 240, 240 ); ?>" alt="<?php $this->e( $this->object['title'] ) ?>" />
                 </div>
             <?php endif ?>
                 <!--
@@ -84,7 +84,7 @@ a.btn-block:hover { background: #539893; }
                         <p class="author-name"><?php $this->e( $this->object['profile']['name'] ) ?></p>
                         <p class="author-description">
                                 <?php if ( isset( $this->object['profile']['picture'] ) ): ?>
-                                <img class="author-photo" src="<?php echo $this->getAbsoluteUploadUrl( $this->object['profile']['picture'] ); ?>" width="87" height="87" title="Photo profil X" />
+                                <img class="author-photo" src="<?php echo $this->thumbnail( $this->object['profile']['picture'], 87, 87 ); ?>" title="<?php $this->e( $this->object['profie']['firstName'] . ' ' . $this->object['profile']['lastName'] ) ?>" />
                                 <?php endif ?>
                                 <?php $this->e( $this->object['profile']['introduction'] ) ?>
                         </p>

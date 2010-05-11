@@ -45,7 +45,7 @@
 	<div class="recipe-details">
 		<?php if ( isset( $object['picture'] ) ): ?>
 		    <a href="<?php echo $this->url( 'recipe.details', $object ) ?>">
-			    <img class="picture" width="226" height="226" src="<?php echo $this->thumbnail( $object['picture'], 100, 100, 'ratio' ) ?>" />
+			    <img class="picture" src="<?php echo $this->thumbnail( $object['picture'], 226, 226 ) ?>" />
 		</a>
 		<?php endif ?>
 	
