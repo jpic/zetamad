@@ -171,7 +171,7 @@ a.btn-block:hover { background: #539893; }
                 <h3>Ingr&eacute;dients</h3>
                 <ul>
                     <?php foreach( $this->iterate( $this->object['ingredientQuantities'] ) as $ingredient ): ?>
-                        <li><?php $this->e( $ingredient['ingredient'] ) ?> : <span class="att"><?php $this->e( $ingredient['quantity'] ) ?></span></li>
+                        <li><?php $this->e( $ingredient['ingredient'] ) ?><?php if ( isset( $ingredient['quantity'] ) ): ?> : <span class="att"><?php $this->e( $ingredient['quantity'] ) ?></span><?php endif ?></li>
                     <?php endforeach; ?>
                 </ul>
                 <!--<a class="btn-block" href="#">Voir les produits</a>-->
