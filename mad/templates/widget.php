@@ -42,7 +42,7 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
     <textarea class="wysiwyg <?php $this->e( $htmlClasses ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>"><?php if ( isset( $form[$name] ) ) $this->e( $form[$name] ) ?></textarea>
 
 <?php elseif ( $field->widget == 'textarea' ): ?>
-    <textarea class=" <?php $this->e( $htmlClasses ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>"><?php if ( isset( $form[$name] ) ) $this->e( $form[$name] ) ?></textarea>
+    <textarea class=" <?php $this->e( $htmlClasses ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>"><?php if ( isset( $form[$name] ) ) echo htmlentities( stripslashes( $form[$name] ), ENT_COMPAT, 'UTF-8' ) ?> </textarea>
 
 <?php elseif ( $field->widget == 'select' ): ?>
     <select class="<?php $this->e( $htmlClasses ) ?>" name="<?php echo $inputName ?>" id="<?php echo $inputId ?>">
