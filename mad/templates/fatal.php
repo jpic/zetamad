@@ -1,3 +1,8 @@
+<style>
+h2.title { color: #000000; font-family:'Times','Helvetica',serif; font-size:35px; font-weight:100; line-height:40px; margin: 15px 0 15px 0; }
+
+</style>
+<h2 class="title">Faire un formlaire pour rassurer le visiteur ici?</h2>
 <?php if ( isset( $_SESSION['fatalMessage'] ) && $_SESSION['fatalSolutions'] ): ?>
 <p class="fatalInformation"><?php $this->e( $_SESSION['fatalMessage'] ) ?></p>
 <?php endif ?>
@@ -17,5 +22,3 @@
     <?php endforeach ?>
 <?php endif ?>
 </ul>
-
-<h2>Faire un formlaire pour rassurer le visiteur ici?</h2>
