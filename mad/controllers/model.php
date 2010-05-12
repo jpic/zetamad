@@ -58,6 +58,8 @@ class madModelController extends madFormController {
                 $deletes = array(  );
 
                 if ( isset( $form[$name] ) ) {
+                    $form->forceListAttribute( $name );
+
                     foreach( $form[$name] as $key => $related ) {
                         if ( isset( $related['DELETE'] ) ) {
                             // unsetting the related object here would break 
