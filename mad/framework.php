@@ -38,6 +38,7 @@ class madFramework {
         } elseif ( $this->configuration['mad']['refreshConfiguration'] ) {
             // force configuration reload
             $this->configuration = parse_ini_file( $this->entryApplicationPath . '/etc/applications.ini', true );
+            $this->configuration['mad']['refreshConfiguration'] = true;
         }
 
         // auto make cache director
