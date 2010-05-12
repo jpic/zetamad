@@ -264,7 +264,7 @@ class madModelController extends madFormController {
         ) );
         $this->registry->model->refresh( $object );
         $this->result->variables['object'] = $object;
-        //$this->result->variables['contexts'][] = $object['namespace'];
+        $this->result->variables['contexts'][] = $object['namespace'];
     }
 
     public function doDelete(  ) {
