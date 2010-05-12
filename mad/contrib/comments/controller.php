@@ -8,6 +8,7 @@ class madCommentsController extends madController {
             'comment'   => $this->comment,
             'object'    => $this->object,
             'namespace' => 'comment',
+            'moderated' => 0,
         ) );
 
         $this->registry->model->save( $comment );
