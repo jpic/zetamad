@@ -93,6 +93,8 @@ class madHttpDispatcher {
         $routes = $this->configuration['routes'];
         $router = new madRouter( $request, $routes );
         madRegistry::instance(  )->router = $router;
+
+        $this->signals->send( 'postCreateRouter', array( $request, $router ) );
         
         /**
          * Run the router and get the routing information.

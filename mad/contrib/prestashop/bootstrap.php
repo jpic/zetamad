@@ -2,7 +2,7 @@
 $registry = madRegistry::instance(  );
 
 // authentication backend
-function prestashopAuthentication( ezcMvcRequest $request ) {
+function prestashopAuthentication( ezcMvcRequest $request, ezcMvcRouter $router ) {
     $registry = madRegistry::instance(  );
     $cookie = new Cookie( 'ps' );
     
@@ -27,13 +27,13 @@ function prestashopAuthentication( ezcMvcRequest $request ) {
                 )
             );
 
-            $request->variables['user'] = $result['form'];
+            $request->variables['user'] = $result->variables['form'];
         } else {
             $request->variables['user'] = current( $users );
         }
     }
 }
-$registry->signals->connect( 'postParseRequest', 'prestashopAuthentication' );
+$registry->signals->connect( 'postCreateRouter', 'prestashopAuthentication' );
 
 // fix autoload
 function prestashopAutoload( $class ) {
