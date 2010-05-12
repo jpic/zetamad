@@ -24,8 +24,8 @@
  * @credit Aikar@irc.freenode.net##php parse_ini_file works on 5.3
  */
 class madConfiguration extends madObject {
-    public function __construct( $path, array &$applicationsConfiguration = null ) {
-        $this->path    = $path;
+    public function __construct( $path, &$applicationsConfiguration = null ) {
+        $this->path   = $path;
 
         if ( $applicationsConfiguration ) {
             $this['applications'] = $applicationsConfiguration;
@@ -53,14 +53,13 @@ class madConfiguration extends madObject {
         }
     }
 
-    public function refresh( $entryApplicationPath ) {
+    public function refreshApplications( $entryApplicationPath, $subdir = 'etc' ) {
         // figure the entry application name
         $entryApplicationName = substr( $entryApplicationPath, strrpos( $entryApplicationPath, '/' ) + 1 );
 
         // save entry app repositories and installed applications because 'applications' 
         // will be emptied
         $repositories = $this['applications'][$entryApplicationName]['applicationRepositories'];
-        $installedApplications = array_keys( (array)$this['applications'] );
         
         // clean applications configuration
         $this['applications'] = new madObject();
@@ -88,7 +87,7 @@ class madConfiguration extends madObject {
                 $filePath = madFramework::fixPath( realpath( $fileInfo->getPath(  ) ) );
                 
                 // searching for directories named etc
-                if ( substr( $filePath, -3 ) != 'etc' ) {
+                if ( substr( $filePath, -3 ) != $subdir ) {
                     continue;
                 }
                 
@@ -107,7 +106,7 @@ class madConfiguration extends madObject {
                 }
 
                 // get current application path
-                $applicationPath = substr( $filePath, 0, strrpos( $filePath, '/etc' ) );
+                $applicationPath = substr( $filePath, 0, strrpos( $filePath, '/'. $subdir ) );
 
                 // get current application name
                 $applicationName = substr( $applicationPath, strrpos( $applicationPath, '/' ) + 1 );
@@ -119,23 +118,21 @@ class madConfiguration extends madObject {
 
                 // store the path because we'll parse application config in the 
                 // order of sections in applications.ini
-                $applicationPaths[$applicationName] = $applicationPath;
+                $this['applications'][$applicationName]['path'] = madFramework::getRelativePath( $applicationPath, $entryApplicationPath );
             }
         }
-
+    }
+    public function refresh( $entryApplicationPath, $installedApplications, $subdir = 'etc' ) {
         // applications.ini apps order is from the most specific to the less 
         // specific. Our merge overrides, so configuration must be parsed from 
         // the less specific to the most specific
         foreach( array_reverse( $installedApplications ) as $applicationName ) {
-            $applicationPath = $applicationPaths[$applicationName];
+            $applicationPath = $this['applications'][$applicationName]['path'];
             
             // fetch and override this application configuration
-            foreach( glob( "$applicationPath/etc/*.ini" ) as $file ) {
+            foreach( glob( "$entryApplicationPath/$applicationPath/{$subdir}/*.ini" ) as $file ) {
                 $this->parseIni( madFramework::fixPath( $file ) );
             }
-
-            // save application "path" for later use
-            $this['applications'][$applicationName]['path'] = madFramework::getRelativePath( $applicationPath, $entryApplicationPath );
         }
     }
 
@@ -170,7 +167,7 @@ class madConfiguration extends madObject {
             }
         }
 
-        throw new Exception( "Cannot find the name of the application containing class $className, does it contain a 'etc' subdir?" );
+        throw new Exception( "Cannot find the name of the application containing class $className, does it contain a $subdir subdir?" );
     }
 
     public function getPathSetting( $group, $section, $name ) {
@@ -249,6 +246,45 @@ class madConfiguration extends madObject {
     public function parsePhp( $file ) {
         $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
         $this[$name] = require $file;
+    }
+    public function getMessageSetting( $key, $languages = null, $contexts = null, $default = null ) {
+        if ( is_null( $languages ) ) {
+            $languages = array( $this->getSetting( 'applications', 'mad', 'defaultLanguage' ) );
+        }
+
+        if ( is_null( $contexts ) ) {
+            $contexts = array( 'default' );
+        }
+
+        if ( !is_array( $languages ) ) {
+            $languages = array( $languages );
+        }
+
+        if ( !is_array( $contexts ) ) {
+            $contexts = array( $contexts );
+        }
+
+        if ( !in_array( 'default', $contexts ) ) {
+            $contexts[] = 'default';
+        }
+
+        foreach( $languages as $language ) {
+            if ( !isset( $this[$language] ) ) {
+                continue;
+            }
+
+            foreach( $contexts as $context ) {
+                if ( !isset( $this[$language][$context] ) ) {
+                    continue;
+                }
+
+                if ( isset( $this[$language][$context][$key] ) ) {
+                    return $this[$language][$context][$key];
+                }
+            }
+        }
+
+        return is_null( $default ) ? $key : $default;
     }
 }
 

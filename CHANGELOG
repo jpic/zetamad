@@ -1,3 +1,8 @@
+Release NEXT
+
+- Fixed a bug causing configuration not to refresh
+- Implemented locale (reuse of madConfiguration)
+
 Release 2010-05-10.2
 
 - Formsets with only one object should be interpreted as lists

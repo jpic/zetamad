@@ -202,6 +202,13 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
         return $value;
     }
+    public function t( $key, $context = null ) {
+        return madRegistry::instance(  )->locale->getMessageSetting( 
+            $key,
+            $this->request->accept->languages,
+            $context
+        );
+    }
 }
 
 ?>

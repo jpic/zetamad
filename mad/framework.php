@@ -72,11 +72,11 @@ class madFramework {
         $this->setupSignals(  );
         
         if ( $this->configuration['mad']['refreshConfiguration'] ) {
-            $this->setupConfiguration( $this->entryApplicationPath . '/etc' );
-            
+            $registry->configuration = new madConfiguration( $this->entryApplicationPath . '/etc', $this->configuration );
             // parse all ini files again, with overload support, that will 
             // update the core configuration (applications.ini)
-            $registry->configuration->refresh( $this->entryApplicationPath );
+            $registry->configuration->refreshApplications( $this->entryApplicationPath, 'etc' );
+            $registry->configuration->refresh( $this->entryApplicationPath, array_keys( (array)$registry->configuration['applications'] ), 'etc' );
             // bootstrapper requires refreshed configuration with non-overloaded variables
             $this->configuration = $registry->configuration['applications'];
             // call bootstrap.php from all installed application path to 
@@ -87,8 +87,26 @@ class madFramework {
             // cache the parsed configuration for performances
             $registry->configuration->write( $this->entryApplicationPath . '/cache/etc' );
         } else {
-            $this->setupConfiguration( $this->entryApplicationPath . '/cache/etc' );
+            $registry->configuration = new madConfiguration( $this->entryApplicationPath . '/cache/etc', $this->configuration );
             $this->setupApplications(  );
+        }
+        
+        $this->configuration['mad']['refreshLocale'] = isset( $this->configuration['mad']['refreshLocale'] ) && $this->configuration['mad']['refreshLocale'] && is_dir( $this->entryApplicationPath . '/locale' ) ? false : true;
+
+        if ( $this->configuration['mad']['refreshLocale'] ) {
+            $registry->locale = new madConfiguration( $this->entryApplicationPath . '/locale', $this->configuration );
+            $registry->locale->refresh( $this->entryApplicationPath, array_keys( (array)$registry->configuration['applications'] ), 'locale' );
+            // no need for application configuration in the locale confiuration
+            unset( $registry->locale['applications'] );
+            $registry->signals->send( 'postLocaleRefresh', array( $registry->locale ) );
+
+            if ( !is_dir( $this->entryApplicationPath . '/cache/locale' ) ) {
+                mkdir( $this->entryApplicationPath . '/cache/locale' );
+            }
+
+            $registry->locale->write( $this->entryApplicationPath . '/cache/locale' );
+        } else {
+            $regitry->configuration = new madConfiguration( $this->entryApplicationPath . '/cache/locale', $this->configuration, 'locale' );
         }
 
         if ( $this->configuration['mad']['refreshBin'] ) {
@@ -154,11 +172,6 @@ class madFramework {
 
             require $path;
         }
-    }
-
-    public function setupConfiguration( $path ) {
-        $configuration = new madConfiguration( $path, $this->configuration );
-        madRegistry::instance()->configuration = $configuration;
     }
 
     public function setupDatabase(  ) {
