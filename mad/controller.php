@@ -23,14 +23,15 @@ abstract class madController extends ezcMvcController {
         $this->result->variables['contexts'] = array(  );
         
         foreach( $this->controllers as $controller ) {
-            $ready = $controller->preCreateResult(  );
+            $controller->result = $this->result;
+            $break = $controller->preCreateResult(  );
 
-            if ( $ready ) {
+            if ( $break ) {
                 break;
             }
         }
         
-        if ( ! $ready ) {
+        if ( ! $break ) {
             $result = parent::createResult(  );
         }
 
