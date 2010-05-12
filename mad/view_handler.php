@@ -202,12 +202,18 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
         return $value;
     }
-    public function t( $key, $context = null ) {
-        return madRegistry::instance(  )->locale->getMessageSetting( 
+    public function t( $key, $dictionnary = null ) {
+        $message = madRegistry::instance(  )->locale->getMessageSetting( 
             $key,
             $this->request->accept->languages,
-            $context
+            $this->contexts
         );
+
+        if ( $dictionnary ) {
+            $message = madFramework::dictionnaryReplace( $message, $dictionnary );
+        }
+
+        return $message;
     }
 }
 

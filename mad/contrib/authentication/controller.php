@@ -33,19 +33,9 @@ class madAuthenticationController extends madController {
                 (array)$this->request->variables['user']
             );
 
-            $messages = $this->registry->configuration->getSetting( 'applications', 'authentication', 'messages' );
-            $_SESSION['fatalMessage'] = madFramework::dictionnaryReplace( 
-                $messages['insuficientRolePlural'],
-                $dictionnary
-            );
+            $_SESSION['fatalMessage'] = $this->t( 'insuficientRolePlural', $dictionnary );
 
-            $_SESSION['fatalSolutions'] = array();
-            foreach( $messages['insuficientRoleSolutions'] as $message ) {
-                $_SESSION['fatalSolutions'][] = madFramework::dictionnaryReplace( 
-                    $message,
-                    $dictionnary
-                );
-            }
+            $_SESSION['fatalSolutions'] = $this->t( 'insuficientRoleSolutions', $dictionnary );
             
             $_SESSION['fatalRequest'] = $this->request;
 

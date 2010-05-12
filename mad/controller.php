@@ -47,12 +47,24 @@ abstract class madController extends ezcMvcController {
 
     public function postCreateResult(  ) {
     }
-    public function translate( $key ) {
-        return madRegistry::instance(  )->locale->getMessageSetting( 
+    public function t( $key, $dictionnary = null ) {
+        $message = $this->registry->locale->getMessageSetting( 
             $key,
             $this->request->accept->languages,
             $this->result->variables['contexts']
         );
+
+        if ( $dictionnary ) {
+            if ( is_array( $message ) ) {
+                foreach( $message as $key => $value ) {
+                    $message[$key] = madFramework::dictionnaryReplace( $value, $dictionnary );
+                }
+            } else {
+                $message = madFramework::dictionnaryReplace( $message, $dictionnary );
+            }
+        }
+
+        return $message;
     }
 }
 

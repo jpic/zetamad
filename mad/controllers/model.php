@@ -277,7 +277,7 @@ class madModelController extends madFormController {
         if ( isset( $this->request->variables['confirmDelete'] ) ) {
             $this->registry->model->delete( $object );
             
-            $_SESSION['messages'][] = $this->translate( 'deleteMessage' );
+            $_SESSION['messages'][] = $this->t( 'deleteMessage', $object );
 
             $this->result->status = new ezcMvcExternalRedirect( 
                 $prefix . $this->registry->router->generateUrl( 
