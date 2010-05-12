@@ -264,8 +264,29 @@ class madModelController extends madFormController {
         ) );
         $this->registry->model->refresh( $object );
         $this->result->variables['object'] = $object;
+        //$this->result->variables['contexts'][] = $object['namespace'];
     }
 
+    public function doDelete(  ) {
+        $this->doDetails(  );
+        
+        $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
+
+        $object = $this->result->variables['object'];
+
+        if ( isset( $this->request->variables['confirmDelete'] ) ) {
+            $this->registry->model->delete( $object );
+            
+            $_SESSION['messages'][] = $this->translate( 'deleteMessage' );
+
+            $this->result->status = new ezcMvcExternalRedirect( 
+                $prefix . $this->registry->router->generateUrl( 
+                    $this->configuration['successRoute'],
+                    (array) $object
+                ) 
+            );
+        }
+    }
     static public function routeFormData( $routeName, $data ) {
         $registry = madRegistry::instance();
 
