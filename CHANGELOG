@@ -5,6 +5,8 @@ Release 2010-05-10.1
 - Implemented thumbnailing
 - Fixed compat with PHP 5.6.2
 - Fixed bug caused by ingredients without quantities
+- Formsets with only one object should be interpreted as lists
+- Output profile name as profile image title
 
 Release 2010-05-10.0
 
