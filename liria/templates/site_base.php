@@ -15,6 +15,16 @@ else:
 <body>
 <?php endif ?>
 
+<?php if ( $_SESSION['messages'] ): ?>
+    <ul>
+    <?php foreach( $_SESSION['messages'] as $message ): ?>
+        <li><?php $this->e( $message ) ?></li>
+    <?php endforeach ?>
+    </ul>
+
+    <?php $_SESSION['messages'] = array(  ) /* reset messages array */ ?>
+<?php endif ?>
+
 <?php echo $this->body; ?>
 
 <?php
