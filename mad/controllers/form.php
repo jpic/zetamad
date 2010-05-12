@@ -8,8 +8,6 @@ class madFormController extends madController {
     }
 
     public function doForm(  ) {
-        $result       = new ezcMvcResult(  );
-
         $form         = new madModelObject(  );
         $form->name   = $this->configuration['form'];
         $form->action = $this->request->uri;
@@ -17,7 +15,7 @@ class madFormController extends madController {
         $form->valid  = true;
         
         // add the form to result variables for reuse in the template
-        $result->variables['form'] = $form;
+        $this->result->variables['form'] = $form;
         
         // get and set the form configuration
         $this->setFormOptions( $form, false );
@@ -46,11 +44,9 @@ class madFormController extends madController {
                 var_dump( $dirty );
 
             } else { // save if there is no errors
-                $this->formSuccess( $result, $form );
+                $this->formSuccess( $form );
             }
         }
-
-        return $result;
     }
 
     /**

@@ -21,14 +21,11 @@ class madAuthenticationController extends madController {
         $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix', '' );
 
         if ( $this->isLoginRequired && !$this->isAuthenticated ) {
-            $result = new ezcMvcResult(  );
-            $result->status = new ezcMvcExternalRedirect( $this->loginUrl );
-            return $result;
+            $this->result->status = new ezcMvcExternalRedirect( $this->loginUrl );
+            return true;
         }
 
         if ( $this->isRoleRequired && !in_array( $this->userRole, $this->configuration['acceptedRoles'] ) ) {
-            $result = new ezcMvcResult(  );
-
             $dictionnary = array_merge(
                 array(
                     'acceptedRoles' => implode( ', ', $this->configuration['acceptedRoles'] ),
@@ -52,35 +49,30 @@ class madAuthenticationController extends madController {
             
             $_SESSION['fatalRequest'] = $this->request;
 
-            $result->status = new ezcMvcExternalRedirect(
+            $this->result->status = new ezcMvcExternalRedirect(
                 $prefix . $this->registry->configuration->getSetting( 'routes', 'mad.fatal', 'rails' )
             );
     
-            return $result;
+            return true;
         }
     }
 
-    public function postCreateResult( $result ) {
-        $result->variables['isAuthenticated'] =& $this->isAuthenticated;
-        $result->variables['user']            =& $this->request->variables['user'];
-        $result->variables['loginUrl']        =& $this->loginUrl;
+    public function postCreateResult(  ) {
+        $this->result->variables['isAuthenticated'] =& $this->isAuthenticated;
+        $this->result->variables['user']            =& $this->request->variables['user'];
+        $this->result->variables['loginUrl']        =& $this->loginUrl;
     }
 
     public function doRoleError(  ) {
-        $result = new ezcMvcResult(  );
         $result->variables['role'] = $this->configuration['acceptedRoles'];
-        return $result;
     }
 
     public function doLoginRedirect(  ) {
-        $result = new ezcMvcResult(  );
         $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
 
         $result->status = new ezcMvcExternalRedirect(
             $this->registry->configuration->getSetting( 'applications', 'authentication', 'loginUrl' )
         );
-
-        return $result;
     }
 }
 

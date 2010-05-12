@@ -2,7 +2,6 @@
 
 class madModelController extends madFormController {
     public function doList() {       
-        $result = new ezcMvcResult(  );
         $query = $this->configuration['query'];
         $paginate = isset( $this->configuration['paginate'] ) ? intval( $this->configuration['paginate'] ) : false;
         
@@ -25,9 +24,9 @@ class madModelController extends madFormController {
                 $paginate
             );
 
-            $result->variables['paginate']    = $paginate;
-            $result->variables['currentPage'] = $currentPage;
-            $result->variables['lastPage']    = $lastPage;
+            $this->result->variables['paginate']    = $paginate;
+            $this->result->variables['currentPage'] = $currentPage;
+            $this->result->variables['lastPage']    = $lastPage;
         } 
         $objectList = $this->registry->model->queryLoad( $query );
 
@@ -47,9 +46,7 @@ class madModelController extends madFormController {
             }
         }
         
-        $result->variables['objectList'] = $objectList;
-
-        return $result;
+        $this->result->variables['objectList'] = $objectList;
     }
 
     public function processDeleteFields( madModelObject $form ) {
@@ -188,20 +185,20 @@ class madModelController extends madFormController {
         parent::processOptions( $form );
     }
 
-    public function formSuccess( $result, $form ) {
+    public function formSuccess( $form ) {
         $this->registry->model->save( $form );
 
         // redirect to successRoute
         $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
 
         if ( isset( $this->request->variables['popup'] ) ) {
-            $result->variables['responseBody'] = sprintf( 
+            $this->result->variables['responseBody'] = sprintf( 
                 '<script type="text/javascript">opener.dismissAddAnotherPopup( window, "%s", "%s" );</script>',
                 $form[$this->request->variables['valueAttribute']],
                 $form[$this->request->variables['displayAttribute']]
             );
         } else {
-            $result->status = new ezcMvcExternalRedirect( 
+            $this->result->status = new ezcMvcExternalRedirect( 
                 $prefix . $this->registry->router->generateUrl( 
                     $this->configuration['successRoute'],
                     (array) $form
@@ -213,29 +210,26 @@ class madModelController extends madFormController {
     public function doAutocomplete(  ) {
         if ( isset( $this->configuration['column'] ) ) {
             // simple query case
-            $result = new ezcMvcResult(  );
-            $result->variables['objectList'] = array(  );
+            $this->result->variables['objectList'] = array(  );
 
             $statement = $this->registry->model->query( $this->configuration['query'] );
             foreach( $statement->fetch(  ) as $row ) {
-                $result->variables['objectList'][] = $row;
+                $this->result->variables['objectList'][] = $row;
             }
         } else {
-            $result = $this->doList(  );
+            $this->result = $this->doList(  );
         }
 
         if ( isset( $this->configuration['column'] ) ) {
-            $result->variables['valueAttribute'] = $this->configuration['column'];
-            $result->variables['displayAttribute'] = $this->configuration['column'];
+            $this->result->variables['valueAttribute'] = $this->configuration['column'];
+            $this->result->variables['displayAttribute'] = $this->configuration['column'];
         } elseif ( isset( $this->configuration['attribute'] ) ) {
-            $result->variables['valueAttribute'] = $this->configuration['attribute'];
-            $result->variables['displayAttribute'] = $this->configuration['attribute'];
+            $this->result->variables['valueAttribute'] = $this->configuration['attribute'];
+            $this->result->variables['displayAttribute'] = $this->configuration['attribute'];
         } else {
-            $result->variables['valueAttribute'] = $this->request->variables['valueAttribute'];
-            $result->variables['displayAttribute'] = $this->request->variables['displayAttribute'];
+            $this->result->variables['valueAttribute'] = $this->request->variables['valueAttribute'];
+            $this->result->variables['displayAttribute'] = $this->request->variables['displayAttribute'];
         }
-
-        return $result;
     }
 
     public function doDetails(  ) {
@@ -269,10 +263,7 @@ class madModelController extends madFormController {
             'id' => $id,
         ) );
         $this->registry->model->refresh( $object );
-
-        $result = new ezcMvcResult(  );
-        $result->variables['object'] = $object;
-        return $result;
+        $this->result->variables['object'] = $object;
     }
 
     static public function routeFormData( $routeName, $data ) {

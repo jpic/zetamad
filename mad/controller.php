@@ -5,7 +5,7 @@ abstract class madController extends ezcMvcController {
     public $registry = null;
     public $controllers = array(  );
     public $composite = null;
-    
+    public $result = null;
     public function __construct( $action, ezcMvcRequest $request, &$configuration = null ) {
         parent::__construct( $action, $request );
         $this->registry = madRegistry::instance(  );
@@ -18,31 +18,33 @@ abstract class madController extends ezcMvcController {
     }
 
     public function createResult() {
+        $this->result = new ezcMvcResult;
+        $this->result->content = new ezcMvcResultContent;
+        
         foreach( $this->controllers as $controller ) {
-            $result = $controller->preCreateResult(  );
+            $ready = $controller->preCreateResult(  );
 
-            if ( $result instanceof ezcMvcResult ) {
+            if ( $ready ) {
                 break;
             }
         }
         
-        if ( ! isset( $result ) || ! $result instanceof ezcMvcResult ) {
+        if ( ! $ready ) {
             $result = parent::createResult(  );
         }
 
         foreach( $this->controllers as $controller ) {
-            $controller->postCreateResult( $result );
+            $controller->postCreateResult(  );
         }
 
-        return $result;
+        return $this->result;
     }
 
     public function preCreateResult(  ) {
         return false;
     }
 
-    public function postCreateResult( $result ) {
-        return false;
+    public function postCreateResult(  ) {
     }
 }
 

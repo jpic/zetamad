@@ -12,29 +12,25 @@ class madDownloadController extends madController {
         $absolutePath = $configuration->getPathSetting( 'staticFiles', 'paths', $relativePath );
         $extension = substr(strrchr($absolutePath, '.'), 1);
 
-        $ret = new ezcMvcResult;
-        $ret->content = new ezcMvcResultContent;
-        $ret->content->disposition = new ezcMvcResultContentDisposition;
-        $ret->variables['absolutePath'] = $absolutePath;
-        $ret->variables['fileRequest'] = true;
+        $this->result->content->disposition = new ezcMvcResultContentDisposition;
+        $this->result->variables['absolutePath'] = $absolutePath;
+        $this->result->variables['fileRequest'] = true;
         switch( $extension ){
             case 'html':
-                $ret->content->type = 'text/html';
+                $this->result->content->type = 'text/html';
                 break;
             case 'js':
-                $ret->content->type = 'text/javascript';
+                $this->result->content->type = 'text/javascript';
                 break;
             case 'css':
-                $ret->content->type = 'text/css';
+                $this->result->content->type = 'text/css';
                 break;
             case 'tbz2':
-                $ret->content->disposition->type = 'attachment';
-                $ret->content->type = 'application/x-tar';
+                $this->result->content->disposition->type = 'attachment';
+                $this->result->content->type = 'application/x-tar';
         }
-        $ret->content->disposition->filename = basename( $relativePath );
-        //$ret->content->disposition->creationDate = new DateTime( '1978-12-22' );
-
-        return $ret;
+        $this->result->content->disposition->filename = basename( $relativePath );
+        //$this->result->content->disposition->creationDate = new DateTime( '1978-12-22' );
     }
 }
 

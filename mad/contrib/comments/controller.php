@@ -12,9 +12,7 @@ class madCommentsController extends madController {
 
         $this->registry->model->save( $comment );
 
-        $result = new ezcMvcResult;
-        $result->variables['comment'] = $comment;
-        return $result;
+        $this->result->variables['comment'] = $comment;
     }
 }
 
