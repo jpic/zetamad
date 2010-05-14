@@ -1,8 +1,28 @@
+<?php
+/*
+ JAMES //
+
+recipe_details.php = ok
+Transformation photo en 300*300 = ok
+Ajout du breadcrumb = ok (à gérer les liens maintenant...)
+changement des h3 en h4 = ok
+
+ligne 83 -> Si plusieurs photos disponibles, alors afficher le visu
+ligne 211 -> Si plusieurs prod...
+ligne 218 -> affichage marque + chercher image du produit en boucle
+ligne 237 -> pareil que pour la ligne 218
+
+
+comments.php
+-> affichage de "commentaires" et non "commentaires clients" = ok
+
+*/
+?>
 <style>
 /*Init 100%*/
 #center_column { width: 980px; padding: 0; }
 #center_column a { text-decoration: none;}
-#left_column, .breadcrumb { display: none; }
+#left_column { display: none; }
 
 #nav-recipe { color: #b0aaac; width: 980px; height: 30px; list-style: none; margin-bottom: 10px; }
 #nav-recipe li { display: block; float: left; line-height: 30px; height: 30px; }
@@ -12,14 +32,16 @@
 #nav-recipe li.sep { font-size: 9px; padding: 0px 8px; }
 
 .recipe { width: 740px; float: left;}
-.recipe .recipe-left { width: 240px; float: left; }
-.recipe .recipe-left #recipe-photo { vertical-align: bottom; width: 240px; height: 240px; }
+.recipe .recipe-left { width: 310px; float: left; }
+.recipe .recipe-left #recipe-photo { height: 310px; vertical-align: bottom; border:1px solid #DADADA; margin-bottom:5px; overflow:hidden; position:relative; text-align:center; width:310px; }
+.recipe .recipe-left #recipe-photo #product-ths { float:left; margin-left:5px; margin-right:10px; margin-top:3px; }
+.recipe .recipe-left #recipe-photo #product-ths .product-th  { border:1px solid #DADADA; float:left; height:45px; margin-bottom:5px; margin-right:5px; text-align:center; width:45px; }
 .recipe .recipe-left #recipe-video { position: absolute; margin-top: 10px; width: 240px; height: 130px; position: relative; }
 .recipe .recipe-left #recipe-video a { display: block; width: 240px; height: 130px; text-align: center; z-index: 123999; position: absolute; padding-top: 40px; }
 .recipe .recipe-left #recipe-video #background-video { opacity: 0.5; filter : alpha(opacity=50); position: absolute; background: url('http://storage.canalblog.com/21/51/314534/43401831_p.jpg') center center no-repeat; width: 240px; height: 130px; -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; }
 
-.recipe .recipe-right { float: right; width: 480px;}
-.recipe .recipe-right .recipe-header { position: relative; border-top: 1px solid #dadada; border-bottom: 1px solid #dadada; padding: 9px 0; }
+.recipe .recipe-right { float: right; width: 410px;}
+.recipe .recipe-right .recipe-header { position: relative; border-bottom: 1px solid #dadada; padding: 9px 0; }
 .recipe .recipe-right .recipe-header h2 { color: #232323; font-size: 26px; font-family: Times, Georgia, Arial; font-weight: normal;}
 .recipe .recipe-right .recipe-header .recipe-author { color: #232323; font-size: 18px; font-family: Times; padding-top: 10px;}
 .recipe .recipe-right .recipe-header .recipe-author a { color: #b49135; }
@@ -31,18 +53,21 @@
 .recipe .recipe-right .recipe-header .share-recipe { position: absolute; bottom: 10px; left: 0; }
 
 .recipe .recipe-left .recipe-author, .recipe .recipe-right .recipe-description { margin-top: 20px; }
-.recipe .recipe-left .recipe-author .author-name, .recipe .recipe-right .recipe-title-steps { font-size: 18px; color: #969696; font-family: Times; border-bottom: 1px solid #dadada; margin-bottom: 7px; padding-bottom: 7px; }
+.recipe .recipe-left .recipe-author .author-name, .recipe .recipe-right .h3 { font-size: 18px; color: #969696; font-family: Times; border-bottom: 1px solid #dadada; margin-bottom: 7px; padding-bottom: 7px; }
 .recipe .recipe-left .recipe-author .author-photo { float: left; margin-right: 7px; margin-bottom: 2px; border: 1px solid #dadada; vertical-align: bottom; width: 87px; height: 87px; }
 .recipe .recipe-left .recipe-author .author-description { line-height: 19px; font-size: 11px; color: #969696; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; text-align: justify;}
 
-.recipe .recipe-right .recipe-description .step-title { text-transform:uppercase; font-weight: bold; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 15px; color: #232323; padding-bottom: 10px;}
+.recipe .recipe-right .recipe-description h3 { text-transform:uppercase; font-weight: bold; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 15px; color: #232323; padding-bottom: 10px;}
 .recipe .recipe-right .recipe-description .step-desc { color:#666666; font-family:Lucida,"Lucida Sans",Arial,sans-serif; font-size:12px; line-height:21px; padding-bottom:20px; }
 .recipe .recipe-right .recipe-infos { overflow: auto; border-bottom: 1px dashed #dadada; margin-bottom: 20px; padding-bottom: 7px; }
 .recipe .recipe-right .recipe-infos-block { float: left; margin-right: 15px; color: #AB1D37; font-size: 11px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; padding: 5px; }
 
 #recipe-column { float: right; }
+#recipe-column ul li .recipeProduct-th { border:1px solid #DADADA; float:left; }
+#recipe-column ul li .recipeProduct-th img { vertical-align: bottom; }
+#recipe-column ul li .recipeProduct-link { float: left; margin-left: 10px; }
 #recipe-column .block {  border: 1px solid #dadada; padding: 10px; }
-#recipe-column .block h3 { font-size: 22px; font-family: Times; color: #232323; font-weight: normal; border-bottom: 1px solid #dadada; padding-bottom: 10px; margin-bottom: 10px; }
+#recipe-column .block h4 { font-size: 22px; font-family: Times; color: #232323; font-weight: normal; border-bottom: 1px solid #dadada; padding-bottom: 10px; margin-bottom: 10px; }
 #recipe-column .block ul { margin: 0; padding: 0; }
 #recipe-column .block li { padding: 0; margin: 0; font-size: 11px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; color: #969696; line-height: 21px;}
 #recipe-column .block li .att { color: #ab1d37; }
@@ -52,6 +77,11 @@ a.btn-block { display: block; height: 30px; width: 180px; margin: 0 auto; margin
 a.btn-block:hover { background: #539893; }
 </style>
 
+<div class="breadcrumb">
+	<a title="retour à Accueil" href="http://www.madeleinemarket.com/">Accueil</a>
+	<span class="navigation-pipe"><img alt="" src="http://www.madeleinemarket.com/themes/mmarket/img/fleche.jpg"></span>
+	<a href="#">Recettes</a>
+</div>
 <!--
 <ul id="nav-recipe">
         <li class="browseby">Trier par:</li>
@@ -69,8 +99,19 @@ a.btn-block:hover { background: #539893; }
         <div class="recipe-left">
             <?php if ( isset( $this->object['picture'] ) ): ?>
                 <div id="recipe-photo">
-			            <img src="<?php echo $this->thumbnail( $this->object['picture'], 240, 240 ); ?>" alt="<?php $this->e( $this->object['title'] ) ?>" />
-                </div>
+			<img src="<?php echo $this->thumbnail( $this->object['picture'], 300, 300 ); ?>" alt="<?php $this->e( $this->object['title'] ) ?>" />
+			<!-- if more_photo_exist -->
+			<div id="recipe-ths">
+				<!--début du foreach pour chaque photo trouvée-->
+				<div class="recipe-th">
+					<a rel="other-views" href="<?php //url photo ?>"><img alt="<?php //nom recette ?>" src="<?php //url photo ?> id="thumb_<?php //id_photo php ?>"></a>
+				</div>
+				<!--end foreach-->
+			<div class="clear"></div>
+			</div>
+			<!--end if more_photo_exist-->
+			
+		</div>
             <?php endif ?>
                 <!--
                 <div id="recipe-video">
@@ -88,7 +129,7 @@ a.btn-block:hover { background: #539893; }
                                 <?php endif ?>
                                 <?php $this->e( $this->object['profile']['introduction'] ) ?>
                         </p>
-                        <a href="<?php echo $this->url( 'profile.details', $this->object['profile'] ) ?>" class="btn-block" style="width: 100%;">Voir le profil</a>
+                        <a href="<?php echo $this->url( 'profile.details', $this->object['profile'] ) ?>" class="btn-block" style="width: 50%; float: right;">Voir le profil</a>
                         <?php elseif ( isset( $this->object['source'] ) ): ?>
                         <p class="author-description">
                             <?php $this->e( $this->object['source'] ) ?>
@@ -129,7 +170,7 @@ a.btn-block:hover { background: #539893; }
                 ?>
                 <div class="recipe-description">
                         
-                        <div class="recipe-title-steps">Pr&eacute;paration</div>
+                        <div class="h3">Pr&eacute;paration</div>
                         
                         <?php 
                         if ( isset( $this->object['prepTime'] ) || 
@@ -152,7 +193,7 @@ a.btn-block:hover { background: #539893; }
                         
                         <?php if ( isset( $this->object['recipeSteps'] ) ): ?>
                             <?php $forloopCounter = 0; foreach( $this->iterate( $this->object['recipeSteps'] ) as $step ): ?>
-            			<p class="step-title <?php if ( $forloopCounter == 0 ): ?>clear<?php endif ?>"><?php $this->e( $step['title'] ) ?></p>
+            			<h3 <?php if ( $forloopCounter == 0 ): ?>class="clear"<?php endif ?>"><?php $this->e( $step['title'] ) ?></h3>
                                   				
             			<p class="step-desc">
                             <?php $this->e( $step['description'] ) ?>
@@ -168,7 +209,7 @@ a.btn-block:hover { background: #539893; }
 <div id="recipe-column">
         <?php if ( isset( $this->object['ingredientQuantities'] ) && $this->object['ingredientQuantities'] ): ?> 
         <div class="block">
-                <h3>Ingr&eacute;dients</h3>
+                <h4>Ingr&eacute;dients</h4>
                 <ul>
                     <?php foreach( $this->iterate( $this->object['ingredientQuantities'] ) as $ingredient ): ?>
                         <li><?php $this->e( $ingredient['ingredient'] ) ?><?php if ( isset( $ingredient['quantity'] ) ): ?> : <span class="att"><?php $this->e( $ingredient['quantity'] ) ?></span><?php endif ?></li>
@@ -180,14 +221,24 @@ a.btn-block:hover { background: #539893; }
 
         <?php if ( isset( $this->object['ingredientProducts'] ) && $this->object['ingredientProducts'] ): ?>
     	<div class="block">
-    		<h3>Produits de la recette</h3>
+    		<h4>Produits de la recette</h4>
     		<ul>
                 <?php 
                 foreach( $this->iterate( $this->object['ingredientProducts'] ) as $productId ): ?>
                 <?php
                 $product = new Product(intval( $productId ), true, 2);
                 ?>
-    			<li><a href="/mm/product.php?id_product=<?php echo $productId; ?>"><?php echo $product->name ?></a></li>
+			<!-- Attention, si plusieurs produits dans le foreach, alors ajouter style="margin-top: 10px;" sur le <li> -->
+    			<li>
+				<div class="recipeProduct-th">
+					<a href="" style="float: left;"><img alt="<?php echo $product->name ?>" src="http://www.madeleinemarket.com/img/p/1052-146625-small.jpg" /></a>
+				</div>
+				<div class="recipeProduct-link">
+					<a title="<?php echo $product->name ?>" href="/mm/product.php?id_product=<?php echo $productId; ?>"><?php echo $product->name ?></a>
+					<p><a title="<?php //Nom de la marque ?>" href="<?php // URL marque ?>" style="color: rgb(208, 47, 30); text-decoration: none;"><?php echo "Nom de la marque"; ?></a></p>
+				</div>
+				<div class="clear"></div>
+			</li>
                 <?php endforeach ?>
     		</ul>
     	</div>
@@ -195,14 +246,23 @@ a.btn-block:hover { background: #539893; }
 
         <?php if ( isset( $this->object['toolProducts'] ) && $this->object['toolProducts'] ): ?>
     	<div class="block">
-    		<h3>Outils recommandés</h3>
+    		<h4>Outils recommandés</h4>
     		<ul>
                 <?php 
                 foreach( $this->iterate( $this->object['toolProducts'] ) as $productId ): ?>
                 <?php
                 $product = new Product(intval( $productId ), true, 2);
                 ?>
-    			<li><a href="/mm/product.php?id_product=<?php echo $productId; ?>"><?php echo $product->name ?></a></li>
+    			<li>
+				<div class="recipeProduct-th">
+					<a href="" style="float: left;"><img alt="<?php echo $product->name ?>" src="http://www.madeleinemarket.com/img/p/1052-146625-small.jpg" /></a>
+				</div>
+				<div class="recipeProduct-link">
+					<a title="<?php echo $product->name ?>" href="/mm/product.php?id_product=<?php echo $productId; ?>"><?php echo $product->name ?></a>
+					<p><a title="<?php //Nom de la marque ?>" href="<?php // URL marque ?>" style="color: rgb(208, 47, 30); text-decoration: none;"><?php echo "Nom de la marque"; ?></a></p>
+				</div>
+				<div class="clear"></div>
+			</li>
                 <?php endforeach ?>
     		</ul>
     	</div>
@@ -210,7 +270,7 @@ a.btn-block:hover { background: #539893; }
 
         <?php if ( isset( $this->object['tools'] ) && $this->object['tools'] ): ?>
     	<div class="block">
-    		<h3>Outils nécessaires</h3>
+    		<h4>Outils nécessaires</h4>
     		<ul>
                 <?php 
                 foreach( $this->iterate( $this->object['tools'] ) as $tool ): ?>
@@ -226,12 +286,12 @@ a.btn-block:hover { background: #539893; }
 
         <!--
         <div class="block">
-                <h3>Produits de la recette</h3>
+                <h4>Produits de la recette</h4>
                 -
                 <a class="btn-block" href="#">Voir les produits</a>
         </div>
         <div class="block">
-                <h3>Id&eacute;es recette</h3>
+                <h4>Id&eacute;es recette</h4>
                 -
                 <a class="btn-block" href="#">Voir les produits</a>
         </div>
