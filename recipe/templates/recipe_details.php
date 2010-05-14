@@ -41,7 +41,7 @@ comments.php
 .recipe .recipe-left #recipe-video #background-video { opacity: 0.5; filter : alpha(opacity=50); position: absolute; background: url('http://storage.canalblog.com/21/51/314534/43401831_p.jpg') center center no-repeat; width: 240px; height: 130px; -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; }
 
 .recipe .recipe-right { float: right; width: 410px;}
-.recipe .recipe-right .recipe-header { position: relative; border-bottom: 1px solid #dadada; padding: 9px 0; }
+.recipe .recipe-right .recipe-header { position: relative; border-bottom: 1px solid #dadada; padding: 0 0 9px 0; }
 .recipe .recipe-right .recipe-header h2 { color: #232323; font-size: 26px; font-family: Times, Georgia, Arial; font-weight: normal;}
 .recipe .recipe-right .recipe-header .recipe-author { color: #232323; font-size: 18px; font-family: Times; padding-top: 10px;}
 .recipe .recipe-right .recipe-header .recipe-author a { color: #b49135; }
