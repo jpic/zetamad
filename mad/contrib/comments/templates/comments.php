@@ -9,7 +9,9 @@
         <?php else: ?>
             <?php foreach( $this->object->commentSet as $comment ): ?>
             <p><?php $this->e( $comment['comment'] ) ?></p>
+            <?php if ( isset( $comment['user'] ) && $comment['user'] instanceof madObject ) : ?>
             <p><?php $this->e( $comment['user']['firstName'] . ' ' . $comment['user']['lastName'] ) ?></p>
+            <?php endif ?>
             <?php endforeach ?>
         <?php endif ?>
         
