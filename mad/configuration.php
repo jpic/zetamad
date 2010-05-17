@@ -31,7 +31,13 @@ class madConfiguration extends madObject {
             $this['applications'] = $applicationsConfiguration;
         }
 
-        foreach( glob( "{$this->path}/*" ) as $file ) {
+        $files = glob( "{$this->path}/*" );
+        
+        if ( !$files ) {
+            return true;
+        }
+
+        foreach( $files as $file ) {
             // filename without extension
             $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
 
@@ -129,8 +135,14 @@ class madConfiguration extends madObject {
         foreach( array_reverse( $installedApplications ) as $applicationName ) {
             $applicationPath = $this['applications'][$applicationName]['path'];
             
+            $files = glob( "$entryApplicationPath/$applicationPath/{$subdir}/*.ini" );
+
+            if ( !$files ) {
+                continue;
+            }
+
             // fetch and override this application configuration
-            foreach( glob( "$entryApplicationPath/$applicationPath/{$subdir}/*.ini" ) as $file ) {
+            foreach( $files as $file ) {
                 $this->parseIni( madFramework::fixPath( $file ) );
             }
         }

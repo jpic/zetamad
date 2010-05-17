@@ -1,5 +1,6 @@
 Release 2010-05-17.2
 
+- Fixed bug with glob() and php 5.2.6
 - Added draft of admin menu
 - Use slug in recipe.details route
 - Remove broken user create route in profile form
