@@ -359,6 +359,8 @@ class madObject extends ArrayObject {
         foreach( $unst as $key ) {
             unset( $this[$key] );
         }
+
+        return $this;
     }
 
     /**
