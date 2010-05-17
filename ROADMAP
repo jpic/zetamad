@@ -3,21 +3,13 @@
 ## Dev:
 
 * More ACL
-* More delete object links
-* BRs in old recipes
-* Ingredients without quantities
-* <strike>Pagination url bug</strike>
-* Prestashop globals
-* Thumbnail template tag
-* Categories page
-* <strike>Set paginate to 12</strike>
+* CSRF protection
+* Brute force protection
 
 ## Design:
 
 * Add padding-right +1px on 2 last recipes in list tpl
 * Label radios/checkbox (form.php)
-* Fatal template
-* Profile list template
 * Comments template (add dates)
 * Categories tempate
 
@@ -31,8 +23,6 @@
 * Votes
 * Contact form in fatal?
 * Notifications
-* CSRF protection
-* Brute force protection
 * Error logging
 * Error reproduction
 * Template debug
