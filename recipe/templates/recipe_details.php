@@ -148,6 +148,11 @@ a.btn-block:hover { background: #539893; }
                             <?php $this->e( $this->object['summary'] ) ?>
                         </p>
                         <?php endif ?>
+<a href="http://www.addthis.com/bookmark.php?v=250&pub=xa-4a48da264c324c50" onmouseover="return addthis_open(this, '', window.location.href, document.title)" onmouseout="addthis_close()" onclick="return addthis_sendto()">
+    <img src="/themes/mmarket/img/lg-bookmark-mm.gif" width="127" height="15" alt="Partager" style="border:0"/>
+   </a>
+   <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js?pub=xa-4a48da264c324c50"></script>
+
                         <!--
                         <div class="links-intro">
                                 <a href="#">J'aime cette recette</a>
