@@ -94,18 +94,34 @@ a.btn-block:hover { background: #539893; }
         </form>
 	</div>
     -->
-    <?php if ( isset( $this->object['products'] ) ): ?>
+    <?php if ( isset( $this->object['products'] ) && $this->object['products'] ): ?>
 	<div class="block">
 		<h3>Produits favoris</h3>
 		<ul>
             <?php 
+            $forloopCounter = 0;
             foreach( $this->iterate( $this->object['products'] ) as $productId ): ?>
             <?php
             $product = new Product(intval( $productId ), true, 2);
+            $cover = Product::getCover( $product->id );
             ?>
-			<li><a href="/mm/product.php?id_product=<?php echo $productId; ?>"><?php echo $product->name ?></a></li>
-            <?php endforeach ?>
+			<li <?php if ( $forloopCounter > 0 ): ?>style="margin-top: 10px;"<?php endif ?>>
+				<div class="objectProduct-th">
+					<a href="" style="float: left;"><img alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-small.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" /></a>
+				</div>
+				<div class="objectProduct-link">
+					<a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>"><?php echo $product->name ?></a>
+					<p><a title="<?php $this->e( $product->manufacturer_name ) ?>" href="<?php echo __PS_BASE_URI__ ?>manufacturer.php?id_manufacturer=<?php echo $product->id_manufacturer ?>" style="color: rgb(208, 47, 30); text-decoration: none;"><?php $this->e( $product->manufacturer_name ) ?></a></p>
+				</div>
+				<div class="clear"></div>
+			</li>
+            <?php 
+                $forloopCounter ++;
+            endforeach;
+            unset( $forloopCounter );
+            ?>
 		</ul>
+
 	</div>
     <?php endif ?>
 
