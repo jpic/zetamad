@@ -87,9 +87,9 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
 <?php elseif ( $field->widget == 'file' ): ?>
     <input class="<?php if ( $value ) $this->e( 'hasValue' ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="file" class="fileInput fileUpload <?php $this->e( $htmlClasses ) ?> " />
     
-    <?php if ( isset( $form[$name] ) ): ?>
+    <?php if ( $value ): ?>
     <p class="formHint">
-        <a target="_blank" href="<?php echo $this->getAbsoluteUploadUrl( $form[$name] ) ?>">Voir le fichier actuel</a>
+        <a target="_blank" href="<?php echo $this->getAbsoluteUploadUrl( $value ) ?>">Voir le fichier actuel</a>
     </p>
     <?php endif ?>
 
