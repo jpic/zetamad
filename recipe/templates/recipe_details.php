@@ -82,15 +82,25 @@ a.btn-block:hover { background: #539893; }
         <div class="object-left">
             <?php if ( isset( $this->object['picture'] ) ): ?>
             <div id="object-photo">
-    			<img src="<?php echo $this->thumbnail( $this->object['picture'], 300, 300 ); ?>" alt="<?php $this->e( $this->object['title'] ) ?>" style="margin:4px 0 0; vertical-align:baseline;" id="bigpic" />
+                <a class="thickbox" href="<?php echo $this->getAbsoluteUploadUrl( $this->object['picture'] ) ?>">
+    			    <img src="<?php echo $this->thumbnail( $this->object['picture'], 300, 300 ); ?>" alt="<?php $this->e( $this->object['title'] ) ?>" style="margin:4px 0 0; vertical-align:baseline;" id="bigpic" />
+                </a>
     			<?php if ( isset( $this->object['otherPictures'] ) && count( $this->object['otherPictures'] ) ): ?>
                 <div id="object-ths">
                     <div class="object-th">
-    					<a rel="other-views" href="<?php echo $this->thumbnail( $this->object['picture'], 300, 300 ) ?>"><img alt="<?php $this->e( $this->object['title'] ) ?>" src="<?php echo $this->thumbnail( $this->object['picture'], 45, 45 ) ?>" id="thumb_main"></a>
+    					<a rel="other-views" href="<?php echo $this->getAbsoluteUploadUrl( $this->object['picture'] ) ?>" class="thickbox">
+                            <img alt="<?php $this->e( $this->object['title'] ) ?>" src="<?php echo $this->thumbnail( $this->object['picture'], 45, 45 ) ?>" id="thumb_main">
+                        </a>
     				</div>
     				<?php foreach( $this->object['otherPictures'] as $key => $picture ): ?>
+                    <?php
+                    /* prepare 300x300 thumbnail called by javacript */
+                    $this->thumbnail( $picture, 300, 300 );
+                    ?>
                     <div class="object-th">
-    					<a rel="other-views" href="<?php echo $this->thumbnail( $picture, 300, 300 ) ?>"><img alt="<?php $this->e( $this->object['title'] ) ?>" src="<?php echo $this->thumbnail( $picture, 45, 45 ) ?>" id="thumb_<?php echo $key ?>"></a>
+    					<a rel="other-views" href="<?php echo $this->getAbsoluteUploadUrl( $picture ) ?>" class="thickbox">
+                            <img alt="<?php $this->e( $this->object['title'] ) ?>" src="<?php echo $this->thumbnail( $picture, 45, 45 ) ?>" id="thumb_<?php echo $key ?>">
+                        </a>
     				</div>
                     <?php endforeach ?>
     	    		<div class="clear"></div>
@@ -304,7 +314,7 @@ a.btn-block:hover { background: #539893; }
 
 <script type="text/javascript">
 function displayImage(  ) {
-    var selectedSrc = $(this).attr( 'href' );
+    var selectedSrc = $(this).attr( 'src' ).replace( /45x45/, '300x300' );
     var targetImg   = $( '#bigpic' );
 
     if ( selectedSrc != targetImg.attr( 'src' ) ) {
@@ -317,15 +327,10 @@ function displayImage(  ) {
 
 $(document).ready( function(  ) {
 
-    $( '#object-ths .object-th a' ).hover(
+    $( '#object-ths .object-th img' ).hover(
         displayImage,
         function(  ){}
     );
-
-    $( '#bigpic, #object-ths .object-th a img' ).click( function() {
-        var src = $(this).attr( 'src' ).replace(/_[0-9]+x[0-9]+_*(\.[a-zA-Z]{3,4})$/, "$1");
-        window.open( src, "fullSize", "menubar=no,toolbar=no");
-    });
 
 });
 </script>
