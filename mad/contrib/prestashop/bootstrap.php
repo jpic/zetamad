@@ -67,8 +67,9 @@ function prestashopDatabaseSettings( $bootstrap ) {
 $registry->signals->connect( 'preSetupDatabase', 'prestashopDatabaseSettings' );
 
 function bootstrapPrestashop( $bootstrap ) {
+    $smarty = $GLOBALS['smarty'];
+    require PRESTASHOP_PATH . '/init.php';
     Configuration::loadConfiguration(  );
 }
-
 $registry->signals->connect( 'postBootstrap', 'bootstrapPrestashop' );
 ?>

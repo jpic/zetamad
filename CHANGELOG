@@ -1,6 +1,9 @@
 Release 2010-05-10.1
 
+- Added titles support, thanks Christophe
 - Added thickbox support in recipe details, thanks Christophe
+- Added nice product list in profile details template
+- Added route name as first default context
 
 Release 2010-05-10.0
 

@@ -209,6 +209,14 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             $this->contexts
         );
 
+        if ( is_null( $dictionnary ) && isset( $this->object ) ) {
+            $dictionnary = $this->object;
+        }
+
+        if ( is_null( $dictionnary ) && isset( $this->form ) ) {
+            $dictionnary = $this->form;
+        }
+
         if ( $dictionnary ) {
             $message = madFramework::dictionnaryReplace( $message, $dictionnary );
         }

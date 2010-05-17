@@ -388,7 +388,11 @@ class madFramework {
         $finalDictionnary = array(  );
 
         foreach( $dictionnary as $key => $value ) {
-            $finalDictionnary["%($key)s"] = $value;
+            if ( is_object( $value ) && !method_exists( $value, '__toString' ) ) {
+                continue;
+            }
+
+            $finalDictionnary["%($key)s"] = (string) $value;
         }
 
         $string = str_replace( 

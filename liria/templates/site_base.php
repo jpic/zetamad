@@ -1,6 +1,8 @@
 <?php 
 if ( !isset( $_GET['popup'] ) ):
     $smarty = $GLOBALS['smarty'];
+    
+    $smarty->assign( 'meta_title', ucfirst( $this->t( 'title' ) ) . ' - Madeleine Market' );
     require PRESTASHOP_PATH . '/header.php';
 else:
 ?>
