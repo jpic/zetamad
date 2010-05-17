@@ -52,33 +52,38 @@ class madHttpDispatcher {
         // check if ajax
         $request->variables['ajaxRequest'] = isset( $request->raw['HTTP_X_REQUESTED_WITH'] ) &&
             $request->raw['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
-        
-        function handleFileArray( &$source, &$destination ) {
-            foreach( $source as $key => $value ) {
-                if ( array_key_exists( 'tmp_name', $value ) ) {
-                    $destination[$key] = $value;
-                } else {
-                    handleFileArray( $value, $destination[$key] );
-                }
-            }
-        }
-        
-        // handle files properly, 1 array level
+               
+        // handle files properly, 2 array level
         // properly: http://es2.php.net/manual/en/faq.html.php#faq.html.arrays
         $request->files = array();
         foreach( $_FILES as $formName => $array ) {
             $request->files[$formName] = array(  );
         
-            foreach( array_keys( $array['tmp_name'] ) as $fieldName ) {
-                
-                $file = new ezcMvcRequestFile;
-                $file->mimeType = $array['type'][$fieldName];
-                $file->name = $array['name'][$fieldName];
-                $file->size = $array['size'][$fieldName];
-                $file->status = $array['error'][$fieldName];
-                $file->tmpPath = $array['tmp_name'][$fieldName];
-               
-                $request->files[$formName][$fieldName] = $file;
+            foreach( array_keys( $array['name'] ) as $fieldName ) {
+                if ( is_array( $array['name'][$fieldName] ) ) {
+                    $request->files[$formName][$fieldName] = array(  );
+
+                    foreach( $array['name'][$fieldName] as $key => $value ) {
+                        $file = new ezcMvcRequestFile;
+                        $file->mimeType = $array['type'][$fieldName][$key];
+                        $file->name = $array['name'][$fieldName][$key];
+                        $file->size = $array['size'][$fieldName][$key];
+                        $file->status = $array['error'][$fieldName][$key];
+                        $file->tmpPath = $array['tmp_name'][$fieldName][$key];
+
+                        $request->files[$formName][$fieldName][$key] = $file;
+                    }
+                } else {
+                    $file = new ezcMvcRequestFile;
+                    $file->mimeType = $array['type'][$fieldName];
+                    $file->name = $array['name'][$fieldName];
+                    $file->size = $array['size'][$fieldName];
+                    $file->status = $array['error'][$fieldName];
+                    $file->tmpPath = $array['tmp_name'][$fieldName];
+                   
+                    $request->files[$formName][$fieldName] = $file;
+
+                }
             }
         }
         

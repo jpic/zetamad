@@ -6,6 +6,10 @@ if ( !isset( $inputName ) ) {
     $inputName = sprintf( '%s[%s]', $form->name, $name );
 }
 
+if ( !isset( $value ) ) {
+    $value = isset( $form[$name] ) ? $form[$name] : '';
+}
+
 if ( !isset( $inputId ) ) {
     $inputId = 'id_' . str_replace( 
         array( '.', '-', '[', ']' ), 
@@ -22,32 +26,32 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
 ?>
 
 <?php if ( !isset( $field->widget ) ): ?>
-    <input value="<?php if ( isset( $form[$name] ) ) $this->e( $form[$name] ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="text" class="textInput <?php $this->e( $htmlClasses ) ?>" />
+    <input value="<?php $this->e( $value ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="text" class="textInput <?php $this->e( $htmlClasses ) ?>" />
 
 <?php elseif ( $field->widget == 'password' ): ?>
     <input value="" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="password" class="textInput <?php $this->e( $htmlClasses ) ?>" />
 
 <?php elseif ( $field->widget == 'checkbox' ): ?>
-    <input checked="<?php if ( isset( $form[$name] ) ): ?>checked<?php endif ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="text" class="<?php $this->e( $htmlClasses ) ?>" />
+    <input checked="<?php if ( $value ): ?>checked<?php endif ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="text" class="<?php $this->e( $htmlClasses ) ?>" />
 
 <?php elseif ( $field->widget == 'radio' ): ?>
     <?php
     foreach( $field->choices as $key => $choice ):
         $choiceInputId = $inputId . '__' . $key;
     ?>
-    <input selected="<?php if ( isset( $form[$name] ) && $form[$name] == $choice ): ?>selected<?php endif ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="radio" class="<?php $this->e( $htmlClasses ) ?>" />
+    <input selected="<?php if ( $value == $choice ): ?>selected<?php endif ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="radio" class="<?php $this->e( $htmlClasses ) ?>" />
     <?php endforeach ?>
 
 <?php elseif ( $field->widget == 'wysiwyg' ): ?>
-    <textarea class="wysiwyg <?php $this->e( $htmlClasses ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>"><?php if ( isset( $form[$name] ) ) $this->e( $form[$name] ) ?></textarea>
+    <textarea class="wysiwyg <?php $this->e( $htmlClasses ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>"><?php $this->e( $value ) ?></textarea>
 
 <?php elseif ( $field->widget == 'textarea' ): ?>
-    <textarea class=" <?php $this->e( $htmlClasses ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>"><?php if ( isset( $form[$name] ) ) echo htmlentities( stripslashes( $form[$name] ), ENT_COMPAT, 'UTF-8' ) ?> </textarea>
+    <textarea class=" <?php $this->e( $htmlClasses ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>"><?php if ( isset( $form[$name] ) ) echo htmlentities( stripslashes( $value ), ENT_COMPAT, 'UTF-8' ) ?></textarea>
 
 <?php elseif ( $field->widget == 'select' ): ?>
     <select class="<?php $this->e( $htmlClasses ) ?>" name="<?php echo $inputName ?>" id="<?php echo $inputId ?>">
-    <?php foreach( $field->choices as $value => $verbose ): ?>
-        <option value="<?php $this->e( $value ) ?>" <?php if ( isset( $form[$name] ) && $value == $form[$name][$field->valueAttribute] ) echo 'selected="selected"' ?>><?php echo $verbose ?></option>
+    <?php foreach( $field->choices as $choiceValue => $verbose ): ?>
+        <option value="<?php $this->e( $choiceValue ) ?>" <?php if ( isset( $form[$name] ) && $choiceValue == $form[$name][$field->valueAttribute] ) echo 'selected="selected"' ?>><?php echo $verbose ?></option>
     <?php endforeach ?>
     </select>
 
@@ -58,7 +62,7 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
     <?php endif ?>
 
 <?php elseif ( $field->widget == 'autocomplete' ): ?>
-    <input autocomplete="off" value="<?php if ( isset( $form[$name] ) ) $this->e( $form[$name] ) ?>" name="<?php echo $inputName ?>" id="<?php echo $inputId ?>" type="text" class="textInput <?php $this->e( $htmlClasses ) ?>" />
+    <input autocomplete="off" value="<?php $this->e( $value ) ?>" name="<?php echo $inputName ?>" id="<?php echo $inputId ?>" type="text" class="textInput <?php $this->e( $htmlClasses ) ?>" />
     
     <script type="text/javascript">
     $(document).ready( function() {
@@ -81,7 +85,7 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
     <?php endif ?>
 
 <?php elseif ( $field->widget == 'file' ): ?>
-    <input class="<?php if ( isset( $form[$name] ) ) $this->e( 'hasValue' ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="file" class="fileInput fileUpload <?php $this->e( $htmlClasses ) ?> " />
+    <input class="<?php if ( $value ) $this->e( 'hasValue' ) ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="file" class="fileInput fileUpload <?php $this->e( $htmlClasses ) ?> " />
     
     <?php if ( isset( $form[$name] ) ): ?>
     <p class="formHint">
@@ -93,6 +97,7 @@ if ( isset( $field->maxLength ) ) $htmlClasses.= "validate_maxlength {$field->ma
 <?php endif ?>
 <?php if ( isset( $field ) && isset( $field->widget ) ) $widgets[] = $field->widget ?>
 <?php 
+unset( $value );
 unset( $inputName );
 unset( $inputId );
 unset( $htmlClasses );

@@ -16,7 +16,7 @@ class madFormController extends madController {
         
         // add the form to result variables for reuse in the template
         $this->result->variables['form'] = $form;
-        
+
         // get and set the form configuration
         $this->setFormOptions( $form, false );
 
@@ -26,6 +26,9 @@ class madFormController extends madController {
         // save the form
         if ( $this->request->protocol == 'http-post' ) {
             $form->merge( $this->request->variables[str_replace( '.', '_', $form->name)] );
+            if ( isset( $this->request->files[str_replace( '.', '_', $form->name)] ) ) {
+                $form->merge( $this->request->files[str_replace( '.', '_', $form->name)] );
+            }
 
             // process options again with the new data, autocomplete, hard 
             // coded values, slugs ...
@@ -133,11 +136,14 @@ class madFormController extends madController {
 
         if ( isset( $field->widget ) ) {
             if ( $field->widget == 'file' ) {
-
                 if ( $this->request->protocol == 'http-post' ) {
                     $uploadDir = ENTRY_APP_PATH . DIRECTORY_SEPARATOR . 'upload';
-    
-                    $file = $this->request->files[str_replace( '.', '_', $form->name )][$name];
+
+                    if ( !isset( $form[$name] ) || !$form[$name] ) {
+                        return true;
+                    }
+
+                    $file = $form[$name];
     
                     if ( !$file->tmpPath ) { // check if a file was actually submitted
     
@@ -153,10 +159,12 @@ class madFormController extends madController {
                             //$field->errors['required'] = 'no file';
                         //}
     
+                        $form[$name] = '';
                         return true;
                     }
     
                     if ( !file_exists( $file->tmpPath ) ) { // check if a file was already moved
+                        $form[$name] = '';
                         return true;
                     }
     
@@ -241,6 +249,8 @@ class madFormController extends madController {
                     $form[$name] = new madObject( array( $emptyValue ) );
                 }
 
+                $form[$name]->name = $name;
+
                 foreach( $form[$name] as $key => $value ) {
                     // make a field for each value
                     if ( !isset( $multipleField->fields ) ) {
@@ -253,7 +263,8 @@ class madFormController extends madController {
 
                     // copy options on the field
                     $multipleField->fields->$key->setOptions( $multipleField->options );
-                    $this->processFormFieldOptions( $form[$name], $key, $multipleField->fields->$key );
+                    $field = $multipleField->fields->$key;
+                    $this->processFormFieldOptions( $form[$name], $key, $field );
                 }
             }
         }
