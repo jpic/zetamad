@@ -71,7 +71,9 @@ class madHttpDispatcher {
                         $file->status = $array['error'][$fieldName][$key];
                         $file->tmpPath = $array['tmp_name'][$fieldName][$key];
 
-                        $request->files[$formName][$fieldName][$key] = $file;
+                        if ( $file->status != UPLOAD_ERR_NO_FILE ) {
+                            $request->files[$formName][$fieldName][$key] = $file;
+                        }
                     }
                 } else {
                     $file = new ezcMvcRequestFile;
@@ -81,8 +83,9 @@ class madHttpDispatcher {
                     $file->status = $array['error'][$fieldName];
                     $file->tmpPath = $array['tmp_name'][$fieldName];
                    
-                    $request->files[$formName][$fieldName] = $file;
-
+                    if ( $file->status != UPLOAD_ERR_NO_FILE ) {
+                        $request->files[$formName][$fieldName] = $file;
+                    }
                 }
             }
         }
