@@ -45,7 +45,7 @@
 #object-column { float: right; }
 #object-column ul li .objectProduct-th { border:1px solid #DADADA; float:left; }
 #object-column ul li .objectProduct-th img { vertical-align: bottom; }
-#object-column ul li .objectProduct-link { float: left; margin-left: 10px; }
+#object-column ul li .objectProduct-link { float: left; margin-left: 10px; max-width: 135px; }
 #object-column .block {  border: 1px solid #dadada; padding: 10px; }
 #object-column .block h4 { font-size: 22px; font-family: Times; color: #232323; font-weight: normal; border-bottom: 1px solid #dadada; padding-bottom: 10px; margin-bottom: 10px; }
 #object-column .block ul { margin: 0; padding: 0; }
@@ -247,7 +247,7 @@ a.btn-block:hover { background: #539893; }
                 $product = new Product(intval( $productId ), true, 2);
                 $cover = Product::getCover( $product->id );
                 ?>
-    			<li <?php if ( $forloopCounter > 0 ): ?>style="margin-top: 10px;"<?php endif ?>>
+    			<li <?php if ( count( $this->iterate( $this->object['toolProducts'] ) ) > 1 ): ?>style="margin-top: 10px;"<?php endif ?>>
 				<div class="objectProduct-th">
 					<a href="" style="float: left;"><img alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-small.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" /></a>
 				</div>
