@@ -322,5 +322,10 @@ $(document).ready( function(  ) {
         function(  ){}
     );
 
+    $( '#bigpic, #object-ths .object-th a img' ).click( function() {
+        var src = $(this).attr( 'src' ).replace(/_[0-9]+x[0-9]+_*(\.[a-zA-Z]{3,4})$/, "$1");
+        window.open( src, "fullSize", "menubar=no,toolbar=no");
+    });
+
 });
 </script>
