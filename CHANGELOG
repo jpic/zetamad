@@ -1,3 +1,9 @@
+Release 2010-05-17.2
+
+- Added draft of admin menu
+- Use slug in recipe.details route
+- Remove broken user create route in profile form
+
 Release 2010-05-17.1
 
 - Added titles support, thanks Christophe
