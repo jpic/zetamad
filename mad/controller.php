@@ -20,7 +20,9 @@ abstract class madController extends ezcMvcController {
     public function createResult() {
         $this->result = new ezcMvcResult;
         $this->result->content = new ezcMvcResultContent;
-        $this->result->variables['contexts'] = array(  );
+        $this->result->variables['contexts'] = array(
+            $this->configuration['name'],
+        );
         
         foreach( $this->controllers as $controller ) {
             $controller->result = $this->result;
