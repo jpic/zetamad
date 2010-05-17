@@ -247,7 +247,7 @@ a.btn-block:hover { background: #539893; }
                 $product = new Product(intval( $productId ), true, 2);
                 $cover = Product::getCover( $product->id );
                 ?>
-    			<li <?php if ( count( $this->iterate( $this->object['toolProducts'] ) ) > 1 ): ?>style="margin-top: 10px;"<?php endif ?>>
+    			<li <?php if ( $forloopCounter > 0 ): ?>style="margin-top: 10px;"<?php endif ?>>
 				<div class="objectProduct-th">
 					<a href="" style="float: left;"><img alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-small.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" /></a>
 				</div>
