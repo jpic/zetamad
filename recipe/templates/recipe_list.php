@@ -62,12 +62,14 @@
 			</a>
 		</p>
 		<?php endif ?>
+        <?php if ( isset( $this->user ) && isset( $this->user['role'] ) && $this->user['role'] == 'administrator' ): ?>
 		<div class="adminpanel">
 			<?php if ( isset( $object['profile'] ) ): ?>
 			<a class="editprofil" href="<?php echo $this->url( 'profile.edit', $object['profile'] ) ?>">Modifier le profil</a>
 			<?php endif ?>
 			<a class="editrecipe" href="<?php echo $this->url( 'recipe.edit', $object ) ?>">Modifier la recette</a>
 		</div>
+        <?php endif ?>
 		<div class="clear"></div>
 	</div>
 </div>
@@ -134,7 +136,7 @@ $(document).ready(function(){
 });
 </script>
 <![endif]-->
-
+<!--
 <div id="tabAdminFixed">
     <ul id="adminMenu">
 	<li class="tabMenu">Recettes
@@ -155,3 +157,4 @@ $(document).ready(function(){
 	</li>
     </ul>
 </div>
+-->
