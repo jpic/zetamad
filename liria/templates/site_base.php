@@ -29,6 +29,8 @@ else:
 
 <?php echo $this->body; ?>
 
+
+<?php if ( isset( $this->user ) && isset( $this->user['role'] ) && $this->user['role'] == 'administrator' ): ?>
 <style>
 #tabAdminFixed { position: fixed; bottom: 0; right: 0; height: 25px; z-index: 99; direction: ltr; }
 #tabAdminFixed #adminMenu { position: relative; margin-right: 20px; float: left; border: 1px solid #999999; border-bottom: 0; }
@@ -111,6 +113,8 @@ $(document).ready(function(){
     ?>
     </ul>
 </div>
+
+<?php endif ?>
 
 
 <?php
