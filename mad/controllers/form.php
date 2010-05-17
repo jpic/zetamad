@@ -27,7 +27,9 @@ class madFormController extends madController {
         if ( $this->request->protocol == 'http-post' ) {
             $form->merge( $this->request->variables[str_replace( '.', '_', $form->name)] );
             if ( isset( $this->request->files[str_replace( '.', '_', $form->name)] ) ) {
-                $form->merge( $this->request->files[str_replace( '.', '_', $form->name)] );
+                $files = new madObject( $this->request->files[str_replace( '.', '_', $form->name)] );
+                $files->clean(  );
+                $form->merge( $files );
             }
 
             // process options again with the new data, autocomplete, hard 
@@ -144,6 +146,10 @@ class madFormController extends madController {
                     }
 
                     $file = $form[$name];
+
+                    if ( !$file instanceof ezcMvcRequestFile ) {
+                        return true;
+                    }
     
                     if ( !$file->tmpPath ) { // check if a file was actually submitted
     
