@@ -20,7 +20,7 @@
 .recipe .author-left #external-links ul { list-style: none; }
 .recipe .author-left #external-links ul li { line-height: 19px; }
 .recipe .author-left #external-links ul li a { font: normal 11px Verdana; color: #ab3847; }
-.recipe .author-left #external-links ul li a:hover { font: normal 11px Verdana; color: #232323; text-decoration: underline; }
+.recipe .author-left #external-links ul li a:hover { font: normal 11px Verdana; color: #232323; }
 
 .recipe .author-right { float: right; width: 450px; border-top: 1px solid #dadada; padding: 9px 0;}
 .recipe .author-right h2 { color: #969696; font-size: 30px; font-family: Times, Georgia, Arial; font-weight: normal; }
@@ -208,43 +208,43 @@ a.btn-block:hover { background: #539893; }
 <div class="favorites_products">
 	<div class="title">Mes produits favoris</div>
 	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="110" height="110" alt="" /></a>
+		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
 	</div>
 	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="110" height="110" alt="" /></a>
+		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
 	</div>
 	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="110" height="110" alt="" /></a>
+		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
 	</div>
 	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="110" height="110" alt="" /></a>
+		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
 	</div>
 	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="110" height="110" alt="" /></a>
+		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
 	</div>
 	<!-- pour le dernier de la boucle (4 par rangée) afficher la classe "nomarg" -->
 	<div class="product_block nomarg">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="110" height="110" alt="" /></a>
+		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
 	</div>
 	<div class="clear"></div>
 	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="110" height="110" alt="" /></a>
+		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
 	</div>
 	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="110" height="110" alt="" /></a>
+		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
 	</div>
 	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="110" height="110" alt="" /></a>
+		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
 	</div>
 	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="110" height="110" alt="" /></a>
+		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
 	</div>
 	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="110" height="110" alt="" /></a>
+		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
 	</div>
 	<!-- pour le dernier de la boucle (4 par rangée) afficher la classe "nomarg" -->
 	<div class="product_block nomarg">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="110" height="110" alt="" /></a>
+		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
 	</div>
 </div>
 
