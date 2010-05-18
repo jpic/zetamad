@@ -408,4 +408,27 @@ class madObject extends ArrayObject {
 
         return $this[$name];
     }
+
+    public function flatten(  ) {
+        $unst = array(  );
+        foreach( $this as $key => $value ) {
+            if ( $value instanceof madObject ) {
+                $unst[] = $key;
+
+                foreach( $value as $subKey => $subValue ) {
+                    if ( $subValue instanceof madObject ) {
+                        $this[$key.'.'.$subKey] = $subValue->flatten(  );
+                    } else {
+                        $this[$key.'.'.$subKey] = $subValue;
+                    }
+                }
+            }
+        }
+
+        foreach( $unst as $key ) {
+            unset( $this[$key] );
+        }
+
+        return $this;
+    }
 }

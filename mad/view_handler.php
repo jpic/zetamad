@@ -210,7 +210,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         );
 
         if ( is_null( $dictionnary ) && isset( $this->object ) ) {
-            $dictionnary = $this->object;
+            $dictionnary = $this->object->flatten();
         }
 
         if ( is_null( $dictionnary ) && isset( $this->form ) ) {
