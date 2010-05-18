@@ -82,7 +82,7 @@ a.btn-block:hover { background: #539893; }
         <div class="object-left">
             <?php if ( isset( $this->object['picture'] ) ): ?>
             <div id="object-photo">
-                <a class="thickbox" href="<?php echo $this->getAbsoluteUploadUrl( $this->object['picture'] ) ?>">
+                <a class="thickbox" href="<?php echo $this->getAbsoluteUploadUrl( $this->object['picture'] ) ?>" title="<?php $this->e( $this->object['title'] ) ?>">
     			    <img src="<?php echo $this->thumbnail( $this->object['picture'], 300, 300 ); ?>" alt="<?php $this->e( $this->object['title'] ) ?>" style="margin:4px 0 0; vertical-align:baseline;" id="bigpic" />
                 </a>
     			<?php if ( isset( $this->object['otherPictures'] ) && count( $this->object['otherPictures'] ) ): ?>
