@@ -39,6 +39,12 @@
 </ul>
 -->
 
+<div class="breadcrumb">
+	<a title="retour à Accueil" href="/">Accueil</a>
+	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
+	Recettes
+</div>
+
 <?php $forloopCounter = 1; foreach( $this->objectList as $object ): ?>
 <div class="recipe-block" <?php if( $forloopCounter % 4 == 0 ): ?> style="padding-right: 0;"<?php endif; ?>>
 	<!--<p class="link">remipathier.cookingfor.com</p>-->

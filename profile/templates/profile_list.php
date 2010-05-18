@@ -1,84 +1,68 @@
 <style>
-/*Init 100%*/
-#center_column { width: 980px; padding: 0; }
-#center_column a { text-decoration: none;}
-#left_column, .breadcrumb { display: none; }
-
-#nav-recipe { color: #b0aaac; border-bottom: 1px solid #e1e1e1; width: 980px; height: 30px; list-style: none; margin-bottom: 10px; }
-#nav-recipe li { display: block; float: left; line-height: 30px; height: 30px; }
-#nav-recipe li.browseby { font-size: 10px; font-family: Verdana; padding-right: 8px; }
-#nav-recipe li a { font: bold 15px Times, Arial; color: #b0aaac; text-transform: uppercase; }
-#nav-recipe li a.selected { color: #000; }
-#nav-recipe li.sep { font-size: 9px; padding: 0px 8px; }
-
-#center_column .recipe-block { font-size: 11px; width: 238px; float: left; padding: 0 9px 15px 0; }
-#center_column .recipe-block .infos a { text-decoration: underline; }
-#center_column .recipe-details a { color: #b0aaac; }
-#center_column .recipe-details a:hover { text-decoration: underline; color: #000; }
-#center_column .recipe-details a.editprofil { float: left; color: #DE5161; font-size: 10px; font-weight: normal;}
-#center_column .recipe-details a.editrecipe { float: right; color: #DE5161; font-size: 10px; font-weight: normal; }
-#center_column .recipe-details a.editrecipe:hover, #center_column .recipe-details a.editprofil:hover { text-decoration: underline; }
-#center_column .recipe-block p.link { padding: 5px 0; color: #b0aaac; font-size: 10px; font-family: Verdana;}
-#center_column .recipe-block div.adminpanel { margin: 5px 0; padding-top: 5px; border-top: 1px solid #dadada;}
-#center_column .recipe-details { border: 1px solid #d3d3d3; padding: 5px; overflow: auto; }
-#center_column .recipe-details img.picture { width: 226px; height: 226px; vertical-align: bottom; }
-#center_column .recipe-details .infos {line-height: 19px; font-weight: bold; font-family: Verdana; padding: 10px 0; }
-#center_column .recipe-details .author { color: #656565; font-size: 10px; font-family: Verdana; font-weight: bold; }
+#center_column { padding:0; width:990px; }
+h2.title { color: #000000; font-family:'Times','Helvetica',serif; font-size:35px; font-weight:100; line-height:40px; padding-bottom: 5px; margin: 15px 0 15px 0; border-bottom: 1px solid #dadada; }
+h3 { color: #DE5161; font-size: 14px; padding: 0; margin: 0; line-height: 18px; }
+.UIListingProfils, p, li { font-size: 12px; line-height: 25px; font-family: Lucida, "Lucida Sans", Arial, sans-serif; }
+.UIListingProfils { border-bottom:1px solid #dadada; margin-bottom:6px; padding-bottom:6px; overflow: auto; }
+.UIListingProfils .UIListingProfils_pic { width: 150px; height: 150px; float: left; }
+.UIListingProfils .UIListingProfils_pic img { vertical-align: bottom; }
+.UIListingProfils .UIListingProfils_infos { float: left; width: 500px; margin-left: 20px; }
+.UIListingProfils a.plus { color: #DE5161; margin: 0 5px; }
+.UIListingProfils a.plus:hover { color: #000; }
+.UIListingProfils .UIListingProfils_actions { float: right; width: 200px; margin-left: 20px; }
+.UIListingProfils .UIListingProfils_actions .tab { border-bottom:1px solid #dadada; margin-bottom:6px; padding-bottom:6px; }
+.UIListingProfils .UIListingProfils_actions .tab ul { list-style: none; margin: 5px 0; padding: 0; }
+.UIListingProfils .UIListingProfils_actions .tab ul li { line-height: 20px; }
+.UIListingProfils .UIListingProfils_actions .tab ul li a { text-decoration: none; color: #000; }
+.UIListingProfils .UIListingProfils_actions .tab ul li a:hover { text-decoration: underline; color: #DE5161; }
+/* .clear : allready in globall.css */
+.clear { clear: both; }
 </style>
+<script>
+$(document).ready( function() {
+    $("#UI_ShowLatestsRecipesProfil_1").click(function(){$("#UI_LatestsRecipesProfil_1").slideDown("fast");  }); 
+}); 
+</script>
 
-<!--
-<ul id="nav-recipe">
-	<li class="browseby">Trier par:</li>
-	<li><a href="" class="selected">date</a></li>
-	<li class="sep">|</li>
-	<li><a href="">cat&eacute;gorie</a></li>
-	<li class="sep">|</li>
-	<li><a href="">popularit&eacute;</a></li>
-	<li class="sep">|</li>
-	<li><a href="">au hasard</a></li>
-</ul>
--->
-
-<?php $forloopCounter = 1; foreach( $this->objectList as $object ): ?>
-<?php var_dump( $this->object ) ?>
-<div class="recipe-block" <?php if( $forloopCounter == count( $this->objectList ) ): ?> style="padding-right: 0;"<?php endif; ?>>
-	<!--<p class="link">remipathier.cookingfor.com</p>-->
-	<div class="recipe-details">
-		<?php if ( isset( $object['picture'] ) ): ?>
-		    <a href="<?php echo $this->url( 'profile.details', $object ) ?>">
-			    <img class="picture" width="226" height="226" src="<?php echo $this->getAbsoluteUploadUrl( $object['picture'] ) ?>" />
-		</a>
-		<?php endif ?>
-	
-			<p class="infos">
-				<a href="<?php echo $this->url( 'profile.details', $object ) ?>">
-					<?php echo $object['title']; ?>
-				</a>
-			</p>
-	
-		<?php if ( isset( $object['profile'] ) ): ?>
-		<p class="author">
-			<a href="<?php echo $this->url( 'profile.details', $object['profile'] ) ?>">
-				<?php echo $object['profile']['name'] ?> &bull;
-			</a>
-		</p>
-		<?php endif ?>
-		<div class="adminpanel">
-		<?php if ( isset( $object['profile'] ) ): ?>
-			<a class="editprofil" href="<?php echo $this->url( 'profile.edit', $object['profile'] ) ?>">Modifier le profil</a>
-		<?php endif ?>
-		<a class="editrecipe" href="<?php echo $this->url( 'profile.edit', $object ) ?>">Modifier la recette</a>
-	</div>
-	</div>
+<div class="breadcrumb">
+	<a title="retour à Accueil" href="/">Accueil</a>
+	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
+	Profils
 </div>
-<?php $forloopCounter++; endforeach; ?>
 
-</ul>
-
-<?php
-    include 'mad/templates/paginate.php';
-?>
-
-<!--
-<a href="<?php echo $this->url( 'profile.create' ); ?>">create</a>
--->
+<div id="center_column">
+    <h2 class="title">Liste des chefs</h2>
+    <?php foreach( $this->objectList as $object ): ?>
+    <div class="UIListingProfils">
+        <div class="UIListingProfils_pic">
+            <?php if ( isset( $object['picture'] ) ): ?>
+            <img src="<?php echo $this->thumbnail( $object['picture'], 150, 150 ) ?>" alt="<?php $this->e( $object['name'] ) ?>" />
+            <?php endif ?>
+        </div>
+        <div class="UIListingProfils_infos">
+            <h3><?php $this->e( $object['name'] ) ?></h3>
+            <?php $this->e( $object['introduction'] ) ?> (<a href="<?php echo $this->url( 'profile.details', $object ) ?>" class="plus">Lire la suite...</a>).
+        </div>
+        <div class="UIListingProfils_actions">
+          <div class="tab">
+            &raquo; <a href="<?php echo $this->url( 'profile.details', $object ) ?>" class="plus">Voir son profil</a>
+          </div>
+            <!-- 
+          <div class="tab">
+            &raquo; <a href="" class="plus" id="UI_ShowLatestsRecipesProfil_1">Ses derni&egrave;res recettes</a>
+            <ul style="display: none;" id="UI_LatestsRecipesProfil_1">
+                <li>1. <a href="#">Saucisson frais &agrave;</a></li>
+                <li>2. <a href="#">Creme brulee farcie de tomates</a></li>
+                <li>3. <a href="#">Saucisson frais &agrave;</a></li>
+                <li>4. <a href="#">Courgettes a la provencale</a></li>
+            </ul>
+          </div>
+            -->
+        </div>
+    <!--IE hack floats-->
+    <div class="clear"></div>
+    <?php endforeach ?>
+</div>
+</div>
+<!--end #center_column-->
+</body>

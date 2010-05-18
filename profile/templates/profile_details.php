@@ -46,10 +46,29 @@ a.btn-block { display: block; height: 30px; width: 180px; margin: 0 auto; margin
 a.btn-block:hover { background: #539893; }
 </style>
 
+<div class="breadcrumb">
+	<a title="retour à Accueil" href="/">Accueil</a>
+	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
+	<a href="<?php echo $this->url( 'profile.list' ) ?>">Profils</a>
+	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
+	<?php $this->e( $this->object['name'] ) ?>
+
+</div>
+<div class="breadcrumb">
+	<a title="retour à Accueil" href="/">Accueil</a>
+	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
+	<a href="<?php echo $this->url( 'profile.list' ) ?>">Profils</a>
+	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
+	<?php $this->e( $this->object['name'] ) ?>
+
+</div>
+
 <div class="recipe">
 	<div class="author-left">
 		<div id="author-photo">
-			<img src="<?php echo $this->getAbsoluteUploadUrl( $this->object['picture'] ); ?>" alt="<?php echo $this->object['name']; ?>" height="260" width="260" />
+            <?php if ( isset( $this->object['picture'] ) ): ?>
+			<img src="<?php echo $this->thumbnail( $this->object['picture'], 300, 300 ); ?>" alt="<?php echo $this->object['name']; ?>" height="260" width="260" />
+            <?php endif ?>
             <!--
 			<p class="share">
 				<a href="#">
@@ -131,7 +150,10 @@ a.btn-block:hover { background: #539893; }
 		<ul>
             <?php
             foreach( $this->iterate( $this->object->recipeSet ) as $recipe ): ?>
-			<li><a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>"><?php $this->e( $recipe['title'] ) ?></a></li>
+			<li>
+                <img src="<?php echo $this->thumbnail( $recipe['picture'], 45, 45 ) ?>" />
+                <a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>"><?php $this->e( $recipe['title'] ) ?></a>
+            </li>
             <?php endforeach ?>
 		</ul>
 	</div>

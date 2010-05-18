@@ -216,7 +216,7 @@ a.btn-block:hover { background: #539893; }
 <div id="object-column">
         <?php if ( isset( $this->object['ingredientQuantities'] ) && $this->object['ingredientQuantities'] ): ?>
         <div class="block">
-                <h4>Ingr&eacute;dients</h4>
+                Ingr&eacute;dients
                 <ul>
                     <?php foreach( $this->iterate( $this->object['ingredientQuantities'] ) as $ingredient ): ?>
                         <li><?php $this->e( $ingredient['ingredient'] ) ?><?php if ( isset( $ingredient['quantity'] ) ): ?> : <span class="att"><?php $this->e( $ingredient['quantity'] ) ?></span><?php endif ?></li>
@@ -228,7 +228,7 @@ a.btn-block:hover { background: #539893; }
 
         <?php if ( isset( $this->object['ingredientProducts'] ) && $this->object['ingredientProducts'] ): ?>
     	<div class="block">
-    		<h4>Produits de la recette</h4>
+    		Produits de la recette
     		<ul>
                 <?php 
                 $forloopCounter = 0;
@@ -259,7 +259,7 @@ a.btn-block:hover { background: #539893; }
 
         <?php if ( isset( $this->object['toolProducts'] ) && $this->object['toolProducts'] ): ?>
     	<div class="block">
-    		<h4>Outils recommandés</h4>
+    		Outils recommandés
     		<ul>
                 <?php 
                 $forloopCounter = 0;
@@ -289,7 +289,7 @@ a.btn-block:hover { background: #539893; }
 
         <?php if ( isset( $this->object['tools'] ) && $this->object['tools'] ): ?>
     	<div class="block">
-    		<h4>Outils nécessaires</h4>
+    		Outils nécessaires
     		<ul>
                 <?php 
                 foreach( $this->iterate( $this->object['tools'] ) as $tool ): ?>
