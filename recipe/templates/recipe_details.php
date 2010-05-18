@@ -92,7 +92,7 @@ a.btn-block:hover { background: #539893; }
                             <img alt="<?php $this->e( $this->object['title'] ) ?>" src="<?php echo $this->thumbnail( $this->object['picture'], 45, 45 ) ?>" id="thumb_main">
                         </a>
     				</div>
-    				<?php foreach( $this->object['otherPictures'] as $key => $picture ): ?>
+    				<?php foreach( $this->iterate( $this->object['otherPictures'] ) as $key => $picture ): ?>
                     <?php
                     /* prepare 300x300 thumbnail called by javacript */
                     $this->thumbnail( $picture, 300, 300 );
@@ -108,13 +108,6 @@ a.btn-block:hover { background: #539893; }
                 <?php endif ?>
 			
     		</div>
-            <?php endif ?>
-            <?php if ( isset( $this->object['video'] ) ): ?>
-                <div id="object-video">
-                        <a href="<?php echo $this->object['video'] ?>" title="Jouer la vid&eacute;o"><img src="<?php echo $this->url( 'mad.static', array( 'path' => '/object/img/btn-play.png ') ) ?>" /></a>
-                        <div id="background-video">
-                        </div>
-                </div>
             <?php endif ?>
             <?php if ( isset( $this->object['tags'] ) ): ?>
                 <div id="object-tags">
@@ -213,6 +206,7 @@ a.btn-block:hover { background: #539893; }
 
                 </div>
                 <?php endif ?>
+
         </div>
 </div>
 
@@ -319,6 +313,18 @@ a.btn-block:hover { background: #539893; }
         </div>
         -->
 </div>
+
+                <?php if ( isset( $this->object['video'] ) ): ?>
+                <div style="overflow: auto; clear: left; width: 735px;">
+                    <div class="title-tab">Vidéo de la préparation</div>
+                    <object height="375" width="735">
+                        <param name="allowfullscreen" value="true">
+                        <param name="allowscriptaccess" value="always">
+                        <param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=<?php $this->e( $this->object['video'] ) ?>&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=0&amp;show_portrait=0&amp;color=2881B1&amp;fullscreen=1">
+                        <embed src="http://vimeo.com/moogaloop.swf?clip_id=<?php $this->e( $this->object['video'] ) ?>&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=0&amp;show_portrait=0&amp;color=2881B1&amp;fullscreen=1" type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" height="375" width="735">
+                    </object>
+                </div>
+                <?php endif ?>
 
 <?php echo $this->comments ?>
 
