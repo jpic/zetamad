@@ -116,6 +116,15 @@ a.btn-block:hover { background: #539893; }
                         </div>
                 </div>
             <?php endif ?>
+            <?php if ( isset( $this->object['tags'] ) ): ?>
+                <div id="object-tags">
+                    <ul>
+                        <?php foreach( $this->object['tags'] as $tag ): ?>
+                        <li><?php $this->e( $tag ) ?></li>
+                        <?php endforeach ?>
+                    </ul>
+                </div>
+            <?php endif ?>
                 <div class="object-author">
                         <?php if ( isset( $this->object['profile'] ) ): ?>
                         <p class="author-name"><?php $this->e( $this->object['profile']['name'] ) ?></p>
