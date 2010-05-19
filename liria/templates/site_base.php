@@ -23,12 +23,11 @@ ul#flash li p { color: #666;  font-size: 12px; float: left; }
 ul#flash li a { float: right; direction: rtl; color: #666; text-decoration: none; font-size: 10px;}
 ul#flash li a:hover { float: right; direction: rtl; color: #000; text-decoration: underline;}
 </style>
-<?php $_SESSION['messages'] = array( 'premier message', 'second message' ) ?>
 
 <?php if ( $_SESSION['messages'] ): ?>
     <ul id="flash">
     <?php foreach( $_SESSION['messages'] as $message ): ?>
-        <li><p><?php $this->e( $message ) ?></p><a href="">effacer</a></li>
+        <li><p><?php $this->e( $message ) ?></p><?php /*<a href="">effacer</a>*/ ?></li>
     <?php endforeach ?>
     </ul>
 
