@@ -58,7 +58,10 @@ h3 { color: #DE5161; font-size: 14px; padding: 0; margin: 0; line-height: 18px; 
 			<h3><?php $this->e( $this->truncateWords( $object['name'], 80 ) ) ?></h3>
             <?php if ( isset( $object['introduction'] ) ): ?>
 			<p>
-                <?php $this->e( $this->truncateWords( $object['introduction'], 700 ) ) ?>
+                <?php $this->e( $this->truncateWords( $object['introduction'], 700 ) ) ?> 
+			    <a href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->e( $object['name'] ) ?>">
+                [...]
+                </a>
 			</p>
             <?php endif ?>
 		</div>
