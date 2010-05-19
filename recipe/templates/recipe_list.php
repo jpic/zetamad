@@ -23,7 +23,9 @@
 #center_column .recipe-details { border: 1px solid #d3d3d3; padding: 5px; overflow: auto; }
 #center_column .recipe-details img.picture { width: 226px; height: 226px; vertical-align: bottom; }
 #center_column .recipe-details .infos {line-height: 19px; font-weight: bold; font-family: Verdana; padding: 10px 0; }
-#center_column .recipe-details .author { color: #656565; font-size: 10px; font-family: Verdana; font-weight: bold; }
+#center_column .recipe-details .author { color: #DE5161; font-size: 10px; font-family: Verdana; font-weight: bold; }
+#center_column .recipe-details .author a { color: #DE5161; }
+#center_column .recipe-details .author a:hover { color: #DE5161; }
 </style>
 
 <!--
