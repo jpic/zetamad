@@ -59,7 +59,7 @@ a.btn-block:hover { background: #539893; }
 <div class="breadcrumb">
 	<a title="retour à Accueil" href="/">Accueil</a>
 	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
-	<a href="<?php echo $this->url( 'profils.list' ) ?>" title="List des profils">Profils</a>
+	<a href="<?php echo $this->url( 'profile.list' ) ?>" title="List des profils">Profils</a>
     <span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
 	<?php $this->e( $this->object['name'] ) ?>
 </div>
