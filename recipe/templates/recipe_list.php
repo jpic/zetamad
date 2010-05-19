@@ -46,7 +46,7 @@
 </div>
 
 <?php $forloopCounter = 1; foreach( $this->objectList as $object ): ?>
-<div class="recipe-block" <?php if( $forloopCounter % 4 == 0 ): ?> style="padding-right: 0;"<?php endif; ?>>
+<div class="recipe-block" <?php if( $forloopCounter % 4 == 0 ): ?> style="padding-right: 0; margin-left: 1px;"<?php endif; ?> <?php if( $forloopCounter % 3 == 0 ): ?> style="margin-left: 1px;"<?php endif; ?>>
 	<!--<p class="link">remipathier.cookingfor.com</p>-->
 	<div class="recipe-details">
 		<?php if ( isset( $object['picture'] ) ): ?>
