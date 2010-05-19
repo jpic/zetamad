@@ -4,8 +4,21 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     public $handlers = array(  );
 
     public function thumbnail( $path, $newWidth, $newHeight, $force = false ) {
-        $path = ENTRY_APP_PATH . '/upload/' . $path;
-        $info = pathinfo( $path );
+        $uploadPath = ENTRY_APP_PATH . '/upload/' . $path;
+        if ( !file_exists( $uploadPath ) ) {
+            $registry = madRegistry::instance(  );
+            foreach( $registry->configuration['applications'] as $name => $application ) {
+                $test = ENTRY_APP_PATH . '/' . $application['path'] . '/static/' . $path;
+
+                if ( file_exists( $test ) ) {
+                    copy( $test, $uploadPath );
+                    break;
+                }
+            }
+        }
+
+        $info = pathinfo( $uploadPath );
+        $path = $uploadPath;
 
         $thumbnailName = sprintf( '%s_%sx%s_%s.%s',
             $info['filename'],
@@ -222,6 +235,14 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         }
 
         return $message;
+    }
+    public function truncateWords( $content, $maxchars ) {
+        $content = substr($content, 0, $maxchars);
+        $pos = strrpos($content, ' ');
+        if ($pos>0) {
+            $content = substr($content, 0, $pos);
+        }
+        return $content; 
     }
 }
 
