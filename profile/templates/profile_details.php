@@ -60,7 +60,11 @@ a.btn-block:hover { background: #539893; }
 <div class="recipe">
 	<div class="author-left">
 		<div id="author-photo">
-			<img src="<?php echo $this->getAbsoluteUploadUrl( $this->object['picture'] ); ?>" alt="<?php echo $this->object['name']; ?>" height="260" width="260" />
+			<?php if ( isset( $this->object['picture'] ) ): ?>
+            <img src="<?php echo $this->thumbnail( $this->object['picture'], 260, 260 ) ?>" width="260" height="260" alt="<?php $this->e( $this->object['name'] ) ?>" />	
+            <?php else: ?>
+            <img src="<?php echo $this->thumbnail( $this->configuration['defaultPicture'], 260, 260 ) ?>" width="260" height="260" alt="<?php $this->e( $this->object['name'] ) ?>" />	
+            <?php endif ?>
             <!--
 			<p class="share">
 				<a href="#">
@@ -95,8 +99,8 @@ a.btn-block:hover { background: #539893; }
 	</div>
 </div>
 
-<div id="recipe-column">
     <!--
+<div id="recipe-column">
 	<div class="block">
 		<p class="title-setmsg">&Agrave; <?php $this->e( $this->object['name'] ) ?> :</p>
         <form action="" method="post" class="msg-author-form">
@@ -104,149 +108,57 @@ a.btn-block:hover { background: #539893; }
 		    <a class="btn-block" href="#">Envoyer</a>
         </form>
 	</div>
-    -->
-    <?php if ( isset( $this->object['products'] ) && $this->object['products'] ): ?>
-	<div class="block">
-		<h3>Produits favoris</h3>
-		<ul>
-            <?php 
-            $forloopCounter = 0;
-            foreach( $this->iterate( $this->object['products'] ) as $productId ): ?>
-            <?php
-            $product = new Product(intval( $productId ), true, 2);
-            $cover = Product::getCover( $product->id );
-            ?>
-			<li <?php if ( $forloopCounter > 0 ): ?>style="margin-top: 10px;"<?php endif ?>>
-				<div class="objectProduct-th">
-					<a href="" style="float: left;"><img alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-small.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" /></a>
-				</div>
-				<div class="objectProduct-link">
-					<a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>"><?php echo $product->name ?></a>
-					<p><a title="<?php $this->e( $product->manufacturer_name ) ?>" href="<?php echo __PS_BASE_URI__ ?>manufacturer.php?id_manufacturer=<?php echo $product->id_manufacturer ?>" style="color: rgb(208, 47, 30); text-decoration: none;"><?php $this->e( $product->manufacturer_name ) ?></a></p>
-				</div>
-				<div class="clear"></div>
-			</li>
-            <?php 
-                $forloopCounter ++;
-            endforeach;
-            unset( $forloopCounter );
-            ?>
-		</ul>
-
-	</div>
-    <?php endif ?>
-
-    <?php if ( count( $this->object->recipeSet ) ): ?>
-	<div class="block">
-		<h3>Recettes</h3>
-		<ul>
-            <?php
-            foreach( $this->iterate( $this->object->recipeSet ) as $recipe ): ?>
-			<li><a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>"><?php $this->e( $recipe['title'] ) ?></a></li>
-            <?php endforeach ?>
-		</ul>
-	</div>
-    <?php endif ?>
-
 </div>
-
+    -->
+<?php if ( count( $this->object->recipeSet ) ): ?>
 <div class="favorites_recipes">
 	<div class="title">Mes recettes</div>
-	<div class="recipe_block">
+        <?php
+        $forLoop = 0;
+        foreach( $this->iterate( $this->object->recipeSet ) as $recipe ):
+            if ( !isset( $recipe['picture'] ) ) continue;
+        ?>
+	<div class="recipe_block <?php if ( ( $forLoop + 1 ) % 4 == 0 ): ?>nomarg<?php endif ?>">
 		<div class="thumb">
-			<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/xp/liria/upload/600px-Paul_Bocuse_2007.jpg" width="167" height="167" alt="" /></a>
+			<a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>" title="<?php $this->e( $recipe['title'] ) ?>">
+                <img src="<?php echo $this->thumbnail( $recipe['picture'], 167, 167 ) ?>" width="167" height="167" alt="<?php $this->e( $recipe['title'] ) ?>" />
+            </a>
 		</div>
-		<a href="" title="">Nom de la recette</a>
+		<a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>" title="<?php $this->e( $recipe['title'] ) ?>"><?php $this->e( $recipe['title'] ) ?></a>
 	</div>
-	<div class="recipe_block">
-		<div class="thumb">
-			<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/xp/liria/upload/600px-Paul_Bocuse_2007.jpg" width="167" height="167" alt="" /></a>
-		</div>
-		<a href="" title="">Nom de la recette</a>
-	</div>
-	<div class="recipe_block">
-		<div class="thumb">
-			<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/xp/liria/upload/600px-Paul_Bocuse_2007.jpg" width="167" height="167" alt="" /></a>
-		</div>
-		<a href="" title="">Nom de la recette</a>
-	</div>
-	<!-- pour le dernier de la boucle (4 par rangée) afficher la classe "nomarg" -->
-	<div class="recipe_block nomarg">
-		<div class="thumb">
-			<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/xp/liria/upload/600px-Paul_Bocuse_2007.jpg" width="167" height="167" alt="" /></a>
-		</div>
-		<a href="" title="">Nom de la recette</a>
-	</div>
-	<div class="clear"></div>
-	<div class="recipe_block">
-		<div class="thumb">
-			<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/xp/liria/upload/600px-Paul_Bocuse_2007.jpg" width="167" height="167" alt="" /></a>
-		</div>
-		<a href="" title="">Nom de la recette</a>
-	</div>
-	<div class="recipe_block">
-		<div class="thumb">
-			<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/xp/liria/upload/600px-Paul_Bocuse_2007.jpg" width="167" height="167" alt="" /></a>
-		</div>
-		<a href="" title="">Nom de la recette</a>
-	</div>
-	<div class="recipe_block">
-		<div class="thumb">
-			<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/xp/liria/upload/600px-Paul_Bocuse_2007.jpg" width="167" height="167" alt="" /></a>
-		</div>
-		<a href="" title="">Nom de la recette</a>
-	</div>
-	<!-- pour le dernier de la boucle (4 par rangée) afficher la classe "nomarg" -->
-	<div class="recipe_block nomarg">
-		<div class="thumb">
-			<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/xp/liria/upload/600px-Paul_Bocuse_2007.jpg" width="167" height="167" alt="" /></a>
-		</div>
-		<a href="" title="">Nom de la recette</a>
-	</div>
+        <?php
+            $forLoop++;
+        endforeach;
+        unset( $forLoop );
+        ?>
 </div>
+<?php endif ?>
 
+<?php if ( isset( $this->object['products'] ) && $this->object['products'] ): ?>
 <div class="favorites_products">
 	<div class="title">Mes produits favoris</div>
-	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
+    <?php 
+    $forLoop = 0;
+    foreach( $this->iterate( $this->object['products'] ) as $productId ): ?>
+    <?php
+    $product = new Product(intval( $productId ), true, 2);
+    $cover = Product::getCover( $product->id );
+    ?>
+	<div class="product_block <?php if ( ( $forLoop + 1 ) % 4 == 0 ): ?>nomarg<?php endif ?>">
+        <a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>">
+            <img alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-home.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" />
+        </a>
+        <a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>">
+            <?php echo $product->name ?>
+        </a>
 	</div>
-	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
-	</div>
-	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
-	</div>
-	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
-	</div>
-	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
-	</div>
-	<!-- pour le dernier de la boucle (4 par rangée) afficher la classe "nomarg" -->
-	<div class="product_block nomarg">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
-	</div>
-	<div class="clear"></div>
-	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
-	</div>
-	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
-	</div>
-	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
-	</div>
-	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
-	</div>
-	<div class="product_block">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
-	</div>
-	<!-- pour le dernier de la boucle (4 par rangée) afficher la classe "nomarg" -->
-	<div class="product_block nomarg">
-		<a href="" title=""><img src="http://mad.svn.apache.ocpsys.com/mm/img/p/2271-128645-home.jpg" width="111" height="111" alt="" /></a>
-	</div>
+    <?php 
+        $forLoop++;
+    endforeach;
+    unset( $forLoop );
+    ?>
 </div>
+<?php endif ?>
 
 <script type="text/javascript">
 $(document).ready( function(  ) {
