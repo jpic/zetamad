@@ -16,13 +16,19 @@ else:
 </head>
 <body>
 <?php endif ?>
-
+<style>
+ul#flash { overflow: auto; width: 99%; padding: 5px; margin: 0 auto; margin-bottom: 10px; margin-top: 10px; list-style: none; background: #ebfce3; border: 1px solid #d2f6c1; -moz-border-radius: 3px; border-radius: 3px; -webkit-border-radius: 3px; }
+ul#flash li {clear: both; font-family: Verdana; line-height: 21px; }
+ul#flash li p { color: #666;  font-size: 12px; float: left; }
+ul#flash li a { float: right; direction: rtl; color: #666; text-decoration: none; font-size: 10px;}
+ul#flash li a:hover { float: right; direction: rtl; color: #000; text-decoration: underline;}
+</style>
 <?php $_SESSION['messages'] = array( 'premier message', 'second message' ) ?>
 
 <?php if ( $_SESSION['messages'] ): ?>
-    <ul>
+    <ul id="flash">
     <?php foreach( $_SESSION['messages'] as $message ): ?>
-        <li><?php $this->e( $message ) ?></li>
+        <li><p><?php $this->e( $message ) ?></p><a href="">effacer</a></li>
     <?php endforeach ?>
     </ul>
 
