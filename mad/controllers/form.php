@@ -364,6 +364,10 @@ class madFormController extends madController {
         // remove unwanted characters
         $slug = preg_replace('~[^-\w]+~', '', $slug);
 
+        if ( strlen( $slug ) > 100 ) {
+            $slug = substr( $slug, 0, 100 );
+        }
+
         return $slug;
     }
 }
