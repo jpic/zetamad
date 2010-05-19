@@ -150,7 +150,7 @@ a.btn-block:hover { background: #539893; }
 			</a>
 		</div>
                 <a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>">
-                    <?php echo substr($product->name, 0, 20); ?>[...]
+                    <?php echo $this->truncateWords($product->name, 30); ?>[...]
                 </a>
 	</div>
     <?php 
