@@ -2,7 +2,7 @@
 /*Init 100%*/
 #center_column { width: 980px; padding: 0; }
 #center_column a { text-decoration: none;}
-#left_column, .breadcrumb { display: none; }
+#left_column { display: none; }
 
 #nav-recipe { color: #b0aaac; width: 980px; height: 30px; list-style: none; margin-bottom: 10px; }
 #nav-recipe li { display: block; float: left; line-height: 30px; height: 30px; }
@@ -35,13 +35,12 @@
 
 .favorites_recipes, .favorites_products { float: left; width: 740px; margin-top: 20px; }
 .favorites_products { margin-top: 5px; }
-.favorites_recipes .recipe_block { margin-bottom: 15px; float: left; width: 175px; margin-right: 13px; }
-.favorites_products .product_block { margin-bottom: 5px; float: left; width: 111px; margin-right: 5px; padding: 3px; border: 1px solid #dadada; }
+.favorites_recipes .recipe_block, .favorites_products .product_block { margin-bottom: 15px; float: left; width: 175px; margin-right: 13px; }
 .favorites_recipes .nomarg, .favorites_products .nomarg { margin: 0 !important; }
-.favorites_recipes .recipe_block .thumb { padding: 3px; border: 1px solid #dadada; }
-.favorites_recipes .recipe_block .thumb img, .favorites_products .product_block img { vertical-align: bottom; }
-.favorites_recipes .recipe_block a { line-height: 19px; font-size: 11px; color: #969696; font-family: Verdana; }
-.favorites_recipes .recipe_block a:hover { color: #539893; text-decoration: underline; }
+.favorites_recipes .recipe_block .thumb, .favorites_products .product_block .thumb { padding: 3px; border: 1px solid #dadada; }
+.favorites_recipes .recipe_block .thumb img, .favorites_products .product_block .thumb img { vertical-align: bottom; }
+.favorites_recipes .recipe_block a, .favorites_products .product_block a { line-height: 19px; font-size: 11px; color: #969696; font-family: Verdana; }
+.favorites_recipes .recipe_block a:hover, .favorites_products .product_block a:hover { color: #539893; text-decoration: underline; }
 .favorites_recipes .title, .favorites_products .title { font-size: 22px; color: #969696; font-family: Times; border-bottom: 1px solid #dadada; margin-bottom: 7px; padding-bottom: 7px; }
 
 #recipe-column { float: right; width: 220px; }
@@ -145,12 +144,14 @@ a.btn-block:hover { background: #539893; }
     $cover = Product::getCover( $product->id );
     ?>
 	<div class="product_block <?php if ( ( $forLoop + 1 ) % 4 == 0 ): ?>nomarg<?php endif ?>">
-        <a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>">
-            <img alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-home.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" />
-        </a>
-        <a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>">
-            <?php echo $product->name ?>
-        </a>
+		<div class="thumb">
+			<a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>">
+				<img width="167" height="167" alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-home.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" />
+			</a>
+		</div>
+                <a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>">
+                    <?php echo substr($product->name, 0, 20); ?>[...]
+                </a>
 	</div>
     <?php 
         $forLoop++;
