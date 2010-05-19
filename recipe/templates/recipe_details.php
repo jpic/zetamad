@@ -42,9 +42,7 @@
 .object .object-right .object-infos { overflow: auto; border-bottom: 1px dashed #dadada; margin-bottom: 20px; padding-bottom: 7px; }
 .object .object-right .object-infos-block { float: left; margin-right: 15px; color: #AB1D37; font-size: 11px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; padding: 5px; }
 
-#object-tags { list-style: none; font-size: 11px; font-family: Verdana; }
-#object-tags li a { color: #666; }
-#object-tags li a:hover { color: #000; text-decoration: underline; }
+#object-tags { list-style: none; font-size: 11px; font-family: Verdana; color: #666; clear: both; float: right; margin: 0 0 10px 0; }
 
 #object-column { float: right; }
 #object-column ul li .objectProduct-th { border:1px solid #DADADA; float:left; }
