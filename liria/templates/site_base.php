@@ -17,6 +17,8 @@ else:
 <body>
 <?php endif ?>
 
+<?php $_SESSION['messages'] = array( 'premier message', 'second message' ) ?>
+
 <?php if ( $_SESSION['messages'] ): ?>
     <ul>
     <?php foreach( $_SESSION['messages'] as $message ): ?>
