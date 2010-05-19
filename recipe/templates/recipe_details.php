@@ -171,6 +171,7 @@ a.btn-block:hover { background: #539893; }
                 <?php 
                 if ( isset( $this->object['prepTime'] ) || 
                      isset( $this->object['cookTime'] ) ||
+                     isset( $this->object['restTime'] ) ||
                      isset( $this->object['yield'] ) ||
                      isset( $this->object['recipeSteps'] )
                 ):
@@ -182,6 +183,7 @@ a.btn-block:hover { background: #539893; }
                         <?php 
                         if ( isset( $this->object['prepTime'] ) || 
                              isset( $this->object['cookTime'] ) ||
+                             isset( $this->object['restTime'] ) ||
                              isset( $this->object['yield'] )
                         ):
                         ?>
@@ -191,6 +193,9 @@ a.btn-block:hover { background: #539893; }
                             <?php endif ?>
                             <?php if ( isset( $this->object['cookTime'] ) ): ?>
                                 <p class="object-infos-block">Cuisson: <span class="bold"><?php $this->e( $this->object['cookTime'] ) ?>min</span></p>
+                            <?php endif ?>
+                            <?php if ( isset( $this->object['restTime'] ) ): ?>
+                                <p class="object-infos-block">Repos: <span class="bold"><?php $this->e( $this->object['restTime'] ) ?>min</span></p>
                             <?php endif ?>
                             <?php if ( isset( $this->object['yield'] ) ): ?>
                                 <p class="object-infos-block" style="margin-right: 0;">Personnes: <span class="bold"><?php $this->e( $this->object['yield'] ) ?></span></p>
