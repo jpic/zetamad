@@ -33,7 +33,7 @@
 .object .object-right .object-header .share-object { position: absolute; bottom: 10px; left: 0; }
 
 .object .object-left .object-author, .object .object-right .object-description { margin-top: 20px; }
-.object .object-left .object-author .author-name, .object .object-right .h3 { font-size: 18px; color: #969696; font-family: Times; border-bottom: 1px solid #dadada; margin-bottom: 7px; padding-bottom: 7px; }
+.object .object-left .object-author .author-name, .object .object-right .h3 { clear: both; font-size: 18px; color: #969696; font-family: Times; border-bottom: 1px solid #dadada; margin-bottom: 7px; padding-bottom: 7px; }
 .object .object-left .object-author .author-photo { float: left; margin-right: 7px; margin-bottom: 2px; border: 1px solid #dadada; vertical-align: bottom; width: 87px; height: 87px; }
 .object .object-left .object-author .author-description { line-height: 19px; font-size: 11px; color: #969696; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; text-align: justify;}
 
@@ -41,6 +41,10 @@
 .object .object-right .object-description .step-desc { color:#666666; font-family:Lucida,"Lucida Sans",Arial,sans-serif; font-size:12px; line-height:21px; padding-bottom:20px; }
 .object .object-right .object-infos { overflow: auto; border-bottom: 1px dashed #dadada; margin-bottom: 20px; padding-bottom: 7px; }
 .object .object-right .object-infos-block { float: left; margin-right: 15px; color: #AB1D37; font-size: 11px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; padding: 5px; }
+
+#object-tags { list-style: none; font-size: 11px; font-family: Verdana; }
+#object-tags li a { color: #666; }
+#object-tags li a:hover { color: #000; text-decoration: underline; }
 
 #object-column { float: right; }
 #object-column ul li .objectProduct-th { border:1px solid #DADADA; float:left; }
@@ -109,21 +113,20 @@ a.btn-block:hover { background: #539893; }
 			
     		</div>
             <?php endif ?>
-
-<a href="http://www.addthis.com/bookmark.php?v=250&pub=xa-4a48da264c324c50" onmouseover="return addthis_open(this, '', window.location.href, document.title)" onmouseout="addthis_close()" onclick="return addthis_sendto()">
-    <img src="/themes/mmarket/img/lg-bookmark-mm.gif" width="127" height="15" alt="Partager" style="border:0"/>
-</a>
-<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js?pub=xa-4a48da264c324c50"></script>
-
+	    
+	<div style="float: right; margin-bottom: 10px;">
+		<a href="http://www.addthis.com/bookmark.php?v=250&pub=xa-4a48da264c324c50" onmouseover="return addthis_open(this, '', window.location.href, document.title)" onmouseout="addthis_close()" onclick="return addthis_sendto()">
+		    <img src="/themes/mmarket/img/lg-bookmark-mm.gif" width="127" height="15" alt="Partager" style="border:0"/>
+		</a>
+		<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js?pub=xa-4a48da264c324c50"></script>
+	</div>
 
             <?php if ( isset( $this->object['tags'] ) ): ?>
-                <div id="object-tags">
-                    <ul>
-                        <?php foreach( $this->object['tags'] as $tag ): ?>
-                        <li><?php $this->e( $tag ) ?></li>
-                        <?php endforeach ?>
-                    </ul>
-                </div>
+		<ul id="object-tags">
+		    <?php foreach( $this->iterate( $this->object['tags'] ) as $tag ): ?>
+		    <li><?php $this->e( $tag ) ?></li>
+		    <?php endforeach ?>
+		</ul>
             <?php endif ?>
                 <div class="object-author">
                         <?php if ( isset( $this->object['profile'] ) ): ?>
@@ -170,7 +173,7 @@ a.btn-block:hover { background: #539893; }
                 <?php 
                 if ( isset( $this->object['prepTime'] ) || 
                      isset( $this->object['cookTime'] ) ||
-                     isset( $this->object['numberOfPeople'] ) ||
+                     isset( $this->object['yield'] ) ||
                      isset( $this->object['recipeSteps'] )
                 ):
                 ?>
@@ -181,7 +184,7 @@ a.btn-block:hover { background: #539893; }
                         <?php 
                         if ( isset( $this->object['prepTime'] ) || 
                              isset( $this->object['cookTime'] ) ||
-                             isset( $this->object['numberOfPeople'] )
+                             isset( $this->object['yield'] )
                         ):
                         ?>
                         <div class="object-infos">
@@ -191,8 +194,8 @@ a.btn-block:hover { background: #539893; }
                             <?php if ( isset( $this->object['cookTime'] ) ): ?>
                                 <p class="object-infos-block">Cuisson: <span class="bold"><?php $this->e( $this->object['cookTime'] ) ?>min</span></p>
                             <?php endif ?>
-                            <?php if ( isset( $this->object['numberOfPeople'] ) ): ?>
-                                <p class="object-infos-block" style="margin-right: 0;">Personnes: <span class="bold"><?php $this->e( $this->object['numberOfPeople'] ) ?></span></p>
+                            <?php if ( isset( $this->object['yield'] ) ): ?>
+                                <p class="object-infos-block" style="margin-right: 0;">Personnes: <span class="bold"><?php $this->e( $this->object['yield'] ) ?></span></p>
                             <?php endif ?>
                         </div>
                         <?php endif ?>
@@ -216,7 +219,7 @@ a.btn-block:hover { background: #539893; }
 <div id="object-column">
         <?php if ( isset( $this->object['ingredientQuantities'] ) && $this->object['ingredientQuantities'] ): ?>
         <div class="block">
-                Ingr&eacute;dients
+                <h4>Ingr&eacute;dients</h4>
                 <ul>
                     <?php foreach( $this->iterate( $this->object['ingredientQuantities'] ) as $ingredient ): ?>
                         <li><?php $this->e( $ingredient['ingredient'] ) ?><?php if ( isset( $ingredient['quantity'] ) ): ?> : <span class="att"><?php $this->e( $ingredient['quantity'] ) ?></span><?php endif ?></li>
@@ -228,7 +231,7 @@ a.btn-block:hover { background: #539893; }
 
         <?php if ( isset( $this->object['ingredientProducts'] ) && $this->object['ingredientProducts'] ): ?>
     	<div class="block">
-    		Produits de la recette
+    		<h4>Produits de la recette</h4>
     		<ul>
                 <?php 
                 $forloopCounter = 0;
@@ -259,7 +262,7 @@ a.btn-block:hover { background: #539893; }
 
         <?php if ( isset( $this->object['toolProducts'] ) && $this->object['toolProducts'] ): ?>
     	<div class="block">
-    		Outils recommandés
+    		<h4>Outils recommandés</h4>
     		<ul>
                 <?php 
                 $forloopCounter = 0;
@@ -289,7 +292,7 @@ a.btn-block:hover { background: #539893; }
 
         <?php if ( isset( $this->object['tools'] ) && $this->object['tools'] ): ?>
     	<div class="block">
-    		Outils nécessaires
+    		<h4>Outils nécessaires</h4>
     		<ul>
                 <?php 
                 foreach( $this->iterate( $this->object['tools'] ) as $tool ): ?>
