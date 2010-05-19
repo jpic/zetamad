@@ -43,7 +43,8 @@
 .object .object-right .object-infos-block { float: left; margin-right: 15px; color: #AB1D37; font-size: 11px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; padding: 5px; }
 
 #object-tags { list-style: none; font-size: 11px; font-family: Verdana; color: #666; clear: both; float: right; margin: 0 0 10px 0; }
-
+#object-tags li { float: left; display: block; margin-left: 5px; }
+#object-tags .title { text-decoration: underline; text-transform: uppercase; }
 #object-column { float: right; }
 #object-column ul li .objectProduct-th { border:1px solid #DADADA; float:left; }
 #object-column ul li .objectProduct-th img { vertical-align: bottom; }
@@ -121,6 +122,7 @@ a.btn-block:hover { background: #539893; }
 
             <?php if ( isset( $this->object['tags'] ) ): ?>
 		<ul id="object-tags">
+		    <li class="title">tags:</li>
 		    <?php foreach( $this->iterate( $this->object['tags'] ) as $tag ): ?>
 		    <li><?php $this->e( $tag ) ?></li>
 		    <?php endforeach ?>
