@@ -12,9 +12,8 @@
 #nav-recipe li.sep { font-size: 9px; padding: 0px 8px; }
 
 #center_column .recipe-block { font-size: 11px; width: 238px; float: left; padding: 0 12px 12px 0; }
-#center_column .recipe-block .infos a { text-decoration: underline; }
-#center_column .recipe-details a { color: #b0aaac; }
-#center_column .recipe-details a:hover { text-decoration: underline; color: #000; }
+#center_column .recipe-details a { color: #DE5161; }
+#center_column .recipe-details a:hover { color: #DE5161; }
 #center_column .recipe-details a.editprofil { float: left; color: #DE5161; font-size: 10px; font-weight: normal; display: block; _height: 20px; line-height: 20px; }
 #center_column .recipe-details a.editrecipe { float: right; color: #DE5161; font-size: 10px; font-weight: normal; display: block; _height: 20px; line-height: 20px; }
 #center_column .recipe-details a.editrecipe:hover, #center_column .recipe-details a.editprofil:hover { text-decoration: underline; }
@@ -23,9 +22,9 @@
 #center_column .recipe-details { border: 1px solid #d3d3d3; padding: 5px; overflow: auto; }
 #center_column .recipe-details img.picture { width: 226px; height: 226px; vertical-align: bottom; }
 #center_column .recipe-details .infos {line-height: 19px; font-weight: bold; font-family: Verdana; padding: 10px 0; }
-#center_column .recipe-details .author { color: #DE5161; font-size: 10px; font-family: Verdana; font-weight: bold; }
-#center_column .recipe-details .author a { color: #DE5161; }
-#center_column .recipe-details .author a:hover { color: #DE5161; }
+#center_column .recipe-details .author { color: #b0aaac; font-size: 10px; font-family: Verdana; font-weight: bold; }
+#center_column .recipe-details .author a { color: #b0aaac; text-decoration: none; }
+#center_column .recipe-details .author a:hover { text-decoration: underline; }
 </style>
 
 <!--

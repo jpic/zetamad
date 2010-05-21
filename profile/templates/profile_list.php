@@ -16,6 +16,20 @@ h3 { color: #DE5161; font-size: 14px; padding: 0; margin: 0; line-height: 18px; 
 .UIListingProfils .UIListingProfils_actions .tab ul li a { text-decoration: none; color: #000; }
 .UIListingProfils .UIListingProfils_actions .tab ul li a:hover { text-decoration: underline; color: #DE5161; }
 /* .clear : allready in globall.css */
+<<<<<<< .mine
+.clear { clear: both; }
+/* afficher la colone de droite */
+#left_column { display: block !important; }
+
+.profil_block { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #dadada; clear: both; margin-bottom: 15px; }
+.profil_block .thumb { width: 206px; height: 206px; padding: 3px; float: left; }
+.profil_block .thumb img { vertical-align: bottom; }
+.profil_block .description { float: left; width: 564px;}
+.profil_block .description p { font-family: Verdana; font-size: 11px; line-height: 18px; color: #666666; }
+.profil_block .description h3 { color: #de5161; font-size: 22px; padding-bottom: 7px; font-family: Times; }
+.profil_block .btn { margin-top: 10px; clear: right; float: right; text-align: center; width: 140px; background: #c0c0c0; line-height: 20px; height: 23px; }
+.profil_block .btn a { color: #fff; font-size: 11px; font-family: Verdana; text-transform: uppercase; }
+=======
 .clear { clear: both; }
 /* afficher la colone de droite */
 #left_column { display: block !important; }
@@ -28,7 +42,8 @@ h3 { color: #DE5161; font-size: 14px; padding: 0; margin: 0; line-height: 18px; 
 .profil_block .description h3 { color: #ab3847; font-size: 18px; font-family: Times; }
 .profil_block .btn { margin-top: 5px; clear: right; float: right; text-align: center; width: 140px; background: #c0c0c0; line-height: 20px; height: 23px; }
 .profil_block .btn a { color: #fff; font-size: 11px; font-family: Verdana; text-transform: uppercase; }
-.profil_block .btn a:hover { color: #000; }
+>>>>>>> .r1426
+.profil_block .btn a:hover { color: #000; text-decoration: none; }
 </style>
 
 <div class="breadcrumb">
