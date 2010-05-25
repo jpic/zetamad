@@ -278,7 +278,7 @@ a.btn-block:hover { background: #539893; }
                 ?>
     			<li <?php if ( count( $this->iterate( $this->object['toolProducts'] ) ) > 1 ): ?>style="margin-top: 10px;"<?php endif ?>>
 				<div class="objectProduct-th">
-					<a href="" style="float: left;"><img alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-small.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" /></a>
+					<a href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>" style="float: left;"><img alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-small.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" /></a>
 				</div>
 				<div class="objectProduct-link">
 					<a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>"><?php echo $product->name ?></a>
