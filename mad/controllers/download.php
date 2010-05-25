@@ -2,7 +2,7 @@
 
 class madDownloadController extends madController {
     public function doDownload() {
-        $configuration = madRegistry::instance(  )->configuration;
+        $configuration = madFramework::instance(  )->configuration;
 
         $relativePath = $this->request->variables['path'];
 

@@ -3,7 +3,7 @@
 
 include $_ENV['MAD_BOOTSTRAP'];
 
-$registry = madRegistry::instance(  );
+$registry = madFramework::instance(  );
 
 include '/usr/share/php/php-shell-cmd.php';
 

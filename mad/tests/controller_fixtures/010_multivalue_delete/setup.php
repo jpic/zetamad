@@ -1,5 +1,5 @@
 <?php
-$model = madRegistry::instance(  )->model;
+$model = madFramework::instance(  )->model;
 
 $fixture = new madObject( array( 
     'name'      => 'james',

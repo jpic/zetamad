@@ -7,7 +7,7 @@ class madHttpDispatcher {
     }
 
     public function run(  ) {
-        $registry = madRegistry::instance();
+        $registry = madFramework::instance();
 
         /**
          * Create the http request parser.
@@ -100,7 +100,7 @@ class madHttpDispatcher {
          */
         $routes = $this->configuration['routes'];
         $router = new madRouter( $request, $routes );
-        madRegistry::instance(  )->router = $router;
+        madFramework::instance(  )->router = $router;
 
         $this->signals->send( 'postCreateRouter', array( $request, $router ) );
         
@@ -132,8 +132,13 @@ class madHttpDispatcher {
         $result = $controller->createResult();
         
         $result->variables['request'] = $request;
+        $result->variables['controller'] = $controller;
         $result->variables['configuration'] =& $routeConfiguration;
-        
+
+        foreach( $controller as $attribute => $value ) {
+            $result->variables[$attribute] = $value;
+        }
+
         $this->signals->send( 'postCreateResult', array( $request, $result ) );
 
         /**

@@ -1,6 +1,6 @@
 <?php
 
-$registry = madRegistry::instance(  );
+$registry = madFramework::instance(  );
 
 function setResultComments( ezcMvcRequest $request, ezcMvcResult $result ) {
     if ( isset( $result->variables['object'] ) && isset( $result->variables['object']['comments'] ) ) {
@@ -8,6 +8,6 @@ function setResultComments( ezcMvcRequest $request, ezcMvcResult $result ) {
     }
 }
 
-$registry->signals->connect( 'postCreateResult', 'setResultComments' );
+//$registry->signals->connect( 'postCreateResult', 'setResultComments' );
 
 ?>

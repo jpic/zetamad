@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 include $_ENV['MAD_BOOTSTRAP'];
-$registry = madRegistry::instance();
+$registry = madFramework::instance();
 
 $request = new ezcMvcRequest();
 $request->uri = $argv[1];

@@ -111,7 +111,7 @@ class madView extends ezcMvcView {
     }
 
     public function getTemplatePath( $template, $defaultApplication = null ) { // {{{
-        $registry = madRegistry::instance(  );
+        $registry = madFramework::instance(  );
         
         // path to the "entry point" application
         $entryApplicationPath = ENTRY_APP_PATH;
@@ -223,7 +223,7 @@ class madView extends ezcMvcView {
     public function getTemplate(  ) { // {{{
         $actionName = $this->routeInfo->action;
 
-        $registry = madRegistry::instance(  );
+        $registry = madFramework::instance(  );
         
         // path to the "entry point" application
         $entryApplicationPath = ENTRY_APP_PATH;

@@ -10,10 +10,12 @@
  */
 class madFramework {
     static public $autoload;
-    public $configuration;
+    public $applications;
     public $entryApplicationPath;
     public $entryApplicationName;
     public $refresh = false;
+    static public $instance;
+    public $registry =array(  );
 
     public function __construct( $entryApplicationPath ) {
         $this->entryApplicationPath = madFramework::fixPath( $entryApplicationPath );
@@ -23,22 +25,22 @@ class madFramework {
 
         $applicationsConfigurationPath = $this->entryApplicationPath . '/cache/etc/applications.php';
         if ( file_exists( $applicationsConfigurationPath ) ) {
-            $this->configuration = require $applicationsConfigurationPath;
+            $this->applications = require $applicationsConfigurationPath;
         } else {
-            $this->configuration = parse_ini_file( $this->entryApplicationPath . '/etc/applications.ini', true );
-            $this->configuration['mad']['refreshConfiguration'] = true;
+            $this->applications = parse_ini_file( $this->entryApplicationPath . '/etc/applications.ini', true );
+            $this->applications['mad']['refreshConfiguration'] = true;
         }
-        
+
         if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
             // dont refresh cache on static file hits
-            $this->configuration['mad']['refreshAutoload']      = false;
-            $this->configuration['mad']['refreshDatabase']      = false;
-            $this->configuration['mad']['refreshBin']           = false;
-            $this->configuration['mad']['refreshConfiguration'] = false;
-        } elseif ( $this->configuration['mad']['refreshConfiguration'] ) {
+            $this->applications['mad']['refreshAutoload']      = false;
+            $this->applications['mad']['refreshDatabase']      = false;
+            $this->applications['mad']['refreshBin']           = false;
+            $this->applications['mad']['refreshConfiguration'] = false;
+        } elseif ( $this->applications['mad']['refreshConfiguration'] ) {
             // force configuration reload
-            $this->configuration = parse_ini_file( $this->entryApplicationPath . '/etc/applications.ini', true );
-            $this->configuration['mad']['refreshConfiguration'] = true;
+            $this->applications = parse_ini_file( $this->entryApplicationPath . '/etc/applications.ini', true );
+            $this->applications['mad']['refreshConfiguration'] = true;
         }
 
         // auto make cache director
@@ -48,87 +50,87 @@ class madFramework {
 
         // force autoload refresh
         if ( !file_exists( $this->entryApplicationPath . '/cache/autoload.php' ) ) {
-            $this->configuration['mad']['refreshAutoload'] = true;
+            $this->applications['mad']['refreshAutoload'] = true;
         }
 
         // force cache refresh
         if ( !is_dir( $this->entryApplicationPath . '/cache/etc' ) ) {
             mkdir( $this->entryApplicationPath . '/cache/etc' );
-            $this->configuration['mad']['refreshConfiguration'] = true;
+            $this->applications['mad']['refreshConfiguration'] = true;
+        }
+
+        if ( !isset( self::$instance ) ) {
+            self::$instance = $this;
         }
     }
 
     public function run(  ) {
         $this->setupIncludePath(  );
 
-        if ( $this->configuration['mad']['refreshAutoload'] ) {
+        if ( $this->applications['mad']['refreshAutoload'] ) {
             $this->refreshAutoload(  );
         }
 
         $this->setupAutoload(  );
         
-        $registry = madRegistry::instance(  );
-
-        $this->setupSignals(  );
-        
-        if ( $this->configuration['mad']['refreshConfiguration'] ) {
-            $registry->configuration = new madConfiguration( $this->entryApplicationPath . '/etc', $this->configuration );
+        if ( $this->applications['mad']['refreshConfiguration'] ) {
+            $this->configuration = new madConfiguration( $this->entryApplicationPath . '/etc', $this->applications );
             // parse all ini files again, with overload support, that will 
             // update the core configuration (applications.ini)
-            $registry->configuration->refreshApplications( $this->entryApplicationPath, 'etc' );
-            $registry->configuration->refresh( $this->entryApplicationPath, array_keys( (array)$registry->configuration['applications'] ), 'etc' );
+            $this->configuration->refreshApplications( $this->entryApplicationPath, 'etc' );
+            $this->configuration->refresh( $this->entryApplicationPath, array_keys( (array)$this->configuration['applications'] ), 'etc' );
             // bootstrapper requires refreshed configuration with non-overloaded variables
-            $this->configuration = $registry->configuration['applications'];
+            $this->applications =& $this->configuration['applications'];
             // call bootstrap.php from all installed application path to 
             // connect signals
             $this->setupApplications(  );
             // allow connected functions to visit it befoere it is written
-            $registry->signals->send( 'postConfigurationRefresh', array( $registry->configuration ) );
+            $this->signals->send( 'postConfigurationRefresh', array( $this->configuration ) );
             // cache the parsed configuration for performances
-            $registry->configuration->write( $this->entryApplicationPath . '/cache/etc' );
+            $this->configuration->write( $this->entryApplicationPath . '/cache/etc' );
         } else {
-            $registry->configuration = new madConfiguration( $this->entryApplicationPath . '/cache/etc', $this->configuration );
+            $this->configuration = new madConfiguration( $this->entryApplicationPath . '/cache/etc', $this->applications );
+            $this->applications =& $this->configuration['applications'];
             $this->setupApplications(  );
         }
         
-        $this->configuration['mad']['refreshLocale'] = isset( $this->configuration['mad']['refreshLocale'] ) && $this->configuration['mad']['refreshLocale'] && is_dir( $this->entryApplicationPath . '/locale' ) ? false : true;
+        $this->applications['mad']['refreshLocale'] = isset( $this->applications['mad']['refreshLocale'] ) && $this->applications['mad']['refreshLocale'] && is_dir( $this->entryApplicationPath . '/locale' ) ? false : true;
 
-        if ( $this->configuration['mad']['refreshLocale'] ) {
-            $registry->locale = new madConfiguration( $this->entryApplicationPath . '/locale', $this->configuration );
-            $registry->locale->refresh( $this->entryApplicationPath, array_keys( (array)$registry->configuration['applications'] ), 'locale' );
+        if ( $this->applications['mad']['refreshLocale'] ) {
+            $this->locale = new madConfiguration( $this->entryApplicationPath . '/locale', $this->applications );
+            $this->locale->refresh( $this->entryApplicationPath, array_keys( (array)$this->configuration['applications'] ), 'locale' );
             // no need for application configuration in the locale confiuration
-            unset( $registry->locale['applications'] );
-            $registry->signals->send( 'postLocaleRefresh', array( $registry->locale ) );
+            unset( $this->locale['applications'] );
+            $this->signals->send( 'postLocaleRefresh', array( $this->locale ) );
 
             if ( !is_dir( $this->entryApplicationPath . '/cache/locale' ) ) {
                 mkdir( $this->entryApplicationPath . '/cache/locale' );
             }
 
-            $registry->locale->write( $this->entryApplicationPath . '/cache/locale' );
+            $this->locale->write( $this->entryApplicationPath . '/cache/locale' );
         } else {
-            $regitry->configuration = new madConfiguration( $this->entryApplicationPath . '/cache/locale', $this->configuration, 'locale' );
+            $regitry->configuration = new madConfiguration( $this->entryApplicationPath . '/cache/locale', $this->applications, 'locale' );
         }
 
-        if ( $this->configuration['mad']['refreshBin'] ) {
+        if ( $this->applications['mad']['refreshBin'] ) {
             $this->refreshBin(  );
         }
 
-        if ( $registry->signals->send( 'preSetupDatabase', array( $this ) ) ) {
+        if ( $this->signals->send( 'preSetupDatabase', array( $this ) ) ) {
             $this->setupDatabase(  );
         } else {
-            if ( !isset( $registry->database ) ) {
-                trigger_error( 'Signal preSetupDatabase returned false, but $registry->database was not set', E_USER_ERROR );
+            if ( !isset( $this->pdo ) ) {
+                trigger_error( 'Signal preSetupDatabase returned false, but $this->database was not set', E_USER_ERROR );
             }
         }
         
-        $registry->signals->send( 'preSetupModel', array( $this ) );
-        $this->setupModel(  );
+        $this->signals->send( 'preSetupModel', array( $this ) );
 
-        if ( $this->configuration['mad']['refreshDatabase'] ) {
-            $registry->model->applyConfiguration(  );
+        if ( $this->applications['mad']['refreshDatabase'] ) {
+            $this->model->applyConfiguration(  );
         }
 
-        $registry->signals->send( 'postBootstrap', array( $this ) );
+        $this->signals->send( 'postBootstrap', array( $this ) );
 
         if ( !isset( $_SESSION ) ) {
             session_start(  );
@@ -144,8 +146,8 @@ class madFramework {
             $this->entryApplicationPath,
             get_include_path(  ),
         );
-    
-        foreach( $this->configuration['mad']['includePath'] as $relativePath ) {
+
+        foreach( $this->applications['mad']['includePath'] as $relativePath ) {
             if ( strpos( $relativePath, '/' ) !== 0 ) {
                 $relativePath = '/' . $relativePath;
             }
@@ -179,37 +181,34 @@ class madFramework {
     }
 
     public function setupDatabase(  ) {
-        if ( isset( $this->configuration['mad']['pdoSkip'] ) && 
-            $this->configuration['mad']['pdoSkip'] == true ) {
+        if ( isset( $this->applications['mad']['pdoSkip'] ) && 
+            $this->applications['mad']['pdoSkip'] == true ) {
             return true;
         }
 
-        if ( ! $this->configuration['mad']['pdoClass'] ) {
+        if ( ! $this->applications['mad']['pdoClass'] ) {
             die( 'Did you change refreshConfiguration and did not remove the cache dir?' );
         }
 
-        $reflection = new ReflectionClass( $this->configuration['mad']['pdoClass'] );
+        $reflection = new ReflectionClass( $this->applications['mad']['pdoClass'] );
         
-        $database = $reflection->newInstanceArgs( $this->configuration['mad']['pdoArguments'] );
+        $database = $reflection->newInstanceArgs( $this->applications['mad']['pdoArguments'] );
         $database->query( 'set names "UTF-8"' );
         $database->setAttribute( PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
         
-        madRegistry::instance()->database = $database;
+        madFramework::instance()->database = $database;
     }
 
     public function setupModel(  ) {
-        $registry = madRegistry::instance();
-
-        $registry->model = new madModel( 
-            $registry->database, 
-            $registry->configuration['model'],
-            $this->configuration['mad']
+        $this->model = new madModel( 
+            $this->database, 
+            $this->configuration['model'],
+            $this->applications['mad']
         );
     }
 
-    public function setupSignals(  ) {
-        $registry = madRegistry::instance();
-        $registry->signals = new madSignals(  );
+    public function createSignals(  ) {
+        return new madSignals(  );
     }
 
     public function refreshBin(  ) {
@@ -298,7 +297,7 @@ class madFramework {
     }
 
     public function setupApplications(  ) {
-        foreach( $this->configuration as $name => $application ) {
+        foreach( $this->applications as $name => $application ) {
             if ( $name == $this->entryApplicationName ) {
                 continue;
             }
@@ -384,8 +383,17 @@ class madFramework {
         }
     }
 
+    static public function getPath( $group, $section, $name ) {
+        $cfg = madFramework::instance()->configuration;
+        return $cfg->getPathSetting( $group, $section, $name );
+    }
+
     static public function &dictionnaryReplace( &$string, $dictionnary ) {
         $finalDictionnary = array(  );
+
+        if ( method_exists( $dictionnary, 'flatten' ) ) {
+            $dictionnary->flatten( false );
+        }
 
         foreach( $dictionnary as $key => $value ) {
             if ( is_object( $value ) && !method_exists( $value, '__toString' ) ) {
@@ -403,5 +411,97 @@ class madFramework {
 
         return $string;
     }
+
+    static public function slugify( $string ) {
+        $slug = preg_replace('~[^\\pL\d]+~u', '-', $string );
+        $slug = trim($slug, '-');
+        $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
+        // lowercase
+        $slug = strtolower($slug);
+        // remove unwanted characters
+        $slug = preg_replace('~[^-\w]+~', '', $slug);
+
+        if ( strlen( $slug ) > 100 ) {
+            $slug = substr( $slug, 0, 100 );
+        }
+
+        return $slug;
+    }
+
+    /**
+     * Return always the same instance of madRegistry.
+     * 
+     * @return madRegistry
+     */
+    static public function instance(  ) {
+        return self::$instance;
+    }
+
+    /**
+     * Register an object in the registry.
+     *
+     * Avoid acronyms. For example:
+     * <code>
+     * // bad:
+     * $this->db = new PDO( $parameters );
+     *
+     * // acceptable:
+     * $this->pdo = new PDO( $parameters );
+     *
+     * // too long:
+     * $this->persistentDataObject = new PDO( $parameters );
+     *
+     * // good:
+     * $this->database = new PDO( $parameters );
+     * </code>
+     * 
+     * @param string $name 
+     * @param object $instance 
+     * @return void
+     */
+    public function __set( $name, $instance ) {
+        $this->registry[$name] = $instance;
+    }
+    
+    public function __isset( $name ) {
+        return array_key_exists( $name, $this->registry );
+    }
+
+    /**
+     * Gets an object from the registry.
+     *
+     * <code>
+     * $this->database; // whatever was set to $this->database earlier
+     * </code>
+     * 
+     * @param string $name Name with which the instance was registered.
+     * @return object
+     */
+    public function __get( $name ) {
+        $createMethod = 'create' . ucfirst( $name );
+
+        if ( !isset( $this->registry[$name] ) && method_exists( $this, $createMethod ) ) {
+            $this->registry[$name] = $this->$createMethod(  );
+        }
+        return $this->registry[$name];
+    }
+
+    // starting here we start coupling the framework
+    public function createDispatcher(  ) {
+        $dispatcher = new madHttpDispatcher(
+            $this->configuration,
+            $this->signals
+        );
+        return $dispatcher;
+    }
+    static public function url( $name, $arguments = array(  ) ) { # {{{
+        $framework = madFramework::instance(  );
+        $prefix = $framework->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
+        return $prefix . $framework->router->generateUrl( $name, (array) $arguments );
+    } # }}}
+    static public function query( $sql ) {
+        return madFramework::instance(  )->pdo->query( $sql )->fetchAll( PDO::FETCH_ASSOC );
+    }
+
 }
 ?>

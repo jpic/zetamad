@@ -51,185 +51,22 @@ table.multipleField input[type=text].textInput {
 }
 
 </style>
+
 <script type="text/javascript" src="<?php echo $this->url( 'mad.static', array( 'path' => '/js/uni-form.jquery.js' ) ) ; ?>"></script>
 <?php $widgets = array(  ) ?>
 
 <form action="" method="post" class="uniForm" enctype="multipart/form-data">
-    <?php if ( isset( $this->form->valid ) && !$this->form->valid ): ?>
+    <?php if ( ! $this->isValid ): ?>
     <div id="errorMsg">
         <h2>Pour enregistrer, révisez les valeurs des champs entourés de rouge.</h2>
     </div>
     <?php endif ?>
 
-        <h2><?php echo ucfirst( $this->form->label ) ?></h2>
-        <?php foreach( $this->form->fields->options as $name => $field ):
-            // skip fields without label which should not be displayed
-            if ( !isset( $field->label ) ) continue;
-            // skip formsets/relations
-            if ( $field instanceof madForm ) continue;
-        ?>
-    
-        <fieldset class="inlineLabels">
-        <div class="ctrlHolder <?php if ( isset( $field->errors ) ) echo 'error' ?>">
-            <?php 
-            if ( isset( $field->errors ) ) {
-                $errors = $field->errors;
-                include 'field_errors.php';
-                unset( $errors );
-            }
-            ?>
+    <h2><?php echo ucfirst( $this->t( 'title' ) ) ?></h2>
 
-            <?php
-            if ( isset( $field->widget ) && $field->widget == 'checkbox' ): 
-                $inputName = sprintf( '%s[%s]', $this->form->name, $name );
-
-                if ( !isset( $inputId ) ) {
-                    $inputId = 'id_' . str_replace(
-                        array( '.', '-', '[', ']' ), 
-                        array( '__dot__', '__dash__', '__braceleft__', '__braceright__'), 
-                        $inputName
-                    );
-                }
-                
-                $htmlClasses = "";
-                if ( isset( $field->required ) ) $htmlClasses .= "required ";
-
-            ?>
-                <p>
-                <label class="inlineLabel" for="<?php echo $name; ?>">
-                    <?php if ( isset( $field->required ) ): ?><em>*</em><?php endif ?> <input value="1" checked="<?php if ( isset( $form[$name] ) ): var_dump( $form[$name] ) ?>checked<?php endif ?>" name="<?php echo $inputName ?>" id="<?php echo $inputId; ?>" type="checkbox" class="<?php $this->e( $htmlClasses ) ?>" />
-                    <span><?php $this->e( $field->label ) ?></span>
-                </label>
-                <p>
-
-            <?php
-                unset( $inputName );
-            elseif ( isset( $field->widget ) && $field->widget == 'radio' ):
-                $inputName = sprintf( '%s[%s]', $this->form->name, $name );
-
-                if ( !isset( $inputId ) ) {
-                    $inputId = 'id_' . str_replace( 
-                        array( '.', '-', '[', ']' ), 
-                        array( '__dot__', '__dash__', '__braceleft__', '__braceright__'), 
-                        $inputName
-                    );
-                }
-                
-                $htmlClasses = "";
-                if ( isset( $field->required ) ) $htmlClasses .= "required ";
-            ?>
-                <p class="label"><?php if ( isset( $field->required ) ): ?><em>*</em><?php endif ?> <?php $this->e( ucfirst( $field->label ) ) ?></p>
-                <div class="multiField">
-                <?php
-                foreach( $field->choices->options as $key => $choice ):
-                    $choiceInputId = $inputId . '__' . $key;
-                ?>
-                <label class="blocklabel" for="<?php echo $choiceInputId; ?>">
-                    <?php if ( is_numeric( $key ) ): ?>
-                    <input value="<?php $this->e( $choice ) ?>" checked="<?php if ( isset( $form[$name] ) && $form[$name] == $choice ): ?>checked<?php endif ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="radio" class="<?php $this->e( $htmlClasses ) ?>" />
-                    <?php else: ?>
-                    <input value="<?php $this->e( $key ) ?>" checked="<?php if ( isset( $form[$name] ) && $form[$name] == $key ): ?>checked<?php endif ?>" name="<?php echo $inputName; ?>" id="<?php echo $inputId; ?>" type="radio" class="<?php $this->e( $htmlClasses ) ?>" />
-                    <?php endif ?>
-                    <?php echo ucfirst( $choice ) ?>
-                </label>
-                <?php endforeach ?>
-                </div>
-
-            <?php 
-                unset( $inputName );
-            else: 
-            ?>
-                <label for="<?php echo $name; ?>"><?php if ( isset( $field->required ) && $field->required ): ?><em>*</em> <?php endif ?><?php echo ucfirst( $field->label ); ?></label>
-    
-                <?php 
-                $form = $this->form;
-                include 'widget.php';
-                unset( $form );
-                ?>
-    
-                <?php if ( isset( $field->help ) ): ?>
-                <p class="formHint"><?php echo ucfirst( $field->help ); ?></p>
-                <?php endif ?>
-            <?php endif ?>
-        </div>
-
-        <?php endforeach ?>
-
-    <?php 
-    if ( isset( $this->form->multipleFields ) ):
-        foreach( $this->form->multipleFields->options as $multipleFieldName => $multipleField ):
-    ?>
-        <div class="ctrlHolder">
-            <label>
-            <?php $this->e( ucfirst( $multipleField->label ) ) ?>
-            </label>
-            
-            <table class="multipleField">
-                <tbody>
-                    <?php
-                    $count = 0;
-                    if ( count( $this->form[$multipleFieldName] ) ):
-                        foreach( $this->form[$multipleFieldName] as $multipleFieldValue ): 
-                            include 'multipleField_row.php';
-                            $count ++;
-                        endforeach;
-
-                    endif;
-                    ?>
-                </tbody>
-            </table>
-
-            <p  class="formHint">
-                <?php $this->e( isset( $multipleField->help ) ? ucfirst( $multipleField->help ) : '' ) ?>
-            </p>
-            <button disabled="disabled" class="formset_add">Ajouter</button>
-        </div>
-    <?php
-        endforeach;
-    endif
-    ?>
+    <fieldset class="inlineLabels">
+    <?php echo $this->renderFormFields( $this->controller ) ?>
     </fieldset>
-
-    <?php
-    if ( isset( $this->form->formsets ) ):
-        foreach( $this->form->formsets->options as $formsetName => $formset ):
-    ?>
-    <h2><?php echo ucfirst( $formset->label ) ?></h2>
-    <fieldset class="formset_<?php echo $formsetName; ?> formset">
-        <table class="formset">
-            <thead>
-                <tr>
-                    <?php foreach( $formset->fields->options as $name => $field ):
-                        // skip fields with hard coded value (ie. namespace)
-                        if ( isset( $field->value ) ) continue;
-                    ?>
-                    <th><?php echo ucfirst( $field->label ) ?></th>
-                    <?php endforeach ?>
-                    <th>Effacer</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $count = 0;
-                if ( count( $this->form[$formsetName] ) ):
-                    foreach( $this->form[$formsetName] as $formsetKey => $formsetForm ): 
-                        $form = $formsetForm;
-                        include 'formset_row.php';
-                        unset( $form );
-                        unset( $formsetForm );
-                        $count ++;
-                    endforeach;
-                endif;
-                ?>
-            </tbody>
-        </table>
-        <button disabled="disabled" class="formset_add">Ajouter</button>
-    </fieldset>
-    <?php
-        endforeach;
-    endif
-    ?>
-
     <div class="buttonHolder">
       <!--
       <button type="reset" class="resetButton">Rétablir les valeurs initiales</button>
@@ -241,15 +78,6 @@ table.multipleField input[type=text].textInput {
 
 <script type="text/javascript" src="<?php echo $this->url( 'mad.static', array( 'path' => '/js/jquery.form.js' ) ) ; ?>"></script>
 <script type="text/javascript" src="<?php echo $this->url( 'mad.static', array( 'path' => '/js/jquery.uni-form.js' ) ) ; ?>"></script>
-<?php if ( in_array( 'wysiwyg', $widgets ) ): ?>
-<script type="text/javascript" src="<?php echo $this->url( 'mad.static', array( 'path' => '/ckeditor/ckeditor.js' ) ) ; ?>"></script>
-<?php endif ?>
-<!--
-<?php if ( in_array( 'autocomplete', $widgets ) ): ?>
-<link rel="stylesheet" type="text/css" href="<?php echo $this->url( 'mad.static', array( 'path' => '/jquery-autocomplete/jquery.autocomplete.css' ) ) ; ?>" />
-<script type="text/javascript" src="<?php echo $this->url( 'mad.static', array( 'path' => '/jquery-autocomplete/jquery.autocomplete.pack.js' ) ) ; ?>"></script>
-<?php endif ?>
--->
 
 <script type="text/javascript">
 $(document).ready( function(  ) {

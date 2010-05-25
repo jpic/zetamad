@@ -1,15 +1,14 @@
 <?php
-$registry = madRegistry::instance(  );
+$framework = madFramework::instance(  );
 
 // authentication backend
 function prestashopAuthentication( ezcMvcRequest $request, ezcMvcRouter $router ) {
-    $registry = madRegistry::instance(  );
+    $framework = madFramework::instance(  );
     $cookie = new Cookie( 'ps' );
     
     if ( $cookie->isLogged(  ) ) {
-        $users = $registry->model->queryLoad( 
-            'select id from %(user_index)s where prestashopId = :id', 
-            array( 'id' => $cookie->id_customer )
+        $users = $framework->pdo->query( 
+            'select id from users where prestashopId = ' . intval( $cookie->id_customer )
         );
         
         if ( !count( $users ) ) {
@@ -33,11 +32,11 @@ function prestashopAuthentication( ezcMvcRequest $request, ezcMvcRouter $router 
         }
     }
 }
-$registry->signals->connect( 'postCreateRouter', 'prestashopAuthentication' );
+$framework->signals->connect( 'postCreateRouter', 'prestashopAuthentication' );
 
 // fix autoload
 function prestashopAutoload( $class ) {
-    $registry = madRegistry::instance(  );
+    $framework = madFramework::instance(  );
 
     $prestashopClassPath = join( DIRECTORY_SEPARATOR, array( 
         PRESTASHOP_PATH,
@@ -52,24 +51,22 @@ function prestashopAutoload( $class ) {
 
 spl_autoload_register( 'prestashopAutoload' );
 
-function prestashopDatabaseSettings( $bootstrap ) {
-    $registry = madRegistry::instance(  );
-    define( 'PRESTASHOP_PATH', $registry->configuration->getPathSetting( 'applications', 'prestashop', 'projectPath' ) );
+function prestashopDatabaseSettings( $framework ) {
+    define( 'PRESTASHOP_PATH', $framework->configuration->getPathSetting( 'applications', 'prestashop', 'projectPath' ) );
     require PRESTASHOP_PATH . '/config/config.inc.php';
     $GLOBALS['smarty'] = $smarty;
 
     // set the database with prestashop settings
-    $database = new PDO( 'mysql:host=' . _DB_SERVER_ . ';dbname=' . _DB_NAME_, _DB_USER_, _DB_PASSWD_ );
-    $registry->database = $database;
+    $framework->pdo = new madPDOFramework( 'mysql:host=' . _DB_SERVER_ . ';dbname=' . _DB_NAME_, _DB_USER_, _DB_PASSWD_ );
 
     return false; // will prevent normal setting of $registery->database
 }
-$registry->signals->connect( 'preSetupDatabase', 'prestashopDatabaseSettings' );
+$framework->signals->connect( 'preSetupDatabase', 'prestashopDatabaseSettings' );
 
 function bootstrapPrestashop( $bootstrap ) {
     $smarty = $GLOBALS['smarty'];
     require PRESTASHOP_PATH . '/init.php';
     Configuration::loadConfiguration(  );
 }
-$registry->signals->connect( 'postBootstrap', 'bootstrapPrestashop' );
+$framework->signals->connect( 'postBootstrap', 'bootstrapPrestashop' );
 ?>

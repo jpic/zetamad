@@ -1,10 +1,44 @@
 <?php
 
 class madModelController extends madFormController {
+    static public function saveArray( &$row, $table = null ) {
+        $set  = array(  );
+
+        if ( is_null( $table ) ) {
+            if ( !isset( $row['namespace'] ) ) {
+                var_dump( $row );
+                trigger_error( "Row has no namespace attribute, and no table argument was provided" );
+            }
+            $table = $row['namespace'];
+            unset( $row['namespace'] );
+        }
+
+        foreach( $row as $column => $value ) {
+            if ( is_array( $value ) ) {
+                continue;
+            }
+
+            if ( is_object( $value ) ) {
+                continue;
+            }
+
+            $set[] = "$column = :$column";
+        }
+
+        $sql = "insert into `$table` set " . implode( ', ', $set );
+
+        $framework = madFramework::instance(  );
+        $insert = $framework->pdo->prepare( $sql );
+        $insert->execute( $row );
+
+        $row['namespace'] = $table;
+    }
+
     public function doList() {       
         $query = $this->configuration['query'];
         $paginate = isset( $this->configuration['paginate'] ) ? intval( $this->configuration['paginate'] ) : false;
-        
+        $pdo = madFramework::instance(  )->pdo;
+
         if ( $paginate ) {
             $totalObjectsSql = preg_replace( '/^select (.*)? from/i', 'SELECT count(id) FROM', $query );
             $totalObjects = $this->registry->model->query( $totalObjectsSql )->fetchColumn(  );
@@ -28,7 +62,7 @@ class madModelController extends madFormController {
             $this->result->variables['currentPage'] = $currentPage;
             $this->result->variables['lastPage']    = $lastPage;
         } 
-        $objectList = $this->registry->model->queryLoad( $query );
+        $objectList = $pdo->query( $query )->fetchAll( PDO::FETCH_ASSOC );
 
         if ( $objectList && !isset( $this->configuration['tableColumns'] ) ) {
             $this->configuration['tableColumns'] = array(  );
@@ -288,7 +322,7 @@ class madModelController extends madFormController {
         }
     }
     static public function routeFormData( $routeName, $data ) {
-        $registry = madRegistry::instance();
+        $registry = madFramework::instance();
 
         $configuration = $registry->configuration['routes'][$routeName];
 

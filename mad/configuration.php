@@ -83,7 +83,6 @@ class madConfiguration extends madObject {
         foreach( $repositories as $path ) {
             // prepend application path and get the absolute path
             $path = $entryApplicationPath . '/' . $path;
-            
             $fileIterator = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( 
                 $path,
                 $flags
@@ -135,7 +134,13 @@ class madConfiguration extends madObject {
         foreach( array_reverse( $installedApplications ) as $applicationName ) {
             $applicationPath = $this['applications'][$applicationName]['path'];
             
-            $files = glob( "$entryApplicationPath/$applicationPath/{$subdir}/*.ini" );
+            // entry app has its relative path empty, hence this change to 
+            // avoid getting $entryApplicationPath//foo.ini
+            if ( $applicationPath ) {
+                $applicationPath .= '/';
+            }
+
+            $files = glob( "$entryApplicationPath/$applicationPath{$subdir}/*.ini" );
 
             if ( !$files ) {
                 continue;
@@ -195,8 +200,11 @@ class madConfiguration extends madObject {
     }
 
     public function parseIni( $file ) {
+        preg_match( '@/(?P<appName>[^/]+)/(?P<subdir>[^/]+)/(?P<name>[^/]+)\.ini$@', $file, $matches );
+        $name = $matches['name'];
+        $appName = $matches['appName'];
+        
         $parser = new ezcConfigurationIniParser( ezcConfigurationIniParser::PARSE, $file );
-        $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
 
         if ( !isset( $this[$name] ) ) {
             $this[$name] = new madObject();
@@ -210,6 +218,9 @@ class madConfiguration extends madObject {
                     case ezcConfigurationIniItem::GROUP_HEADER:
                         if ( !isset( $this[$name][$element->group] ) ) {
                             $this[$name][$element->group] = new madObject();
+                            $this[$name][$element->group]['META'] = array(
+                                'application' => $appName,
+                            );
                         }
 
                         // a little heavy on performances, but its the safest 

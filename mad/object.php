@@ -409,11 +409,15 @@ class madObject extends ArrayObject {
         return $this[$name];
     }
 
-    public function flatten(  ) {
+    public function flatten( $destructive = true ) {
         $unst = array(  );
         foreach( $this as $key => $value ) {
             if ( $value instanceof madObject ) {
                 $unst[] = $key;
+
+                if ( $destructive ) {
+                    continue;
+                }
 
                 foreach( $value as $subKey => $subValue ) {
                     if ( $subValue instanceof madObject ) {

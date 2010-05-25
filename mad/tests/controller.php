@@ -95,7 +95,7 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
     public $model = null;
 
     public function setUp() {
-        $registry = madRegistry::instance();
+        $registry = madFramework::instance();
         $registry->router = $this->getMock( 'madRouter', array(  ), array( new ezcMvcrequest(  ), array(  ) ));
         $registry->router->expects( $this->any(  ) )
                          ->method( 'generateUrl' )
@@ -109,7 +109,7 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
 
     protected function getConnection()
     {
-        $registry = madRegistry::instance();
+        $registry = madFramework::instance();
         $this->db = $registry->database;
         return $this->createDefaultDBConnection($this->db, '');
     }
@@ -159,7 +159,7 @@ class madModelControllerTest extends PHPUnit_Extensions_Database_TestCase {
     public function testForm( $scenario, $options, $request, $expectedForm, $expectedDatasetFile, $setup ) {
 
         // reset predictable uuid pointer
-        reset( madRegistry::instance()->model->ids );
+        reset( madFramework::instance()->model->ids );
 
         include $setup;
 

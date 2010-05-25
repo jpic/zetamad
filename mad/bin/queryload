@@ -3,5 +3,5 @@
 include $_ENV['MAD_BOOTSTRAP'];
 $registry = madFramework::instance();
 
-$registry->model->updateIndex( $argv[1] );
+var_export( $registry->model->queryLoad( $argv[1] ) );
 ?>

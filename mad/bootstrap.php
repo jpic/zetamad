@@ -1,32 +1,5 @@
 <?php
-$registry = madRegistry::instance(  );
-
-function autoCreateMadModelTable( $bootstrap ) {
-    if ( !$bootstrap->configuration['mad']['refreshModel'] ) {
-        return true;
-    }
-    
-    $registry = madRegistry::instance(  );
-
-    $statement = $registry->database->prepare( 'show tables' );
-    $statement->setFetchMode( PDO::FETCH_NUM );
-    $statement->execute();
-    $tables = $statement->fetchAll(  );
-
-    if ( in_array( 'mad_model', $tables ) ) {
-        return true;
-    }
-
-    $registry->database->query( '
-    CREATE TABLE `mad_model` (
-      `id_attribute` int(15) DEFAULT NULL,
-      `id` varchar(44) DEFAULT NULL,
-      `attribute_key` varchar(50) NOT NULL,
-      `attribute_value` text
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8
-    ' );
-}
-$registry->signals->connect( 'preSetupModel', 'autoCreateMadModelTable' );
+$registry = madFramework::instance(  );
 
 function setRoutesApplication( $configuration ) {
     foreach( $configuration['routes'] as $name => $route ) {
@@ -61,11 +34,15 @@ function defaultView( $configuration ) {
 $registry->signals->connect( 'postConfigurationRefresh', 'defaultView' );
 
 function prefixRoutes( $configuration ) {
-    foreach( $configuration['routes'] as $name => $route ) {
+    foreach( $configuration['routes'] as $name => &$route ) {
         $applicationName   = substr( $name, 0, strrpos( $name, '.' ) );
 
         if ( !isset( $configuration['applications'][$applicationName] ) ) {
             continue;
+        }
+
+        if ( isset( $route['rails'] ) && substr( $route['rails'], 0, 1 ) != '/' ) {
+            $route['rails'] = '/' . $route['rails'];
         }
 
         $applicationPrefix = $configuration['applications'][$applicationName]['routePrefix'];
@@ -213,4 +190,212 @@ function allPathsRelative( &$configuration ) {
     }
 }
 $registry->signals->connect( 'postConfigurationRefresh', 'allPathsRelative' );
+
+function setDefaultWidgets( &$configuration ) {
+    foreach( $configuration['forms'] as $formName => $form ) {
+        foreach( $form as $fieldName => $field ) {
+            if ( isset( $field['value'] ) ) {
+                continue;
+            }
+
+            if ( isset( $field['autoNow'] ) ) {
+                continue;
+            }
+
+            if ( isset( $field['slugify'] ) ) {
+                continue;
+            }
+
+            if ( !isset( $field['widget'] ) ) {
+                if ( isset( $field['relation'] ) && $field['relation'] == 'manyToMany' ) {
+                    $configuration['forms'][$formName][$fieldName]['widget'] = 'select';
+                    $configuration['forms'][$formName][$fieldName]['multiple'] = true;
+                } else {
+                    $configuration['forms'][$formName][$fieldName]['widget'] = 'text';
+                }
+            } elseif ( $field['widget'] == 'select' && !isset( $attribute['multiple'] ) ) {
+                $attribute['multiple'] = false;
+            }
+        }
+    }
+}
+$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultWidgets' );
+
+function setDefaultFieldNames( &$configuration ) {
+    foreach( $configuration['forms'] as $formName => $form ) {
+        foreach( $form as $fieldName => $field ) {
+            if ( !isset( $field['name'] ) ) {
+                $configuration['forms'][$formName][$fieldName]['name'] = $fieldName;
+            }
+        }
+    }
+}
+$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultFieldNames' );
+
+function setFormAttributesViewDefaultParameters( &$configuration ) {
+    foreach( $configuration['forms'] as $formName => &$form ) {
+        foreach( $form as $fieldName => &$field ) {
+            $field['asFormSet'] = false;
+            $field['asMultiValue'] = false;
+
+            if ( !isset( $field['relation'] ) ) {
+                continue;
+            }
+
+            if ( $field['relation'] != 'reverseFk' ) {
+                continue;
+            }
+
+            if ( isset( $field['formName'] ) ) {
+                $field['asFormSet'] = true;
+            } else {
+                $field['asMultiValue'] = true;
+            }
+        }
+    }
+}
+$registry->signals->connect( 'postConfigurationRefresh', 'setFormAttributesViewDefaultParameters' );
+
+function setDefaultFieldErrors( &$configuration ) {
+    foreach( $configuration['forms'] as $formName => $form ) {
+        foreach( $form as $fieldName => $field ) {
+            if ( !isset( $field['errors'] ) ) {
+                $configuration['forms'][$formName][$fieldName]['errors'] = array(  );
+            }
+        }
+    }
+}
+$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultFieldErrors' );
+
+function setDefaultFieldRequired( &$configuration ) {
+    foreach( $configuration['forms'] as $formName => $form ) {
+        foreach( $form as $fieldName => $field ) {
+            if ( !isset( $field['required'] ) ) {
+                $configuration['forms'][$formName][$fieldName]['required'] = false;
+            }
+        }
+    }
+}
+$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultFieldRequired' );
+
+function setDefaultFieldDisplayValue( &$configuration ) {
+    foreach( $configuration['forms'] as $formName => $form ) {
+        foreach( $form as $fieldName => $field ) {
+            if ( !isset( $field['displayValue'] ) ) {
+                $configuration['forms'][$formName][$fieldName]['displayValue'] = '';
+            }
+        }
+    }
+}
+$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultFieldDisplayValue' );
+
+function setDefaultFieldClasses( &$configuration ) {
+    foreach( $configuration['forms'] as $formName => $form ) {
+        foreach( $form as $fieldName => $field ) {
+            if ( !isset( $field['classes'] ) ) {
+                $configuration['forms'][$formName][$fieldName]['classes'] = array(  );
+            }
+
+            if ( !isset( $configuration['forms'][$formName][$fieldName]['widget'] ) ) {
+                continue;
+            }
+
+            switch( $configuration['forms'][$formName][$fieldName]['widget'] ) {
+                case 'text':
+                    $configuration['forms'][$formName][$fieldName]['classes'][] = 'textInput';
+                    break;
+            }
+        }
+    }
+}
+$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultFieldClasses' );
+
+function setDefaultFkNames( &$configuration ) {
+    foreach( $configuration['forms'] as $formName => &$form ) {
+        foreach( $form as $fieldName => &$field ) {
+            if ( !isset( $field['relation'] ) ) {
+                continue;
+            }
+
+            if ( isset( $field['fkName'] ) ) {
+                continue;
+            }
+
+            switch( $field['relation'] ) {
+                case 'fk':
+                    $field['fkName'] = $fieldName;
+                    continue;
+                case 'reverseFk':
+                    $field['fkName'] = $form['namespace']['value'];
+                    continue;
+            }
+        }
+    }
+}
+$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultFkNames' );
+
+function setDefaultColumn( &$configuration ) {
+    foreach( $configuration['forms'] as $formName => &$form ) {
+        foreach( $form as $fieldName => &$field ) {
+            if ( !empty( $field['column'] ) ) {
+                continue;
+            }
+
+            $configuration['forms'][$formName][$fieldName]['column'] = $fieldName;
+        }
+    }
+}
+$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultColumn' );
+
+function setDefaultValueAttributes( &$configuration ) {
+    foreach( $configuration['forms'] as $formName => &$form ) {
+        foreach( $form as $fieldName => &$field ) {
+            if ( !isset( $field['displayAttribute'] ) ) {
+                continue;
+            }
+
+            if ( isset( $field['valueAttribute'] ) ) {
+                continue;
+            }
+
+            $field['valueAttribute'] = 'id';
+        }
+    }
+}
+$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultValueAttributes' );
+
+function setDefaultManyToManyTableNames( &$configuration ) {
+    foreach( $configuration['forms'] as $formName => &$form ) {
+        foreach( $form as $fieldName => &$field ) {
+            if ( empty( $field['relation'] ) ) {
+                continue;
+            }
+
+            if ( $field['relation'] != 'manyToMany') {
+                continue;
+            }
+
+            if ( empty( $field['leftRelationAttribute'] ) ) {
+                $field['leftRelationAttribute'] = $form['namespace']['value'];
+            }
+
+            if ( empty( $field['rightRelationAttribute'] ) ) {
+                preg_match( '/from `?([^`\s]+)`?/i', $field['query'], $m);
+                $field['rightRelationAttribute'] = $m[1];
+            }
+
+            if ( empty( $field['relationNamespace'] ) ) {
+                $field['relationNamespace'] = sprintf(
+                    '%s_%s',
+                    $field['leftRelationAttribute'],
+                    $field['rightRelationAttribute']
+                );
+            }
+
+            // @todo: set reverse field
+        }
+    }
+}
+$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultManyToManyTableNames' );
+
 ?>

@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 include $_ENV['MAD_BOOTSTRAP'];
-$registry = madRegistry::instance();
+$registry = madFramework::instance();
 
 var_export( $registry->model->loadMatching( new madObject( array( 'namespace' => $argv[1] ) ) ) );
 ?>

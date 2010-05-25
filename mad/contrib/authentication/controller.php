@@ -12,7 +12,7 @@ class madAuthenticationController extends madController {
 
         $this->isAuthenticated = isset( $this->request->variables['user'] ) && isset( $this->request->variables['user']['id'] );
         $this->isRoleRequired = isset( $this->configuration['acceptedRoles'] );
-        $this->loginUrl = madRegistry::instance()->configuration->getSetting( 'applications', 'authentication', 'loginUrl' );
+        $this->loginUrl = madFramework::instance()->configuration->getSetting( 'applications', 'authentication', 'loginUrl' );
         $this->isLoginRequired = ( isset( $this->configuration['loginRequired'] ) && $this->configuration['loginRequired'] ) || $this->isRoleRequired;
         $this->userRole = $this->isAuthenticated && isset( $this->request->variables['user']['role'] ) ? $this->request->variables['user']['role'] : null;
     }

@@ -17,7 +17,7 @@
  *
  * Example usage:
  * <code>
- * $registry = madRegistry::instance();
+ * $registry = madFramework::instance();
  * $registry->database = new PDO( $pdoParameters );
  * </code>
  * 
@@ -80,6 +80,9 @@ class madRegistry {
      * @return void
      */
     public function __set( $name, $instance ) {
+        $f = madFramework::instance(  );
+        $f->$name = $instance;
+        
         $this->registry[$name] = $instance;
     }
     
@@ -103,6 +106,7 @@ class madRegistry {
         if ( !isset( $this->registry[$name] ) && method_exists( $this, $createMethod ) ) {
             $this->registry[$name] = $this->$createMethod(  );
         }
+        
         return $this->registry[$name];
     }
 

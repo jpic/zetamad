@@ -6,9 +6,11 @@ abstract class madController extends ezcMvcController {
     public $controllers = array(  );
     public $composite = null;
     public $result = null;
-    public function __construct( $action, ezcMvcRequest $request, &$configuration = null ) {
-        parent::__construct( $action, $request );
-        $this->registry = madRegistry::instance(  );
+    public function __construct( $action = null, ezcMvcRequest $request = null, &$configuration = null ) {
+        if ( !is_null( $request ) ) {
+            parent::__construct( $action, $request );
+        }
+        $this->registry = madFramework::instance(  );
         $this->configuration =& $configuration;
     }
 
@@ -17,12 +19,18 @@ abstract class madController extends ezcMvcController {
         $this->controllers[$name] = $controller;
     }
 
-    public function createResult() {
+    public function prepareResult(  ) {
         $this->result = new ezcMvcResult;
         $this->result->content = new ezcMvcResultContent;
         $this->result->variables['contexts'] = array(
+            $this->configuration['META']['application'] . '.' . $this->configuration['name'],
+            $this->configuration['META']['application'],
             $this->configuration['name'],
         );
+    }
+
+    public function createResult() {
+        $this->prepareResult(  );
         
         foreach( $this->controllers as $controller ) {
             $controller->result = $this->result;
@@ -41,6 +49,8 @@ abstract class madController extends ezcMvcController {
             $controller->postCreateResult(  );
         }
 
+        $this->postCreateResult(  );
+
         return $this->result;
     }
 
@@ -50,6 +60,7 @@ abstract class madController extends ezcMvcController {
 
     public function postCreateResult(  ) {
     }
+
     public function t( $key, $dictionnary = null ) {
         $message = $this->registry->locale->getMessageSetting( 
             $key,
