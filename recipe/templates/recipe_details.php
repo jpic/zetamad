@@ -40,7 +40,7 @@
 .object .object-right .object-description h3 { text-transform:uppercase; font-weight: bold; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 15px; color: #232323; padding-bottom: 10px;}
 .object .object-right .object-description .step-desc { color:#666666; font-family:Lucida,"Lucida Sans",Arial,sans-serif; font-size:12px; line-height:21px; padding-bottom:20px; }
 .object .object-right .object-infos { overflow: auto; border-bottom: 1px dashed #dadada; margin-bottom: 20px; padding-bottom: 7px; }
-.object .object-right .object-infos-block { float: left; margin-right: 15px; color: #AB1D37; font-size: 11px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; padding: 5px; }
+.object .object-right .object-infos-block { float: left; margin-right: 15px; color: #D02F1E; font-size: 11px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; padding: 5px; }
 
 #object-tags { list-style: none; font-size: 11px; font-family: Verdana; color: #666; clear: both; float: right; margin: 0 0 10px 0; }
 #object-tags li { float: left; display: block; margin-left: 5px; }
@@ -53,7 +53,7 @@
 #object-column .block h4 { font-size: 22px; font-family: Times; color: #232323; font-weight: normal; border-bottom: 1px solid #dadada; padding-bottom: 10px; margin-bottom: 10px; }
 #object-column .block ul { margin: 0; padding: 0; }
 #object-column .block li { padding: 0; margin: 0; font-size: 11px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; color: #969696; line-height: 21px;}
-#object-column .block li .att { color: #ab1d37; }
+#object-column .block li .att { color: #D02F1E; }
 #object-column .block li .object-step { text-transform: uppercase; font-weight:bold; }
 
 a.btn-block { display: block; height: 30px; width: 180px; margin: 0 auto; margin-top: 10px; text-align: center; font-size: 16px; font-style: italic; font-family: Times; color: #fff; line-height: 30px; background: #929da3; }
@@ -137,7 +137,7 @@ a.btn-block:hover { background: #539893; }
                                 <?php endif ?>
                                 <?php $this->e( $this->object['profile']['introduction'] ) ?>
                         </p>
-                        <a href="<?php echo $this->url( 'profile.details', $this->object['profile'] ) ?>" class="btn-block" style="width: 50%; float: right;">Voir le profil</a>
+                        <a href="<?php echo $this->url( 'profile.details', $this->object['profile'] ) ?>" class="btn-block" style="width: 50%; float: right;" title="<?php $this->e( $this->object['profile']['name'] ) ?>">Voir le profil</a>
                         <?php elseif ( isset( $this->object['source'] ) ): ?>
                         <p class="author-description">
                             <?php $this->e( $this->object['source'] ) ?>

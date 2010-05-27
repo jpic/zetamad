@@ -19,9 +19,9 @@
 #center_column .recipe-details a.editrecipe:hover, #center_column .recipe-details a.editprofil:hover { text-decoration: underline; }
 #center_column .recipe-block p.link { padding: 5px 0; color: #b0aaac; font-size: 10px; font-family: Verdana;}
 #center_column .recipe-block div.adminpanel { margin: 5px 0; padding-top: 5px; border-top: 1px solid #dadada;}
-#center_column .recipe-details { border: 1px solid #d3d3d3; padding: 5px; overflow: auto; }
+#center_column .recipe-details { border: 1px solid #d3d3d3; padding: 5px; overflow: hidden; height: 282px; }
 #center_column .recipe-details img.picture { width: 226px; height: 226px; vertical-align: bottom; }
-#center_column .recipe-details .infos {line-height: 19px; font-weight: bold; font-family: Verdana; padding: 10px 0; }
+#center_column .recipe-details .infos {line-height: 17px; font-weight: bold; font-family: Verdana; padding: 10px 0 0 0; }
 #center_column .recipe-details .author { color: #b0aaac; font-size: 10px; font-family: Verdana; font-weight: bold; }
 #center_column .recipe-details .author a { color: #b0aaac; text-decoration: none; }
 #center_column .recipe-details .author a:hover { text-decoration: underline; }
@@ -65,7 +65,7 @@
 		<?php if ( isset( $object['profile'] ) ): ?>
 		<p class="author">
 			<a href="<?php echo $this->url( 'profile.details', $object['profile'] ) ?>">
-				<?php echo $object['profile']['name'] ?> &bull;
+				<?php echo $object['profile']['name'] ?>
 			</a>
 		</p>
 		<?php endif ?>
