@@ -312,20 +312,35 @@ function setDefaultFieldDisplayValue( &$configuration ) {
 $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldDisplayValue' );
 
 function setDefaultFieldClasses( &$configuration ) {
-    foreach( $configuration['forms'] as $formName => $form ) {
-        foreach( $form as $fieldName => $field ) {
+    foreach( $configuration['forms'] as $formName => &$form ) {
+        foreach( $form as $fieldName => &$field ) {
             if ( !isset( $field['classes'] ) ) {
-                $configuration['forms'][$formName][$fieldName]['classes'] = array(  );
+                $field['classes'] = array(  );
             }
 
-            if ( !isset( $configuration['forms'][$formName][$fieldName]['widget'] ) ) {
+            if ( !isset( $field['widget'] ) ) {
                 continue;
             }
 
-            switch( $configuration['forms'][$formName][$fieldName]['widget'] ) {
+            switch( $field['widget'] ) {
                 case 'text':
-                    $configuration['forms'][$formName][$fieldName]['classes'][] = 'textInput';
+                    $field['classes'][] = 'textInput';
                     break;
+                case 'file':
+                    $field['classes'][] = 'fileInput';
+                    break;
+            }
+
+            if ( !empty( $field['required'] ) ) {
+                $field['classes'][] = 'required';
+            }
+
+            if ( !empty($field['minLength']) ) {
+                $field['classes'][] = 'validate_minlength ' . $field['minLength'];
+            }
+
+            if ( !empty($field['maxLength']) ) {
+                $field['classes'][] = 'validate_maxlength ' . $field['maxLength'];
             }
         }
     }
