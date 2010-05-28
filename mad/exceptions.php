@@ -9,13 +9,20 @@
  * @license http://madeleinemarket.com/code/license
  */
 /**
- * madObjectException is a container from which all other exceptions in the Mad 
+ * madException is a container from which all other exceptions in the Mad
  * packages descent.
  * 
  * @package MadBase
  * @version //autogen//
  */
-class madObjectException extends Exception {}
+class madException extends Exception {}
+
+class madApplicationPathNotFound extends madException {
+    public function __construct( $application ) {
+        $msg = "$application[name] has no path defined. Please make sure that $application[name] is installed and readable by the server";
+        parent::__construct( $msg );
+    }
+}
 
 /**
  * madObjectValueException is thrown whenever the type or value of the given
@@ -24,7 +31,7 @@ class madObjectException extends Exception {}
  * @package MadBase
  * @version //autogen//
  */
-class madObjectValueException extends madObjectException {
+class madObjectValueException extends madException {
     /**
      * Constructs a new madObjectValueException on the $name variable.
      *
@@ -57,7 +64,7 @@ class madObjectValueException extends madObjectException {
  * @package MadBase
  * @version //autogen//
  */
-class madObjectPropertyNotFoundException extends madObjectException
+class madObjectPropertyNotFoundException extends madException
 {
     /**
      * Constructs a new madObjectPropertyNotFoundException for the property
@@ -86,7 +93,7 @@ class madObjectPropertyNotFoundException extends madObjectException
  * @package MadBase
  * @version //autogen//
  */
-class madObjectMixedKeysException extends madObjectException
+class madObjectMixedKeysException extends madException
 {
     /**
      * Constructs a new madObjectMixedKeysException for the key $key.
@@ -108,7 +115,7 @@ class madObjectMixedKeysException extends madObjectException
  * @package MadModel
  * @version //autogen//
  */
-class madModelException extends madObjectException {}
+class madModelException extends madException {}
 
 /**
  * madModelExceptedId is thrown when runtime needs a madObject object needs an id 

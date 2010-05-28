@@ -292,6 +292,10 @@ class madFramework {
                 continue;
             }
 
+            if ( empty($application['path']) ) {
+                throw new madApplicationPathNotFound( $application );
+            }
+
             $bootstrap = $this->entryApplicationPath . '/' . $application['path'] . '/bootstrap.php';
         
             if ( file_exists( $bootstrap ) ) {
