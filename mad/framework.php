@@ -16,7 +16,9 @@ class madFramework {
     public $refresh = false;
     static public $instance;
     public $registry =array(  );
+    public $languages = null;
 
+    # {{{ bootstrap
     public function __construct( $entryApplicationPath ) {
         $this->entryApplicationPath = madFramework::fixPath( $entryApplicationPath );
         $this->entryApplicationName = substr( $this->entryApplicationPath, strrpos( $this->entryApplicationPath, '/' ) + 1 );
@@ -85,7 +87,7 @@ class madFramework {
             // connect signals
             $this->setupApplications(  );
             // allow connected functions to visit it befoere it is written
-            $this->signals->send( 'postConfigurationRefresh', array( $this->configuration ) );
+            $this->sendSignal( 'postConfigurationRefresh', $this->configuration );
             // cache the parsed configuration for performances
             $this->configuration->write( $this->entryApplicationPath . '/cache/etc' );
         } else {
@@ -101,7 +103,7 @@ class madFramework {
             $this->locale->refresh( $this->entryApplicationPath, array_keys( (array)$this->configuration['applications'] ), 'locale' );
             // no need for application configuration in the locale confiuration
             unset( $this->locale['applications'] );
-            $this->signals->send( 'postLocaleRefresh', array( $this->locale ) );
+            $this->sendSignal( 'postLocaleRefresh', $this->locale );
 
             if ( !is_dir( $this->entryApplicationPath . '/cache/locale' ) ) {
                 mkdir( $this->entryApplicationPath . '/cache/locale' );
@@ -116,7 +118,7 @@ class madFramework {
             $this->refreshBin(  );
         }
 
-        if ( $this->signals->send( 'preSetupDatabase', array( $this ) ) ) {
+        if ( $this->sendSignal( 'preSetupDatabase', $this ) ) {
             $this->setupDatabase(  );
         } else {
             if ( !isset( $this->pdo ) ) {
@@ -124,13 +126,13 @@ class madFramework {
             }
         }
         
-        $this->signals->send( 'preSetupModel', array( $this ) );
+        $this->sendSignal( 'preSetupModel', $this );
 
         if ( $this->applications['mad']['refreshDatabase'] ) {
             $this->model->applyConfiguration(  );
         }
 
-        $this->signals->send( 'postBootstrap', array( $this ) );
+        $this->sendSignal( 'postBootstrap', $this );
 
         if ( !isset( $_SESSION ) ) {
             session_start(  );
@@ -197,18 +199,6 @@ class madFramework {
         $database->setAttribute( PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
         
         madFramework::instance()->database = $database;
-    }
-
-    public function setupModel(  ) {
-        $this->model = new madModel( 
-            $this->database, 
-            $this->configuration['model'],
-            $this->applications['mad']
-        );
-    }
-
-    public function createSignals(  ) {
-        return new madSignals(  );
     }
 
     public function refreshBin(  ) {
@@ -310,6 +300,74 @@ class madFramework {
         }
     }
 
+    public function createUrlPrefix(  ) {
+        return $this->configuration->getSetting( 'applications', 'mad', 'urlPrefix', '' );
+    }
+
+    public function createDispatcher(  ) {
+        return new madHttpDispatcher();
+    }
+    # }}}    
+    static public function instance(  ) { # {{{ singleton
+        return self::$instance;
+    }
+    # }}}
+    # {{{ registry
+    /**
+     * Register an object in the registry.
+     *
+     * Avoid acronyms. For example:
+     * <code>
+     * // bad:
+     * $this->db = new PDO( $parameters );
+     *
+     * // acceptable:
+     * $this->pdo = new PDO( $parameters );
+     *
+     * // too long:
+     * $this->persistentDataObject = new PDO( $parameters );
+     *
+     * // good:
+     * $this->database = new PDO( $parameters );
+     * </code>
+     * 
+     * @param string $name 
+     * @param object $instance 
+     * @return void
+     */
+    public function __set( $name, $instance ) {
+        $this->registry[$name] = $instance;
+    }
+    
+    public function __isset( $name ) {
+        return array_key_exists( $name, $this->registry );
+    }
+
+    /**
+     * Gets an object from the registry.
+     *
+     * <code>
+     * $this->database; // whatever was set to $this->database earlier
+     * </code>
+     * 
+     * @param string $name Name with which the instance was registered.
+     * @return object
+     */
+    public function __get( $name ) {
+        $createMethod = 'create' . ucfirst( $name );
+
+        if ( !isset( $this->registry[$name] ) && method_exists( $this, $createMethod ) ) {
+            $this->registry[$name] = $this->$createMethod(  );
+        }
+        return $this->registry[$name];
+    }
+
+    static public function get( $name ) {
+        $registry = self::instance();
+        return $registry->$name;
+    }
+    # }}}
+
     static public function getRelativePath( $path, $compareTo ) {
         // clean arguments by removing trailing and prefixing slashes
         if ( substr( $path, -1 ) == '/' ) {
@@ -388,7 +446,7 @@ class madFramework {
         return $cfg->getPathSetting( $group, $section, $name );
     }
 
-    static public function &dictionnaryReplace( &$string, $dictionnary ) {
+    static public function &dictionnaryReplace( &$string, $dictionnary = array() ) {
         $finalDictionnary = array(  );
 
         if ( method_exists( $dictionnary, 'flatten' ) ) {
@@ -428,80 +486,165 @@ class madFramework {
         return $slug;
     }
 
-    /**
-     * Return always the same instance of madRegistry.
-     * 
-     * @return madRegistry
-     */
-    static public function instance(  ) {
-        return self::$instance;
-    }
-
-    /**
-     * Register an object in the registry.
-     *
-     * Avoid acronyms. For example:
-     * <code>
-     * // bad:
-     * $this->db = new PDO( $parameters );
-     *
-     * // acceptable:
-     * $this->pdo = new PDO( $parameters );
-     *
-     * // too long:
-     * $this->persistentDataObject = new PDO( $parameters );
-     *
-     * // good:
-     * $this->database = new PDO( $parameters );
-     * </code>
-     * 
-     * @param string $name 
-     * @param object $instance 
-     * @return void
-     */
-    public function __set( $name, $instance ) {
-        $this->registry[$name] = $instance;
-    }
-    
-    public function __isset( $name ) {
-        return array_key_exists( $name, $this->registry );
-    }
-
-    /**
-     * Gets an object from the registry.
-     *
-     * <code>
-     * $this->database; // whatever was set to $this->database earlier
-     * </code>
-     * 
-     * @param string $name Name with which the instance was registered.
-     * @return object
-     */
-    public function __get( $name ) {
-        $createMethod = 'create' . ucfirst( $name );
-
-        if ( !isset( $this->registry[$name] ) && method_exists( $this, $createMethod ) ) {
-            $this->registry[$name] = $this->$createMethod(  );
-        }
-        return $this->registry[$name];
-    }
-
-    // starting here we start coupling the framework
-    public function createDispatcher(  ) {
-        $dispatcher = new madHttpDispatcher(
-            $this->configuration,
-            $this->signals
-        );
-        return $dispatcher;
-    }
-    static public function url( $name, $arguments = array(  ) ) { # {{{
+    static public function url( $name, $arguments = array(  ) ) { 
         $framework = madFramework::instance(  );
         $prefix = $framework->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
         return $prefix . $framework->router->generateUrl( $name, (array) $arguments );
-    } # }}}
+    }
+
     static public function query( $sql ) {
         return madFramework::instance(  )->pdo->query( $sql )->fetchAll( PDO::FETCH_ASSOC );
     }
 
+    static public function translate( $key, $dictionnary = array(), $contexts = array() ) {
+        $framework = madFramework::instance();
+        $locale = $framework->locale;
+
+        if ( empty( $framework->languages ) ) {
+            $framework->languages = $framework->request->accept->languages;
+            $framework->languages[] = $framework->configuration['applications']['mad']['defaultLanguage'];
+        }
+
+        $contexts = array_merge( $framework->result->variables['contexts'], $contexts );
+        $contexts[] = 'default';
+
+        $message = $key;
+
+        foreach( $framework->languages as $language ) {
+            if ( !isset( $framework->locale[$language] ) ) {
+                continue;
+            }
+
+            foreach( $contexts as $context ) {
+                if ( !isset( $framework->locale[$language][$context] ) ) {
+                    continue;
+                }
+
+                if ( isset( $framework->locale[$language][$context][$key] ) ) {
+                    $message = $framework->locale[$language][$context][$key];
+                    break;
+                }
+            }
+        }
+
+        // workaround whatever php bug during crunch
+        if ( empty( $dictionnary ) ) $dictionnary = array();
+
+        return madFramework::dictionnaryReplace( $message, $dictionnary );
+    }
+
+    static public function copyRecursive( $source, $destination, $depth = -1, $dirMode = 0775, $fileMode = 0664 )
+    {
+        // Skip non readable files in source directory
+        if ( !is_readable( $source ) )
+        {
+            return;
+        }
+
+        // Copy
+        if ( is_dir( $source ) && !is_dir( $destination ) )
+        {
+            mkdir( $destination );
+            // To ignore umask, umask() should not be changed with
+            // multithreaded servers...
+            chmod( $destination, $dirMode );
+        }
+        elseif ( is_file( $source ) )
+        {
+            copy( $source, $destination );
+            chmod( $destination, $fileMode );
+        }
+
+        if ( ( $depth === 0 ) ||
+            ( !is_dir( $source ) ) )
+        {
+            // Do not recurse (any more)
+            return;
+        }
+
+        // Recurse
+        $dh = opendir( $source );
+        while ( ( $file = readdir( $dh ) ) !== false )
+        {
+            if ( ( $file === '.' ) ||
+                ( $file === '..' ) )
+            {
+                continue;
+            }
+
+            self::copyRecursive(
+                $source . '/' . $file,
+                $destination . '/' . $file,
+                $depth - 1, $dirMode, $fileMode
+            );
+        }
+    }
+
+    # {{{ signals
+    public $signals;
+    /**
+     * List of callbacks connected to a signal.
+     * 
+     * @var array(string=>callback)
+     */
+    public function connectSignal( $name, $callback ) {
+        if ( !isset( $this->signals[$name] ) ) {
+            $this->signals[$name] = array(  );
+        }
+
+        $this->signals[$name][] = $callback;
+    }
+    public function sendSignal(  ) {
+
+        $arguments = func_get_args(  );
+        $signal = array_shift( $arguments );
+
+        if ( !isset( $this->signals[$signal] ) ) {
+            return true;
+        }
+
+        if ( !count( $this->signals[$signal] ) ) {
+            return true;
+        }
+
+        $return = true;
+
+        foreach( $this->signals[$signal] as $callback ) {
+            $result = madFramework::arrayCall( $callback, $arguments );
+
+            if ( !$result ) {
+                $return = false;
+            }
+        }
+
+        return $result;
+    }
+    # }}}
+
+    static public function call(  ) {
+        $arguments = func_get_args(  );
+        $callback  = array_shift( $arguments );
+
+        self::arrayCall($callback, $arguments);
+    }
+
+    static public function arrayCall( $callback, $arguments ) {
+        switch( count( $arguments ) ) {
+            case 0:
+                return call_user_func( $callback );
+            case 1:
+                return call_user_func( $callback, $arguments[0] );
+            case 2:
+                return call_user_func( $callback, $arguments[0], $arguments[1] );
+            case 3:
+                return call_user_func( $callback, $arguments[0], $arguments[1], $arguments[2] );
+            case 4:
+                return call_user_func( $callback, $arguments[0], $arguments[1], $arguments[2], $arguments[3] );
+            case 5:
+                return call_user_func( $callback, $arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4] );
+            default:
+                return call_user_func_array( $callback, $arguments );
+        }
+    }
 }
 ?>

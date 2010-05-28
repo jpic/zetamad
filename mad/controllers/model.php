@@ -35,13 +35,13 @@ class madModelController extends madFormController {
     }
 
     public function doList() {       
-        $query = $this->configuration['query'];
-        $paginate = isset( $this->configuration['paginate'] ) ? intval( $this->configuration['paginate'] ) : false;
+        $query = $this->framework->routeConfiguration['query'];
+        $paginate = isset( $this->framework->routeConfiguration['paginate'] ) ? intval( $this->framework->routeConfiguration['paginate'] ) : false;
         $pdo = madFramework::instance(  )->pdo;
 
-        if ( $paginate ) {
+        if ( $paginate && false ) {
             $totalObjectsSql = preg_replace( '/^select (.*)? from/i', 'SELECT count(id) FROM', $query );
-            $totalObjects = $this->registry->model->query( $totalObjectsSql )->fetchColumn(  );
+            $totalObjects = $this->framework->model->query( $totalObjectsSql )->fetchColumn(  );
             $lastPage = ceil( $totalObjects / $paginate );
 
             $currentPage = isset( $this->request->variables['page'] ) ? intval( $this->request->variables['page'] ) : 1;
@@ -64,19 +64,23 @@ class madModelController extends madFormController {
         } 
         $objectList = $pdo->query( $query )->fetchAll( PDO::FETCH_ASSOC );
 
-        if ( $objectList && !isset( $this->configuration['tableColumns'] ) ) {
-            $this->configuration['tableColumns'] = array(  );
+        if ( $objectList ) {
+            if ( empty( $this->framework->routeConfiguration['tableColumns'] ) ) {
+                $this->result->variables['tableColumns'] = array(  );
 
-            foreach( current( $objectList ) as $key => $value ) {
-                if ( $value instanceof madObject && $value->isEntity ) {
-                    continue;
-                }
+                foreach( current( $objectList ) as $key => $value ) {
+                    if ( $value instanceof madObject && $value->isEntity ) {
+                        continue;
+                    }
 
-                if ( $key == 'namespace' || $key == 'id' ) {
-                    continue;
+                    if ( $key == 'namespace' || $key == 'id' ) {
+                        continue;
+                    }
+
+                    $this->result->variables['tableColumns'][$key] = $key;
                 }
-                
-                $this->configuration['tableColumns'][$key] = $key;
+            } else {
+                $this->result->variables['tableColumns'] = $this->framework->routeConfiguration['tableColumns'];
             }
         }
         
@@ -103,7 +107,7 @@ class madModelController extends madFormController {
                     foreach( $deletes as $key ) {
                         $delete = $form[$name][$key];
                         // delete from database
-                        $this->registry->model->delete( $delete );
+                        $this->framework->model->delete( $delete );
                         // delete from object
                         unset( $form[$name][$key] );
                     }
@@ -116,10 +120,10 @@ class madModelController extends madFormController {
         $slug = parent::slugify( $string, $name );
 
         // ensure it is unique
-        $stmt = $this->registry->database->query( "select id from mad_model where attribute_key = '" . $name . "' and attribute_value = '" . $slug . "'" );
+        $stmt = $this->framework->database->query( "select id from mad_model where attribute_key = '" . $name . "' and attribute_value = '" . $slug . "'" );
         while( intval( $stmt->rowCount(  ) ) > 0 ) {
             $slug .= '-';
-            $stmt = $this->registry->database->query( "select id from mad_model where attribute_key = '" . $name . "' and attribute_value = '" . $slug . "'" );
+            $stmt = $this->framework->database->query( "select id from mad_model where attribute_key = '" . $name . "' and attribute_value = '" . $slug . "'" );
         }
 
         return $slug;
@@ -196,7 +200,7 @@ class madModelController extends madFormController {
 
         if ( isset( $this->id ) ) {
             $form['id'] = $this->id;
-            $this->registry->model->refresh( $form );
+            $this->framework->model->refresh( $form );
 
             if ( $this->request->protocol == 'http-post' && !$merged ) {
                 // drop all multival
@@ -220,10 +224,10 @@ class madModelController extends madFormController {
     }
 
     public function formSuccess( $form ) {
-        $this->registry->model->save( $form );
+        $this->framework->model->save( $form );
 
         // redirect to successRoute
-        $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
+        $prefix = $this->framework->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
 
         if ( isset( $this->request->variables['popup'] ) ) {
             $this->result->variables['responseBody'] = sprintf( 
@@ -233,8 +237,8 @@ class madModelController extends madFormController {
             );
         } else {
             $this->result->status = new ezcMvcExternalRedirect( 
-                $prefix . $this->registry->router->generateUrl( 
-                    $this->configuration['successRoute'],
+                $prefix . $this->framework->router->generateUrl(
+                    $this->framework->routeConfiguration['successRoute'],
                     (array) $form
                 ) 
             );
@@ -242,11 +246,11 @@ class madModelController extends madFormController {
     }
 
     public function doAutocomplete(  ) {
-        if ( isset( $this->configuration['column'] ) ) {
+        if ( isset( $this->framework->routeConfiguration['column'] ) ) {
             // simple query case
             $this->result->variables['objectList'] = array(  );
 
-            $statement = $this->registry->model->query( $this->configuration['query'] );
+            $statement = $this->framework->model->query( $this->framework->routeConfiguration['query'] );
             foreach( $statement->fetch(  ) as $row ) {
                 $this->result->variables['objectList'][] = $row;
             }
@@ -254,12 +258,12 @@ class madModelController extends madFormController {
             $this->result = $this->doList(  );
         }
 
-        if ( isset( $this->configuration['column'] ) ) {
-            $this->result->variables['valueAttribute'] = $this->configuration['column'];
-            $this->result->variables['displayAttribute'] = $this->configuration['column'];
-        } elseif ( isset( $this->configuration['attribute'] ) ) {
-            $this->result->variables['valueAttribute'] = $this->configuration['attribute'];
-            $this->result->variables['displayAttribute'] = $this->configuration['attribute'];
+        if ( isset( $this->framework->routeConfiguration['column'] ) ) {
+            $this->result->variables['valueAttribute'] = $this->framework->routeConfiguration['column'];
+            $this->result->variables['displayAttribute'] = $this->framework->routeConfiguration['column'];
+        } elseif ( isset( $this->framework->routeConfiguration['attribute'] ) ) {
+            $this->result->variables['valueAttribute'] = $this->framework->routeConfiguration['attribute'];
+            $this->result->variables['displayAttribute'] = $this->framework->routeConfiguration['attribute'];
         } else {
             $this->result->variables['valueAttribute'] = $this->request->variables['valueAttribute'];
             $this->result->variables['displayAttribute'] = $this->request->variables['displayAttribute'];
@@ -267,36 +271,23 @@ class madModelController extends madFormController {
     }
 
     public function doDetails(  ) {
-        if ( !isset( $this->id ) ) {
-            $sql = sprintf( '
-                select 
-                    %s as id
-                from mad_model 
-                where ',
-                madModel::DECODE_ID_ENTITY
-            );
-
-            $arguments = $where = array(  );
-            foreach( explode( '/', $this->configuration['rails'] ) as $part ) {
-                if ( substr( $part, 0, 1 ) == ':' ) {
-                    $attributeName = substr( $part, 1 );
-                    break;
-                }
+        $arguments = $where = array(  );
+        foreach( explode( '/', $this->framework->routeConfiguration['rails'] ) as $part ) {
+            if ( substr( $part, 0, 1 ) == ':' ) {
+                $attributeName = substr( $part, 1 );
+                $where[] = "$attributeName = :$attributeName";
+                $arguments[$attributeName] = $this->request->variables[$attributeName];
+                break;
             }
-
-            $sql.= "attribute_key = '$attributeName' and attribute_value = :$attributeName";
-            $stmt = $this->registry->database->prepare( $sql );
-            $stmt->execute( array( $attributeName => $this->$attributeName ) );
-            $id = $stmt->fetchColumn( 0 );
-
-        } else {
-            $id = $this->id;
         }
 
-        $object = new madModelObject( array(
-            'id' => $id,
-        ) );
-        $this->registry->model->refresh( $object );
+        $sql = "select * from {$this->framework->routeConfiguration['table']} where " . implode( ' AND ', $where ) . " limit 0, 1";
+        $select = madFramework::instance()->pdo->prepare( $sql );
+        $select->execute( $arguments );
+        $row = $select->fetch( PDO::FETCH_ASSOC );
+
+        $object = new madModelObject( $row );
+        $object['namespace'] = $table;
         $this->result->variables['object'] = $object;
         $this->result->variables['contexts'][] = $object['namespace'];
     }
@@ -304,33 +295,33 @@ class madModelController extends madFormController {
     public function doDelete(  ) {
         $this->doDetails(  );
         
-        $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
+        $prefix = $this->framework->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
 
         $object = $this->result->variables['object'];
 
         if ( isset( $this->request->variables['confirmDelete'] ) ) {
-            $this->registry->model->delete( $object );
+            $this->framework->model->delete( $object );
             
             $_SESSION['messages'][] = $this->t( 'deleteMessage', $object );
 
             $this->result->status = new ezcMvcExternalRedirect( 
-                $prefix . $this->registry->router->generateUrl( 
-                    $this->configuration['successRoute'],
+                $prefix . $this->framework->router->generateUrl(
+                    $this->framework->routeConfiguration['successRoute'],
                     (array) $object
                 ) 
             );
         }
     }
     static public function routeFormData( $routeName, $data ) {
-        $registry = madFramework::instance();
+        $framework = madFramework::instance();
 
-        $configuration = $registry->configuration['routes'][$routeName];
+        $configuration = $framework->configuration['routes'][$routeName];
 
         $request = new ezcMvcRequest(  );
         $request->protocol = 'http-post';
         $request->variables[str_replace( '.', '_', $configuration['form'] )] = $data;
 
-        $controller = $registry->dispatcher->createRouteController( 
+        $controller = $framework->dispatcher->createRouteController(
             $request,
             $configuration
         );

@@ -1,17 +1,15 @@
 <?php
 
 abstract class madController extends ezcMvcController {
-    public $configuration = array(  );
-    public $registry = null;
     public $controllers = array(  );
     public $composite = null;
     public $result = null;
-    public function __construct( $action = null, ezcMvcRequest $request = null, &$configuration = null ) {
-        if ( !is_null( $request ) ) {
-            parent::__construct( $action, $request );
-        }
-        $this->registry = madFramework::instance(  );
-        $this->configuration =& $configuration;
+    public $framework;
+    public $request = null;
+    public function __construct( $framework ) {
+        $this->framework = $framework;
+        $this->request = $framework->request;
+        parent::__construct( $framework->action, $framework->request );
     }
 
     public function compose( $name, $controller ) {
@@ -23,15 +21,17 @@ abstract class madController extends ezcMvcController {
         $this->result = new ezcMvcResult;
         $this->result->content = new ezcMvcResultContent;
         $this->result->variables['contexts'] = array(
-            $this->configuration['META']['application'] . '.' . $this->configuration['name'],
-            $this->configuration['META']['application'],
-            $this->configuration['name'],
+            $this->framework->routeConfiguration['META']['application'] . '.' . $this->framework->routeConfiguration['name'],
+            $this->framework->routeConfiguration['META']['application'],
+            $this->framework->routeConfiguration['name'],
         );
     }
 
     public function createResult() {
         $this->prepareResult(  );
-        
+
+        $this->preCreateResult();
+
         foreach( $this->controllers as $controller ) {
             $controller->result = $this->result;
             $break = $controller->preCreateResult(  );

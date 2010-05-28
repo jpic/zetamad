@@ -39,7 +39,7 @@ class madRouter extends ezcMvcRouter {
             {
                 throw new ezcBaseValueException( 'route', $route, 'instance of ezcMvcRoute' );
             }
-
+            
             $routingInformation = $route->matches( $this->request );
             if ( $routingInformation !== null )
             {
@@ -87,11 +87,11 @@ class madRouter extends ezcMvcRouter {
                 );           
             }
 
-            if ( !isset( $routeArray['application'] ) ) {
+            if ( empty( $routeArray['META'] ) || empty( $routeArray['META']['application'] ) ) {
                 throw new Exception( "What application is that route comming from?" );
             }
 
-            $route->application = $routeArray['application'];
+            $route->application = $routeArray['META']['application'];
 
             $routes[$name] = $route;
         }

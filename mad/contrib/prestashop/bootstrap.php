@@ -1,6 +1,4 @@
 <?php
-$framework = madFramework::instance(  );
-
 // authentication backend
 function prestashopAuthentication( ezcMvcRequest $request, ezcMvcRouter $router ) {
     $framework = madFramework::instance(  );
@@ -32,7 +30,7 @@ function prestashopAuthentication( ezcMvcRequest $request, ezcMvcRouter $router 
         }
     }
 }
-$framework->signals->connect( 'postCreateRouter', 'prestashopAuthentication' );
+$this->connectSignal( 'postCreateRouter', 'prestashopAuthentication' );
 
 // fix autoload
 function prestashopAutoload( $class ) {
@@ -61,12 +59,12 @@ function prestashopDatabaseSettings( $framework ) {
 
     return false; // will prevent normal setting of $registery->database
 }
-$framework->signals->connect( 'preSetupDatabase', 'prestashopDatabaseSettings' );
+$this->connectSignal( 'preSetupDatabase', 'prestashopDatabaseSettings' );
 
 function bootstrapPrestashop( $bootstrap ) {
     $smarty = $GLOBALS['smarty'];
     require PRESTASHOP_PATH . '/init.php';
     Configuration::loadConfiguration(  );
 }
-$framework->signals->connect( 'postBootstrap', 'bootstrapPrestashop' );
+$this->connectSignal( 'postBootstrap', 'bootstrapPrestashop' );
 ?>

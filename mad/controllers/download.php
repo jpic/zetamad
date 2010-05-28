@@ -13,8 +13,7 @@ class madDownloadController extends madController {
         $extension = substr(strrchr($absolutePath, '.'), 1);
 
         $this->result->content->disposition = new ezcMvcResultContentDisposition;
-        $this->result->variables['absolutePath'] = $absolutePath;
-        $this->result->variables['fileRequest'] = true;
+        $this->result->variables['serveFile'] = $absolutePath;
         switch( $extension ){
             case 'html':
                 $this->result->content->type = 'text/html';

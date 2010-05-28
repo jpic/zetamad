@@ -1,5 +1,4 @@
 <?php
-$registry = madFramework::instance(  );
 
 function setRoutesApplication( $configuration ) {
     foreach( $configuration['routes'] as $name => $route ) {
@@ -13,7 +12,7 @@ function setRoutesApplication( $configuration ) {
         $configuration['routes'][$name]->merge( $configuration['applications'][$applicationName] );
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'setRoutesApplication' );
+$this->connectSignal( 'postConfigurationRefresh', 'setRoutesApplication' );
 
 function defaultController( $configuration ) {
     foreach( $configuration['routes'] as $name => $route ) {
@@ -22,7 +21,7 @@ function defaultController( $configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'defaultController' );
+$this->connectSignal( 'postConfigurationRefresh', 'defaultController' );
 
 function defaultView( $configuration ) {
     foreach( $configuration['routes'] as $name => $route ) {
@@ -31,7 +30,25 @@ function defaultView( $configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'defaultView' );
+$this->connectSignal( 'postConfigurationRefresh', 'defaultView' );
+
+function defaultRails( &$configuration ) {
+    foreach( $configuration['routes'] as $routeName => &$route ) {
+        if ( empty( $route['rails'] ) && empty( $route['regexp'] ) ) {
+            $route['rails'] = "/{$route['action']}";
+        }
+    }
+}
+$this->connectSignal( 'postConfigurationRefresh', 'defaultRails' );
+
+function defaultTemplate( &$configuration ) {
+    foreach( $configuration['routes'] as $routeName => &$route ) {
+        if ( empty( $route['template'] ) ) {
+            $route['template'] = $routeName . '.php';
+        }
+    }
+}
+$this->connectSignal( 'postConfigurationRefresh', 'defaultTemplate' );
 
 function prefixRoutes( $configuration ) {
     foreach( $configuration['routes'] as $name => &$route ) {
@@ -44,7 +61,7 @@ function prefixRoutes( $configuration ) {
         if ( isset( $route['rails'] ) && substr( $route['rails'], 0, 1 ) != '/' ) {
             $route['rails'] = '/' . $route['rails'];
         }
-
+        
         $applicationPrefix = $configuration['applications'][$applicationName]['routePrefix'];
         if ( isset( $route['rails'] ) ) {
             $configuration['routes'][$name]['rails'] = $applicationPrefix . $configuration['routes'][$name]['rails'];
@@ -58,7 +75,7 @@ function prefixRoutes( $configuration ) {
         $configuration['routes'][$name]['name'] = $name;
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'prefixRoutes' );
+$this->connectSignal( 'postConfigurationRefresh', 'prefixRoutes' );
 
 function findClasses( $configuration ) {
     if ( defined( 'RecursiveDirectoryIterator::FOLLOW_SYMLINKS' ) ) {
@@ -126,7 +143,7 @@ function findClasses( $configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'findClasses' );
+$this->connectSignal( 'postConfigurationRefresh', 'findClasses' );
 
 function stripTrailingSlashes( &$array ) {
     foreach( $array as $name => $value ) {
@@ -137,7 +154,7 @@ function stripTrailingSlashes( &$array ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'stripTrailingSlashes' );
+$this->connectSignal( 'postConfigurationRefresh', 'stripTrailingSlashes' );
 
 function findStaticFiles( $configuration ) {
     if ( !isset( $configuration['staticFiles'] ) ) {
@@ -176,7 +193,7 @@ function findStaticFiles( $configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'findStaticFiles' );
+$this->connectSignal( 'postConfigurationRefresh', 'findStaticFiles' );
 
 function allPathsRelative( &$configuration ) {
     foreach( $configuration as $key => $value ) {
@@ -189,7 +206,7 @@ function allPathsRelative( &$configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'allPathsRelative' );
+$this->connectSignal( 'postConfigurationRefresh', 'allPathsRelative' );
 
 function setDefaultWidgets( &$configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
@@ -206,12 +223,17 @@ function setDefaultWidgets( &$configuration ) {
                 continue;
             }
 
-            if ( !isset( $field['widget'] ) ) {
-                if ( isset( $field['relation'] ) && $field['relation'] == 'manyToMany' ) {
-                    $configuration['forms'][$formName][$fieldName]['widget'] = 'select';
-                    $configuration['forms'][$formName][$fieldName]['multiple'] = true;
-                } else {
-                    $configuration['forms'][$formName][$fieldName]['widget'] = 'text';
+            if ( empty( $field['widget'] ) ) {
+                $configuration['forms'][$formName][$fieldName]['widget'] = 'text';
+
+                if ( !empty( $field['relation'] ) ) {
+                    if ( $field['relation'] == 'manyToMany' ) {
+                        $configuration['forms'][$formName][$fieldName]['widget'] = 'select';
+                        $configuration['forms'][$formName][$fieldName]['multiple'] = true;
+                    } elseif ( $field['relation'] == 'fk' ) {
+                        $configuration['forms'][$formName][$fieldName]['widget'] = 'select';
+                        $configuration['forms'][$formName][$fieldName]['multiple'] = false;
+                    }
                 }
             } elseif ( $field['widget'] == 'select' && !isset( $attribute['multiple'] ) ) {
                 $attribute['multiple'] = false;
@@ -219,7 +241,7 @@ function setDefaultWidgets( &$configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultWidgets' );
+$this->connectSignal( 'postConfigurationRefresh', 'setDefaultWidgets' );
 
 function setDefaultFieldNames( &$configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
@@ -230,7 +252,7 @@ function setDefaultFieldNames( &$configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultFieldNames' );
+$this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldNames' );
 
 function setFormAttributesViewDefaultParameters( &$configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
@@ -254,7 +276,7 @@ function setFormAttributesViewDefaultParameters( &$configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'setFormAttributesViewDefaultParameters' );
+$this->connectSignal( 'postConfigurationRefresh', 'setFormAttributesViewDefaultParameters' );
 
 function setDefaultFieldErrors( &$configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
@@ -265,7 +287,7 @@ function setDefaultFieldErrors( &$configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultFieldErrors' );
+$this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldErrors' );
 
 function setDefaultFieldRequired( &$configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
@@ -276,7 +298,7 @@ function setDefaultFieldRequired( &$configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultFieldRequired' );
+$this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldRequired' );
 
 function setDefaultFieldDisplayValue( &$configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
@@ -287,7 +309,7 @@ function setDefaultFieldDisplayValue( &$configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultFieldDisplayValue' );
+$this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldDisplayValue' );
 
 function setDefaultFieldClasses( &$configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
@@ -308,7 +330,7 @@ function setDefaultFieldClasses( &$configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultFieldClasses' );
+$this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldClasses' );
 
 function setDefaultFkNames( &$configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
@@ -332,7 +354,7 @@ function setDefaultFkNames( &$configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultFkNames' );
+$this->connectSignal( 'postConfigurationRefresh', 'setDefaultFkNames' );
 
 function setDefaultColumn( &$configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
@@ -345,7 +367,7 @@ function setDefaultColumn( &$configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultColumn' );
+$this->connectSignal( 'postConfigurationRefresh', 'setDefaultColumn' );
 
 function setDefaultValueAttributes( &$configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
@@ -362,7 +384,7 @@ function setDefaultValueAttributes( &$configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultValueAttributes' );
+$this->connectSignal( 'postConfigurationRefresh', 'setDefaultValueAttributes' );
 
 function setDefaultManyToManyTableNames( &$configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
@@ -396,6 +418,46 @@ function setDefaultManyToManyTableNames( &$configuration ) {
         }
     }
 }
-$registry->signals->connect( 'postConfigurationRefresh', 'setDefaultManyToManyTableNames' );
+$this->connectSignal( 'postConfigurationRefresh', 'setDefaultManyToManyTableNames' );
+
+function copyTemplates( &$configuration ) {
+    $templatesPath = ENTRY_APP_PATH . '/cache/templates';
+    if ( is_dir( $templatesPath ) ) {
+        ezcBaseFile::removeRecursive( $templatesPath );
+    }
+
+    $applications = array_reverse( array_keys( (array) $configuration['applications'] ) );
+
+    foreach( $applications as $application ) {
+        $path = $configuration->getPathSetting( 'applications', $application, 'path' ) . '/templates';
+        madFramework::copyRecursive( $path, $templatesPath );
+    }
+}
+$this->connectSignal( 'postConfigurationRefresh', 'copyTemplates' );
+
+function shortTemplateTags( $configuration ) {
+    if ( defined( 'RecursiveDirectoryIterator::FOLLOW_SYMLINKS' ) ) {
+        $flags = RecursiveDirectoryIterator::FOLLOW_SYMLINKS|RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST;
+    } else { // php 5.2.6 support
+        $flags = RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST;
+    }
+
+    $path = ENTRY_APP_PATH . '/cache/templates';
+    
+    $fileIterator = new RecursiveIteratorIterator( 
+        new RecursiveDirectoryIterator( 
+            $path,
+            $flags
+        )
+    );
+ 
+    foreach( $fileIterator as $fileInfo ) {
+        $template = file_get_contents( $fileInfo->getRealPath(  ) );
+        $template = preg_replace( '/<?=( .*)?>/', '<?php $this->e( \1 ) ?>', $template );
+        $template = preg_replace( '/<??( .*)?>/', '<?php $this->\1 ?>', $template );
+        file_put_contents( $fileInfo->getRealPath(  ), $template );
+    }
+}
+$this->connectSignal( 'shortTemplateTags', 'postConfigurationRefresh' );
 
 ?>

@@ -7,28 +7,28 @@ class madAuthenticationController extends madController {
     public $isLoginRequired = false;
     public $userRole = false;
 
-    public function __construct( $action, ezcMvcRequest $request, &$configuration = null ) {
-        parent::__construct( $action, $request, $configuration );
+    public function __construct( $framework ) {
+        parent::__construct( $framework );
 
         $this->isAuthenticated = isset( $this->request->variables['user'] ) && isset( $this->request->variables['user']['id'] );
-        $this->isRoleRequired = isset( $this->configuration['acceptedRoles'] );
+        $this->isRoleRequired = isset( $this->framework->routeConfiguration['acceptedRoles'] );
         $this->loginUrl = madFramework::instance()->configuration->getSetting( 'applications', 'authentication', 'loginUrl' );
-        $this->isLoginRequired = ( isset( $this->configuration['loginRequired'] ) && $this->configuration['loginRequired'] ) || $this->isRoleRequired;
+        $this->isLoginRequired = ( isset( $this->framework->routeConfiguration['loginRequired'] ) && $this->framework->routeConfiguration['loginRequired'] ) || $this->isRoleRequired;
         $this->userRole = $this->isAuthenticated && isset( $this->request->variables['user']['role'] ) ? $this->request->variables['user']['role'] : null;
     }
     
     public function preCreateResult(  ) {
-        $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix', '' );
+        $prefix = $this->framework->urlPrefix;
 
         if ( $this->isLoginRequired && !$this->isAuthenticated ) {
             $this->result->status = new ezcMvcExternalRedirect( $this->loginUrl );
             return true;
         }
 
-        if ( $this->isRoleRequired && !in_array( $this->userRole, $this->configuration['acceptedRoles'] ) ) {
+        if ( $this->isRoleRequired && !in_array( $this->userRole, $this->framework->routeConfiguration['acceptedRoles'] ) ) {
             $dictionnary = array_merge(
                 array(
-                    'acceptedRoles' => implode( ', ', $this->configuration['acceptedRoles'] ),
+                    'acceptedRoles' => implode( ', ', $this->framework->routeConfiguration['acceptedRoles'] ),
                 ),
                 (array)$this->request->variables['user']
             );
@@ -40,7 +40,7 @@ class madAuthenticationController extends madController {
             $_SESSION['fatalRequest'] = $this->request;
 
             $this->result->status = new ezcMvcExternalRedirect(
-                $prefix . $this->registry->configuration->getSetting( 'routes', 'mad.fatal', 'rails' )
+                $prefix . $this->framework->configuration->getSetting( 'routes', 'mad.fatal', 'rails' )
             );
     
             return true;
@@ -54,14 +54,14 @@ class madAuthenticationController extends madController {
     }
 
     public function doRoleError(  ) {
-        $result->variables['role'] = $this->configuration['acceptedRoles'];
+        $result->variables['role'] = $this->framework->routeConfiguration['acceptedRoles'];
     }
 
     public function doLoginRedirect(  ) {
-        $prefix = $this->registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
+        $prefix = $this->framework->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
 
         $result->status = new ezcMvcExternalRedirect(
-            $this->registry->configuration->getSetting( 'applications', 'authentication', 'loginUrl' )
+            $this->framework->configuration->getSetting( 'applications', 'authentication', 'loginUrl' )
         );
     }
 }

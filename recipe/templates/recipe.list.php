@@ -27,7 +27,6 @@
 #center_column .recipe-details .author a:hover { text-decoration: underline; }
 </style>
 
-<!--
 <ul id="nav-recipe">
 	<li class="browseby">Trier par:</li>
 	<li><a href="" class="selected">date</a></li>
@@ -38,13 +37,13 @@
 	<li class="sep">|</li>
 	<li><a href="">au hasard</a></li>
 </ul>
--->
 
 <div class="breadcrumb">
 	<a title="retour à Accueil" href="/">Accueil</a>
 	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
 	Recettes
 </div>
+<?php var_dump($this->object); return ?>
 
 <?php $forloopCounter = 1; foreach( $this->objectList as $object ): ?>
 <div class="recipe-block" <?php if( $forloopCounter % 4 == 0 ): ?> style="padding-right: 0; margin-left: 1px;"<?php endif; ?> <?php if( $forloopCounter % 3 == 0 ): ?> style="margin-left: 1px;"<?php endif; ?>>
@@ -52,12 +51,12 @@
 	<div class="recipe-details">
 		<?php if ( isset( $object['picture'] ) ): ?>
 		    <a href="<?php echo $this->url( 'recipe.details', $object ) ?>">
-			    <img class="picture" src="<?php echo $this->thumbnail( $object['picture'], 226, 226 ) ?>" />
+			    <img class="picture" src="<?php echo $this->thumbnail( $object['picture'], 226, 226 ) ?>" alt="<?php echo $this->object['title'] ?>" />
 		</a>
 		<?php endif ?>
 	
 			<p class="infos">
-				<a href="<?php echo $this->url( 'recipe.details', $object ) ?>">
+                            <a href="<?php echo madFramework::url( 'recipe.details', $object ) ?>">
 					<?php echo $object['title']; ?>
 				</a>
 			</p>

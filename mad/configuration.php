@@ -270,45 +270,7 @@ class madConfiguration extends madObject {
         $name = substr( substr( $file, strrpos( $file, '/' ) + 1 ), 0, -4 );
         $this[$name] = require $file;
     }
-    public function getMessageSetting( $key, $languages = null, $contexts = null, $default = null ) {
-        if ( is_null( $languages ) ) {
-            $languages = array( $this->getSetting( 'applications', 'mad', 'defaultLanguage' ) );
-        }
 
-        if ( is_null( $contexts ) ) {
-            $contexts = array( 'default' );
-        }
-
-        if ( !is_array( $languages ) ) {
-            $languages = array( $languages );
-        }
-
-        if ( !is_array( $contexts ) ) {
-            $contexts = array( $contexts );
-        }
-
-        if ( !in_array( 'default', $contexts ) ) {
-            $contexts[] = 'default';
-        }
-
-        foreach( $languages as $language ) {
-            if ( !isset( $this[$language] ) ) {
-                continue;
-            }
-
-            foreach( $contexts as $context ) {
-                if ( !isset( $this[$language][$context] ) ) {
-                    continue;
-                }
-
-                if ( isset( $this[$language][$context][$key] ) ) {
-                    return $this[$language][$context][$key];
-                }
-            }
-        }
-
-        return is_null( $default ) ? $key : $default;
-    }
 }
 
 ?>

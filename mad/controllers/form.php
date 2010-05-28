@@ -13,39 +13,29 @@ class madFormController extends madController {
     public $isFormSet = false;
     public $currentFormSet = false;
 
-    public function __construct( $action = null, ezcMvcRequest $request = null, &$routeConfiguration = null ) {
-        parent::__construct( $action, $request, $routeConfiguration );
+    public function __construct( $framework ) {
+        parent::__construct( $framework );
+        $this->processedData = new madObject(  );
+    }
 
-        if ( $action != 'form' ) {
-            return true;
-        }
+    public function preCreateResult(  ) {
+        $this->requestFormName = str_replace( '.', '_', $this->framework->routeConfiguration['form'] );
+        $this->formName = $this->framework->routeConfiguration['form'];
+        $this->routeConfiguration = $this->framework->routeConfiguration;
 
-        if ( !is_null( $routeConfiguration ) ) {
-            $this->requestFormName = str_replace( '.', '_', $routeConfiguration['form'] );
-            $this->formName = $routeConfiguration['form'];
-            $this->routeConfiguration = $routeConfiguration;
-        } else {
-            $this->requestFormName = null;
-            $this->formName = null;
-            $this->routeConfiguration = null;
-        }
-
-        if ( $request instanceof ezcMvcRequest && isset( $request->variables[$this->requestFormName] ) ) {
-            $this->data = new madObject( $request->variables[$this->requestFormName] );
+        if ( !empty( $this->request->variables[$this->requestFormName] ) ) {
+            $this->data = new madObject( $this->request->variables[$this->requestFormName] );
         } else {
             $this->data = array(  );
         }
 
-        $configuration = madFramework::instance()->configuration;
-        if ( $this->formName && isset( $configuration['forms'][$this->formName] ) ) {
-            $this->formConfiguration = $configuration['forms'][$this->formName];
+        if ( $this->formName && !empty( $this->framework->configuration['forms'][$this->formName] ) ) {
+            $this->formConfiguration = $this->framework->configuration['forms'][$this->formName];
             $this->formMeta = $this->formConfiguration['META'];
             unset( $this->formConfiguration['META'] );
-        } else{
+        } else {
             $this->formConfiguration = array(  );
         }
-
-        $this->processedData = new madObject(  );
     }
 
     static public function factory( $formName, $data ) {
@@ -56,15 +46,15 @@ class madFormController extends madController {
     }
 
     static public function formsetFactory( $attribute, $data ) {
-        $configuration = madFramework::instance()->configuration;
+        $framework = madFramework::instance();
         
-        $controller = new madFormController( 'form' );
+        $controller = new madFormController( $framework );
         $controller->isFormSet = true;
         $controller->data = $data;
 
         if ( isset( $attribute['formName'] ) ) {
             $controller->formName = $attribute['formName'];
-            $controller->formConfiguration = $configuration['forms'][$attribute['formName']];
+            $controller->formConfiguration = $framework->configuration['forms'][$attribute['formName']];
             $controller->formMeta = $controller->formConfiguration['META'];
             unset( $controller->formConfiguration['META'] );
         } else {
@@ -94,7 +84,6 @@ class madFormController extends madController {
         } else {
             $this->process(  );
         }
-
     }
 
     public function setContexts(  ) {
@@ -123,6 +112,8 @@ class madFormController extends madController {
             return true;
         }
 
+        $this->result->variables['form'] = $this;
+
         if ( !$this->isSuccessfull ) {
             $this->setContexts(  );
         } else {
@@ -135,7 +126,7 @@ class madFormController extends madController {
             } else {
                 $this->result->status = new ezcMvcExternalRedirect( madFramework::url(
                         $this->routeConfiguration['successRoute'],
-                        $this->data
+                        $this->processedData
                 ) );
             }
         }
@@ -157,7 +148,6 @@ class madFormController extends madController {
             }
             
             madModelController::saveArray( $row );
-            var_dump( $row );
 
             // set the id to reverseFks
             foreach( $this->formConfiguration as $attribute ) {
@@ -196,8 +186,6 @@ class madFormController extends madController {
         }
 
         $this->isSuccessfull = true;
-
-        if ( $this->formName == 'recipe.recipe' ) die( "DOne saving recipe" );
     }
 
     public function mergeRequestData(  ) {

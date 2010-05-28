@@ -3,6 +3,14 @@
 class madViewHandler extends ezcMvcPhpViewHandler {
     public $handlers = array(  );
 
+    public function processZone( $name, $template ) {
+        $templateBackup = $this->templateLocation;
+        $this->templateLocation = $template;
+        $this->process( false );
+        $this->send( $name, $this->getResult() );
+        $this->templateLocation = $templateBackup;
+    }
+
     public function thumbnail( $path, $newWidth, $newHeight, $force = false ) { # {{{
         $uploadPath = ENTRY_APP_PATH . '/upload/' . $path;
         if ( !file_exists( $uploadPath ) ) {
@@ -210,12 +218,6 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     public function t( $key, $dictionnary = null, $contexts = array(  ) ) { # {{{
         $contexts = array_merge( $contexts, $this->contexts );
 
-        $message = madFramework::instance(  )->locale->getMessageSetting( 
-            $key,
-            $this->request->accept->languages,
-            $contexts
-        );
-
         if ( is_null( $dictionnary ) && isset( $this->object ) ) {
             $dictionnary = $this->object->flatten( false );
         }
@@ -224,9 +226,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             $dictionnary = $this->form;
         }
 
-        if ( $dictionnary ) {
-            $message = madFramework::dictionnaryReplace( $message, $dictionnary );
-        }
+        $message = madFramework::translate( $key, $dictionnary, $contexts );
 
         return $message;
     } # }}}
@@ -253,12 +253,16 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         if ( !empty( $attribute['widget'] ) ) {
             return true;
         }
+
+        if ( $attribute['form'] !== $attribute['parentForm'] ) {
+            return true;
+        }
     } # }}}
     
     /*
      * @todo: move to a form view handler
      */
-    
+
     /**
      * For each attribute that have a "widget" key, call renderFormFieldRow().
      * 
@@ -273,7 +277,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
                 continue;
             }
 
-            $html[] = $this->renderFormFieldRow( $attribute );
+            $html[] = $this->renderFormFieldRow( $attribute['name'] );
         }
 
         return implode( "\n", $html );
@@ -291,19 +295,14 @@ class madViewHandler extends ezcMvcPhpViewHandler {
      * @param array $attribute
      * @return string HTML version of the field row as dictated by uni-form
      */
-    public function renderFormFieldRow( &$attribute ) { # {{{
+    public function renderFormFieldRow( $attributeName ) { # {{{
         $html = array(  );
+        $attribute =& $this->form->formConfiguration[$attributeName];
 
         $this->processAttribute( $attribute );
 
-        if ( empty( $attribute['widget'] ) ) {
-            return '';
-        }
-
         if ( $attribute['asFormSet'] ) {
-            $html[] = '<h2>';
-            $html[] = $attribute['label'];
-            $html[] = '</h2>';
+            $html[] = sprintf( '<h2>%s</h2>', $attribute['label'] );
             $html[] = $this->renderFormSet( $attribute['form'] );
         } elseif ( $attribute['asMultiValue'] ) {
             $method = sprintf( 
@@ -354,7 +353,19 @@ class madViewHandler extends ezcMvcPhpViewHandler {
                 $attribute['contexts']
             );
         }
-        
+
+        if ( empty( $attribute['help'] ) ) {
+            $key = $attribute['name'] . '.META.HELP';
+
+            $help = $this->t(
+                $key,
+                $attribute,
+                $attribute['contexts']
+            );
+
+            $attribute['help'] = $key == $help ? null : $help;
+        }
+
         $attribute['htmlName'] = sprintf( 
             $htmlNamePattern,
             $attribute['form']->requestFormName,
@@ -401,6 +412,10 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
         $html[] = $this->$widgetRenderer( &$attribute );
     
+        if ( !empty( $attribute['help'] ) ) {
+            $html[] = '<p class="formHint">' . $this->ucfirst( $attribute['help'] ) . '</p>';
+        }
+        
         $html[]= '</div>';
 
         return implode( "\n\t\t", $html );
@@ -492,7 +507,30 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
 
         $html[] = '</tbody>';
+//        $html[] = '<tfoot>';
+//
+//        foreach( $form->formConfiguration as &$attribute ) {
+//            if ( !$this->isRenderable( $attribute ) ) {
+//                continue;
+//            }
+//
+//            $this->processAttribute( $attribute );
+//
+//            $html[] = sprintf(
+//                '<td class="formHint">%s</td>',
+//                $this->ucfirst( $attribute['help'] )
+//            );
+//        }
+//
+//        $html[] = '</tfoot>';
         $html[] = '</table>';
+
+        if (!empty($attribute['help'])) {
+            $html[] = '<p class="formHint">';
+            $html[] = $attribute['help'];
+            $html[] = '</p>';
+        }
+
         $html[] = '<button disabled="disabled" class="formset_add">';
         $html[] = $this->ucfirst( $this->t( 'add' ) );
         $html[] = '</button>';
@@ -583,6 +621,12 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
         $html[] = '</table>';
 
+        if (!empty($attribute['help'])) {
+            $html[] = '<p class="formHint">';
+            $html[] = $attribute['help'];
+            $html[] = '</p>';
+        }
+
         $html[] = '<button disabled="disabled" class="formset_add">';
         $html[] = $this->ucfirst( $this->t( 'add' ) );
         $html[] = '</button>';
@@ -628,8 +672,8 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         $html  = array(  );
 
         $html[] = sprintf(
-            '<select multiple="%s" name="%s" class="%s" id="%s" />',
-            $attribute['multiple'] ? 'multiple' : '',
+            '<select "%s" name="%s" class="%s" id="%s" />',
+            $attribute['multiple'] ? 'multiple="multiple"' : '',
             $attribute['htmlName'],
             implode( ' ', $attribute['classes'] ),
             $attribute['htmlId']
@@ -646,6 +690,18 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         }
 
         $html[] = '</select>';
+
+        if ( !empty( $attribute['createRoute']) ) {
+            $html[] = sprintf(
+                '<p class="formHint"><a href="%s?displayAttribute=%s&valueAttribute=%s" id="add_%s" class="add-another">%s</a> %s</p>',
+                madFramework::url( $attribute['createRoute'] ),
+                $attribute['displayAttribute'],
+                $attribute['valueAttribute'],
+                $attribute['htmlId'],
+                $this->ucfirst( $this->t( 'addAnotherSolution' ) ),
+                $this->t( 'addAnotherIfIssue' )
+            );
+        }
 
         return implode( '', $html );
     } # }}}
