@@ -287,7 +287,7 @@ class madModelController extends madFormController {
         $row = $select->fetch( PDO::FETCH_ASSOC );
 
         $object = new madModelObject( $row );
-        $object['namespace'] = $table;
+        $object['namespace'] = $this->framework->routeConfiguration['table'];
         $this->result->variables['object'] = $object;
         $this->result->variables['contexts'][] = $object['namespace'];
     }

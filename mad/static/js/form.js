@@ -2,10 +2,10 @@ $(document).ready( function(  ) {
     $( 'form.uniForm input:first' ).focus(  );
     $( 'button.formset_add' ).click( function( e ) {
         e.preventDefault(  );
-        var table = $(this).parent().children('table');
+        var table = $(this).prev();
         var count = table.children('tbody').children('tr').length;
         var next = count;
-        var tr = $(this).parent().children('table').children('tbody').children('tr:first').clone().appendTo(table);
+        var tr = table.children('tbody').children('tr:first').clone();
 
         tr.find('input[type=checkbox]').attr('disabled', '');
         tr.find('input[type=button]').attr('disabled', '');
@@ -36,6 +36,8 @@ $(document).ready( function(  ) {
                 })
             }
         });
+
+        tr.appendTo(table)
     });
 
 
@@ -126,4 +128,3 @@ function id_to_windowname(text) {
 function windowname_to_id(text) {
     return text;
 }
-

@@ -19,22 +19,27 @@ class madFormController extends madController {
     }
 
     public function preCreateResult(  ) {
-        $this->requestFormName = str_replace( '.', '_', $this->framework->routeConfiguration['form'] );
-        $this->formName = $this->framework->routeConfiguration['form'];
-        $this->routeConfiguration = $this->framework->routeConfiguration;
+        parent::preCreateResult();
 
-        if ( !empty( $this->request->variables[$this->requestFormName] ) ) {
-            $this->data = new madObject( $this->request->variables[$this->requestFormName] );
-        } else {
-            $this->data = array(  );
-        }
+        if ( $this->action == 'form' ) {
+            $this->requestFormName = str_replace( '.', '_', $this->framework->routeConfiguration['form'] );
+            $this->formName = $this->framework->routeConfiguration['form'];            
+        
+            if ( !empty( $this->request->variables[$this->requestFormName] ) ) {
+                $this->data = new madObject( $this->request->variables[$this->requestFormName] );
+            } else {
+                $this->data = array(  );
+            }
+            
+            if ( $this->formName && !empty( $this->framework->configuration['forms'][$this->formName] ) ) {
+                $this->formConfiguration = $this->framework->configuration['forms'][$this->formName];
+                $this->formMeta = $this->formConfiguration['META'];
+                unset( $this->formConfiguration['META'] );
+            } else {
+                $this->formConfiguration = array(  );
+            }
 
-        if ( $this->formName && !empty( $this->framework->configuration['forms'][$this->formName] ) ) {
-            $this->formConfiguration = $this->framework->configuration['forms'][$this->formName];
-            $this->formMeta = $this->formConfiguration['META'];
-            unset( $this->formConfiguration['META'] );
-        } else {
-            $this->formConfiguration = array(  );
+            array_unshift( $this->result->variables['contexts'], $this->formName );
         }
     }
 
@@ -120,8 +125,8 @@ class madFormController extends madController {
             if ( isset( $this->request->variables['popup'] ) ) {
                 $this->result->variables['responseBody'] = sprintf( 
                     '<script type="text/javascript">opener.dismissAddAnotherPopup( window, "%s", "%s" );</script>',
-                    $this[$this->request->variables['valueAttribute']],
-                    $this[$this->request->variables['displayAttribute']]
+                    $this->processedData[$this->valueAttribute],
+                    $this->processedData[$this->displayAttribute]
                 );
             } else {
                 $this->result->status = new ezcMvcExternalRedirect( madFramework::url(
@@ -227,11 +232,12 @@ class madFormController extends madController {
                 }
                 $this->currentFormSet = false;
             } else {
-                $value = isset( $this->data[$attribute['name']] ) ? $this->data[$attribute['name']] : null;
+               $value = isset( $this->data[$attribute['name']] ) ? $this->data[$attribute['name']] : null;
                $this->processAttribute( $attribute, $value );
             }
         }
-        
+
+
         $this->processedData->clean();
     }
 

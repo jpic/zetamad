@@ -336,7 +336,7 @@ class madObject extends ArrayObject {
         // internal position is no longer valid
         $unst = array(  );
 
-        foreach( $this as $key => $value ) {
+        foreach( (array)$this as $key => $value ) {
             // unset empty attributes
             if ( $value === '' ) {
                 $unst[] = $key;

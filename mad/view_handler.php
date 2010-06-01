@@ -411,7 +411,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             }
         }
 
-        $html[] = $this->$widgetRenderer( &$attribute );
+        $html[] = $this->$widgetRenderer( $attribute );
     
         if ( !empty( $attribute['help'] ) ) {
             $html[] = '<p class="formHint">' . $this->ucfirst( $attribute['help'] ) . '</p>';

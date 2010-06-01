@@ -315,7 +315,7 @@ class madPdo extends PDO {
     }
 
     public function prepareInsertSet( $sql, $table, $cleanWhitespace = true ) {
-        $statement = new madPDOStatementWrapper( &$this->schemalessTables, $this );
+        $statement = new madPDOStatementWrapper( $this->schemalessTables, $this );
         
         // copy and cut the query
         $tokens = $this->tokenize( $sql, $cleanWhitespace );

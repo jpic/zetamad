@@ -32,7 +32,7 @@ function defaultView( $configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'defaultView' );
 
-function defaultRails( &$configuration ) {
+function defaultRails( $configuration ) {
     foreach( $configuration['routes'] as $routeName => &$route ) {
         if ( empty( $route['rails'] ) && empty( $route['regexp'] ) ) {
             $route['rails'] = "/{$route['action']}";
@@ -41,7 +41,7 @@ function defaultRails( &$configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'defaultRails' );
 
-function defaultTemplate( &$configuration ) {
+function defaultTemplate( $configuration ) {
     foreach( $configuration['routes'] as $routeName => &$route ) {
         if ( empty( $route['template'] ) ) {
             $route['template'] = $routeName . '.php';
@@ -143,16 +143,20 @@ function findClasses( $configuration ) {
         }
     }
 }
-$this->connectSignal( 'postConfigurationRefresh', 'findClasses' );
+//$this->connectSignal( 'postConfigurationRefresh', 'findClasses' );
 
-function stripTrailingSlashes( &$array ) {
-    foreach( $array as $name => $value ) {
-        if ( is_array( $value ) || $value instanceof Traversable ) {
-            stripTrailingSlashes( $value );
-        } else {
-            $value = substr( $value, -1 ) == '/' ? substr( $value, 0, -1 ) : $value;
+function stripTrailingSlashes( $configuration ) {
+    function doStripTrailingSlashes( &$array ) {
+        foreach( $array as $name => $value ) {
+            if ( is_array( $value ) || $value instanceof Traversable ) {
+                doStripTrailingSlashes( $value );
+            } else {
+                $value = substr( $value, -1 ) == '/' ? substr( $value, 0, -1 ) : $value;
+            }
         }
     }
+
+    doStripTrailingSlashes( $configuration );
 }
 $this->connectSignal( 'postConfigurationRefresh', 'stripTrailingSlashes' );
 
@@ -195,7 +199,7 @@ function findStaticFiles( $configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'findStaticFiles' );
 
-function allPathsRelative( &$configuration ) {
+function allPathsRelative( $configuration ) {
     foreach( $configuration as $key => $value ) {
         if ( is_array( $value ) || $value instanceof madObject ) {
             allPathsRelative( $value );
@@ -208,7 +212,7 @@ function allPathsRelative( &$configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'allPathsRelative' );
 
-function setDefaultWidgets( &$configuration ) {
+function setDefaultWidgets( $configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
         foreach( $form as $fieldName => $field ) {
             if ( isset( $field['value'] ) ) {
@@ -243,7 +247,7 @@ function setDefaultWidgets( &$configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'setDefaultWidgets' );
 
-function setDefaultFieldNames( &$configuration ) {
+function setDefaultFieldNames( $configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
         foreach( $form as $fieldName => $field ) {
             if ( !isset( $field['name'] ) ) {
@@ -254,7 +258,7 @@ function setDefaultFieldNames( &$configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldNames' );
 
-function setFormAttributesViewDefaultParameters( &$configuration ) {
+function setFormAttributesViewDefaultParameters( $configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
         foreach( $form as $fieldName => &$field ) {
             $field['asFormSet'] = false;
@@ -278,7 +282,7 @@ function setFormAttributesViewDefaultParameters( &$configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'setFormAttributesViewDefaultParameters' );
 
-function setDefaultFieldErrors( &$configuration ) {
+function setDefaultFieldErrors( $configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
         foreach( $form as $fieldName => $field ) {
             if ( !isset( $field['errors'] ) ) {
@@ -289,7 +293,7 @@ function setDefaultFieldErrors( &$configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldErrors' );
 
-function setDefaultFieldRequired( &$configuration ) {
+function setDefaultFieldRequired( $configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
         foreach( $form as $fieldName => $field ) {
             if ( !isset( $field['required'] ) ) {
@@ -300,7 +304,7 @@ function setDefaultFieldRequired( &$configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldRequired' );
 
-function setDefaultFieldDisplayValue( &$configuration ) {
+function setDefaultFieldDisplayValue( $configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
         foreach( $form as $fieldName => $field ) {
             if ( !isset( $field['displayValue'] ) ) {
@@ -311,7 +315,7 @@ function setDefaultFieldDisplayValue( &$configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldDisplayValue' );
 
-function setDefaultFieldClasses( &$configuration ) {
+function setDefaultFieldClasses( $configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
         foreach( $form as $fieldName => &$field ) {
             if ( !isset( $field['classes'] ) ) {
@@ -347,7 +351,7 @@ function setDefaultFieldClasses( &$configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldClasses' );
 
-function setDefaultFkNames( &$configuration ) {
+function setDefaultFkNames( $configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
         foreach( $form as $fieldName => &$field ) {
             if ( !isset( $field['relation'] ) ) {
@@ -371,7 +375,7 @@ function setDefaultFkNames( &$configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFkNames' );
 
-function setDefaultColumn( &$configuration ) {
+function setDefaultColumn( $configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
         foreach( $form as $fieldName => &$field ) {
             if ( !empty( $field['column'] ) ) {
@@ -384,24 +388,18 @@ function setDefaultColumn( &$configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'setDefaultColumn' );
 
-function setDefaultValueAttributes( &$configuration ) {
+function setDefaultValueAttributes( $configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
         foreach( $form as $fieldName => &$field ) {
-            if ( !isset( $field['displayAttribute'] ) ) {
-                continue;
+            if ( empty( $field['valueAttribute'] ) ) {
+                $field['valueAttribute'] = 'id';
             }
-
-            if ( isset( $field['valueAttribute'] ) ) {
-                continue;
-            }
-
-            $field['valueAttribute'] = 'id';
         }
     }
 }
 $this->connectSignal( 'postConfigurationRefresh', 'setDefaultValueAttributes' );
 
-function setDefaultManyToManyTableNames( &$configuration ) {
+function setDefaultManyToManyTableNames( $configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
         foreach( $form as $fieldName => &$field ) {
             if ( empty( $field['relation'] ) ) {
@@ -435,7 +433,7 @@ function setDefaultManyToManyTableNames( &$configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'setDefaultManyToManyTableNames' );
 
-function copyTemplates( &$configuration ) {
+function copyTemplates( $configuration ) {
     $templatesPath = ENTRY_APP_PATH . '/cache/templates';
     if ( is_dir( $templatesPath ) ) {
         ezcBaseFile::removeRecursive( $templatesPath );
@@ -458,14 +456,14 @@ function shortTemplateTags( $configuration ) {
     }
 
     $path = ENTRY_APP_PATH . '/cache/templates';
-    
-    $fileIterator = new RecursiveIteratorIterator( 
-        new RecursiveDirectoryIterator( 
+
+    $fileIterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator(
             $path,
             $flags
         )
     );
- 
+
     foreach( $fileIterator as $fileInfo ) {
         $template = file_get_contents( $fileInfo->getRealPath(  ) );
         $template = preg_replace( '/<?=( .*)?>/', '<?php $this->e( \1 ) ?>', $template );
@@ -473,6 +471,6 @@ function shortTemplateTags( $configuration ) {
         file_put_contents( $fileInfo->getRealPath(  ), $template );
     }
 }
-$this->connectSignal( 'shortTemplateTags', 'postConfigurationRefresh' );
+//$this->connectSignal( 'shortTemplateTags', 'postConfigurationRefresh' );
 
 ?>

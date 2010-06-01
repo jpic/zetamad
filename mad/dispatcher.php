@@ -75,11 +75,11 @@ class madHttpDispatcher {
         
         $framework->request->files = $this->monkeyFiles( $_FILES );
         
-        $framework->sendSignal( 'postParseRequest', $framework->request );
+        $framework->sendSignal( 'postParseRequest', array( $framework->request ) );
         
         $framework->router = new madRouter( $framework->request, $framework->configuration['routes'] );
         
-        $framework->sendSignal( 'postCreateRouter', $framework->request, $framework->router );
+        $framework->sendSignal( 'postCreateRouter', array( $framework->request, $framework->router ) );
         
         $framework->routingInformation = $framework->router->getRoutingInformation();
 
@@ -89,7 +89,7 @@ class madHttpDispatcher {
         $framework->controller = $this->createRouteController( $framework );
         $framework->result = $framework->controller->createResult();
 
-        $framework->sendSignal( 'postCreateResult', $framework->request, $framework->result );
+        $framework->sendSignal( 'postCreateResult', array( $framework->request, $framework->result ) );
 
         $framework->response = $this->createResponse( $framework );
         
@@ -135,6 +135,9 @@ class madHttpDispatcher {
             }
 
             $template = ENTRY_APP_PATH . '/cache/templates/' . $framework->routeConfiguration['template'];
+            if ( !empty( $framework->result->variables['form'] ) && !file_exists($template) ) {
+                $template = ENTRY_APP_PATH . '/cache/templates/forms/' . $framework->result->variables['form']->formName . '.php';
+            }
             if ( !file_exists($template) ) {
                 $template = ENTRY_APP_PATH . '/cache/templates/' . $framework->routeConfiguration['META']['application']. '.'. $framework->routeConfiguration['action'] . '.php';
             }

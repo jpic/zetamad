@@ -87,7 +87,7 @@ class madFramework {
             // connect signals
             $this->setupApplications(  );
             // allow connected functions to visit it befoere it is written
-            $this->sendSignal( 'postConfigurationRefresh', $this->configuration );
+            $this->sendSignal( 'postConfigurationRefresh', array( &$this->configuration ) );
             // cache the parsed configuration for performances
             $this->configuration->write( $this->entryApplicationPath . '/cache/etc' );
         } else {
@@ -103,7 +103,7 @@ class madFramework {
             $this->locale->refresh( $this->entryApplicationPath, array_keys( (array)$this->configuration['applications'] ), 'locale' );
             // no need for application configuration in the locale confiuration
             unset( $this->locale['applications'] );
-            $this->sendSignal( 'postLocaleRefresh', $this->locale );
+            $this->sendSignal( 'postLocaleRefresh', array( $this->locale ) );
 
             if ( !is_dir( $this->entryApplicationPath . '/cache/locale' ) ) {
                 mkdir( $this->entryApplicationPath . '/cache/locale' );
@@ -118,7 +118,7 @@ class madFramework {
             $this->refreshBin(  );
         }
 
-        if ( $this->sendSignal( 'preSetupDatabase', $this ) ) {
+        if ( $this->sendSignal( 'preSetupDatabase', array( $this ) ) ) {
             $this->setupDatabase(  );
         } else {
             if ( !isset( $this->pdo ) ) {
@@ -126,13 +126,13 @@ class madFramework {
             }
         }
         
-        $this->sendSignal( 'preSetupModel', $this );
+        $this->sendSignal( 'preSetupModel', array( $this ) );
 
         if ( $this->applications['mad']['refreshDatabase'] ) {
             $this->model->applyConfiguration(  );
         }
 
-        $this->sendSignal( 'postBootstrap', $this );
+        $this->sendSignal( 'postBootstrap', array( $this ) );
 
         if ( !isset( $_SESSION ) ) {
             session_start(  );
@@ -454,6 +454,8 @@ class madFramework {
         $finalDictionnary = array(  );
 
         if ( method_exists( $dictionnary, 'flatten' ) ) {
+            // don't pollute argument
+            $dictionnary = clone $dictionnary;
             $dictionnary->flatten( false );
         }
 
@@ -598,11 +600,7 @@ class madFramework {
 
         $this->signals[$name][] = $callback;
     }
-    public function sendSignal(  ) {
-
-        $arguments = func_get_args(  );
-        $signal = array_shift( $arguments );
-
+    public function sendSignal( $signal, array $arguments = array() ) {
         if ( !isset( $this->signals[$signal] ) ) {
             return true;
         }
@@ -614,7 +612,7 @@ class madFramework {
         $return = true;
 
         foreach( $this->signals[$signal] as $callback ) {
-            $result = madFramework::arrayCall( $callback, $arguments );
+            $result = call_user_func_array( $callback, $arguments );
 
             if ( !$result ) {
                 $return = false;
@@ -624,31 +622,5 @@ class madFramework {
         return $result;
     }
     # }}}
-
-    static public function call(  ) {
-        $arguments = func_get_args(  );
-        $callback  = array_shift( $arguments );
-
-        self::arrayCall($callback, $arguments);
-    }
-
-    static public function arrayCall( $callback, $arguments ) {
-        switch( count( $arguments ) ) {
-            case 0:
-                return call_user_func( $callback );
-            case 1:
-                return call_user_func( $callback, $arguments[0] );
-            case 2:
-                return call_user_func( $callback, $arguments[0], $arguments[1] );
-            case 3:
-                return call_user_func( $callback, $arguments[0], $arguments[1], $arguments[2] );
-            case 4:
-                return call_user_func( $callback, $arguments[0], $arguments[1], $arguments[2], $arguments[3] );
-            case 5:
-                return call_user_func( $callback, $arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4] );
-            default:
-                return call_user_func_array( $callback, $arguments );
-        }
-    }
 }
 ?>

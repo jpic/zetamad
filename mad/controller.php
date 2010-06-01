@@ -17,19 +17,7 @@ abstract class madController extends ezcMvcController {
         $this->controllers[$name] = $controller;
     }
 
-    public function prepareResult(  ) {
-        $this->result = new ezcMvcResult;
-        $this->result->content = new ezcMvcResultContent;
-        $this->result->variables['contexts'] = array(
-            $this->framework->routeConfiguration['META']['application'] . '.' . $this->framework->routeConfiguration['name'],
-            $this->framework->routeConfiguration['META']['application'],
-            $this->framework->routeConfiguration['name'],
-        );
-    }
-
     public function createResult() {
-        $this->prepareResult(  );
-
         $this->preCreateResult();
 
         foreach( $this->controllers as $controller ) {
@@ -55,7 +43,13 @@ abstract class madController extends ezcMvcController {
     }
 
     public function preCreateResult(  ) {
-        return false;
+        $this->result = new ezcMvcResult;
+        $this->result->content = new ezcMvcResultContent;
+        $this->result->variables['contexts'] = array(
+            $this->framework->routeConfiguration['META']['application'] . '.' . $this->framework->routeConfiguration['name'],
+            $this->framework->routeConfiguration['META']['application'],
+            $this->framework->routeConfiguration['name'],
+        );
     }
 
     public function postCreateResult(  ) {
