@@ -80,39 +80,29 @@ a.btn-block:hover { background: #539893; }
         <li><a href="">au hasard</a></li>
 </ul>
 -->
-
-<?php var_dump($this->object->categorySet); return true ?>
-
+<?php var_dump($this->pictures, $this->object) ?>
 <div class="object">
         <div class="object-left">
-            <?php if ( isset( $this->object['picture'] ) ): ?>
+            <?php if ( !empty( $this->pictures ) ): ?>
             <div id="object-photo">
-                <a class="thickbox" href="<?php echo $this->getAbsoluteUploadUrl( $this->object['picture'] ) ?>" title="<?php $this->e( $this->object['title'] ) ?>">
-    			    <img src="<?php echo $this->thumbnail( $this->object['picture'], 300, 300 ); ?>" alt="<?php $this->e( $this->object['title'] ) ?>" style="margin:4px 0 0; vertical-align:baseline;" id="bigpic" />
+                <a class="thickbox" href="<?php echo $this->getAbsoluteUploadUrl( $this->pictures[0]['picture'] ) ?>" title="<?php $this->e( $this->object['title'] ) ?>">
+                    <img src="<?php echo $this->thumbnail( $this->pictures[0]['picture'], 300, 300 ); ?>" alt="<?php $this->e( $this->pictures[0]['title'] ) ?>" style="margin:4px 0 0; vertical-align:baseline;" id="bigpic" />
                 </a>
-    			<?php if ( isset( $this->object['otherPictures'] ) && count( $this->object['otherPictures'] ) ): ?>
                 <div id="object-ths">
-                    <div class="object-th">
-    					<a rel="other-views" href="<?php echo $this->getAbsoluteUploadUrl( $this->object['picture'] ) ?>" class="thickbox">
-                            <img alt="<?php $this->e( $this->object['title'] ) ?>" src="<?php echo $this->thumbnail( $this->object['picture'], 45, 45 ) ?>" id="thumb_main">
-                        </a>
-    				</div>
-    				<?php foreach( $this->iterate( $this->object['otherPictures'] ) as $key => $picture ): ?>
+                    <?php foreach( $this->pictures as $key => $picture ): ?>
                     <?php
                     /* prepare 300x300 thumbnail called by javacript */
-                    $this->thumbnail( $picture, 300, 300 );
+                    $this->thumbnail( $picture['picture'], 300, 300 );
                     ?>
                     <div class="object-th">
-    					<a rel="other-views" href="<?php echo $this->getAbsoluteUploadUrl( $picture ) ?>" class="thickbox">
-                            <img alt="<?php $this->e( $this->object['title'] ) ?>" src="<?php echo $this->thumbnail( $picture, 45, 45 ) ?>" id="thumb_<?php echo $key ?>">
+                        <a rel="other-views" href="<?php echo $this->getAbsoluteUploadUrl( $picture['picture'] ) ?>" class="thickbox">
+                            <img alt="<?php $this->e( $picture['title'] ) ?>" src="<?php echo $this->thumbnail( $picture['picture'], 45, 45 ) ?>" id="thumb_<?php echo $key ?>">
                         </a>
-    				</div>
+                    </div>
                     <?php endforeach ?>
-    	    		<div class="clear"></div>
-    			</div>
-                <?php endif ?>
-			
-    		</div>
+                    <div class="clear"></div>
+                </div>
+            </div>
             <?php endif ?>
 	    
 	<div style="float: right; margin-bottom: 10px;">

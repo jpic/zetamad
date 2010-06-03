@@ -12,10 +12,12 @@ class madFormController extends madController {
     public $formMeta = array(  );
     public $isFormSet = false;
     public $currentFormSet = false;
+    public $errors = array();
 
     public function __construct( $framework ) {
         parent::__construct( $framework );
         $this->processedData = new madObject(  );
+        $this->data = new madObject();
     }
 
     public function preCreateResult(  ) {
@@ -24,12 +26,6 @@ class madFormController extends madController {
         if ( $this->action == 'form' ) {
             $this->requestFormName = str_replace( '.', '_', $this->framework->routeConfiguration['form'] );
             $this->formName = $this->framework->routeConfiguration['form'];            
-        
-            if ( !empty( $this->request->variables[$this->requestFormName] ) ) {
-                $this->data = new madObject( $this->request->variables[$this->requestFormName] );
-            } else {
-                $this->data = array(  );
-            }
             
             if ( $this->formName && !empty( $this->framework->configuration['forms'][$this->formName] ) ) {
                 $this->formConfiguration = $this->framework->configuration['forms'][$this->formName];
@@ -40,6 +36,24 @@ class madFormController extends madController {
             }
 
             array_unshift( $this->result->variables['contexts'], $this->formName );
+
+            $this->initFormConfiguration();
+        }
+    }
+
+    public function initFormConfiguration() {
+        foreach( $this->formConfiguration as $name => &$attribute ) {
+            if ( isset( $attribute['relation'] ) && $attribute['relation'] == 'reverseFk' ) {
+                $attribute['form'] = madFormController::formsetFactory(
+                    $attribute,
+                    isset( $this->data[$name] ) ? $this->data[$name] : array()
+                );
+                $attribute['form']->requestFormName = sprintf( '%s[%s]', $this->requestFormName, $attribute['name'] );
+                $attribute['parentForm'] = $this;
+            } else {
+                $attribute['form'] = $this;
+                $attribute['parentForm'] = $this;
+            }
         }
     }
 
@@ -55,7 +69,11 @@ class madFormController extends madController {
         
         $controller = new madFormController( $framework );
         $controller->isFormSet = true;
-        $controller->data = $data;
+        $controller->data = is_array( $data ) ? new madObject( $data) : $data;
+
+        if ( !count( $controller->data ) ) {
+            $controller->data = new madObject( array( array() ) );
+        }
 
         if ( isset( $attribute['formName'] ) ) {
             $controller->formName = $attribute['formName'];
@@ -75,19 +93,63 @@ class madFormController extends madController {
             $controller->formName = "multi_$name";
         }
 
+        $controller->initFormConfiguration();
+
         return $controller;
     }
 
     public function doForm(  ) {
+        if ( isset( $this->id ) )  {
+            // edit mode
+            $this->mergePersistentData();
+        }
+
         if ( $this->request->protocol == 'http-post' ) {
             $this->mergeRequestData(  );
             $this->process(  );
 
-            if ( true /*$this->isValid*/ ) {
+            if ( $this->isValid ) {
                 $this->save(  );
             }
         } else {
             $this->process(  );
+        }
+    }
+
+    public function mergePersistentData( $relationAttribute = null ) {
+        $table = $this->formConfiguration['namespace']['value'];
+        if ( is_null( $relationAttribute ) ) {
+            // @todo: sql rewriter still doesn't rewrite id in where clause
+            $sql = "select * from $table where $table.id = :id";
+            $arguments = $this->request->variables;
+        } else {
+            $fk = $relationAttribute['fkName'];
+            $sql = "select * from $table where $fk = :id";
+            $arguments = $relationAttribute['parentForm']->data;
+        }
+
+        $rows = madFramework::query( $sql, $arguments );
+        
+        $this->data->merge( $this->isFormSet ? $rows : $rows[0] );
+
+        if ( $this->isFormSet ) {
+            foreach( $this->data as $key => $row ) {
+                $this->processedData[$key]['id'] = $row['id'];
+            }
+        } else {
+            $this->processedData['id'] = $this->data['id'];
+        }
+
+        foreach( $this->formConfiguration as &$attribute ) {
+            if ( empty( $attribute['relation'] ) ) {
+                continue;
+            }
+
+            if ( $attribute['relation'] == 'reverseFk' ) {
+                $attribute['form']->mergePersistentData( $attribute );
+
+                $this->data[$attribute['name']] = $attribute['form']->data;
+            }
         }
     }
 
@@ -130,67 +192,11 @@ class madFormController extends madController {
                 );
             } else {
                 $this->result->status = new ezcMvcExternalRedirect( madFramework::url(
-                        $this->routeConfiguration['successRoute'],
-                        $this->processedData
+                        $this->framework->routeConfiguration['successRoute'],
+                        $this->processedData->flatten()
                 ) );
             }
         }
-    }
-
-    public function save() {
-        // for some reason this doesn't work:
-        // $processedData =& $this->isFormSet ? $this->processedData : array( &$this->processedData );
-        if ( $this->isFormSet ) {
-            $processedData = $this->processedData;
-        } else {
-            $processedData = array( &$this->processedData );
-        }
-
-        // save this to get pk for relations
-        foreach( $processedData as $key => &$row ) {
-            if ( !$row ) {
-                continue;
-            }
-            
-            madModelController::saveArray( $row );
-
-            // set the id to reverseFks
-            foreach( $this->formConfiguration as $attribute ) {
-                if ( empty( $attribute['relation'] ) ) {
-                    continue;
-                }
-                
-                if ( !isset( $this->processedData[$attribute['name']] ) ) {
-                    continue;
-                }
-        
-                if ( $attribute['relation'] == 'reverseFk' ) {
-                    if ( $attribute['form']->isFormSet ) {
-                        foreach( $attribute['form']->processedData as $subKey => &$subRow ) {
-                            $subRow[$attribute['fkName']] = $row['id'];
-                        }
-                    } else {
-                        $attribute['form']->processedData[$attribute['fkName']] = $row['id'];
-                    }
-
-                    $attribute['form']->save(  );
-                }
-
-                if ( $attribute['relation'] == 'manyToMany' ) {
-                    foreach( $row[$attribute['name']] as $relatedId ) {
-                        $relation = array( 
-                            'namespace' => $attribute['relationNamespace'],
-                            $attribute['leftRelationAttribute'] => $row['id'],
-                            $attribute['rightRelationAttribute'] => $relatedId,
-                        );
-
-                        madModelController::saveArray( $relation );
-                    }
-                }
-            }
-        }
-
-        $this->isSuccessfull = true;
     }
 
     public function mergeRequestData(  ) {
@@ -203,25 +209,20 @@ class madFormController extends madController {
         }
 
         $this->data->clean();
+
     }
 
     public function process(  ) {
         foreach( $this->formConfiguration as $name => &$attribute ) {
             if ( isset( $attribute['relation'] ) && $attribute['relation'] == 'reverseFk' ) {
-                $attribute['form'] = madFormController::formsetFactory( 
-                    $attribute,
-                    isset( $this->data[$name] ) ? $this->data[$name] : array()
-                );
-                $attribute['form']->requestFormName = sprintf( '%s[%s]', $this->requestFormName, $attribute['name'] );
+                if ( !empty( $this->data[$name] ) ) {
+                    $attribute['form']->data = $this->data[$name];
+                }
                 $attribute['form']->process(  );
-                $attribute['parentForm'] = $this;
 
                 $this->processedData[$name] = $attribute['form']->processedData;
                 $this->isValid = $attribute['form']->isValid ? $this->isValid : false;
                 continue;
-            } else {
-                $attribute['form'] = $this;
-                $attribute['parentForm'] = $this;
             }
 
             if ( $this->isFormSet ) {
@@ -236,7 +237,6 @@ class madFormController extends madController {
                $this->processAttribute( $attribute, $value );
             }
         }
-
 
         $this->processedData->clean();
     }
@@ -255,7 +255,7 @@ class madFormController extends madController {
             $slug = madFramework::slugify( $phrase );
 
             $this->processedData( $attribute, $slug );
-        } elseif ( $attribute['widget'] == 'file' && $value instanceof ezcMvcRequestFile ) {
+        } elseif ( in_array( $attribute['widget'], array( 'file', 'image' ) ) && $value instanceof ezcMvcRequestFile ) {
             $fileName = iconv( 'utf-8', 'us-ascii//TRANSLIT', $value->name );
 
             $uploadDir = madFramework::getPath( 'applications', 'mad', 'uploadDir' );
@@ -273,7 +273,7 @@ class madFormController extends madController {
             if ( move_uploaded_file( $value->tmpPath, $uploadTo ) ) {
                 $this->processedData( $attribute, $fileName );
             } else {
-                $this->attributeError( $attribute, 'move uploaded file failed' );
+                $this->attributeError( $attribute, $value, 'move uploaded file failed' );
             }
         } elseif ( isset( $attribute['query'] ) ) {
             $attribute['rows'] = madFramework::query( $attribute['query'] );
@@ -291,7 +291,7 @@ class madFormController extends madController {
 
             foreach ( $values as $check ) {
                 if ( !isset( $attribute['choices'][$check] ) ) {
-                    return $this->attributeError( $attribute, 'value not in query' );
+                    return $this->attributeError( $attribute, $value, 'value not in query' );
                 }
             }
 
@@ -301,9 +301,7 @@ class madFormController extends madController {
         }
     }
 
-    public function processedData( $attribute, $value ) {
-        $attribute['displayValue'] = $value;
-
+    public function processedData( &$attribute, $value ) {
         if ( $this->isFormSet ) {
             if ( !isset( $this->processedData[$this->currentFormSet] ) ) {
                 $this->processedData[$this->currentFormSet] = array(  );
@@ -314,14 +312,77 @@ class madFormController extends madController {
         }
     }
 
-    public function attributeError( $attribute, $error ) {
-        if ( !isset( $attribute['errors'] ) ) {
-            $attribute['errors'] = array(  );
+    public function attributeError( &$attribute, $value, $error ) {
+        if ( $this->isFormSet ) {
+            if ( !isset( $this->errors[$this->currentFormSet] ) ) {
+                $this->errors[$this->currentFormSet] = array();
+            }
+
+            $this->errors[$this->currentFormSet][$attribute['name']] = $error;
+        } else {
+            $this->errors[$attribute['name']] = $error;
         }
 
-        $attribute['errors'][] = $error;
         $this->isValid = false;
     }
+
+
+    public function save() {
+        // for some reason this doesn't work:
+        // $processedData =& $this->isFormSet ? $this->processedData : array( &$this->processedData );
+        if ( $this->isFormSet ) {
+            $processedData = $this->processedData;
+        } else {
+            $processedData = array( &$this->processedData );
+        }
+
+        // save this to get pk for relations
+        foreach( $processedData as $key => &$row ) {
+            if ( !$row ) {
+                continue;
+            }
+
+            madModelController::saveArray( $row );
+
+            // set the id to reverseFks
+            foreach( $this->formConfiguration as $attribute ) {
+                if ( empty( $attribute['relation'] ) ) {
+                    continue;
+                }
+
+                if ( !isset( $this->processedData[$attribute['name']] ) ) {
+                    continue;
+                }
+
+                if ( $attribute['relation'] == 'reverseFk' ) {
+                    if ( $attribute['form']->isFormSet ) {
+                        foreach( $attribute['form']->processedData as $subKey => &$subRow ) {
+                            $subRow[$attribute['fkName']] = $row['id'];
+                        }
+                    } else {
+                        $attribute['form']->processedData[$attribute['fkName']] = $row['id'];
+                    }
+
+                    $attribute['form']->save(  );
+                }
+
+                if ( $attribute['relation'] == 'manyToMany' ) {
+                    foreach( $row[$attribute['name']] as $relatedId ) {
+                        $relation = array(
+                            'namespace' => $attribute['relationNamespace'],
+                            $attribute['leftRelationAttribute'] => $row['id'],
+                            $attribute['rightRelationAttribute'] => $relatedId,
+                        );
+
+                        madModelController::saveArray( $relation );
+                    }
+                }
+            }
+        }
+
+        $this->isSuccessfull = true;
+    }
+
 }
 
 ?>

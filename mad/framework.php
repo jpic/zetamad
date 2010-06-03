@@ -498,8 +498,28 @@ class madFramework {
         return $prefix . $framework->router->generateUrl( $name, (array) $arguments );
     }
 
-    static public function query( $sql ) {
-        return madFramework::instance(  )->pdo->query( $sql )->fetchAll( PDO::FETCH_ASSOC );
+    static public function query( $sql, $arguments = null ) {
+        if (is_null($arguments)) {
+            return madFramework::instance(  )->pdo->query( $sql )->fetchAll( PDO::FETCH_ASSOC );
+        } else {
+            $query = madFramework::instance(  )->pdo->prepare( $sql );
+
+            if (is_object($arguments)) {
+                $arguments = clone $arguments;
+            } else {
+                // copy
+                $arguments = $arguments;
+            }
+
+            foreach( array_keys((array)$arguments) as $key) {
+                if (strpos($sql, ":$key" ) === false) {
+                    unset($arguments[$key]);
+                }
+            }
+
+            $query->execute( $arguments );
+            return $query->fetchAll( PDO::FETCH_ASSOC );
+        }
     }
 
     static public function translate( $key, $dictionnary = array(), $contexts = array() ) {

@@ -2,7 +2,7 @@ $(document).ready( function(  ) {
     $( 'form.uniForm input:first' ).focus(  );
     $( 'button.formset_add' ).click( function( e ) {
         e.preventDefault(  );
-        var table = $(this).prev();
+        var table = $(this).prev(  );
         var count = table.children('tbody').children('tr').length;
         var next = count;
         var tr = table.children('tbody').children('tr:first').clone();

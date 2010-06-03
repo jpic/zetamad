@@ -184,6 +184,11 @@ class madPdo extends PDO {
        
         // rewrite columns
         foreach ( $tokens as $key => $token ) {
+            // hack because id is not a registered column in $this->schemalessTables
+            if ( $token == 'id' && count( $from ) == 1 && $querySection == 'select' ) {
+                $tokens[$key] = "`{$from[0]}`.`id`";
+            }
+
             if ( in_array( strtolower( $token ), $this->querysections ) ) {
                 $querySection = $token;
             }
@@ -211,11 +216,6 @@ class madPdo extends PDO {
                     $tokens[$key] = '`'. $subToken . '`.*';
                     return $this->rewriteSelect( implode( '', $tokens ) );
                 }
-            }
-
-            // hack because id is not a registered column in $this->schemalessTables
-            if ( $token == 'id' && count( $from ) == 1 && $querySection == 'select' ) {
-                $tokens[$key] = "`{$from[0]}`.`id`";
             }
 
 
@@ -257,6 +257,10 @@ class madPdo extends PDO {
 
                     if ( preg_match( "/`?$schemalessTable`?\\.`?$column`?/", $token ) ) {
                         $rewrite = true;
+                    }
+
+                    if ( preg_match( "/(`?$schemalessTable`?\\.)?`?id`?$/", $token) ) {
+                        $rewrite = false;
                     }
 
                     if ( $rewrite ) {
@@ -351,11 +355,13 @@ class madPdo extends PDO {
             $statement->objects[] = $createStatement;
             unset( $createStatement );
         }
-   
-        $insertStatement = parent::prepare( "INSERT INTO $table VALUES()" );
-        $insertStatement->insertsSchemalessRow = true;
-        $statement->objects[] = $insertStatement;
-        unset( $insertStatement );
+
+        if ( !isset( $data['id'] ) ) {
+            $insertStatement = parent::prepare( "INSERT INTO $table VALUES()" );
+            $insertStatement->insertsSchemalessRow = true;
+            $statement->objects[] = $insertStatement;
+            unset( $insertStatement );
+        }
 
         foreach( $data as $column => $value ) {
             if ( !isset( $this->schemalessTables[$table] ) || !in_array( $column, $this->schemalessTables[$table] ) ) {

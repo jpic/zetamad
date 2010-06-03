@@ -318,11 +318,11 @@ $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldDisplayValue' 
 function setDefaultFieldClasses( $configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
         foreach( $form as $fieldName => &$field ) {
-            if ( !isset( $field['classes'] ) ) {
+            if ( empty( $field['classes'] ) ) {
                 $field['classes'] = array(  );
             }
 
-            if ( !isset( $field['widget'] ) ) {
+            if ( empty( $field['widget'] ) ) {
                 continue;
             }
 
