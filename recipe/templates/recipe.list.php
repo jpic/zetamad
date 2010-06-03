@@ -16,7 +16,7 @@
 #center_column .recipe-details a:hover { color: #DE5161; }
 #center_column .recipe-details a.editprofil { float: left; color: #DE5161; font-size: 10px; font-weight: normal; display: block; _height: 20px; line-height: 20px; }
 #center_column .recipe-details a.editrecipe { float: right; color: #DE5161; font-size: 10px; font-weight: normal; display: block; _height: 20px; line-height: 20px; }
-#center_column .recipe-details a.editrecipe:hover, #center_column .recipe-details a.editprofil:hover { text-decoration: underline; }
+#center_column .recipe-details a.editrecipe:hover, #center_column .recipe-details a.editprofil:hover { text-decoration: underline;  }
 #center_column .recipe-block p.link { padding: 5px 0; color: #b0aaac; font-size: 10px; font-family: Verdana;}
 #center_column .recipe-block div.adminpanel { margin: 5px 0; padding-top: 5px; border-top: 1px solid #dadada;}
 #center_column .recipe-details { border: 1px solid #d3d3d3; padding: 5px; overflow: hidden; height: 280px; }
@@ -50,9 +50,9 @@
 <div class="recipe-block" <?php if( $forloopCounter % 4 == 0 ): ?> style="padding-right: 0; margin-left: 1px;"<?php endif; ?> <?php if( $forloopCounter % 3 == 0 ): ?> style="margin-left: 1px;"<?php endif; ?>>
 	<!--<p class="link">remipathier.cookingfor.com</p>-->
 	<div class="recipe-details">
-		<?php if ( isset( $object['picture'] ) ): ?>
+		<?php if ( !empty( $object['picture'] ) ): ?>
 		    <a href="<?php echo $this->url( 'recipe.details', $object ) ?>">
-			    <img class="picture" src="<?php echo $this->thumbnail( $object['picture'], 226, 226 ) ?>" />
+                        <img class="picture" src="<?php echo $this->thumbnail( $object['picture'], 226, 226 ) ?>" alt="<?php $this->e( empty($object['picture_title']) ? $object['title'] : $object['picture_title'] ) ?>" />
 		</a>
 		<?php endif ?>
 	
@@ -62,13 +62,11 @@
 				</a>
 			</p>
 	
-		<?php if ( isset( $object['profile'] ) ): ?>
 		<p class="author">
-			<a href="<?php echo $this->url( 'profile.details', $object['profile'] ) ?>">
-				<?php echo $object['profile']['name'] ?>
-			</a>
+                    <a href="<?php echo $this->url( 'profile.details', array( 'slug' => $object['profile_slug'] ) ) ?>" title="<?php $this->e( $object['profile_name'] ) ?>">
+                        <?php echo $object['profile_name'] ?> &bull;
+                    </a>
 		</p>
-		<?php endif ?>
         <?php if ( isset( $this->user ) && isset( $this->user['role'] ) && $this->user['role'] == 'administrator' ): ?>
 		<div class="adminpanel">
 			<?php if ( isset( $object['profile'] ) ): ?>

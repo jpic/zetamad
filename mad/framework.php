@@ -505,20 +505,21 @@ class madFramework {
             $query = madFramework::instance(  )->pdo->prepare( $sql );
 
             if (is_object($arguments)) {
-                $arguments = clone $arguments;
+                $arguments = (array) $arguments;
             } else {
                 // copy
                 $arguments = $arguments;
             }
 
-            foreach( array_keys((array)$arguments) as $key) {
+            foreach( array_keys($arguments) as $key) {
                 if (strpos($sql, ":$key" ) === false) {
                     unset($arguments[$key]);
                 }
             }
 
-            $query->execute( $arguments );
-            return $query->fetchAll( PDO::FETCH_ASSOC );
+            $query->execute( (array) $arguments );
+            $rows = $query->fetchAll( PDO::FETCH_ASSOC );
+            return $rows;
         }
     }
 

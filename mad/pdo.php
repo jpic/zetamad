@@ -184,6 +184,7 @@ class madPdo extends PDO {
        
         // rewrite columns
         foreach ( $tokens as $key => $token ) {
+            if ($token == 'order') xdebug_break();
             // hack because id is not a registered column in $this->schemalessTables
             if ( $token == 'id' && count( $from ) == 1 && $querySection == 'select' ) {
                 $tokens[$key] = "`{$from[0]}`.`id`";
@@ -192,11 +193,11 @@ class madPdo extends PDO {
             if ( in_array( strtolower( $token ), $this->querysections ) ) {
                 $querySection = $token;
             }
-
-            if ( $querySection == 'order' ) {
-                // no need to rewrite in order sections
-                continue;
-            }
+// For some reason i need it
+//            if ( $querySection == 'order' ) {
+//                // no need to rewrite in order sections
+//                continue;
+//            }
 
             if ( $querySection == 'select' && $token == '*' ) {
                 // figure the table, rewrite the *
@@ -364,6 +365,10 @@ class madPdo extends PDO {
         }
 
         foreach( $data as $column => $value ) {
+            if ( $column == 'id' ) {
+                continue;
+            }
+
             if ( !isset( $this->schemalessTables[$table] ) || !in_array( $column, $this->schemalessTables[$table] ) ) {
                 $createStatement = parent::prepare( "CREATE TABLE {$table}_{$column} (id INT(12), value TEXT, UNIQUE(id)) ENGINE=InnoDb" );
                 $createStatement->createColumn = array( $table, $column );

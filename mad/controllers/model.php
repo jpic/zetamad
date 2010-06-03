@@ -118,18 +118,22 @@ class madModelController extends madFormController {
         $pdo = madFramework::instance()->pdo;
 
         $sql = "select * from $table where " . implode( ' AND ', $where ) . " limit 0, 1";
-        $select = $pdo->prepare( $sql );
-        $select->execute( $arguments );
-        $row = $select->fetch( PDO::FETCH_ASSOC );
-        var_dump($sql, $row);
+        $rows = madFramework::query( $sql, $arguments );
+        $row = $rows[0];
 
         $object = new madObject( $row );
+
         $object['namespace'] = $table;
         $this->result->variables['object'] = $object;
 
         if (!empty($this->framework->routeConfiguration['queries'])) {
             foreach($this->framework->routeConfiguration['queries'] as $name => $sql ) {
-                $this->result->variables[$name] = madFramework::query( $sql, $row );
+                $this->result->variables[$name] = madFramework::query( $sql, $object );
+
+                if ( !empty( $row[$name] ) && is_numeric( $row[$name] ) ) {
+                    // assume fk
+                    $this->result->variables[$name] = $this->result->variables[$name][0];
+                }
             }
         }
 
@@ -156,6 +160,7 @@ class madModelController extends madFormController {
             );
         }
     }
+    
     static public function routeFormData( $routeName, $data ) {
         $framework = madFramework::instance();
 
