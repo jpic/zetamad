@@ -85,7 +85,7 @@ a.btn-block:hover { background: #539893; }
 		</div>
         <?php if ( isset( $this->object['sites'] ) ): ?>
 		<div id="external-links">
-			<h3>Moi sur la toile...</h3>
+			<h3>Les sites de <?php $this->e( $this->object['name'] ) ?>"</h3>
 			<ul>
                 <?php foreach( $this->iterate( $this->object['sites'] ) as $site ): ?>
 				<li><a href="http://<?php echo $site ?>"><span style="color: #232323;">&bull;</span> <?php echo $site ?></a></li>

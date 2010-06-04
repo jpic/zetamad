@@ -53,7 +53,7 @@ h3 { color: #DE5161; font-size: 14px; padding: 0; margin: 0; line-height: 18px; 
 </div>
 
 <div id="center_column">
-    <h2 class="title" style="margin-top: 5px;">Liste des chefs</h2>
+    <h2 class="title" style="margin-top: 5px;">Ils sont sur Madeleine Market</h2>
     <?php 
     $forLoop = 0;
     $last = count( $this->objectList ) - 1;
