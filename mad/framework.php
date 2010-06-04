@@ -588,39 +588,33 @@ class madFramework {
     static public function copyRecursive( $source, $destination, $depth = -1, $dirMode = 0775, $fileMode = 0664 )
     {
         // Skip non readable files in source directory
-        if ( !is_readable( $source ) )
-        {
+        if ( !is_readable( $source ) ) {
             return;
         }
 
-        // Copy
-        if ( is_dir( $source ) && !is_dir( $destination ) )
-        {
+        if ( strpos( $source, '.svn' ) !== false ) {
+            return;
+        } elseif ( is_dir( $source ) && !is_dir( $destination ) ) {
             mkdir( $destination );
             // To ignore umask, umask() should not be changed with
             // multithreaded servers...
             chmod( $destination, $dirMode );
-        }
-        elseif ( is_file( $source ) )
-        {
+        } elseif ( is_file( $source ) ) {
             copy( $source, $destination );
             chmod( $destination, $fileMode );
         }
 
         if ( ( $depth === 0 ) ||
-            ( !is_dir( $source ) ) )
-        {
+            ( !is_dir( $source ) ) ) {
             // Do not recurse (any more)
             return;
         }
 
         // Recurse
         $dh = opendir( $source );
-        while ( ( $file = readdir( $dh ) ) !== false )
-        {
+        while ( ( $file = readdir( $dh ) ) !== false ) {
             if ( ( $file === '.' ) ||
-                ( $file === '..' ) )
-            {
+                ( $file === '..' ) ) {
                 continue;
             }
 
