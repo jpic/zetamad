@@ -30,9 +30,17 @@ class madConfiguration extends madObject {
         if ( $applicationsConfiguration ) {
             $this['applications'] = $applicationsConfiguration;
         }
+    }
+
+    public function reset() {
+        if ( isset( $this->reseted ) ) {
+            return parent::reset();
+        }
+
+        var_dump( 'reset' );
 
         $files = glob( "{$this->path}/*" );
-        
+
         if ( !$files ) {
             return true;
         }
@@ -57,6 +65,26 @@ class madConfiguration extends madObject {
                     continue;
             }
         }
+
+        $this->reseted = true;
+
+        return parent::reset();
+    }
+
+    public function offsetGet( $key ) {
+        if ( parent::offsetExists( $key ) ) {
+            return parent::offsetGet($key);
+        }
+        var_dump( "parsing $key" );
+        if ( file_exists( "$this->path/$key.php" ) ) {
+            $this->parsePhp( "$this->path/$key.php" );
+        } elseif ( file_exists( "$this->path/$key.ini" ) ) {
+            $this->parseIni( "$this->path/$key.ini" );
+        } else {
+            trigger_error( "Cannot find configuration for $key in $this->path", E_USER_ERROR );
+        }
+
+        return parent::offsetGet( $key );
     }
 
     public function refreshApplications( $entryApplicationPath, $subdir = 'etc' ) {
@@ -216,6 +244,10 @@ class madConfiguration extends madObject {
             if ( $element instanceof ezcConfigurationIniItem ) {
                 switch ( $element->type ) {
                     case ezcConfigurationIniItem::GROUP_HEADER:
+                        if ( !isset( $this[$name] ) ) {
+                            $this[$name] = new madObject();
+                        }
+                        
                         if ( !isset( $this[$name][$element->group] ) ) {
                             $this[$name][$element->group] = new madObject();
                             $this[$name][$element->group]['META'] = array(
@@ -241,6 +273,9 @@ class madConfiguration extends madObject {
                             // merge does override, so the order is reversed to 
                             // start by the least specific.
                             foreach( array_reverse( $groupParts ) as $parentGroup ) {
+                                if ( !isset($this[$name])) {
+                                    $this[$name] = new madObject();
+                                }
                                 if ( !isset( $this[$name][$parentGroup] ) ) {
                                     trigger_error( "Can't inherit from a section that was not defined! Happenned with: " . $element->group, E_USER_ERROR );
                                 }
