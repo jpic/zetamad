@@ -28,7 +28,7 @@
 .object .object-right .object-header .object-author a:hover { color: #232323; }
 .object .object-right .object-header .object-intro { text-align: justify; margin-top: 10px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 11px; color: #969696; word-spacing: 0.5px; line-height: 18px;}
 .object .object-right .object-header .links-intro a { font-weight: bold; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 11px; color: #539893; border-bottom: 1px solid #969696; display: block; float: left; margin-right: 20px; margin-top: 10px;}
-.object .object-right .object-header .links-intro a:hover { color: #c21123; border-bottom: 1px solid #cf6875;}
+.object .object-right .object-header .links-intro a:hover { color: #D02F1E; border-bottom: 1px solid #cf6875;}
 .object .object-right .object-header .share-object p.lovedit { background: url('themes/mmarket/img/object-love.jpg') 0 1px no-repeat; padding-left: 15px; font-style: italic; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 11px; color: #969696; padding-bottom: 10px;}
 .object .object-right .object-header .share-object { position: absolute; bottom: 10px; left: 0; }
 
@@ -56,8 +56,8 @@
 #object-column .block li .att { color: #D02F1E; }
 #object-column .block li .object-step { text-transform: uppercase; font-weight:bold; }
 
-a.btn-block { display: block; height: 30px; width: 180px; margin: 0 auto; margin-top: 10px; text-align: center; font-size: 16px; font-style: italic; font-family: Times; color: #fff; line-height: 30px; background: #929da3; }
-a.btn-block:hover { background: #539893; }
+a.btn-block { display: block; height: 26px; width: 170px; margin: 0 auto; margin-top: 10px; text-align: center; font-size: 16px; font-style: italic; font-family: Times; color: #666; line-height: 26px; background: #f7f7f7; border: 1px solid #dadada; -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; }
+a.btn-block:hover { background: #f1f1f1; }
 </style>
 
 <div class="breadcrumb">
@@ -127,7 +127,7 @@ a.btn-block:hover { background: #539893; }
 
             <?php if ( !empty( $this->tags ) ): ?>
 		<ul id="object-tags">
-		    <li class="title">tags:</li>
+		    <li class="title">Mots clés:</li>
 		    <?php foreach( $this->tags as $tag ): ?>
 		    <li>
                         <a href="<?php $this->url( 'recipe.listByTag', $tag ) ?>" title="Recettes tagu&eacute;es <?php $this->e( $tag['name']) ?>">
@@ -145,7 +145,7 @@ a.btn-block:hover { background: #539893; }
                             <?php endif ?>
                             <?php $this->e( $this->profile['introduction'] ) ?>
                     </p>
-                    <a href="<?php echo $this->url( 'profile.details', $this->profile ) ?>" class="btn-block" style="width: 50%; float: right;">Voir le profil</a>
+                    <a title="<?php $this->e( $this->profile['name'] ) ?>" href="<?php echo $this->url( 'profile.details', $this->profile ) ?>" class="btn-block" style="width: 50%; float: right;">Voir le profil</a>
                 </div>
         </div>
         <div class="object-right">
@@ -183,7 +183,7 @@ a.btn-block:hover { background: #539893; }
                 ?>
                 <div class="object-description">
                         
-                        <div class="h3">Pr&eacute;paration</div>
+                        <?php /*<div class="h3">Pr&eacute;paration</div>*/ ?>
                         
                         <?php 
                         if ( !empty( $this->object['prepTime'] ) ||
@@ -201,9 +201,6 @@ a.btn-block:hover { background: #539893; }
                             <?php endif ?>
                             <?php if ( !empty( $this->object['restTime'] ) ): ?>
                                 <p class="object-infos-block">Repos: <span class="bold"><?php $this->e( $this->object['restTime'] ) ?></span></p>
-                            <?php endif ?>
-                            <?php if ( !empty( $this->object['yield'] ) ): ?>
-                                <p class="object-infos-block" style="margin-right: 0;">Personnes: <span class="bold"><?php $this->e( $this->object['yield'] ) ?></span></p>
                             <?php endif ?>
                         </div>
                         <?php endif ?>
@@ -228,6 +225,10 @@ a.btn-block:hover { background: #539893; }
         <div class="block">
                 <h4>Ingr&eacute;dients</h4>
                 <ul>
+		    <?php if ( !empty( $this->object['yield'] ) ): ?>
+                        <li>Pour : <span class="bold"><?php $this->e( $this->object['yield'] ) ?></span></li>
+                    <?php endif ?>
+			    
                     <?php foreach( $this->ingredientQuantities as $ingredient ): ?>
                         <li><?php $this->e( $ingredient['ingredient'] ) ?><?php if ( !empty( $ingredient['quantity'] ) ): ?> : <span class="att"><?php $this->e( $ingredient['quantity'] ) ?></span><?php endif ?></li>
                     <?php endforeach; ?>
@@ -238,7 +239,7 @@ a.btn-block:hover { background: #539893; }
 
         <?php if ( !empty( $this->ingredientProducts) ): ?>
     	<div class="block">
-    		<h4>Produits de la recette</h4>
+    		<h4>Suggestions de produits</h4>
     		<ul>
                 <?php 
                 $forloopCounter = 0;

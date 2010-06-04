@@ -21,8 +21,8 @@
 #center_column .recipe-block div.adminpanel { margin: 5px 0; padding-top: 5px; border-top: 1px solid #dadada;}
 #center_column .recipe-details { border: 1px solid #d3d3d3; padding: 5px; overflow: hidden; height: 280px; }
 #center_column .recipe-details img.picture { width: 226px; height: 226px; vertical-align: bottom; }
-#center_column .recipe-details .infos {line-height: 17px; font-weight: bold; font-family: Verdana; padding: 10px 0 0 0; }
-#center_column .recipe-details .author { color: #b0aaac; font-size: 10px; font-family: Verdana; font-weight: bold; }
+#center_column .recipe-details .infos {line-height: 18px; font-weight: bold; font-family: Verdana; padding: 10px 0 0 0; }
+#center_column .recipe-details .author { line-height: 18px; color: #b0aaac; font-size: 10px; font-family: Verdana; font-weight: bold; }
 #center_column .recipe-details .author a { color: #b0aaac; text-decoration: none; }
 #center_column .recipe-details .author a:hover { text-decoration: underline; }
 </style>
@@ -64,7 +64,7 @@
 	
 		<p class="author">
                     <a href="<?php echo $this->url( 'profile.details', array( 'slug' => $object['profile_slug'] ) ) ?>" title="<?php $this->e( $object['profile_name'] ) ?>">
-                        <?php echo $object['profile_name'] ?> &bull;
+                        <?php echo $object['profile_name'] ?>
                     </a>
 		</p>
         <?php if ( isset( $this->user ) && isset( $this->user['role'] ) && $this->user['role'] == 'administrator' ): ?>
