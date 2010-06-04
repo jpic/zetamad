@@ -2,7 +2,7 @@
 <form action="" method="post" class="uniForm" enctype="multipart/form-data">
     <?php if ( ! $this->form->isValid ): ?>
     <div id="errorMsg">
-        <h2>Pour enregistrer, révisez les valeurs des champs entourés de rouge.</h2>
+        <h2>Veuillez remplir les champs entourés de rouge.</h2>
     </div>
     <?php endif ?>
 

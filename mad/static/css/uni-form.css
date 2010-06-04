@@ -74,7 +74,7 @@
     .uniForm .inlineLabels .ctrlHolder{}
     
     .uniForm .inlineLabels label,
-    .uniForm .inlineLabels .label{ width: 45%; /* <- Required property */ margin: .3em 2% 0 0; _line-height: normal;/* <- Required property */ }
+    .uniForm .inlineLabels .label{ width: 24%; /* <- Required property */ margin: .3em 2% 0 0; _line-height: normal;/* <- Required property */ }
     
     .uniForm .inlineLabels .textInput,
     .uniForm .inlineLabels .fileUpload{ width: 45%; /* <- Required property */ }
@@ -84,7 +84,7 @@
     
     .uniForm .inlineLabels textarea{  width: 45%; /* <- Required property */ height: 12em; }
 
-    .uniForm .inlineLabels .formHint{ margin-top: 0; margin-left: 47%; font-size: 11px; color: #777; position: static; }
+    .uniForm .inlineLabels .formHint{ margin-top: 0; margin-left: 26%; font-size: 11px; color: #777; position: static; 21px }
     
     .uniForm .inlineLabels .multiField{ width: 46%; /* <- Required property */ margin: 0 0 .3em 0; }
       .uniForm .inlineLabels .multiField .inlineLabel{ display: block; margin: 0 0 .5em 0; }
@@ -142,14 +142,28 @@ YOU CAN VERY EASILY REVERT TO A GENERIC STYLE OF UNI-FORM. BEST OF LUCK...
   
   
 /* LAURENT */
-.formset_recipeSteps th, .formset_ingredientQuantities th {
+td.title { width: 250px;}
+.title input { width: 210px !important; }
+td.description textarea { width: 660px !important; }
+div.tags label { width: 230px !important;}
+div.tags p { float: !important; margin-left: 247px !important; }
+
+td.order input {width: 70px !important; margin-right: 20px;}
+td.picture input {width: 270px !important; margin-right: 20px;}
+
+h3 { font-family: Times; font-size: 20px; color: #666; padding: 0 0 5px 0 !important; }
+label, th { font-size: 12px; text-transform: Capitalize; }
+
+.formset th, .formset_ingredientQuantity_form {
     text-align: left;
     font: normal 12px Verdana;
 }
 
-.formset_recipeSteps_form textarea {
+.formset textarea {
     width: 520px !important;
 }
+
+.formset { }
 
 
 .formset_ingredientQuantities .textInput { width: 400px !important; }
