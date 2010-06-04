@@ -68,7 +68,7 @@ class madPdo extends PDO {
 
             if ( count( $fields ) == 2 && $fields[0]['Field'] == 'id' && $fields[1]['Field'] == 'value' ) {
                 foreach( array_keys( $this->schemalessTables ) as $schemalessTable ) {
-                    if ( preg_match( "/^{$schemalessTable}_/", $table ) ) {
+                    if ( preg_match( "/^{$schemalessTable}_/i", $table ) ) {
                         $this->schemalessTables[$schemalessTable][] = substr( $table, strlen( $schemalessTable ) + 1 );
                     }
                 }
@@ -177,14 +177,25 @@ class madPdo extends PDO {
                 continue;
             }
 
-            if ( in_array( $token, array_keys( $this->schemalessTables ) ) ) {
-                 $from[] = $token;
+            if ( PHP_OS == 'WINNT' ) {
+                $add = false;
+                foreach( $this->schemalessTables as $key => $value ) {
+                    if ( strtolower($key) == strtolower($token) ) {
+                        $from[] = strtolower($key);
+                        
+                        break;
+                    }
+                }
+            } else {
+                if (in_array( $token, array_keys( $this->schemalessTables ) )) {
+                    $from[] = $token;
+                }
             }
+            
         }
        
         // rewrite columns
         foreach ( $tokens as $key => $token ) {
-            if ($token == 'order') xdebug_break();
             // hack because id is not a registered column in $this->schemalessTables
             if ( $token == 'id' && count( $from ) == 1 && $querySection == 'select' ) {
                 $tokens[$key] = "`{$from[0]}`.`id`";
@@ -210,8 +221,21 @@ class madPdo extends PDO {
                         continue;
                     }
 
-                    if ( !in_array( $subToken, array_keys( $this->schemalessTables ) ) ) {
-                        continue;
+                    if ( PHP_OS == 'WINNT' ) {
+                        $continue = true;
+                        foreach( $this->schemalessTables as $tableName => $value) {
+                            if ( strtolower($subToken) == strtolower($tableName)) {
+                                $continue = false;
+                                break;
+                            }
+                        }
+                        if ($continue) {
+                            continue;
+                        }
+                    } else {
+                        if ( !in_array( $subToken, array_keys( $this->schemalessTables ) ) ) {
+                            continue;
+                        }
                     }
 
                     $tokens[$key] = '`'. $subToken . '`.*';
@@ -223,7 +247,7 @@ class madPdo extends PDO {
             foreach( $from as $schemalessTable ) {
                 $columns = $this->schemalessTables[$schemalessTable];
 
-                if ( preg_match( "/`?$schemalessTable`?\\.\\*/", $token ) ) {
+                if ( preg_match( "/`?$schemalessTable`?\\.\\*/i", $token ) ) {
                     $selects = array(
                         "`$schemalessTable`.`id`",
                     );
@@ -256,11 +280,11 @@ class madPdo extends PDO {
                         $rewrite = true;
                     }
 
-                    if ( preg_match( "/`?$schemalessTable`?\\.`?$column`?/", $token ) ) {
+                    if ( preg_match( "/`?$schemalessTable`?\\.`?$column`?/i", $token ) ) {
                         $rewrite = true;
                     }
 
-                    if ( preg_match( "/(`?$schemalessTable`?\\.)?`?id`?$/", $token) ) {
+                    if ( preg_match( "/(`?$schemalessTable`?\\.)?`?id`?$/i", $token) ) {
                         $rewrite = false;
                     }
 
@@ -308,9 +332,21 @@ class madPdo extends PDO {
             }
 
             if ( $querySection == 'from' ) {
-                if ( in_array( $token, array_keys( $join ) ) ) {
-                    foreach( $join[$token] as $column ) {
-                        $tokens[$key] .= " LEFT OUTER JOIN {$token}_{$column} ON {$token}_{$column}.id = $token.id";
+                if (PHP_OS == 'WINNT') {
+                    foreach( array_keys($join) as $subTable ) {
+                        if (strtolower($subTable) == strtolower($token)) {
+                            foreach( $join[strtolower($subTable)] as $column ) {
+                                $tokens[$key] .= " LEFT OUTER JOIN {$token}_{$column} ON {$token}_{$column}.id = $token.id\n";
+                            }
+                            break;
+                        }
+                    }
+                } else {
+                        
+                    if ( in_array( $token, array_keys( $join ) ) ) {
+                        foreach( $join[$token] as $column ) {
+                            $tokens[$key] .= " LEFT OUTER JOIN {$token}_{$column} ON {$token}_{$column}.id = $token.id\n";
+                        }
                     }
                 }
             }
