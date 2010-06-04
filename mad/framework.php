@@ -33,6 +33,10 @@ class madFramework {
             $this->applications['mad']['refreshConfiguration'] = true;
         }
 
+        if ( $this->xhprofEnable ) {
+            xhprof_enable();
+        }
+
         if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
             // dont refresh cache on static file hits
             $this->applications['mad']['refreshAutoload']      = false;
@@ -64,6 +68,27 @@ class madFramework {
         if ( !isset( self::$instance ) ) {
             self::$instance = $this;
         }
+    }
+
+    public function __destruct() {
+        if ( $this->xhprofEnable ) {
+            $data = xhprof_disable();
+
+            require $this->entryApplicationPath . '/' . $this->applications['mad']['xhprofPath'] . '/utils/xhprof_lib.php';
+            require $this->entryApplicationPath . '/' . $this->applications['mad']['xhprofPath'] . '/utils/xhprof_runs.php';
+            $profiler = new XHProfRuns_Default();
+            $runId = $profiler->save_run( $data, 'mad' );
+        }
+    }
+
+    public function createXhprofEnable()  {
+        if ( empty( $this->applications['mad']['xhprofEnable'] ) ) {
+            return false;
+        }
+        if ( !extension_loaded( 'xhprof' ) ) {
+            return false;
+        }
+        return true;
     }
 
     public function run(  ) {
