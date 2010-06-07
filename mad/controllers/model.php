@@ -29,7 +29,7 @@ class madModelController extends madFormController {
 
         $framework = madFramework::instance(  );
         $insert = $framework->pdo->prepare( $sql );
-        $insert->execute( $row );
+        $result = $insert->execute( $row );
 
         $row['namespace'] = $table;
     }
@@ -40,7 +40,10 @@ class madModelController extends madFormController {
         $pdo = madFramework::instance(  )->pdo;
 
         if ( $paginate ) {
-            $totalObjects = $pdo->query( $this->framework->routeConfiguration['paginateTotal'] )->fetchColumn(  );
+            $totalObjectsQuery = $pdo->prepare( $this->framework->routeConfiguration['paginateTotal'] );
+            $totalObjectsQuery->setFetchMode( PDO::FETCH_COLUMN, 0 );
+            madFramework::pdoExecute( $totalObjectsQuery, $this->request->variables );
+            $totalObjects = $totalObjectsQuery->fetchColumn();
             $lastPage = ceil( $totalObjects / $paginate );
 
             $currentPage = isset( $this->request->variables['page'] ) ? intval( $this->request->variables['page'] ) : 1;
@@ -62,7 +65,7 @@ class madModelController extends madFormController {
             $this->result->variables['lastPage']    = $lastPage;
 
         } 
-        $objectList = $pdo->query( $query )->fetchAll( PDO::FETCH_ASSOC );
+        $objectList = madFramework::pdoExecute( $pdo->prepare( $query ), $this->request->variables )->fetchAll( PDO::FETCH_ASSOC );
 
         if ( $objectList ) {
             if ( empty( $this->framework->routeConfiguration['tableColumns'] ) ) {
