@@ -388,7 +388,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         
         $html[] = sprintf( 
             '<div class="ctrlHolder %s %s">',
-            $this->getAttributeErrors( $attribute ) ? 'error' : '',
+            $this->getAttributeError( $attribute ) ? 'error' : '',
             $attribute['name']
         );
 
@@ -399,16 +399,14 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             $this->ucfirst( $attribute['label'] )
         );
 
-        if ( $errors = $this->getAttributeErrors( $attribute ) ) {
-            foreach( $errors as $error ) {
-                $html[] = '<p class="errorField">';
-                $html[] = $this->t( 
-                    $error, 
-                    $attribute,
-                    $attribute['contexts']
-                );
-                $html[] = '</p>';
-            }
+        if ( $error = $this->getAttributeError( $attribute ) ) {
+            $html[] = '<p class="errorField">';
+            $html[] = $this->t(
+                $error,
+                $attribute,
+                $attribute['contexts']
+            );
+            $html[] = '</p>';
         }
 
         $html[] = $this->$widgetRenderer( $attribute );
@@ -546,7 +544,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
         $html[] = sprintf( 
             '<div class="ctrlHolder %s">',
-            $this->getAttributeErrors( $attribute ) ? 'error' : ''
+            $this->getAttributeError( $attribute ) ? 'error' : ''
         );
 
         $html[] = sprintf( 
@@ -556,7 +554,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             $this->ucfirst( $attribute['label'] )
         );
 
-        if ( $this->getAttributeErrors( $attribute ) ) {
+        if ( $this->getAttributeError( $attribute ) ) {
             foreach( $attribute->errors as $error ) {
                 $html[] = '<p class="errorField">';
                 $html[] = $this->t( 
@@ -642,7 +640,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         return implode( "\n\t\t", $html );
     } # }}}
 
-    public function getAttributeErrors( $attribute, $key = null ) {
+    public function getAttributeError( $attribute, $key = null ) {
         if ( !is_null( $key ) ) {
             if ( !empty( $attribute['form']->errors[$key][$attribute['name']] ) ) {
                 return $attribute['form']->errors[$key][$attribute['name']];
@@ -655,7 +653,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     }
 
     public function getAttributeValue( $attribute, $key = null ) {
-        if ( $this->getAttributeErrors( $attribute, $key ) ) {
+        if ( $this->getAttributeError( $attribute, $key ) ) {
             if ( !is_null( $key ) ) {
                 if ( isset( $attribute['form']->data[$key][$attribute['column']] ) ) {
                     return $attribute['form']->data[$key][$attribute['column']];
