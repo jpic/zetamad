@@ -134,6 +134,9 @@ class madFormController extends madController {
 
         if ( $this->isFormSet ) {
             foreach( $this->data as $key => $row ) {
+                if ( !$row ) {
+                    continue;
+                }
                 $this->processedData[$key]['id'] = $row['id'];
             }
         } else {
