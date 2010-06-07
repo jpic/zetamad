@@ -141,7 +141,7 @@ class madFramework {
 
             $this->locale->write( $this->entryApplicationPath . '/cache/locale' );
         } else {
-            $regitry->configuration = new madConfiguration( $this->entryApplicationPath . '/cache/locale', $this->applications, 'locale' );
+            $this->locale = new madConfiguration( $this->entryApplicationPath . '/cache/locale', $this->applications, 'locale' );
         }
 
         if ( $this->applications['mad']['refreshBin'] ) {
