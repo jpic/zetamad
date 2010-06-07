@@ -83,12 +83,12 @@ a.btn-block:hover { background: #539893; }
 			</p>
             -->
 		</div>
-        <?php if ( isset( $this->object['sites'] ) ): ?>
+        <?php if ( !empty( $this->sites ) ): ?>
 		<div id="external-links">
 			<h3>Les sites de <?php $this->e( $this->object['name'] ) ?>"</h3>
 			<ul>
-                <?php foreach( $this->iterate( $this->object['sites'] ) as $site ): ?>
-				<li><a href="http://<?php echo $site ?>"><span style="color: #232323;">&bull;</span> <?php echo $site ?></a></li>
+                <?php foreach( $this->sites as $site ): ?>
+				<li><a href="http://<?php echo $site['site'] ?>"><span style="color: #232323;">&bull;</span> <?php echo $site['site'] ?></a></li>
                 <?php endforeach ?>
 			</ul>
 		</div>
@@ -119,12 +119,12 @@ a.btn-block:hover { background: #539893; }
 	</div>
 </div>
     -->
-<?php if ( count( $this->object->recipeSet ) ): ?>
+<?php if ( !empty( $this->recipes ) ): ?>
 <div class="favorites_recipes">
 	<div class="title">Mes recettes</div>
         <?php
         $forLoop = 0;
-        foreach( $this->iterate( $this->object->recipeSet ) as $recipe ):
+        foreach( $this->recipes as $recipe ):
             if ( !isset( $recipe['picture'] ) ) continue;
         ?>
 	<div class="recipe_block <?php if ( ( $forLoop + 1 ) % 4 == 0 ): ?>nomarg<?php endif ?>">
@@ -143,14 +143,18 @@ a.btn-block:hover { background: #539893; }
 </div>
 <?php endif ?>
 
-<?php if ( isset( $this->object['products'] ) && $this->object['products'] ): ?>
+<?php if ( !empty( $this->products ) ): ?>
 <div class="favorites_products">
 	<div class="title">Mes produits favoris</div>
     <?php 
     $forLoop = 0;
-    foreach( $this->iterate( $this->object['products'] ) as $productId ): ?>
+    foreach( $this->products as $productId ): ?>
     <?php
     $product = new Product(intval( $productId ), true, 2);
+
+    // skip deleted products
+    if (!$product) continue;
+
     $cover = Product::getCover( $product->id );
     ?>
 	<div class="product_block <?php if ( ( $forLoop + 1 ) % 4 == 0 ): ?>nomarg<?php endif ?>">

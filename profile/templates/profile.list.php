@@ -16,7 +16,6 @@ h3 { color: #DE5161; font-size: 14px; padding: 0; margin: 0; line-height: 18px; 
 .UIListingProfils .UIListingProfils_actions .tab ul li a { text-decoration: none; color: #000; }
 .UIListingProfils .UIListingProfils_actions .tab ul li a:hover { text-decoration: underline; color: #DE5161; }
 /* .clear : allready in globall.css */
-<<<<<<< .mine
 .clear { clear: both; }
 /* afficher la colone de droite */
 #left_column { display: block !important; }
@@ -29,7 +28,6 @@ h3 { color: #DE5161; font-size: 14px; padding: 0; margin: 0; line-height: 18px; 
 .profil_block .description h3 { color: #de5161; font-size: 22px; padding-bottom: 7px; font-family: Times; }
 .profil_block .btn { margin-top: 10px; clear: right; float: right; text-align: center; width: 140px; background: #c0c0c0; line-height: 20px; height: 23px; }
 .profil_block .btn a { color: #fff; font-size: 11px; font-family: Verdana; text-transform: uppercase; }
-=======
 .clear { clear: both; }
 /* afficher la colone de droite */
 #left_column { display: block !important; }
@@ -42,7 +40,6 @@ h3 { color: #DE5161; font-size: 14px; padding: 0; margin: 0; line-height: 18px; 
 .profil_block .description h3 { color: #ab3847; font-size: 18px; font-family: Times; }
 .profil_block .btn { margin-top: 5px; clear: right; float: right; text-align: center; width: 140px; background: #c0c0c0; line-height: 20px; height: 23px; }
 .profil_block .btn a { color: #fff; font-size: 11px; font-family: Verdana; text-transform: uppercase; }
->>>>>>> .r1426
 .profil_block .btn a:hover { color: #000; text-decoration: none; }
 </style>
 
@@ -64,8 +61,7 @@ h3 { color: #DE5161; font-size: 14px; padding: 0; margin: 0; line-height: 18px; 
 			<a href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->e( $object['name'] ) ?>">
 			<?php if ( isset( $object['picture'] ) ): ?>
             <img src="<?php echo $this->thumbnail( $object['picture'], 200, 200 ) ?>" width="200" height="200" alt="<?php $this->e( $object['name'] ) ?>" />	
-            <?php else: ?>
-            <img src="<?php echo $this->thumbnail( $this->configuration['defaultPicture'], 200, 200 ) ?>" width="200" height="200" alt="<?php $this->e( $object['name'] ) ?>" />	
+          
             <?php endif ?>
             </a>
 		</div>
