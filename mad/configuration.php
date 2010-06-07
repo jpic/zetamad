@@ -37,8 +37,6 @@ class madConfiguration extends madObject {
             return parent::reset();
         }
 
-        var_dump( 'reset' );
-
         $files = glob( "{$this->path}/*" );
 
         if ( !$files ) {
@@ -75,7 +73,7 @@ class madConfiguration extends madObject {
         if ( parent::offsetExists( $key ) ) {
             return parent::offsetGet($key);
         }
-        var_dump( "parsing $key" );
+
         if ( file_exists( "$this->path/$key.php" ) ) {
             $this->parsePhp( "$this->path/$key.php" );
         } elseif ( file_exists( "$this->path/$key.ini" ) ) {
@@ -194,6 +192,10 @@ class madConfiguration extends madObject {
     }
     
     public function getSetting( $group, $section, $name, $default = null ) {
+        if ( !isset( $this[$group] ) ) {
+            $this->offsetGet( $group );
+        }
+        
         if ( isset( $this[$group] ) && isset( $this[$group][$section] ) && isset( $this[$group][$section][$name] ) ) {
             return $this[$group][$section][$name];
         }
