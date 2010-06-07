@@ -136,9 +136,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         return $this->getAbsoluteUploadUrl( $thumbnailName );
     } # }}}
     public function url( $name, $arguments = array(  ) ) { # {{{
-        $registry = madFramework::instance();
-        $prefix = $registry->configuration->getSetting( 'applications', 'mad', 'urlPrefix' );
-        return $prefix . $registry->router->generateUrl( $name, (array) $arguments );
+        echo madFramework::url($name, $arguments);
     } # }}}
     public function getAbsoluteUploadUrl( $relativePath ) { # {{{
         $registry = madFramework::instance();
