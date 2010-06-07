@@ -16,6 +16,10 @@ class madDevController extends madController {
             $this->result->variables['rows'] = $req->fetchAll( PDO::FETCH_ASSOC );
         }
     }
+
+    public function doRoutes() {
+        $this->result->variables['routes'] = $this->framework->configuration['routes'];
+    }
 }
 
 ?>
