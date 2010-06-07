@@ -1,3 +1,10 @@
+- Forms/model & route configurations rewrite to support m2m
+- Migration
+- Tags
+- Multiple Categories
+- Image widget
+- Locale improvement
+
 Release 2010-05-18.0
 
 - Video support->vimeo clip id
