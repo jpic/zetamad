@@ -148,8 +148,9 @@ a.btn-block:hover { background: #539893; }
 	<div class="title">Mes produits favoris</div>
     <?php 
     $forLoop = 0;
-    foreach( $this->products as $productId ): ?>
+    foreach( $this->products as $product ): ?>
     <?php
+    $productId = $product['product'];
     $product = new Product(intval( $productId ), true, 2);
 
     // skip deleted products
