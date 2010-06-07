@@ -1,6 +1,6 @@
 <?php
 
-abstract class madController extends ezcMvcController {
+class madController extends ezcMvcController {
     public $controllers = array(  );
     public $composite = null;
     public $result = null;
@@ -73,6 +73,11 @@ abstract class madController extends ezcMvcController {
         }
 
         return $message;
+    }
+
+    
+    public function doVoid() {
+        
     }
 }
 
