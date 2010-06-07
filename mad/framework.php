@@ -17,6 +17,10 @@ class madFramework {
     static public $instance;
     public $registry =array(  );
     public $languages = null;
+    public $configuration;
+    public $request;
+    public $result;
+    public $routeConfiguration;
 
     # {{{ bootstrap
     public function __construct( $entryApplicationPath ) {
@@ -117,7 +121,8 @@ class madFramework {
             $this->configuration->write( $this->entryApplicationPath . '/cache/etc' );
         } else {
             $this->configuration = new madConfiguration( $this->entryApplicationPath . '/cache/etc', $this->applications );
-            $this->applications =& $this->configuration['applications'];
+            // php parser is still retarded
+            $this->applications = $this->configuration['applications'];
             $this->setupApplications(  );
         }
         
