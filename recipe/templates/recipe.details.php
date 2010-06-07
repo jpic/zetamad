@@ -88,6 +88,7 @@ a.btn-block:hover { background: #f1f1f1; }
                 <a class="thickbox" href="<?php echo $this->getAbsoluteUploadUrl( $this->pictures[0]['picture'] ) ?>" title="<?php $this->e( $this->object['title'] ) ?>">
                     <img src="<?php echo $this->thumbnail( $this->pictures[0]['picture'], 300, 300 ); ?>" alt="<?php $this->e( $this->pictures[0]['title'] ) ?>" style="margin:4px 0 0; vertical-align:baseline;" id="bigpic" />
                 </a>
+                <?php if ( count( $this->pictures ) > 1 ): ?>
                 <div id="object-ths">
                     <?php foreach( $this->pictures as $key => $picture ): ?>
                     <?php
@@ -102,6 +103,7 @@ a.btn-block:hover { background: #f1f1f1; }
                     <?php endforeach ?>
                     <div class="clear"></div>
                 </div>
+                <?php endif ?>
             </div>
             <?php endif ?>
 	    
