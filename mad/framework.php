@@ -532,25 +532,33 @@ class madFramework {
         if (is_null($arguments)) {
             return madFramework::instance(  )->pdo->query( $sql )->fetchAll( PDO::FETCH_ASSOC );
         } else {
-            $query = madFramework::instance(  )->pdo->prepare( $sql );
+            $statement = madFramework::instance(  )->pdo->prepare( $sql );
 
-            if (is_object($arguments)) {
-                $arguments = (array) $arguments;
-            } else {
-                // copy
-                $arguments = $arguments;
-            }
+            self::pdoExecute( $statement, $arguments, $sql );
 
-            foreach( array_keys($arguments) as $key) {
-                if (strpos($sql, ":$key" ) === false) {
-                    unset($arguments[$key]);
-                }
-            }
-
-            $query->execute( (array) $arguments );
-            $rows = $query->fetchAll( PDO::FETCH_ASSOC );
+            $rows = $statement->fetchAll( PDO::FETCH_ASSOC );
             return $rows;
         }
+    }
+
+    static public function pdoExecute( $statement, $arguments, $sql = null ) {
+        if (is_object($arguments)) {
+            $arguments = (array) $arguments;
+        } else {
+            // copy
+            $arguments = $arguments;
+        }
+
+        $sql = is_null( $sql ) ? $statement->queryString : $sql;
+
+        foreach( array_keys($arguments) as $key) {
+            if (strpos( $sql, ":$key" ) === false) {
+                unset($arguments[$key]);
+            }
+        }
+
+        $statement->execute( $arguments );
+        return $statement;
     }
 
     static public function translate( $key, $dictionnary = array(), $contexts = array() ) {
