@@ -50,32 +50,44 @@ class madController extends ezcMvcController {
             $this->framework->routeConfiguration['META']['application'],
             $this->framework->routeConfiguration['name'],
         );
+        $this->framework->result = $this->result;
     }
 
     public function postCreateResult(  ) {
     }
 
-    public function t( $key, $dictionnary = null ) {
-        $message = $this->registry->locale->getMessageSetting( 
-            $key,
-            $this->request->accept->languages,
-            $this->result->variables['contexts']
-        );
+    public function t( $key, $dictionnary = null, $contexts = array() ) {
+        $contexts = array_merge( $contexts, $this->result->variables['contexts'] );
 
-        if ( $dictionnary ) {
-            if ( is_array( $message ) ) {
-                foreach( $message as $key => $value ) {
-                    $message[$key] = madFramework::dictionnaryReplace( $value, $dictionnary );
-                }
-            } else {
-                $message = madFramework::dictionnaryReplace( $message, $dictionnary );
-            }
+        if ( is_null( $dictionnary ) && isset( $this->object ) ) {
+            $dictionnary = $this->object->flatten( false );
         }
+
+        if ( is_null( $dictionnary ) && isset( $this->form ) ) {
+            $dictionnary = $this->form;
+        }
+
+        $message = madFramework::translate( $key, $dictionnary, $contexts );
 
         return $message;
     }
 
+    public function addMessage( $key, $dictionnary = null, $contexts = array() ) {
+        $message = $this->t( $key, $dictionnary, $contexts );
+
+        if ( !isset( $_SESSION['messages'] ) ) {
+            $_SESSION['messages'] = array();
+        }
+
+        $_SESSION['messages'][] = $message;
+    }
     
+    public function redirectToReferer() {
+        $this->result->status = new ezcMvcExternalRedirect(
+            $_SERVER['HTTP_REFERER']
+        );
+    }
+
     public function doVoid() {
         
     }
