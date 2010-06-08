@@ -776,18 +776,20 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
         $html[] = sprintf(
             '<select "%s" name="%s" class="%s" id="%s" />',
-            $attribute['multiple'] ? 'multiple="multiple"' : '',
+            !empty( $attribute['multiple'] ) ? 'multiple="multiple"' : '',
             $this->getAttributeHtmlName( $attribute, $key ),
             implode( ' ', $attribute['classes'] ),
             $this->getAttributeHtmlId( $attribute, $key )
         );
 
+        $actualValue = $this->getAttributeValue( $attribute, $key );
         foreach( $attribute['choices'] as $value => $display ) {
-            $selected = $value == $this->getValue( $attribute, $key);
+            $selected = $value == $actualValue || ( is_array( $actualValue ) && in_array( $value, $actualValue ) );
+
             $html[] = sprintf( 
-                '<option value="%s" selected="%s">%s</option>',
+                '<option value="%s" %s>%s</option>',
                 $value,
-                $selected ? 'selected' : '',
+                $selected ? 'selected="selected"' : '',
                 $display
             );
         }
