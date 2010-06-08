@@ -26,7 +26,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
      * @param <type> $force false, "width", "height" or "ratio"
      * @return <type> Absolute URL to resized image
      */
-    public function thumbnail( $path, $newWidth, $newHeight, $force = false ) { # {{{
+    public function thumbnail( $path, $size ) { # {{{
         $uploadPath = ENTRY_APP_PATH . '/upload/' . $path;
         if ( !file_exists( $uploadPath ) ) {
             $registry = madFramework::instance(  );
@@ -43,22 +43,22 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         $info = pathinfo( $uploadPath );
         $path = $uploadPath;
 
-        $thumbnailName = sprintf( '%s_%sx%s_%s.%s',
+        $thumbnailName = sprintf( '%s_%sx%s.%s',
             $info['filename'],
-            $newWidth,
-            $newHeight,
-            $force,
+            $size,
+            $size,
             $info['extension']
         );
 
-        $thumbnailPath = sprintf( '%s/%s/%s',
-            ENTRY_APP_PATH,
-            'upload',
-            $thumbnailName
-        );
+        $thumbnailRelativePath = "thumbnails/$thumbnailName";
+        $thumbnailPath = ENTRY_APP_PATH . "/upload/$thumbnailRelativePath";
 
         if ( file_exists( $thumbnailPath ) ) {
-            return $this->getAbsoluteUploadUrl( $thumbnailName );
+            return $this->getAbsoluteUploadUrl( $thumbnailRelativePath );
+        }
+
+        if ( !is_dir( dirname( $thumbnailPath ) ) ) {
+            mkdir( dirname( $thumbnailPath ) );
         }
 
         if ( !$src = @imageCreateFromJpeg( $path ) ) {
@@ -69,46 +69,36 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             }
         }
 
+        // copy src image to gd2
         $tmpFile = tempnam( sys_get_temp_dir(  ), 'mad' );
         imagegd2( $src, $tmpFile );
         imagedestroy( $src );
         $src = imageCreateFromGd2( $tmpFile );
 
-        switch( $info['extension'] ) {
-            case 'jpg':
-            case 'jpeg':
-                $src = imagecreatefromjpeg( $path );
-                break;
-            case 'png':
-                $src = imagecreatefrompng( $path );
-                break;
-            case 'gif':
-                $src = imagecreatefromgif( $path );
-                break;
-            default:
-                trigger_error( "Thumbnailing of " . $info['extension'] . " is not supported", E_USER_ERROR );
-                break;
-        }
-
         $oldWidth  = imageSX( $src );
         $oldHeight = imageSY( $src );
-        
-        if ( $oldWidth == $oldHeight ) {
-            $newHeight = $newWidth;
-        } elseif ( $force == 'height' || ( $force == 'ratio' && $oldWidth > $oldHeight ) ) {
-            $newHeight = $oldHeight * ( $newHeight / $oldWidth );
-        } elseif ( $force == 'width' || ( $force == 'ratio' && $oldWidth < $oldHeight ) ) {
-            $newWidth = $oldWidth * ( $newWidth / $oldHeight );
+        $newX = $newY = 0;
+
+        if ( $oldHeight > $oldWidth ) {
+            $ratio = $size / $oldWidth;
+            $newHeight = $oldHeight * $ratio;
+            $newWidth = $size;
+            $newY = ( $newHeight - $size ) / 2;
+        } elseif ( $oldWidth > $oldHeight ) {
+            $ratio = $size / $oldHeight;
+            $newWidth = $oldWidth * $ratio;
+            $newHeight = $size;
+            $newX = ( $newWidth - $size ) / 2;
         }
 
-        $image = ImageCreateTrueColor(
+        $resized = imageCreateTrueColor(
             $newWidth,
             $newHeight
         );
 
-        imagecopyresampled( 
-            $image, 
-            $src, 
+        imageCopyResampled(
+            $resized,
+            $src,
             0,
             0,
             0,
@@ -119,7 +109,23 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             $oldHeight
         );
 
-        imagedestroy( $src );
+        $cropped = imageCreateTrueColor(
+            $size,
+            $size
+        );
+
+        imageCopy(
+            $cropped,
+            $resized,
+            0,
+            0,
+            $newX,
+            $newY,
+            $newWidth,
+            $newHeight
+        );
+
+        $image =& $cropped;
 
         switch( $info['extension'] ) {
             case 'jpg':
@@ -129,11 +135,16 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             case 'png':
                 imagepng( $image, $thumbnailPath );
                 break;
+            case 'gif':
+                imagegif( $image, $thumbnailPath );
+                break;
         }
 
-        imagedestroy( $image );
+        imageDestroy( $cropped );
+        imageDestroy( $src );
+        imageDestroy( $resized );
         
-        return $this->getAbsoluteUploadUrl( $thumbnailName );
+        return $this->getAbsoluteUploadUrl( $thumbnailRelativePath );
     } # }}}
     public function url( $name, $arguments = array(  ) ) { # {{{
         echo madFramework::url($name, $arguments);
