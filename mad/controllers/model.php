@@ -34,6 +34,19 @@ class madModelController extends madFormController {
         $row['namespace'] = $table;
     }
 
+    public function doListDelete() {
+        $table = $this->framework->routeConfiguration['table'];
+        foreach( $this->framework->pdo->schemalessTables[$table] as $attribute ) {
+            $query = "delete from `{$table}_{$attribute}` where id in ('". implode("','", $this->ids)."')";
+            madFramework::query($query);
+        }
+        $query = "delete from $table where id in ('". implode("','", $this->ids)."')";
+        madFramework::query($query);
+
+        $this->addMessage( 'listDeleteSuccess', array( 'table' => $table ) );
+        $this->redirectToReferer();
+    }
+
     public function doList() {       
         $query = $this->framework->routeConfiguration['query'];
         $paginate = isset( $this->framework->routeConfiguration['paginateBy'] ) ? intval( $this->framework->routeConfiguration['paginateBy'] ) : false;
