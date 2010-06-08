@@ -58,9 +58,12 @@ class madFormController extends madController {
     }
 
     static public function factory( $formName, $data ) {
-        $controller = new madFormController( 'form' );
+        $framework = madFramework::instance();
+        $controller = new madFormController( $framework );
         $controller->data = $data;
         $controller->formName = $formName;
+        $controller->formConfiguration = $framework->configuration['forms'][$formName];
+        $controller->initFormConfiguration();
         return $controller;
     }
 
@@ -242,6 +245,7 @@ class madFormController extends madController {
         }
 
         $this->processedData->clean();
+        return $this;
     }
 
     public function processAttribute( &$attribute, $value ) {
@@ -385,7 +389,6 @@ class madFormController extends madController {
 
         $this->isSuccessfull = true;
     }
-
 }
 
 ?>
