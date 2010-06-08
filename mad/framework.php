@@ -96,11 +96,11 @@ class madFramework {
     }
 
     public function run(  ) {
-        $this->setupIncludePath(  );
-
         if ( $this->applications['mad']['refreshAutoload'] ) {
             $this->refreshAutoload(  );
         }
+
+        set_include_path( ENTRY_APP_PATH . '/cache/templates'. PATH_SEPARATOR . get_include_path() );
 
         $this->setupAutoload(  );
         
@@ -171,23 +171,6 @@ class madFramework {
         if ( !isset( $_SESSION['messages'] ) ) {
             $_SESSION['messages'] = array(  );
         }
-    }
-
-    public function setupIncludePath(  ) {
-        $paths = array( 
-            $this->entryApplicationPath,
-            get_include_path(  ),
-        );
-
-        foreach( $this->applications['mad']['includePath'] as $relativePath ) {
-            if ( strpos( $relativePath, '/' ) !== 0 ) {
-                $relativePath = '/' . $relativePath;
-            }
-
-            $paths[] = $this->entryApplicationPath . $relativePath;
-        }
-
-        set_include_path( join( PATH_SEPARATOR, $paths ) );
     }
 
     public function setupAutoload(  ) {
