@@ -87,11 +87,16 @@ class madHttpDispatcher {
         $framework->routeConfiguration = $framework->configuration['routes'][$framework->routingInformation->routeName];
 
         $framework->controller = $this->createRouteController( $framework );
-        $framework->result = $framework->controller->createResult();
+        $framework->controller->createResult();
 
         $framework->sendSignal( 'postCreateResult', array( $framework->request, $framework->result ) );
 
-        $framework->response = $this->createResponse( $framework );
+        if ( $framework->result->status !== 0 ) {
+            $framework->response = new ezcMvcResponse;
+            $framework->response->status = $framework->result->status;
+        } else {
+            $framework->response = $this->createResponse( $framework );
+        }
         
         $framework->responseWriter = new ezcMvcHttpResponseWriter( $framework->response );
         $framework->responseWriter->handleResponse();
