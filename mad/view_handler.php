@@ -766,6 +766,11 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     public function renderMultiSelectWidget( &$attribute, $key = null ) {
         return $this->renderSelectWidget( $attribute, $key );
     }
+
+    public function renderReadOnlyWidget( &$attribute, $key = null ) {
+        return $this->getAttributeValue( $attribute, $key );
+    }
+
     public function renderSelectWidget( &$attribute, $key = null ) { # {{{
         $html  = array(  );
 
