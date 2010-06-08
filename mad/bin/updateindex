@@ -1,7 +1,0 @@
-#!/usr/bin/php
-<?php
-include $_ENV['MAD_BOOTSTRAP'];
-$registry = madFramework::instance();
-
-$registry->model->updateIndex( $argv[1] );
-?>

@@ -1,7 +1,0 @@
-#!/usr/bin/php
-<?php
-include $_ENV['MAD_BOOTSTRAP'];
-$registry = madFramework::instance();
-
-var_export( $registry->model->queryLoad( $argv[1] ) );
-?>
