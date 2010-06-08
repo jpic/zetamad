@@ -5,26 +5,23 @@ function prestashopAuthentication( ezcMvcRequest $request, ezcMvcRouter $router 
     $cookie = new Cookie( 'ps' );
     
     if ( $cookie->isLogged(  ) ) {
-        $users = $framework->pdo->query( 
-            'select id from users where prestashopId = ' . intval( $cookie->id_customer )
+        $users = madFramework::query(
+            'select firstName, lastName, email, prestashopId from user where prestashopId = :prestashopId',
+            array(
+                'prestashopId' => intval( $cookie->id_customer )
+            )
         );
         
         if ( !count( $users ) ) {
-            $result = madModelController::routeFormData(
-                // ideally we'd use authentication.register but we dont have it 
-                // defined yet
-                'authentication.userCreate', 
-                array( 
-                    'firstName'    => $cookie->customer_firstname,
-                    'lastName'     => $cookie->customer_lastname,
-                    'email'        => $cookie->email,
-                    'password'     => $cookie->passwd,
-                    'prestashopId' => intval( $cookie->id_customer ),
-                    'namespace'    => 'user',
-                )
+            $user = array( 
+                'firstName'    => $cookie->customer_firstname,
+                'lastName'     => $cookie->customer_lastname,
+                'email'        => $cookie->email,
+                'prestashopId' => intval( $cookie->id_customer ),
+                'namespace'    => 'user',
             );
-
-            $request->variables['user'] = $result->variables['form'];
+            madModelController::saveArray( $user );
+            $request->variables['user'] = $user;
         } else {
             $request->variables['user'] = current( $users );
         }
