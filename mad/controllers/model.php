@@ -176,25 +176,6 @@ class madModelController extends madFormController {
             );
         }
     }
-    
-    static public function routeFormData( $routeName, $data ) {
-        $framework = madFramework::instance();
-
-        $configuration = $framework->configuration['routes'][$routeName];
-
-        $request = new ezcMvcRequest(  );
-        $request->protocol = 'http-post';
-        $request->variables[str_replace( '.', '_', $configuration['form'] )] = $data;
-
-        $controller = $framework->dispatcher->createRouteController(
-            $request,
-            $configuration
-        );
-
-        $result = $controller->createResult(  );
-
-        return $result;
-    }
 }
 
 ?>
