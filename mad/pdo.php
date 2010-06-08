@@ -101,10 +101,10 @@ class madPdo extends PDO {
              }
              
              $return = parent::prepare( $statement );
-         } elseif ( strtolower( substr( $statement, 0, 6 ) ) == 'delete' ) {
-         
+/*
+         } elseif ( preg_match( '/delete( from)? `?([^.]+\.)?(?P<table>[^\s`]+)`?/i', $statement, $matches ) ) {
          } elseif ( strtolower( substr( $statement, 0, 6 ) ) == 'update' ) {
- 
+*/
          } else {
              $return = parent::prepare( $statement );
          }
