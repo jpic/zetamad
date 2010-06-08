@@ -12,58 +12,105 @@
     .object_table tbody .row_details a { color: #000; }
     .object_table tbody .row_details a:hover { text-decoration: underline; }
 </style>
-<?php if ( isset( $this->configuration['title'] ) ): ?>
-<h2 class="title"><?php $this->e( ucfirst( $this->configuration['title'] ) ) ?></h1>
-<?php else: ?>
-<h2 class="title">Page de liste d'objets par defaut</h1>
-<?php endif ?>
 
-<?php if ( isset( $this->configuration['createRoute'] ) ): ?>
-    <a class="add_user" href="<?php echo $this->url( $this->configuration['createRoute'] ) ?>">
-        <?php $this->e( isset( $this->configuration['createLabel'] ) ? ucfirst( $this->configuration['createLabel'] ) : 'Nouvelle saisie' ) ?> &raquo;
+<?php if ( !empty( $this->framework->routeConfiguration['createRoute'] ) ): ?>
+    <a class="add_user" href="<?php echo $this->url( $this->framework->routeConfiguration['createRoute'] ) ?>">
+        <?php $this->e( isset( $this->framework->routeConfiguration['createLabel'] ) ? ucfirst( $this->framework->routeConfiguration['createLabel'] ) : 'Nouvelle saisie' ) ?> &raquo;
     </a>
 <?php endif ?>
 
 <?php if ( !count( $this->objectList ) ): ?>
 <p>
-    <?php $this->e( isset( $this->configuration['ifEmpty'] ) ? ucfirst( $this->configuration['ifEmpty'] ) : 'Aucun objet trouvé' ) ?>
+    <?php $this->e( isset( $this->framework->routeConfiguration['ifEmpty'] ) ? ucfirst( $this->framework->routeConfiguration['ifEmpty'] ) : 'Aucun objet trouvé' ) ?>
 </p>
 <?php else: ?>
-<table class="object_table">
-    <thead class="object_head" >
-        <tr>
-            <?php foreach( $this->configuration['tableColumns'] as $name => $label ): ?>
-            <th><?php $this->e( ucfirst( $label ) ) ?></th>
-            <?php endforeach ?>
 
-            <?php if ( isset( $this->configuration['tableLinkColumns'] ) ): ?>
-            <?php foreach( $this->configuration['tableLinkColumns'] as $route => $label ): ?>
-            <th><?php $this->e( ucfirst( $label ) ) ?></th>
+    <?php if (!empty($this->framework->routeConfiguration['actions'])): ?>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('input[type=checkbox][name=selectAll]').change(function() {
+        $('input[type=checkbox]').attr('checked', $(this).attr('checked'));
+    })
+    $('select[name=action]').blur(function() {
+        <?php foreach($this->framework->routeConfiguration['actions'] as $route => $action): ?>
+        if ( $(this).val() == '<?php echo $action ?>' ) {
+            var action = '<?php $this->url( $route ) ?>';
+        }
+        <?php endforeach ?>
+
+        var form = $(this).parents('form');
+        form.attr('action', action);
+        if ( confirm( '<?php echo $this->t( 'confirmAction', array( 'action' => $action ) ) ?>' ) ) {
+            form.trigger('submit');
+        }
+    });
+})
+</script>
+
+    <form action="" method="post">
+        Action:
+        <select name="action">
+            <option><?php $this->e( $this->t( 'selectAction' ) ) ?></option>
+            <?php foreach($this->framework->routeConfiguration['actions'] as $route => $action): ?>
+            <option value="<?php echo madFramework::slugify( $action ) ?>">
+                <?php echo $this->t( $action ) ?>
+            </option>
             <?php endforeach ?>
-            <?php endif ?>
-        </tr>
-    </thead>
-    <tbody>
-<?php foreach( $this->objectList as $object ): ?>
-        <!--<tr onClick='document.location.href="";'>-->
-        <tr>
-            <?php foreach( $this->configuration['tableColumns'] as $key => $label ): ?>
-            <td class="row_name">
-                <?php $this->e( $this->getValueString( $object, $key ) ) ?>
-            </td>
-            <?php endforeach ?>
-            
-            <?php if ( isset( $this->configuration['tableLinkColumns'] ) ): ?>
-            <?php foreach( $this->configuration['tableLinkColumns'] as $route => $label ): ?>
-            <td class="row_details">
-                <a href="<?php echo $this->url( $route, $object ) ?>" title="<?php $this->e( ucfirst( $label ) ) ?>">
-                    <?php $this->e( ucfirst( $label ) ) ?>
-                </a>
-            </td>
-            <?php endforeach ?>
-            <?php endif ?>
-        </tr>
-<?php endforeach ?>
-    </tbody>
-</table>
+        </select>
+    <?php endif ?>
+
+    <table class="object_table">
+        <thead class="object_head" >
+            <tr>
+                <?php if (!empty($this->framework->routeConfiguration['actions'])): ?>
+                <td>
+                    <input type="checkbox" name="selectAll" />
+                </td>
+                <?php endif ?>
+                <?php foreach( $this->framework->routeConfiguration['tableColumns'] as $name => $label ): ?>
+                <th><?php $this->e( ucfirst( $label ) ) ?></th>
+                <?php endforeach ?>
+
+                <?php if ( isset( $this->framework->routeConfiguration['tableLinkColumns'] ) ): ?>
+                <?php foreach( $this->framework->routeConfiguration['tableLinkColumns'] as $route => $label ): ?>
+                <th><?php $this->e( ucfirst( $label ) ) ?></th>
+                <?php endforeach ?>
+                <?php endif ?>
+            </tr>
+        </thead>
+        <tbody>
+    <?php foreach( $this->objectList as $object ): ?>
+            <!--<tr onClick='document.location.href="";'>-->
+            <tr>
+                <?php if (!empty($this->framework->routeConfiguration['actions'])): ?>
+                <td>
+                    <input type="checkbox" name="ids[]" value="<?php echo $object['id'] ?>" />
+                </td>
+                <?php endif ?>
+
+                <?php foreach( $this->framework->routeConfiguration['tableColumns'] as $key => $label ): ?>
+                <td class="row_name">
+                    <?php $this->e( $this->getValueString( $object, $key ) ) ?>
+                </td>
+                <?php endforeach ?>
+
+                <?php if ( isset( $this->framework->routeConfiguration['tableLinkColumns'] ) ): ?>
+                <?php foreach( $this->framework->routeConfiguration['tableLinkColumns'] as $route => $label ): ?>
+                <td class="row_details">
+                    <a href="<?php echo $this->url( $route, $object ) ?>" title="<?php $this->e( ucfirst( $label ) ) ?>">
+                        <?php $this->e( ucfirst( $label ) ) ?>
+                    </a>
+                </td>
+                <?php endforeach ?>
+                <?php endif ?>
+            </tr>
+    <?php endforeach ?>
+        </tbody>
+    </table>
+
+    <?php if (!empty($this->framework->routeConfiguration['actions'])): ?>
+    </form>
+    <?php endif ?>
+
+
 <?php endif ?>
