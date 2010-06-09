@@ -111,7 +111,7 @@ $(document).ready(function() {
                 <?php foreach( $this->framework->routeConfiguration['tableLinkColumns'] as $route ): ?>
                 <td class="row_details">
                     <a href="<?php echo $this->url( $route, $object ) ?>" title="<?php $this->uet( $route ) ?>">
-                        <?php $this->uet( $label ) ?>
+                        <?php $this->uet( $route ) ?>
                     </a>
                 </td>
                 <?php endforeach ?>
