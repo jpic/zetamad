@@ -6,9 +6,9 @@ function prestashopAuthentication( ezcMvcRequest $request, ezcMvcRouter $router 
     
     if ( $cookie->isLogged(  ) ) {
         $users = madFramework::query(
-            'select firstName, lastName, email, prestashopId from user where prestashopId = :prestashopId',
+            'select id, firstName, lastName, email, prestashopId from user where prestashopId = :prestashopId',
             array(
-                'prestashopId' => intval( $cookie->id_customer )
+                'prestashopId' => (string)intval( $cookie->id_customer )
             )
         );
         
