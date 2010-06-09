@@ -133,12 +133,6 @@ class madHttpDispatcher {
                 $framework->view->send( $key, $value );
             }
 
-            if ( !empty( $framework->routeConfiguration['zones'] ) ) {
-                foreach( $framework->routeConfiguration['zones'] as $name => $template ) {
-                    $framework->view->processZone( $name, ENTRY_APP_PATH . '/cache/templates/' . $template );
-                }
-            }
-
             $template = ENTRY_APP_PATH . '/cache/templates/' . $framework->routeConfiguration['template'];
             if ( !empty( $framework->result->variables['form'] ) && !file_exists($template) ) {
                 $template = ENTRY_APP_PATH . '/cache/templates/forms/' . $framework->result->variables['form']->formName . '.php';
