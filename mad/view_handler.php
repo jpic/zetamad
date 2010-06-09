@@ -447,7 +447,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     
     public function renderFormSet( $form ) { # {{{
         $html = array(
-            '<table class="formset">',
+            sprintf( '<table class="formset %s">', str_replace( '.', '_', $form->formName ) ),
             '<thead>',
             '<tr>',
         );
@@ -470,8 +470,9 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             $this->processAttribute( $attribute );
 
             $html[] = sprintf(
-                '<th>%s</th>',
-                $this->ucfirst( $attribute['label'] )
+                '<th class="%s">%s</th>',
+                $this->ucfirst( $attribute['label'] ),
+                $attribute['name']
             );
         }
 
@@ -500,7 +501,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
                         ucfirst( $attribute['widget'] )
                     );
 
-                    $html[] = '<td>';
+                    $html[] = sprintf('<td class="%s">', $attribute['name']);
                     if ( method_exists( $this, $method ) ) {
                         $html[] = $this->$method( $attribute, $key );
                     } else {
@@ -510,7 +511,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
                 }
             }
             
-            $html[] = '<td class="formsetDeleteRow">';
+            $html[] = '<td class="formsetDeleteRowh">';
             $html[] = sprintf( 
                 '<input type="button" class="deleteRow" value="%s" disabled="%s" />',
                 $this->ucfirst( $this->t( 'delete' ) ),

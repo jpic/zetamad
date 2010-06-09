@@ -189,18 +189,10 @@ function findStaticFiles( $configuration ) {
 
             foreach( $fileIterator as $fileInfo ) {
                 $absolutePath = madFramework::fixPath( $fileInfo->getRealPath(  ) );
-                
-                // skip .svn subdirs
-                if ( strpos( $absolutePath, '.svn' ) !== false ) {
-                    continue;
-                }
-                
                 $relativePath = substr( $absolutePath, strlen( $staticPath ) );
 
-                $configuration['staticFiles']['paths'][$relativePath] = ezcBaseFile::calculateRelativePath(
-                    $absolutePath,
-                    ENTRY_APP_PATH
-                );
+                $configuration['staticFiles']['paths'][$relativePath] = 
+                    madFramework::getRelativePath( $absolutePath, ENTRY_APP_PATH );
             }
         }
     }
