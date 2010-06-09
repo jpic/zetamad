@@ -87,12 +87,12 @@ a.btn-block:hover { background: #f1f1f1; }
 </ul>
 -->
 
-<div class="object">
+<div class="object hrecipe">
         <div class="object-left">
             <?php if ( !empty( $this->pictures ) ): ?>
             <div id="object-photo">
                 <a class="thickbox" href="<?php echo $this->getAbsoluteUploadUrl( $this->pictures[0]['picture'] ) ?>" title="<?php $this->e( $this->object['title'] ) ?>">
-                    <img src="<?php echo $this->thumbnail( $this->pictures[0]['picture'], 300, 300 ); ?>" alt="<?php $this->e( $this->pictures[0]['title'] ) ?>" style="margin:4px 0 0; vertical-align:baseline;" id="bigpic" />
+                    <img class="photo" src="<?php echo $this->thumbnail( $this->pictures[0]['picture'], 300, 300 ); ?>" alt="<?php $this->e( $this->pictures[0]['title'] ) ?>" style="margin:4px 0 0; vertical-align:baseline;" id="bigpic" />
                 </a>
                 <?php if ( count( $this->pictures ) > 1 ): ?>
                 <div id="object-ths">
@@ -103,7 +103,7 @@ a.btn-block:hover { background: #f1f1f1; }
                     ?>
                     <div class="object-th">
                         <a rel="other-views" href="<?php echo $this->getAbsoluteUploadUrl( $picture['picture'] ) ?>" class="thickbox">
-                            <img alt="<?php $this->e( $picture['title'] ) ?>" src="<?php echo $this->thumbnail( $picture['picture'], 45, 45 ) ?>" id="thumb_<?php echo $key ?>">
+                            <img class="photo" alt="<?php $this->e( $picture['title'] ) ?>" src="<?php echo $this->thumbnail( $picture['picture'], 45, 45 ) ?>" id="thumb_<?php echo $key ?>">
                         </a>
                     </div>
                     <?php endforeach ?>
@@ -133,7 +133,7 @@ a.btn-block:hover { background: #f1f1f1; }
 		</ul>
             <?php endif ?>
                 <div class="object-author">
-                    <p class="author-name"><?php $this->e( $this->profile['name'] ) ?></p>
+                    <p class="author-name"><span class="author"><?php $this->e( $this->profile['name'] ) ?></span></p>
                     <p class="author-description">
                             <?php if ( !empty( $this->profile['picture'] ) ): ?>
                             <img class="author-photo" src="<?php echo $this->thumbnail( $this->profile['picture'], 87, 87 ); ?>" title="<?php $this->e( $this->profile['name'] ) ?>" />
@@ -145,7 +145,7 @@ a.btn-block:hover { background: #f1f1f1; }
         </div>
         <div class="object-right">
                 <div class="object-header">
-                        <h2><?php $this->e( $this->object['title'] ) ?></h2>
+                        <h2 class="fn"><?php $this->e( $this->object['title'] ) ?></h2>
 			<?php if ( !empty( $this->categories ) ): ?>
 			    <ul id="object-categories">
 				<li class="title">Classée dans :</li>
@@ -163,9 +163,9 @@ a.btn-block:hover { background: #f1f1f1; }
                         <p class="object-author">Par&nbsp; <?php $this->e( $this->object['author'] ) ?></p>
                         <?php endif ?>
                         <?php if ( !empty( $this->object['summary'] ) ): ?>
-                        <p class="object-intro">
+                        <div class="object-intro summary">
                             <?php $this->e( $this->object['summary'] ) ?>
-                        </p>
+                        </div>
                         <?php endif ?>
 
                         <!--
@@ -202,18 +202,28 @@ a.btn-block:hover { background: #f1f1f1; }
                         ?>
                         <div class="object-infos">
                             <?php if ( !empty( $this->object['prepTime'] ) ): ?>
-                                <p class="object-infos-block">Pr&eacute;paration: <span class="bold"><?php $this->e( $this->object['prepTime'] ) ?></span></p>
+                                <p class="object-infos-block">
+                                    Pr&eacute;paration: <span class="bold "><?php $this->e( $this->object['prepTime'] ) ?>
+                                    </span>
+                                </p>
                             <?php endif ?>
                             <?php if ( !empty( $this->object['cookTime'] ) ): ?>
-                                <p class="object-infos-block">Cuisson: <span class="bold"><?php $this->e( $this->object['cookTime'] ) ?></span></p>
+                                <p class="object-infos-block">
+                                    Cuisson: <span class="bold "><?php $this->e( $this->object['cookTime'] ) ?>
+                                    </span>
+                                </p>
                             <?php endif ?>
                             <?php if ( !empty( $this->object['restTime'] ) ): ?>
-                                <p class="object-infos-block">Repos: <span class="bold"><?php $this->e( $this->object['restTime'] ) ?></span></p>
+                                <p class="object-infos-block">
+                                    Repos: <span class="bold "><?php $this->e( $this->object['restTime'] ) ?>
+                                    </span>
+                                </p>
                             <?php endif ?>
                         </div>
                         <?php endif ?>
-                        
+
                         <?php if ( !empty($this->steps) ): ?>
+                            <div class="instructions">
                             <?php $forloopCounter = 0; foreach( $this->steps as $step ): ?>
             			<h3 <?php if ( $forloopCounter == 0 ): ?>class="clear"<?php endif ?>><?php $this->e( $step['title'] ) ?></h3>
 
@@ -223,6 +233,7 @@ a.btn-block:hover { background: #f1f1f1; }
                                 </p>
                                 <?php endif ?>
                             <?php $forloopCounter++; endforeach ?>
+                            </div>
             		<?php endif ?>
                 </div>
                 <?php endif ?>
@@ -234,11 +245,11 @@ a.btn-block:hover { background: #f1f1f1; }
                 <h4>Ingr&eacute;dients</h4>
                 <ul>
 		    <?php if ( !empty( $this->object['yield'] ) ): ?>
-                        <li>Pour : <span class="bold"><?php $this->e( $this->object['yield'] ) ?></span></li>
+                        <li>Pour : <span class="bold yield"><?php $this->e( $this->object['yield'] ) ?></span></li>
                     <?php endif ?>
 			    
                     <?php foreach( $this->ingredientQuantities as $ingredient ): ?>
-                        <li><?php $this->e( $ingredient['ingredient'] ) ?><?php if ( !empty( $ingredient['quantity'] ) ): ?> : <span class="att"><?php $this->e( $ingredient['quantity'] ) ?></span><?php endif ?></li>
+                        <li class="ingredient"><span class="name"><?php $this->e( $ingredient['ingredient'] ) ?></span><?php if ( !empty( $ingredient['quantity'] ) ): ?> : <span class="att amount"><?php $this->e( $ingredient['quantity'] ) ?></span><?php endif ?></li>
                     <?php endforeach; ?>
                 </ul>
                 <!--<a class="btn-block" href="#">Voir les produits</a>-->
