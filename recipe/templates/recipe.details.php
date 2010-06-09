@@ -26,7 +26,7 @@
 .object .object-right .object-header .object-author { color: #232323; font-size: 18px; font-family: Times; padding-top: 10px;}
 .object .object-right .object-header .object-author a { color: #b49135; }
 .object .object-right .object-header .object-author a:hover { color: #232323; }
-.object .object-right .object-header .object-intro { text-align: justify; margin-top: 10px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 11px; color: #969696; word-spacing: 0.5px; line-height: 18px;}
+.object .object-right .object-header .object-intro { text-align: justify; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 11px; color: #969696; word-spacing: 0.5px; line-height: 18px;}
 .object .object-right .object-header .links-intro a { font-weight: bold; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 11px; color: #539893; border-bottom: 1px solid #969696; display: block; float: left; margin-right: 20px; margin-top: 10px;}
 .object .object-right .object-header .links-intro a:hover { color: #D02F1E; border-bottom: 1px solid #cf6875;}
 .object .object-right .object-header .share-object p.lovedit { background: url('themes/mmarket/img/object-love.jpg') 0 1px no-repeat; padding-left: 15px; font-style: italic; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; font-size: 11px; color: #969696; padding-bottom: 10px;}
@@ -41,6 +41,12 @@
 .object .object-right .object-description .step-desc { color:#666666; font-family:Lucida,"Lucida Sans",Arial,sans-serif; font-size:12px; line-height:21px; padding-bottom:20px; }
 .object .object-right .object-infos { overflow: auto; border-bottom: 1px dashed #dadada; margin-bottom: 20px; padding-bottom: 7px; }
 .object .object-right .object-infos-block { float: left; margin-right: 15px; color: #D02F1E; font-size: 11px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; padding: 5px; }
+
+#object-categories { font-size: 11px; color: #666; }
+#object-categories li { line-height: 30px; display: block; float: left; margin-right: 5px; }
+#object-categories .title { font-weight: bold; }
+#object-categories li a { color: #D02F1E; }
+#object-categories li a:hover { text-decoration: underline; }
 
 #object-tags { list-style: none; font-size: 11px; font-family: Verdana; color: #666; clear: both; float: right; margin: 0 0 10px 0; }
 #object-tags li { float: left; display: block; margin-left: 5px; }
@@ -114,19 +120,6 @@ a.btn-block:hover { background: #f1f1f1; }
 		<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js?pub=xa-4a48da264c324c50"></script>
 	</div>
 
-            <?php if ( !empty( $this->categories ) ): ?>
-		<ul id="object-categories">
-		    <li class="title">categories:</li>
-		    <?php foreach( $this->categories as $category ): ?>
-		    <li>
-                        <a href="<?php $this->url( 'recipe.listByCategory', $category ) ?>" title="Recettes de la catégorie <?php $this->e( $category['title']) ?>">
-                            <?php $this->e( $category['title'] ) ?>
-                        </a>
-                    </li>
-		    <?php endforeach ?>
-		</ul>
-            <?php endif ?>
-
             <?php if ( !empty( $this->tags ) ): ?>
 		<ul id="object-tags">
 		    <li class="title">Mots clés:</li>
@@ -153,6 +146,19 @@ a.btn-block:hover { background: #f1f1f1; }
         <div class="object-right">
                 <div class="object-header">
                         <h2><?php $this->e( $this->object['title'] ) ?></h2>
+			<?php if ( !empty( $this->categories ) ): ?>
+			    <ul id="object-categories">
+				<li class="title">Classée dans :</li>
+				<?php foreach( $this->categories as $category ): ?>
+				<li>
+				    <a href="<?php $this->url( 'recipe.listByCategory', $category ) ?>" title="Recettes de la catégorie <?php $this->e( $category['title']) ?>">
+					<?php $this->e( $category['title'] ) ?>
+				    </a>
+				</li>
+				<?php endforeach ?>
+			    </ul>
+			    <div class="clear"></div>
+			<?php endif ?>
                         <?php if ( !empty( $this->object['author'] ) ): ?>
                         <p class="object-author">Par&nbsp; <?php $this->e( $this->object['author'] ) ?></p>
                         <?php endif ?>

@@ -25,22 +25,16 @@ h3 { color: #DE5161; font-size: 14px; padding: 0; margin: 0; line-height: 18px; 
 .profil_block .thumb img { vertical-align: bottom; }
 .profil_block .description { float: left; width: 564px;}
 .profil_block .description p { font-family: Verdana; font-size: 11px; line-height: 18px; color: #666666; }
-.profil_block .description h3 { color: #de5161; font-size: 22px; padding-bottom: 7px; font-family: Times; }
-.profil_block .btn { margin-top: 10px; clear: right; float: right; text-align: center; width: 140px; background: #c0c0c0; line-height: 20px; height: 23px; }
-.profil_block .btn a { color: #fff; font-size: 11px; font-family: Verdana; text-transform: uppercase; }
+.profil_block .description h3 a { color: #de5161; font-size: 22px; line-height: 30px; font-family: Times; font-weight: normal; }
+.profil_block .description h3 a:hover { text-decoration: underline; }
 .clear { clear: both; }
 /* afficher la colone de droite */
 #left_column { display: block !important; }
 
-.profil_block { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #dadada; clear: both; margin-bottom: 15px; }
-.profil_block .thumb { width: 206px; height: 206px; padding: 3px; float: left; }
-.profil_block .thumb img { vertical-align: bottom; }
-.profil_block .description { float: left; width: 564px;}
-.profil_block .description p { font-family: Verdana; font-size: 11px; line-height: 18px; color: #666666; }
-.profil_block .description h3 { color: #ab3847; font-size: 18px; font-family: Times; }
-.profil_block .btn { margin-top: 5px; clear: right; float: right; text-align: center; width: 140px; background: #c0c0c0; line-height: 20px; height: 23px; }
-.profil_block .btn a { color: #fff; font-size: 11px; font-family: Verdana; text-transform: uppercase; }
-.profil_block .btn a:hover { color: #000; text-decoration: none; }
+.profil_block a.show_more { color: #de5161; }
+a.btn-block { display: block; height: 26px; width: 170px; margin: 0 auto; margin-top: 10px; text-align: center; font-size: 16px; font-style: italic; font-family: Times; color: #666; line-height: 26px; background: #f7f7f7; border: 1px solid #dadada; -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; }
+a.btn-block:hover { background: #f1f1f1; text-decoration: none; }
+
 </style>
 
 <div class="breadcrumb">
@@ -65,22 +59,20 @@ h3 { color: #DE5161; font-size: 14px; padding: 0; margin: 0; line-height: 18px; 
             <?php endif ?>
             </a>
 		</div>
+		
 		<div class="description">
-			<h3><?php $this->e( $this->truncateWords( $object['name'], 80 ) ) ?></h3>
+			<h3><a href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->e( $object['name'] ) ?>"><?php $this->e( $this->truncateWords( $object['name'], 80 ) ) ?></a></h3>
             <?php if ( isset( $object['introduction'] ) ): ?>
-			<p>
-                <?php $this->e( $this->truncateWords( $object['introduction'], 700 ) ) ?> 
-			    <a href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->e( $object['name'] ) ?>">
-                [...]
-                </a>
-			</p>
+		<p>
+			<?php $this->e( $this->truncateWords( $object['introduction'], 700 ) ) ?> 
+			<a class="show_more" href="<?php echo $this->url( 'profile.details', $object ) ?>" title="Lire la suite" >(...)</a>
+		</p>
             <?php endif ?>
+		
+		<a style="float: right;" class="btn-block"" href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->e( $object['name'] ) ?>">Voir le profil</a>
+		
 		</div>
-		<div class="btn">
-			<a href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->e( $object['name'] ) ?>">
-            voir le profil
-            </a>
-		</div>
+		
 		<div class="clear"></div>
 	</div>
     <?php

@@ -57,16 +57,18 @@
 		<?php endif ?>
 	
 			<p class="infos">
-				<a href="<?php echo $this->url( 'recipe.details', $object ) ?>">
-					<?php echo $object['title']; ?>
+				<a href="<?php echo $this->url( 'recipe.details', $object ) ?>" title="<?php echo $object['title']; ?>">
+					<?php echo $this->truncateWords( $object['title'], 29 ) ?>
+					<?php if ( strlen( $object['title'] ) > 29 ): ?>...<?php endif ?>
 				</a>
 			</p>
 	
 		<p class="author">
                     <a href="<?php echo $this->url( 'profile.details', array( 'slug' => $object['profile_slug'] ) ) ?>" title="<?php $this->e( $object['profile_name'] ) ?>">
-                        <?php echo $object['profile_name'] ?>
+                        <?php echo $this->truncateWords($object['profile_name'], 35) ?>
                     </a>
 		</p>
+		
         <?php if ( isset( $this->user ) && isset( $this->user['role'] ) && $this->user['role'] == 'administrator' ): ?>
 		<div class="adminpanel">
 			<?php if ( isset( $object['profile'] ) ): ?>

@@ -165,8 +165,9 @@ label, th { font-size: 12px; text-transform: Capitalize; }
 
 .formset { }
 
-
 .formset_ingredientQuantities .textInput { width: 400px !important; }
+
+.uniForm .inlineLabels .formset_ulti_sites_form .textInput, .uniForm .inlineLabels .formset_ulti_products_form .textInput { width: 250px; }
 
 
 
