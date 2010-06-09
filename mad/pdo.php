@@ -74,6 +74,11 @@ class madPdo extends PDO {
                 }
             }
         }
+
+        if ( function_exists( 'apc_store' ) ) {
+            apc_store( 'mad query cache', array() );
+            apc_store( 'mad schemaless tables', $this->schemalessTables );
+        }
     }
 
     public function __destruct(  ) {
