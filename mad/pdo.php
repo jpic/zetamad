@@ -289,7 +289,7 @@ class madPdo extends PDO {
                         $rewrite = true;
                     }
 
-                    if ( preg_match( "/(`?$schemalessTable`?\\.)?`?id`?$/i", $token) ) {
+                    if ( preg_match( "/^(`?$schemalessTable`?\\.)?`?id`?$/i", $token) ) {
                         $rewrite = false;
                     }
 
