@@ -213,18 +213,27 @@ function allPathsRelative( $configuration ) {
 $this->connectSignal( 'postConfigurationRefresh', 'allPathsRelative' );
 
 function setDefaultWidgets( $configuration ) {
+    $noWidget = array(
+        'value',
+        'autoNow',
+        'autoMe',
+        'autoNowAdd',
+        'slugify',
+    );
+
     foreach( $configuration['forms'] as $formName => $form ) {
         foreach( $form as $fieldName => $field ) {
-            if ( isset( $field['value'] ) ) {
+            if ( $fieldName == 'META' ) {
                 continue;
             }
-
-            if ( isset( $field['autoNow'] ) ) {
-                continue;
-            }
-
-            if ( isset( $field['slugify'] ) ) {
-                continue;
+            
+            foreach( $noWidget as $key ) {
+                if ( isset( $field[$key] ) ) {
+                    if ( !empty( $field['widget'] ) ) {
+                        unset( $configuration['forms'][$formName][$fieldName]['widget'] );
+                    }
+                    continue 2;
+                }
             }
 
             if ( empty( $field['widget'] ) ) {
@@ -250,6 +259,10 @@ $this->connectSignal( 'postConfigurationRefresh', 'setDefaultWidgets' );
 function setDefaultFieldNames( $configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
         foreach( $form as $fieldName => $field ) {
+            if ( $fieldName == 'META' ) {
+                continue;
+            }
+
             if ( !isset( $field['name'] ) ) {
                 $configuration['forms'][$formName][$fieldName]['name'] = $fieldName;
             }
@@ -261,6 +274,10 @@ $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldNames' );
 function setFormAttributesViewDefaultParameters( $configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
         foreach( $form as $fieldName => &$field ) {
+            if ( $fieldName == 'META' ) {
+                continue;
+            }
+
             $field['asFormSet'] = false;
             $field['asMultiValue'] = false;
 
@@ -285,6 +302,10 @@ $this->connectSignal( 'postConfigurationRefresh', 'setFormAttributesViewDefaultP
 function setDefaultFieldErrors( $configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
         foreach( $form as $fieldName => $field ) {
+            if ( $fieldName == 'META' ) {
+                continue;
+            }
+
             if ( !isset( $field['errors'] ) ) {
                 $configuration['forms'][$formName][$fieldName]['errors'] = array(  );
             }
@@ -296,6 +317,10 @@ $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldErrors' );
 function setDefaultFieldRequired( $configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
         foreach( $form as $fieldName => $field ) {
+            if ( $fieldName == 'META' ) {
+                continue;
+            }
+
             if ( !isset( $field['required'] ) ) {
                 $configuration['forms'][$formName][$fieldName]['required'] = false;
             }
@@ -307,6 +332,10 @@ $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldRequired' );
 function setDefaultFieldDisplayValue( $configuration ) {
     foreach( $configuration['forms'] as $formName => $form ) {
         foreach( $form as $fieldName => $field ) {
+            if ( $fieldName == 'META' ) {
+                continue;
+            }
+
             if ( !isset( $field['displayValue'] ) ) {
                 $configuration['forms'][$formName][$fieldName]['displayValue'] = '';
             }
@@ -318,6 +347,10 @@ $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldDisplayValue' 
 function setDefaultFieldClasses( $configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
         foreach( $form as $fieldName => &$field ) {
+            if ( $fieldName == 'META' ) {
+                continue;
+            }
+
             if ( empty( $field['classes'] ) ) {
                 $field['classes'] = array(  );
             }
@@ -354,6 +387,10 @@ $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFieldClasses' );
 function setDefaultFkNames( $configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
         foreach( $form as $fieldName => &$field ) {
+            if ( $fieldName == 'META' ) {
+                continue;
+            }
+
             if ( !isset( $field['relation'] ) ) {
                 continue;
             }
@@ -378,6 +415,10 @@ $this->connectSignal( 'postConfigurationRefresh', 'setDefaultFkNames' );
 function setDefaultColumn( $configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
         foreach( $form as $fieldName => &$field ) {
+            if ( $fieldName == 'META' ) {
+                continue;
+            }
+
             if ( !empty( $field['column'] ) ) {
                 continue;
             }
@@ -391,6 +432,10 @@ $this->connectSignal( 'postConfigurationRefresh', 'setDefaultColumn' );
 function setDefaultValueAttributes( $configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
         foreach( $form as $fieldName => &$field ) {
+            if ( $fieldName == 'META' ) {
+                continue;
+            }
+
             if ( empty( $field['valueAttribute'] ) ) {
                 $field['valueAttribute'] = 'id';
             }
@@ -402,6 +447,10 @@ $this->connectSignal( 'postConfigurationRefresh', 'setDefaultValueAttributes' );
 function setDefaultManyToManyTableNames( $configuration ) {
     foreach( $configuration['forms'] as $formName => &$form ) {
         foreach( $form as $fieldName => &$field ) {
+            if ( $fieldName == 'META' ) {
+                continue;
+            }
+
             if ( empty( $field['relation'] ) ) {
                 continue;
             }

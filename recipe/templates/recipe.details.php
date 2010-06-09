@@ -350,7 +350,7 @@ a.btn-block:hover { background: #f1f1f1; }
                 </div>
                 <?php endif ?>
 
-<?php /*echo $this->comments*/ ?>
+<?php $this->includeTemplate( "comments.php" ) ?>
 
 <!--
 <a href="<?php /* echo $this->url( 'recipe.edit', $this->object ) */ ?>">edit</a>

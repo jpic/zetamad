@@ -1,6 +1,11 @@
 <?php
 
-$registry = madFramework::instance(  );
+function createForm( $template ) {
+    $framework = madFramework::instance();
+    $form = madFormController::factory( 'comments.post' );
+    $framework->view->send( 'commentForm', $form );
+}
+$this->connectSignal( 'preIncludeTemplate', 'createForm' );
 
 function setResultComments( ezcMvcRequest $request, ezcMvcResult $result ) {
     if ( isset( $result->variables['object'] ) && isset( $result->variables['object']['comments'] ) ) {
@@ -9,5 +14,6 @@ function setResultComments( ezcMvcRequest $request, ezcMvcResult $result ) {
 }
 
 //$registry->signals->connect( 'postCreateResult', 'setResultComments' );
+
 
 ?>

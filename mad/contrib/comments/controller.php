@@ -1,19 +1,44 @@
 <?php
 
-class madCommentsController extends madController {
-    public function doPost(  ) {
-        $comment = new madModelObject( array(
-            'updated'   => date( 'Y-m-d' ),
-            'user'      => $this->user['id'],
-            'comment'   => $this->comment,
-            'object'    => $this->object,
-            'namespace' => 'comment',
-            'moderated' => 0,
-        ) );
+class madCommentsController extends madFormController {
+    public function process() {
+        parent::process();
 
-        $this->registry->model->save( $comment );
+        if ( !empty( $this->relatedNamespace ) ) {
+            $this->processedData[$this->relatedNamespace] = (int) $this->relatedId;
+        }
+    }
 
-        $this->result->variables['comment'] = $comment;
+    public function doListValidate() {
+        $table = 'comment';
+
+        foreach( $this->ids as $id ) {
+            madFramework::query(
+                "insert into comment set id = :id, status = 'validated'",
+                array(
+                    'id' => $id,
+                )
+            );
+        }
+
+        $this->addMessage( 'listValidateSuccess', array( 'table' => $table ) );
+        $this->redirectToReferer();
+    }
+
+    public function doListUnvalidate() {
+        $table = 'comment';
+
+        foreach( $this->ids as $id ) {
+            madFramework::query(
+                "insert into comment set id = :id, status = 'unvalidated'",
+                array(
+                    'id' => $id,
+                )
+            );
+        }
+
+        $this->addMessage( 'listValidateSuccess', array( 'table' => $table ) );
+        $this->redirectToReferer();
     }
 }
 

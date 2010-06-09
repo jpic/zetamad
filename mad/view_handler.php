@@ -164,7 +164,9 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         }
     } # }}}
     public function includeTemplate( $template ) { # {{{
+        madFramework::instance()->sendSignal( 'preIncludeTemplate', array( $template ) );
         include $template;
+        madFramework::instance()->sendSignal( 'postIncludeTemplate', array( $template ) );
     } # }}}
     public function includeApplicationTemplate( $application, $template ) { # {{{
         $registry = madFramework::instance();
@@ -257,6 +259,13 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
         return $message;
     } # }}}
+
+    public function et( $key, $dictionnary = null, $contexts = array(  ) ) {
+        $this->e( $this->t( $key, $dictionnary , $contexts ) );
+    }
+    public function uet( $key, $dictionnary = null, $contexts = array() ) {
+        $this->e( $this->ucfirst( $this->t( $key, $dictionnary, $contexts ) ) );
+    }
     public function truncateWords( $content, $maxchars ) { # {{{
         $content = substr($content, 0, $maxchars);
         $pos = strrpos($content, ' ');
@@ -297,14 +306,16 @@ class madViewHandler extends ezcMvcPhpViewHandler {
      * @return string HTML form as dictated by uni-form
      */
     public function renderFormFields( $form ) { # {{{
+        madFramework::instance()->sendSignal( 'preRenderFormFields', array( 'form' => $form ) );
+
         $html = array(  );
 
-        foreach( $form->formConfiguration as &$attribute ) {
+        foreach( $form->formConfiguration as $name => &$attribute ) {
             if ( !$this->isRenderable( $attribute ) ) {
                 continue;
             }
 
-            $html[] = $this->renderFormFieldRow( $attribute['name'] );
+            $html[] = $this->renderFormFieldRow( $attribute );
         }
 
         return implode( "\n", $html );
@@ -322,9 +333,11 @@ class madViewHandler extends ezcMvcPhpViewHandler {
      * @param array $attribute
      * @return string HTML version of the field row as dictated by uni-form
      */
-    public function renderFormFieldRow( $attributeName ) { # {{{
+    public function renderFormFieldRow( $attribute ) { # {{{
         $html = array(  );
-        $attribute =& $this->form->formConfiguration[$attributeName];
+        if ( is_string( $attribute ) ) {
+            $attribute =& $this->form->formConfiguration[$attributeName];
+        }
 
         $this->processAttribute( $attribute );
 
@@ -343,7 +356,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
                 $html[] = $this->renderMultiInputWidgetRow( $attribute );
             }
         } else {
-            $method = sprintf( 
+            $method = sprintf(
                 "render%sWidgetRow",
                 ucfirst( $attribute['widget'] )
             );

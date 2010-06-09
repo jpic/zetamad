@@ -18,30 +18,37 @@ class madFormController extends madController {
         parent::__construct( $framework );
         $this->processedData = new madObject(  );
         $this->data = new madObject();
+        $framework->connectSignal( 'preRenderFormFields', array( $this, 'setContexts' ) );
     }
 
     public function preCreateResult(  ) {
         parent::preCreateResult();
-
-        if ( $this->action == 'form' ) {
-            $this->requestFormName = str_replace( '.', '_', $this->framework->routeConfiguration['form'] );
-            $this->formName = $this->framework->routeConfiguration['form'];            
-            
-            if ( $this->formName && !empty( $this->framework->configuration['forms'][$this->formName] ) ) {
-                $this->formConfiguration = $this->framework->configuration['forms'][$this->formName];
-                $this->formMeta = $this->formConfiguration['META'];
-                unset( $this->formConfiguration['META'] );
-            } else {
-                $this->formConfiguration = array(  );
-            }
-
-            array_unshift( $this->result->variables['contexts'], $this->formName );
-
+       
+        if ( !empty( $this->framework->routeConfiguration['form'] ) ) {
             $this->initFormConfiguration();
         }
     }
 
     public function initFormConfiguration() {
+        if ( !$this->formName ) {
+            $this->formName = $this->framework->routeConfiguration['form'];            
+        }
+        
+        if ( !$this->requestFormName ) {
+            $this->requestFormName = str_replace( '.', '_', $this->formName );
+        }
+
+        if ( !empty( $this->framework->configuration['forms'][$this->formName] ) ) {
+            $this->formConfiguration = $this->framework->configuration['forms'][$this->formName];
+        } else {
+            $this->formConfiguration = array();
+        }
+
+        if ( isset( $this->formConfiguration['META'] ) ) {
+            $this->formMeta = $this->formConfiguration['META'];
+            unset( $this->formConfiguration['META'] );
+        }
+        
         foreach( $this->formConfiguration as $name => &$attribute ) {
             if ( isset( $attribute['relation'] ) && $attribute['relation'] == 'reverseFk' ) {
                 $attribute['form'] = madFormController::formsetFactory(
@@ -57,10 +64,10 @@ class madFormController extends madController {
         }
     }
 
-    static public function factory( $formName, $data ) {
+    static public function factory( $formName, $data = array() ) {
         $framework = madFramework::instance();
         $controller = new madFormController( $framework );
-        $controller->data = $data;
+        $controller->data = is_array( $data ) ? new madObject( $data ) : $data;
         $controller->formName = $formName;
         $controller->formConfiguration = $framework->configuration['forms'][$formName];
         $controller->initFormConfiguration();
@@ -146,7 +153,7 @@ class madFormController extends madController {
             $this->processedData['id'] = $this->data['id'];
         }
 
-        foreach( $this->formConfiguration as &$attribute ) {
+        foreach( $this->formConfiguration as $name => &$attribute ) {
             if ( empty( $attribute['relation'] ) ) {
                 continue;
             }
@@ -160,7 +167,12 @@ class madFormController extends madController {
     }
 
     public function setContexts(  ) {
-        foreach( $this->formConfiguration as &$attribute ) {
+        // boilerplate code because php foreach is a whiner
+        if ( empty( $this->formConfiguration ) ) {
+            return;
+        }
+
+        foreach( $this->formConfiguration as $name => &$attribute ) {
             if ( !isset( $attribute['contexts'] ) ) {
                 $attribute['contexts'] = array(  );
             }
@@ -181,15 +193,15 @@ class madFormController extends madController {
     }
 
     public function postCreateResult(  ) {
-        if ( $this->action != 'form' ) {
+        if ( ! $this->formName ) {
             return true;
         }
 
+        array_unshift( $this->result->variables['contexts'], $this->formName );
+
         $this->result->variables['form'] = $this;
 
-        if ( !$this->isSuccessfull ) {
-            $this->setContexts(  );
-        } else {
+        if ( $this->isSuccessfull ) {
             if ( isset( $this->request->variables['popup'] ) ) {
                 $this->result->variables['responseBody'] = sprintf( 
                     '<script type="text/javascript">opener.dismissAddAnotherPopup( window, "%s", "%s" );</script>',
@@ -197,10 +209,16 @@ class madFormController extends madController {
                     $this->processedData[$this->displayAttribute]
                 );
             } else {
-                $this->result->status = new ezcMvcExternalRedirect( madFramework::url(
+                $this->addMessage( 'saveSuccess' );
+
+                if ( !empty( $this->framework->routeConfiguration['successRoute'] ) ) {
+                    $this->result->status = new ezcMvcExternalRedirect( madFramework::url(
                         $this->framework->routeConfiguration['successRoute'],
                         $this->processedData->flatten()
-                ) );
+                    ) );
+                } elseif ( !empty( $this->next ) ) {
+                    $this->result->status = new ezcMvcExternalRedirect( $this->next );
+                }
             }
         }
     }
@@ -251,9 +269,11 @@ class madFormController extends madController {
     public function processAttribute( &$attribute, $value ) {
         if ( isset( $attribute['value'] ) ) {
             $this->processedData( $attribute, $attribute['value'] );
-        } elseif ( isset( $attribute['autoNow'] ) ) {
+        } elseif ( !empty( $attribute['autoNow'] ) ) {
             $this->processedData( $attribute, date( 'Y-m-d' ) );
-        } elseif ( isset( $attribute['slugify'] ) ) {
+        } elseif ( !empty( $attribute['autoNowAdd'] ) && !isset( $this->processedData['id'] ) ) {
+            $this->processedData( $attribute, date( 'Y-m-d' ) );
+        } elseif ( !empty( $attribute['slugify'] ) ) {
             $phrase = madFramework::dictionnaryReplace(
                 $attribute['slugify'],
                 $this->processedData
@@ -262,6 +282,8 @@ class madFormController extends madController {
             $slug = madFramework::slugify( $phrase );
 
             $this->processedData( $attribute, $slug );
+        } elseif ( !empty( $attribute['autoMe'] ) ) {
+            $this->processedData( $attribute, $this->request->variables['user']['id'] );
         } elseif ( in_array( $attribute['widget'], array( 'file', 'image' ) ) && $value instanceof ezcMvcRequestFile ) {
             $fileName = iconv( 'utf-8', 'us-ascii//TRANSLIT', $value->name );
 
@@ -352,7 +374,7 @@ class madFormController extends madController {
             madModelController::saveArray( $row );
 
             // set the id to reverseFks
-            foreach( $this->formConfiguration as $attribute ) {
+            foreach( $this->formConfiguration as $name => $attribute ) {
                 if ( empty( $attribute['relation'] ) ) {
                     continue;
                 }
