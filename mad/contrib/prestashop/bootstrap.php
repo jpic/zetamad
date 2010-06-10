@@ -19,6 +19,7 @@ function prestashopAuthentication( ezcMvcRequest $request, ezcMvcRouter $router 
                 'email'        => $cookie->email,
                 'prestashopId' => intval( $cookie->id_customer ),
                 'namespace'    => 'user',
+                'role'         => 'customer',
             );
             madModelController::saveArray( $user );
             $request->variables['user'] = $user;

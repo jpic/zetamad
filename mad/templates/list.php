@@ -1,5 +1,5 @@
 <style>
-    h2.title { float: left; color: #000000; font-family:'Times','Helvetica',serif; font-size:35px; font-weight:100; line-height:40px; margin: 15px 0 15px 0; }
+    h2.title { float: left; color: #000000; font-family:"Times","Helvetica",serif; font-size:35px; font-weight:100; line-height:40px; margin: 15px 0 15px 0; }
     a.add_user { color: #DE5161; font-size: 11px; font-weight: bold; float: right; line-height: 40px; display: block; margin: 15px 0 15px 0; }
     .object_table { margin: 0 auto; width: 95%; }
     .object_head { background: #f6f6f6; }
@@ -13,79 +13,73 @@
     .object_table tbody .row_details a:hover { text-decoration: underline; }
 </style>
 
-<?php if ( !empty( $this->framework->routeConfiguration['createRoute'] ) ): ?>
-    <a class="add_user" href="<?php echo $this->url( $this->framework->routeConfiguration['createRoute'] ) ?>">
-        <?php $this->e( isset( $this->framework->routeConfiguration['createLabel'] ) ? ucfirst( $this->framework->routeConfiguration['createLabel'] ) : 'Nouvelle saisie' ) ?> &raquo;
-    </a>
-<?php endif ?>
-
-<?php if ( !empty( $this->framework->routeConfiguration['links'] ) ): ?>
-<ul>
-    <?php foreach( $this->framework->routeConfiguration['links'] as $routeName ): ?>
-    <li>
-        <a href="<?php $this->url( $routeName ) ?>">
-            <?php $this->et( $routeName ) ?>
-        </a>
-    </li>
-    <?php endforeach ?>
-</ul>
-<?php endif ?>
-
 <?php if ( !count( $this->objectList ) ): ?>
 <p>
-    <?php $this->e( isset( $this->framework->routeConfiguration['ifEmpty'] ) ? ucfirst( $this->framework->routeConfiguration['ifEmpty'] ) : 'Aucun objet trouvé' ) ?>
+    <?php $this->e( isset( $this->framework->routeConfiguration["ifEmpty"] ) ? ucfirst( $this->framework->routeConfiguration["ifEmpty"] ) : "Aucun objet trouvé" ) ?>
 </p>
 <?php else: ?>
 
-    <?php if (!empty($this->framework->routeConfiguration['actions'])): ?>
+    <?php if (!empty($this->framework->routeConfiguration["actions"])): ?>
 <script type="text/javascript">
 $(document).ready(function() {
-    $('form#actionForm input[type=checkbox][name=selectAll]').change(function() {
-        $('input[type=checkbox]').attr('checked', $(this).attr('checked') );
-    });
-    $('form#actionForm input[type=checkbox][name=selectAll]').attr( 'disabled', '' );
+    var confirmMessage = '<?php echo str_replace( "'", "\\'", $this->ut( 'confirmAction' ) ) ?>';
 
-    $('form#actionForm select[name=action]').click(function() {
-        <?php foreach($this->framework->routeConfiguration['actions'] as $routeName ): ?>
-        if ( $(this).val() != '0' ) {
-            $(this).parents('form').attr( 'action', $(this).val() );
+    $("form#actionForm input[type=checkbox][name=selectAll]").change(function() {
+        $("input[type=checkbox]").attr("checked", $(this).attr("checked") );
+    });
+    $("form#actionForm input[type=checkbox][name=selectAll]").attr( "disabled", "" );
+
+    $("form#actionForm select[name=action]").click(function() {
+        if ( $(this).val() != "0" ) {
+            switch( $(this).val() ) {
+            <?php foreach($this->framework->routeConfiguration["actions"] as $routeName ): ?>
+                case '<?php echo $routeName ?>':
+                    $(this).parents("form").attr( "action", '<?php $this->url( $routeName) ?>' );
+                    confirmMessage = '<?php echo str_replace( "'", "\\'", $this->ut( 'confirmAction' ) )?>' + "\n" + '<?php echo str_replace( "'", "\\'", $this->ut( $routeName ) ) ?>';
+                    break;
+            <?php endforeach ?>
+            }
         } else {
             return false;
         }
-        <?php endforeach ?>
     });
-    $('form#actionForm select[name=action]').attr('disabled', '');
-    $('form#actionForm input[name=go]').attr('disabled', '');
+    $("form#actionForm select[name=action]").attr("disabled", "");
+    $("form#actionForm input[name=go]").attr("disabled", "");
+    $("form#actionForm").submit(function( e ) {
+        if ( !confirm( confirmMessage ) ){
+            e.preventDefault();
+        }
+    });
 })
 </script>
 
     <form action="" method="post" id="actionForm">
         Action:
         <select name="action" disabled="disabled">
-            <option value="9"><?php $this->e( $this->t( 'selectAction' ) ) ?></option>
-            <?php foreach($this->framework->routeConfiguration['actions'] as $routeName ): ?>
-            <option value="<?php $this->url( $routeName ) ?>">
+            <option value="9"><?php $this->e( $this->t( "selectAction" ) ) ?></option>
+            <?php foreach($this->framework->routeConfiguration["actions"] as $routeName ): ?>
+            <option value="<?php echo $routeName ?>">
                 <?php $this->et( $routeName ) ?>
             </option>
             <?php endforeach ?>
         </select>
-        <input disabled="disabled" onclick="javascript: return confirm( '<?php $this->uet( 'confirmAction' ) ?>' )" type="submit" name="go" value="<?php $this->uet('do') ?>" />
+        <input disabled="disabled" type="submit" name="go" value="<?php $this->uet("do") ?>" />
     <?php endif ?>
 
     <table class="object_table">
         <thead class="object_head" >
             <tr>
-                <?php if (!empty($this->framework->routeConfiguration['actions'])): ?>
+                <?php if (!empty($this->framework->routeConfiguration["actions"])): ?>
                 <td>
                     <input type="checkbox" name="selectAll" disabled="disabled" />
                 </td>
                 <?php endif ?>
-                <?php foreach( $this->framework->routeConfiguration['tableColumns'] as $name ): ?>
+                <?php foreach( $this->framework->routeConfiguration["tableColumns"] as $name ): ?>
                 <th><?php $this->uet( $name ) ?></th>
                 <?php endforeach ?>
 
-                <?php if ( isset( $this->framework->routeConfiguration['tableLinkColumns'] ) ): ?>
-                <?php foreach( $this->framework->routeConfiguration['tableLinkColumns'] as $route  ): ?>
+                <?php if ( isset( $this->framework->routeConfiguration["tableLinkColumns"] ) ): ?>
+                <?php foreach( $this->framework->routeConfiguration["tableLinkColumns"] as $route  ): ?>
                 <th><?php $this->uet( $route ) ?></th>
                 <?php endforeach ?>
                 <?php endif ?>
@@ -93,22 +87,22 @@ $(document).ready(function() {
         </thead>
         <tbody>
     <?php foreach( $this->objectList as $object ): ?>
-            <!--<tr onClick='document.location.href="";'>-->
+            <!--<tr onClick="document.location.href="";">-->
             <tr>
-                <?php if (!empty($this->framework->routeConfiguration['actions'])): ?>
+                <?php if (!empty($this->framework->routeConfiguration["actions"])): ?>
                 <td>
-                    <input type="checkbox" name="ids[]" value="<?php echo $object['id'] ?>" />
+                    <input type="checkbox" name="ids[]" value="<?php echo $object["id"] ?>" />
                 </td>
                 <?php endif ?>
 
-                <?php foreach( $this->framework->routeConfiguration['tableColumns'] as $key ): ?>
+                <?php foreach( $this->framework->routeConfiguration["tableColumns"] as $key ): ?>
                 <td class="row_name">
-                    <?php $this->e( $this->getValueString( $object, $key ) ) ?>
+                    <?php $this->et( $this->getValueString( $object, $key ) ) ?>
                 </td>
                 <?php endforeach ?>
 
-                <?php if ( isset( $this->framework->routeConfiguration['tableLinkColumns'] ) ): ?>
-                <?php foreach( $this->framework->routeConfiguration['tableLinkColumns'] as $route ): ?>
+                <?php if ( isset( $this->framework->routeConfiguration["tableLinkColumns"] ) ): ?>
+                <?php foreach( $this->framework->routeConfiguration["tableLinkColumns"] as $route ): ?>
                 <td class="row_details">
                     <a href="<?php echo $this->url( $route, $object ) ?>" title="<?php $this->uet( $route ) ?>">
                         <?php $this->uet( $route ) ?>
@@ -121,7 +115,7 @@ $(document).ready(function() {
         </tbody>
     </table>
 
-    <?php if (!empty($this->framework->routeConfiguration['actions'])): ?>
+    <?php if (!empty($this->framework->routeConfiguration["actions"])): ?>
     </form>
     <?php endif ?>
 

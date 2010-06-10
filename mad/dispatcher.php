@@ -134,14 +134,27 @@ class madHttpDispatcher {
             }
 
             $template = ENTRY_APP_PATH . '/cache/templates/' . $framework->routeConfiguration['template'];
-            if ( !empty( $framework->result->variables['form'] ) && !file_exists($template) ) {
-                $template = ENTRY_APP_PATH . '/cache/templates/forms/' . $framework->result->variables['form']->formName . '.php';
+
+            if ( !empty( $framework->result->variables['form'] ) ) {
+                if ( !file_exists($template) ) {
+                    $template = ENTRY_APP_PATH . '/cache/templates/forms/' . $framework->result->variables['form']->formName . '.php';
+                }
+                $framework->view->send( 'metaTitle', $framework->view->hut( $framework->routeConfiguration['name'], $framework->result->variables['form']->data ) );
             }
+
+            if ( !empty( $framework->result->variables['object'] ) ) {
+                $framework->view->send( 'metaTitle', $framework->view->hut( $framework->routeConfiguration['name'], $framework->result->variables['object'] ) );
+            }
+
             if ( !file_exists($template) ) {
                 $template = ENTRY_APP_PATH . '/cache/templates/' . $framework->routeConfiguration['META']['application']. '.'. $framework->routeConfiguration['action'] . '.php';
             }
             if ( !file_exists($template) ) {
                 $template = ENTRY_APP_PATH . '/cache/templates/' . $framework->routeConfiguration['action'] . '.php';
+            }
+
+            if ( empty( $framework->view->metaTitle ) || stripos( $framework->view->metaTitle, 'meta.title' ) !== false ) {
+                $framework->view->send( 'metaTitle', $framework->view->hut( $framework->routeConfiguration['name'] ) );
             }
 
             $framework->view->processZone( 'body', $template );

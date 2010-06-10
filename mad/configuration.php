@@ -253,7 +253,7 @@ class madConfiguration extends madObject {
                         if ( !isset( $this[$name][$element->group] ) ) {
                             $this[$name][$element->group] = new madObject();
                             $this[$name][$element->group]['META'] = array(
-                                'application' => $appName,
+                                'application' => substr( $element->group, 0, strpos( $element->group, '.' ) ),
                             );
                         }
 

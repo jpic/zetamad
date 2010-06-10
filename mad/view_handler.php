@@ -156,9 +156,50 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         $registry = madFramework::instance();
         return $registry->configuration->getSetting( 'applications', 'mad', 'uploadUrl' ) . '/' . $relativePath;
     } # }}}
-    public function e( $val ) { # {{{
-        echo nl2br( htmlentities( stripslashes( $val ), ENT_COMPAT, 'UTF-8' ) );
+
+
+    public function e( $value ) { # {{{
+        echo $this->htmlize( $value );
     } # }}}
+    public function htmlize( $value ) {
+        return nl2br( htmlentities( stripslashes( $value ), ENT_COMPAT, 'UTF-8' ) );
+    }
+
+    public function t( $key, $dictionnary = null, $contexts = array(  ) ) { # {{{
+        if ( !is_array( $contexts ) ) {
+            $contexts = array( $contexts );
+        }
+
+        $contexts = array_merge( $contexts, $this->contexts );
+
+        if ( is_null( $dictionnary ) && isset( $this->object ) ) {
+            $dictionnary = $this->object->flatten( false );
+        }
+
+        if ( is_null( $dictionnary ) && isset( $this->form ) ) {
+            $dictionnary = $this->form;
+        }
+
+        $message = madFramework::translate( $key, $dictionnary, $contexts );
+
+        return $message;
+    } # }}}
+
+    public function et( $key, $dictionnary = null, $contexts = array(  ) ) {
+        $this->e( $this->t( $key, $dictionnary , $contexts ) );
+    }
+    public function uet( $key, $dictionnary = null, $contexts = array() ) {
+        $this->e( $this->ucfirst( $this->t( $key, $dictionnary, $contexts ) ) );
+    }
+
+    public function ut( $key, $dictionnary = null, $contexts = array() ) {
+        return $this->ucfirst( $this->t( $key, $dictionnary, $contexts ) );
+    }
+    public function hut( $key, $dictionnary = null, $contexts = array() ) {
+        return $this->htmlize( $this->ucfirst( $this->t( $key, $dictionnary, $contexts ) ) );
+    }
+
+
     public function iterate( $value ) { # {{{
         if ( is_array( $value ) || ( $value instanceof madObject && !$value->isEntity ) ) {
             return $value;
@@ -221,13 +262,6 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         echo " <b>$value</b>";
         if ($level==0) echo '</pre>';
     } # }}}
-    public function __call( $method, $arguments ) { # {{{
-        foreach( $this->handlers as $handler ) {
-            if ( method_exists( $handler, $method ) ) {
-                return call_user_func_array( array( $handler, $method ), $arguments );
-            }
-        }
-    } # }}}
     public function getValueString( $array, $key ) { # {{{
         if ( !isset( $array[$key] ) ) {
             return '';
@@ -247,38 +281,19 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
         return $value;
     } # }}}
-    public function t( $key, $dictionnary = null, $contexts = array(  ) ) { # {{{
-        $contexts = array_merge( $contexts, $this->contexts );
-
-        if ( is_null( $dictionnary ) && isset( $this->object ) ) {
-            $dictionnary = $this->object->flatten( false );
-        }
-
-        if ( is_null( $dictionnary ) && isset( $this->form ) ) {
-            $dictionnary = $this->form;
-        }
-
-        $message = madFramework::translate( $key, $dictionnary, $contexts );
-
-        return $message;
-    } # }}}
-
-    public function et( $key, $dictionnary = null, $contexts = array(  ) ) {
-        $this->e( $this->t( $key, $dictionnary , $contexts ) );
-    }
-    public function uet( $key, $dictionnary = null, $contexts = array() ) {
-        $this->e( $this->ucfirst( $this->t( $key, $dictionnary, $contexts ) ) );
-    }
     public function truncateWords( $content, $maxchars ) { # {{{
         if ( strlen( $content ) <= $maxchars ) {
             return $content;
         }
+
         $content = substr($content, 0, $maxchars);
         $pos = strrpos($content, ' ');
+
         if ($pos>0) {
             $content = substr($content, 0, $pos);
         }
-        return $content; 
+
+        return $content;
     } # }}}
     public function ucfirst( $string , $e ='utf-8') { # {{{
         if (function_exists('mb_strtoupper') && function_exists('mb_substr') && !empty($string)) {
@@ -461,7 +476,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         );
 
         // make default initial data
-        if ( !$form->data ) {
+        if ( !count( $form->data ) ) {
             $form->data = array( array(  ) );
 
             foreach( $form->formConfiguration as &$attribute ) {
@@ -606,8 +621,8 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
         $form = $attribute['form'];
 
-        foreach( $form->formConfiguration as &$attribute ) {
-            $this->processAttribute( $attribute );
+        foreach( $form->formConfiguration as &$formAttribute ) {
+            $this->processAttribute( $formAttribute );
         }
         
         foreach( $form->data as $key => &$row ) {
@@ -616,22 +631,22 @@ class madViewHandler extends ezcMvcPhpViewHandler {
                 substr( $attribute['form']->formName, strrpos( $attribute['form']->formName, '.' ) +1 )
             );
 
-            foreach( $form->formConfiguration as &$attribute ) {
-                if ( !$this->isRenderable( $attribute ) ) {
+            foreach( $form->formConfiguration as &$formAttribute ) {
+                if ( !$this->isRenderable( $formAttribute ) ) {
                     continue;
                 }
 
-                if ( !empty( $attribute['widget'] ) ) {
+                if ( !empty( $formAttribute['widget'] ) ) {
                     $method = sprintf( 
                         "render%sWidget",
-                        ucfirst( $attribute['widget'] )
+                        ucfirst( $formAttribute['widget'] )
                     );
 
                     $html[] = '<td>';
                     if ( method_exists( $this, $method ) ) {
-                        $html[] = $this->$method( $attribute, $key );
+                        $html[] = $this->$method( $formAttribute, $key );
                     } else {
-                        $html[] = $this->renderInputWidget( $attribute, $key );
+                        $html[] = $this->renderInputWidget( $formAttribute, $key );
                     }
                     $html[] = '</td>';
                 }
@@ -645,9 +660,11 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             );
             if ( !empty( $row['id'] ) ) {
                 $html[] = sprintf(
-                    '<input type="hidden" name="%s" value="%s" />',
+                    '<input type="hidden" value="%s" name="%s[%s][%s]" />',
                     $row['id'],
-                    $attribute
+                    $form->requestFormName,
+                    $key,
+                    'id'
                 );
             }
 

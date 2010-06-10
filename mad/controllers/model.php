@@ -43,7 +43,7 @@ class madModelController extends madFormController {
         $query = "delete from $table where id in ('". implode("','", $this->ids)."')";
         madFramework::query($query);
 
-        $this->addMessage( 'listDeleteSuccess', array( 'table' => $table ) );
+        $this->addMessage( 'listDeleteSuccess', array( 'table' => madFramework::translate( $table ) ) );
         $this->redirectToReferer();
     }
 

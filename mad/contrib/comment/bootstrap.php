@@ -1,6 +1,10 @@
 <?php
 
 function createForm( $template ) {
+    if ( $template != 'comment.php' ) {
+        return;
+    }
+
     $framework = madFramework::instance();
     $form = madFormController::factory( 'comment.post' );
     $framework->view->send( 'commentForm', $form );

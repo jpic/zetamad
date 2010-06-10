@@ -165,6 +165,8 @@ class madFormController extends madController {
     public function setAttributeContext( &$attribute ) {
         if ( !isset( $attribute['contexts'] ) ) {
             $attribute['contexts'] = array(  );
+        } else {
+            return;
         }
 
         if ( $attribute['form'] != $attribute['parentForm'] ) {
@@ -181,16 +183,13 @@ class madFormController extends madController {
         }
 
         $formApplicationName = substr( $attribute['form']->formName, 0, strpos( $attribute['form']->formName , '.' ) );
+        if ( !$formApplicationName && !empty( $attribute['parentForm'] ) ) {
+            $formApplicationName = substr( $attribute['parentForm']->formName, 0, strpos( $attribute['parentForm']->formName , '.' ) );
+        }
 
         if ( !in_array( $formApplicationName, $attribute['contexts'] ) ) {
             $attribute['contexts'][] = $formApplicationName;
         }
-
-//        if ( $attribute['form'] !== $this ) {
-//            foreach( $attribute['form']->formConfiguration as $name => &$formAttribute ) {
-//                $attribute['form']->setAttributeContext( $formAttribute );
-//            }
-//        }
     }
 
     public function postCreateResult(  ) {
@@ -198,6 +197,7 @@ class madFormController extends madController {
             return true;
         }
 
+        array_unshift( $this->result->variables['contexts'], $this->formConfiguration['namespace']['value'] );
         array_unshift( $this->result->variables['contexts'], $this->formName );
 
         $this->result->variables['form'] = $this;
@@ -210,7 +210,7 @@ class madFormController extends madController {
                     $this->processedData[$this->displayAttribute]
                 );
             } else {
-                $this->addMessage( 'saveSuccess' );
+                $this->addMessage( 'saveSuccess', $this->processedData );
 
                 if ( !empty( $this->framework->routeConfiguration['successRoute'] ) ) {
                     $this->result->status = new ezcMvcExternalRedirect( madFramework::url(

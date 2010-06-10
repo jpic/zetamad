@@ -67,7 +67,7 @@ class madController extends ezcMvcController {
             $dictionnary = $this->form;
         }
 
-        $message = madFramework::translate( $key, $dictionnary, $contexts );
+        $message = ucfirst( madFramework::translate( $key, $dictionnary, $contexts ) );
 
         return $message;
     }
