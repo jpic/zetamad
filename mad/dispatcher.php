@@ -162,5 +162,3 @@ class madHttpDispatcher {
         return $response;
     }
 }
-
-?>

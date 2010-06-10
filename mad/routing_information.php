@@ -30,4 +30,3 @@ class madRoutingInformation extends ezcMvcRoutingInformation {
         return $return;
     }
 }
-?>

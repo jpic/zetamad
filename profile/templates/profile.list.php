@@ -53,10 +53,12 @@ a.btn-block:hover { background: #f1f1f1; text-decoration: none; }
 	<div class="profil_block" <?php if ( $forLoop == $last ): ?>style="border: 0;"<?php endif ?>>
 		<div class="thumb">
 			<a href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->e( $object['name'] ) ?>">
-			<?php if ( isset( $object['picture'] ) ): ?>
+                            <?php
+                            if ( empty( $object['picture']))
+                                $object['picture'] = 'default.jpg';
+                            ?>
             <img src="<?php echo $this->thumbnail( $object['picture'], 200, 200 ) ?>" width="200" height="200" alt="<?php $this->e( $object['name'] ) ?>" />	
           
-            <?php endif ?>
             </a>
 		</div>
 		
@@ -82,6 +84,9 @@ a.btn-block:hover { background: #f1f1f1; text-decoration: none; }
     unset( $forLoop );
     ?>
 <?php
+
+$this->includeTemplate( 'paginate.php' );
+
 /*
     <?php foreach( $this->objectList as $object ): ?>
     <div class="UIListingProfils">

@@ -8,5 +8,3 @@ class madFatalController extends madController {
         }
     }
 }
-
-?>

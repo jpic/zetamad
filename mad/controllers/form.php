@@ -18,7 +18,7 @@ class madFormController extends madController {
         parent::__construct( $framework );
         $this->processedData = new madObject(  );
         $this->data = new madObject();
-        $framework->connectSignal( 'preRenderFormFields', array( $this, 'setContexts' ) );
+        $framework->connectSignal( 'preProcessAttributeView', array( $this, 'setAttributeContext' ) );
     }
 
     public function preCreateResult(  ) {
@@ -38,10 +38,10 @@ class madFormController extends madController {
             $this->requestFormName = str_replace( '.', '_', $this->formName );
         }
 
-        if ( !empty( $this->framework->configuration['forms'][$this->formName] ) ) {
+        if ( !$this->formConfiguration && !empty( $this->framework->configuration['forms'][$this->formName] ) ) {
             $this->formConfiguration = $this->framework->configuration['forms'][$this->formName];
-        } else {
-            $this->formConfiguration = array();
+        } elseif ( !$this->formConfiguration ) {
+            trigger_error( "Cannot find form configuration", E_USER_ERROR );
         }
 
         if ( isset( $this->formConfiguration['META'] ) ) {
@@ -79,11 +79,7 @@ class madFormController extends madController {
         
         $controller = new madFormController( $framework );
         $controller->isFormSet = true;
-        $controller->data = is_array( $data ) ? new madObject( $data) : $data;
-
-        if ( !count( $controller->data ) ) {
-            $controller->data = new madObject( array( array() ) );
-        }
+        $controller->data = is_array( $data ) ? new madObject( $data ) : $data;
 
         if ( isset( $attribute['formName'] ) ) {
             $controller->formName = $attribute['formName'];
@@ -166,28 +162,23 @@ class madFormController extends madController {
         }
     }
 
-    public function setContexts(  ) {
-        // boilerplate code because php foreach is a whiner
-        if ( empty( $this->formConfiguration ) ) {
-            return;
+    public function setAttributeContext( &$attribute ) {
+        if ( !isset( $attribute['contexts'] ) ) {
+            $attribute['contexts'] = array(  );
+        }
+        if ( $attribute['form'] != $attribute['parentForm'] ) {
+            $attribute['contexts'][] = "{$attribute['parentForm']->formName}.{$attribute['form']->formName}.{$attribute['name']}";
+            $attribute['contexts'][] = "{$attribute['parentForm']->formName}.{$attribute['form']->formName}";
+        }
+        $attribute['contexts'][] = "{$attribute['form']->formName}.{$attribute['name']}";
+        $attribute['contexts'][] = $attribute['form']->formName;
+        if ( isset( $attribute['form']->processedData['namespace'] ) ) {
+            $attribute['contexts'][] = $attribute['form']->processedData['namespace'];
         }
 
-        foreach( $this->formConfiguration as $name => &$attribute ) {
-            if ( !isset( $attribute['contexts'] ) ) {
-                $attribute['contexts'] = array(  );
-            }
-            if ( $attribute['form'] != $attribute['parentForm'] ) {
-                $attribute['contexts'][] = "{$attribute['parentForm']->formName}.{$attribute['form']->formName}.{$attribute['name']}";
-                $attribute['contexts'][] = "{$attribute['parentForm']->formName}.{$attribute['form']->formName}";
-            }
-            $attribute['contexts'][] = "{$attribute['form']->formName}.{$attribute['name']}";
-            $attribute['contexts'][] = $attribute['form']->formName;
-            if ( isset( $attribute['form']->processedData['namespace'] ) ) {
-                $attribute['contexts'][] = $attribute['form']->processedData['namespace'];
-            }
-
-            if ( $attribute['form'] !== $this ) {
-                $attribute['form']->setContexts(  );
+        if ( $attribute['form'] !== $this ) {
+            foreach( $attribute['form']->formConfiguration as $name => &$formAttribute ) {
+                $attribute['form']->setAttributeContext( $formAttribute );
             }
         }
     }
@@ -233,7 +224,6 @@ class madFormController extends madController {
         }
 
         $this->data->clean();
-
     }
 
     public function process(  ) {
@@ -251,8 +241,8 @@ class madFormController extends madController {
 
             if ( $this->isFormSet ) {
                 foreach( $this->data as $key => $row ) {
-                    $value = isset( $row[$attribute['column']] ) ? $row[$attribute['column']] : null;
                     $this->currentFormSet = $key;
+                    $value = isset( $row[$attribute['column']] ) ? $row[$attribute['column']] : null;
                     $this->processAttribute( $attribute, $value );
                 }
                 $this->currentFormSet = false;
@@ -412,5 +402,3 @@ class madFormController extends madController {
         $this->isSuccessfull = true;
     }
 }
-
-?>

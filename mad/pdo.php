@@ -694,5 +694,3 @@ class madPDOException extends PDOException {
         ) );
     }
 }
-
-?>

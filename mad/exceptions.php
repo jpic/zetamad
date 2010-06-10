@@ -126,5 +126,3 @@ class madModelException extends madException {}
  */
 class madModelExceptedId extends madModelException {}
 
-
-?>

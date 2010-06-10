@@ -99,4 +99,3 @@ class madRouter extends ezcMvcRouter {
         return $routes;
     }
 }
-?>

@@ -25,7 +25,6 @@
     <fieldset class="inlineLabels">
         <h3>Illustrations</h3>
         <?php echo $this->renderFormFieldRow( 'pictures' ) ?>
-        <?php var_dump($this->form->formConfiguration['pictures']['help']); ?>
         <?php echo $this->renderFormFieldRow( 'video' ) ?>
     </fieldset>
     <fieldset class="inlineLabels">

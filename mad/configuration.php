@@ -309,5 +309,3 @@ class madConfiguration extends madObject {
     }
 
 }
-
-?>

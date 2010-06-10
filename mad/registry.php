@@ -119,5 +119,3 @@ class madRegistry {
         return $dispatcher;
     }
 }
-
-?>

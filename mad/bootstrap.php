@@ -521,5 +521,3 @@ function shortTemplateTags( $configuration ) {
     }
 }
 //$this->connectSignal( 'shortTemplateTags', 'postConfigurationRefresh' );
-
-?>

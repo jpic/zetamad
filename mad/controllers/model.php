@@ -177,5 +177,3 @@ class madModelController extends madFormController {
         }
     }
 }
-
-?>

@@ -21,5 +21,3 @@ class madDevController extends madController {
         $this->result->variables['routes'] = $this->framework->configuration['routes'];
     }
 }
-
-?>

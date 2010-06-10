@@ -50,16 +50,19 @@
 <div class="recipe-block" <?php if( $forloopCounter % 4 == 0 ): ?> style="padding-right: 0; margin-left: 1px;"<?php endif; ?> <?php if( $forloopCounter % 3 == 0 ): ?> style="margin-left: 1px;"<?php endif; ?>>
 	<!--<p class="link">remipathier.cookingfor.com</p>-->
 	<div class="recipe-details">
-		<?php if ( !empty( $object['picture'] ) ): ?>
+		<?php
+                if ( empty( $object['picture'] ) )
+                    $object['picture'] = 'default.jpg';
+                ?>
 		    <a href="<?php echo $this->url( 'recipe.details', $object ) ?>">
                         <img class="picture" src="<?php echo $this->thumbnail( $object['picture'], 226, 226 ) ?>" alt="<?php $this->e( empty($object['picture_title']) ? $object['title'] : $object['picture_title'] ) ?>" />
 		</a>
-		<?php endif ?>
 	
 			<p class="infos">
 				<a href="<?php echo $this->url( 'recipe.details', $object ) ?>" title="<?php echo $object['title']; ?>">
-					<?php echo $this->truncateWords( $object['title'], 29 ) ?>
-					<?php if ( strlen( $object['title'] ) > 29 ): ?>...<?php endif ?>
+                                       <?php echo $this->truncateWords( $object['title'], 29 ) ?>
+                                       <?php if ( strlen( $object['title'] ) > 29 ): ?>...<?php endif ?>
+
 				</a>
 			</p>
 	
@@ -85,7 +88,7 @@
 </ul>
 
 <?php
-    include 'mad/templates/paginate.php';
+    $this->includeTemplate( 'paginate.php' );
 ?>
 
 <!--

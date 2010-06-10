@@ -64,4 +64,3 @@ function bootstrapPrestashop( $bootstrap ) {
     Configuration::loadConfiguration(  );
 }
 $this->connectSignal( 'postBootstrap', 'bootstrapPrestashop' );
-?>

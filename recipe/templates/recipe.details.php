@@ -48,9 +48,16 @@
 #object-categories li a { color: #D02F1E; }
 #object-categories li a:hover { text-decoration: underline; }
 
+#object-tags { font-size: 11px; color: #666; }
+#object-tags li { line-height: 30px; display: block; float: left; margin-right: 5px; }
+#object-tags .title { font-weight: bold; }
+#object-tags li a { color: #D02F1E; }
+#object-tags li a:hover { text-decoration: underline; }
+/*
 #object-tags { list-style: none; font-size: 11px; font-family: Verdana; color: #666; clear: both; float: right; margin: 0 0 10px 0; }
 #object-tags li { float: left; display: block; margin-left: 5px; }
 #object-tags .title { text-decoration: underline; text-transform: uppercase; }
+*/
 #object-column { float: right; }
 #object-column ul li .objectProduct-th { border:1px solid #DADADA; float:left; }
 #object-column ul li .objectProduct-th img { vertical-align: bottom; }
@@ -87,9 +94,17 @@ a.btn-block:hover { background: #f1f1f1; }
 </ul>
 -->
 
+<?php
+if ( empty( $this->pictures ) )
+    $this->pictures = array();
+if ( empty( $this->pictures[0]['picture'] ) )
+    $this->pictures[0]['picture'] = 'default.jpg';
+if ( empty( $this->profile['picture'] ) )
+    $this->profile['picture'] = 'default.jpg';
+?>
+
 <div class="object hrecipe">
         <div class="object-left">
-            <?php if ( !empty( $this->pictures ) ): ?>
             <div id="object-photo">
                 <a class="thickbox" href="<?php echo $this->getAbsoluteUploadUrl( $this->pictures[0]['picture'] ) ?>" title="<?php $this->e( $this->object['title'] ) ?>">
                     <img class="photo" src="<?php echo $this->thumbnail( $this->pictures[0]['picture'], 300, 300 ); ?>" alt="<?php $this->e( $this->pictures[0]['title'] ) ?>" style="margin:4px 0 0; vertical-align:baseline;" id="bigpic" />
@@ -111,7 +126,6 @@ a.btn-block:hover { background: #f1f1f1; }
                 </div>
                 <?php endif ?>
             </div>
-            <?php endif ?>
 	    
 	<div style="float: right; margin-bottom: 10px;">
 		<a href="http://www.addthis.com/bookmark.php?v=250&pub=xa-4a48da264c324c50" onmouseover="return addthis_open(this, '', window.location.href, document.title)" onmouseout="addthis_close()" onclick="return addthis_sendto()">
@@ -120,18 +134,6 @@ a.btn-block:hover { background: #f1f1f1; }
 		<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js?pub=xa-4a48da264c324c50"></script>
 	</div>
 
-            <?php if ( !empty( $this->tags ) ): ?>
-		<ul id="object-tags">
-		    <li class="title">Mots clés:</li>
-		    <?php foreach( $this->tags as $tag ): ?>
-		    <li>
-                        <a href="<?php $this->url( 'recipe.listByTag', $tag ) ?>" title="Recettes tagu&eacute;es <?php $this->e( $tag['name']) ?>">
-                            <?php $this->e( $tag['name'] ) ?>
-                        </a>
-                    </li>
-		    <?php endforeach ?>
-		</ul>
-            <?php endif ?>
                 <div class="object-author">
                     <p class="author-name"><span class="author"><?php $this->e( $this->profile['name'] ) ?></span></p>
                     <p class="author-description">
@@ -159,6 +161,18 @@ a.btn-block:hover { background: #f1f1f1; }
 			    </ul>
 			    <div class="clear"></div>
 			<?php endif ?>
+                        <?php if ( !empty( $this->tags ) ): ?>
+                            <ul id="object-tags">
+                                <li class="title">Mots clés:</li>
+                                <?php foreach( $this->tags as $tag ): ?>
+                                <li>
+                                    <a href="<?php $this->url( 'recipe.listByTag', $tag ) ?>" title="Recettes tagu&eacute;es <?php $this->e( $tag['name']) ?>">
+                                        <?php $this->e( $tag['name'] ) ?>
+                                    </a>
+                                </li>
+                                <?php endforeach ?>
+                            </ul>
+                        <?php endif ?>
                         <?php if ( !empty( $this->object['author'] ) ): ?>
                         <p class="object-author">Par&nbsp; <?php $this->e( $this->object['author'] ) ?></p>
                         <?php endif ?>

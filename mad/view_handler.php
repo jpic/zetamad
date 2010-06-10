@@ -1,8 +1,6 @@
 <?php
 
 class madViewHandler extends ezcMvcPhpViewHandler {
-    public $handlers = array(  );
-
     public function processZone( $name, $template ) {
         $templateBackup = $this->templateLocation;
         $this->templateLocation = $template;
@@ -41,6 +39,9 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         }
 
         $info = pathinfo( $uploadPath );
+        if ( !$info && !$info['extension'] ) {
+            return false;
+        }
         $path = $uploadPath;
 
         $thumbnailName = sprintf( '%s_%sx%s.%s',
@@ -64,16 +65,16 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         if ( !$src = @imageCreateFromJpeg( $path ) ) {
             if ( !$src = @imageCreateFromPng( $path ) ) {
                 if ( !$src = @imageCreateFromGif( $path ) ) {
-
+                    trigger_error( "Cannot open $path", E_USER_ERROR );
                 }
             }
         }
 
         // copy src image to gd2
-        $tmpFile = tempnam( sys_get_temp_dir(  ), 'mad' );
-        imagegd2( $src, $tmpFile );
-        imagedestroy( $src );
-        $src = imageCreateFromGd2( $tmpFile );
+//        $tmpFile = tempnam( sys_get_temp_dir(  ), 'mad' );
+//        imagegd2( $src, $tmpFile );
+//        imagedestroy( $src );
+//        $src = imageCreateFromGd2( $tmpFile );
 
         $oldWidth  = imageSX( $src );
         $oldHeight = imageSY( $src );
@@ -89,6 +90,8 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             $newWidth = $oldWidth * $ratio;
             $newHeight = $size;
             $newX = ( $newWidth - $size ) / 2;
+        } else {
+            $newWidth = $newHeight = $size;
         }
 
         $resized = imageCreateTrueColor(
@@ -267,6 +270,9 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         $this->e( $this->ucfirst( $this->t( $key, $dictionnary, $contexts ) ) );
     }
     public function truncateWords( $content, $maxchars ) { # {{{
+        if ( strlen( $content ) <= $maxchars ) {
+            return $content;
+        }
         $content = substr($content, 0, $maxchars);
         $pos = strrpos($content, ' ');
         if ($pos>0) {
@@ -306,8 +312,6 @@ class madViewHandler extends ezcMvcPhpViewHandler {
      * @return string HTML form as dictated by uni-form
      */
     public function renderFormFields( $form ) { # {{{
-        madFramework::instance()->sendSignal( 'preRenderFormFields', array( 'form' => $form ) );
-
         $html = array(  );
 
         foreach( $form->formConfiguration as $name => &$attribute ) {
@@ -315,7 +319,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
                 continue;
             }
 
-            $html[] = $this->renderFormFieldRow( $attribute );
+            $html[] = $this->renderFormFieldRow( $attribute, $form );
         }
 
         return implode( "\n", $html );
@@ -333,10 +337,12 @@ class madViewHandler extends ezcMvcPhpViewHandler {
      * @param array $attribute
      * @return string HTML version of the field row as dictated by uni-form
      */
-    public function renderFormFieldRow( $attribute ) { # {{{
+    public function renderFormFieldRow( $attribute, $form = null ) { # {{{
         $html = array(  );
+        $form = is_null( $form ) && !empty( $this->form ) ? $this->form : $form;
+
         if ( is_string( $attribute ) ) {
-            $attribute =& $this->form->formConfiguration[$attributeName];
+            $attribute =& $form->formConfiguration[$attribute];
         }
 
         $this->processAttribute( $attribute );
@@ -386,6 +392,8 @@ class madViewHandler extends ezcMvcPhpViewHandler {
      * @param string $htmlNamePattern
      */
     public function processAttribute( &$attribute ) { # {{{
+        madFramework::instance()->sendSignal( 'preProcessAttributeView', array( &$attribute ) );
+
         if ( empty( $attribute['label'] ) ) {
             $attribute['label'] = $this->t( 
                 $attribute['name'], 
@@ -592,7 +600,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
         $html[] = '<table class="multipleField">';
 
-        if ( !$attribute['form']->data ) {
+        if ( !count( $attribute['form']->data ) ) {
             $attribute['form']->data = array( array(  ) );
         }
 
@@ -691,11 +699,12 @@ class madViewHandler extends ezcMvcPhpViewHandler {
                     return '';
                 }
             }
-        } elseif ( !is_null( $key ) && isset( $attribute['form']->processedData[$key][$attribute['column']] ) ) {
+        } elseif ( !is_null( $key ) && isset( $attribute['form']->processedData[$key] ) && isset( $attribute['form']->processedData[$key][$attribute['column']] ) ) {
             return $attribute['form']->processedData[$key][$attribute['column']];
         } elseif ( isset( $attribute['form']->processedData[$attribute['column']] ) ) {
             return $attribute['form']->processedData[$attribute['column']];
         }
+        return '';
     }
 
     public function getAttributeHtmlName( $attribute, $key = null ) {
@@ -825,5 +834,3 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     } # }}}
 
 }
-
-?>

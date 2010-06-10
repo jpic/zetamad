@@ -64,7 +64,10 @@ a.btn-block:hover { background: #539893; }
 	<?php $this->e( $this->object['name'] ) ?>
 </div>
 
-
+<?php
+if ( empty( $this->object['picture'] ) )
+    $this->object['picture'] = 'default.jpg';
+?>
 
 <div class="recipe">
 	<div class="author-left">

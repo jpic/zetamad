@@ -93,5 +93,3 @@ class madController extends ezcMvcController {
     }
 }
 
-
-?>

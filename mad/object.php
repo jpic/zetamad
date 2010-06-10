@@ -305,9 +305,8 @@ class madObject extends ArrayObject {
                     $value = new madObject( $value );
                 }
 
-                if ( $value instanceof madObject && !isset( $this[$key] ) ) {
-                    $this[$key] = $value;
-                    continue;
+                if ( !isset( $this[$key] ) ) {
+                    $this[$key] = new madObject;
                 }
 
                 if ( is_array( $this[$key] ) ) {
@@ -361,6 +360,15 @@ class madObject extends ArrayObject {
         }
 
         return $this;
+    }
+
+    public function toObject(  ) {
+        foreach( $this as $key => $value ) {
+            if ( is_array( $value ) ) {
+                $this[$key] = new madObject( $value );
+                $this[$key]->toObject();
+            }
+        }
     }
 
     /**
