@@ -166,21 +166,31 @@ class madFormController extends madController {
         if ( !isset( $attribute['contexts'] ) ) {
             $attribute['contexts'] = array(  );
         }
+
         if ( $attribute['form'] != $attribute['parentForm'] ) {
             $attribute['contexts'][] = "{$attribute['parentForm']->formName}.{$attribute['form']->formName}.{$attribute['name']}";
             $attribute['contexts'][] = "{$attribute['parentForm']->formName}.{$attribute['form']->formName}";
         }
+
         $attribute['contexts'][] = "{$attribute['form']->formName}.{$attribute['name']}";
+        
         $attribute['contexts'][] = $attribute['form']->formName;
-        if ( isset( $attribute['form']->processedData['namespace'] ) ) {
-            $attribute['contexts'][] = $attribute['form']->processedData['namespace'];
+
+        if ( isset( $attribute['form']->formConfiguration['namespace']['value'] ) ) {
+            $attribute['contexts'][] = $attribute['form']->formConfiguration['namespace']['value'];
         }
 
-        if ( $attribute['form'] !== $this ) {
-            foreach( $attribute['form']->formConfiguration as $name => &$formAttribute ) {
-                $attribute['form']->setAttributeContext( $formAttribute );
-            }
+        $formApplicationName = substr( $attribute['form']->formName, 0, strpos( $attribute['form']->formName , '.' ) );
+
+        if ( !in_array( $formApplicationName, $attribute['contexts'] ) ) {
+            $attribute['contexts'][] = $formApplicationName;
         }
+
+//        if ( $attribute['form'] !== $this ) {
+//            foreach( $attribute['form']->formConfiguration as $name => &$formAttribute ) {
+//                $attribute['form']->setAttributeContext( $formAttribute );
+//            }
+//        }
     }
 
     public function postCreateResult(  ) {
