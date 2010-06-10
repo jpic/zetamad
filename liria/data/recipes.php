@@ -90,7 +90,7 @@ Vous pouvez aussi mixer tous les ingrédients afin d’obtenir un milk-shake bie
     'restTime' => '5',
     'cookTime' => '15',
     'slug' => 'creme-coco-mangue-passion',
-    'video' => 'http://www.madeleinemarket.com/epicerie-fine/chocolats-confiseries/gourmandises-confiseries/1688-petit-ourson-guimauve-tendre-amour.html#comments',
+    'video' => 'http://www.madeleinemarket.com/epicerie-fine/chocolats-confiseries/gourmandises-confiseries/1688-petit-ourson-guimauve-tendre-amour.html#comment',
   ),
   1 => 
   array (

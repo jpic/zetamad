@@ -5,7 +5,7 @@ class madCommentsView extends madView {
         $zones = array(  );
 
         if ( isset( $this->result->variables['object'] ) ) {
-            $zones[] = new madViewHandler( 'comments', $this->getTemplatePath( 'comments.php', 'comments' ) );
+            $zones[] = new madViewHandler( 'comment', $this->getTemplatePath( 'comments.php', 'comments' ) );
         }
 
         return $zones;

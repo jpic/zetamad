@@ -144,11 +144,11 @@ class madPdo extends PDO {
          * Regular expression based on SQL::Tokenizer's Tokenizer.pm by Igor Sutton Lopes
          **/
         $regex = '('; # begin group
-        $regex .= '(?:--|\\#)[\\ \\t\\S]*'; # inline comments
+        $regex .= '(?:--|\\#)[\\ \\t\\S]*'; # inline comment
         $regex .= '|(?:<>|<=>|>=|<=|==|=|!=|!|<<|>>|<|>|\\|\\||\\||&&|&|-|\\+|\\*(?!\/)|\/(?!\\*)|\\%|~|\\^|\\?)'; # logical operators
         $regex .= '|[\\[\\]\\(\\),;]|\\\'\\\'(?!\\\')|\\"\\"(?!\\"")'; # empty single/double quotes
         $regex .= '|".*?(?:(?:""){1,}"|(?<!["\\\\])"(?!")|\\\\"{2})|\'.*?(?:(?:\'\'){1,}\'|(?<![\'\\\\])\'(?!\')|\\\\\'{2})'; # quoted strings
-        $regex .= '|\/\\*[\\ \\t\\n\\S]*?\\*\/'; # c style comments
+        $regex .= '|\/\\*[\\ \\t\\n\\S]*?\\*\/'; # c style comment
         $regex .= '|(?:`?[\\w:@]+`?(?:\\.(?:`?\\w+`?|\\*)?)*)'; # words, placeholders, database.table.column strings
         $regex .= '|[\t\ ]+';
         $regex .= '|[\.]'; #period

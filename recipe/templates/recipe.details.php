@@ -381,7 +381,7 @@ if ( empty( $this->profile['picture'] ) )
                 </div>
                 <?php endif ?>
 
-<?php $this->includeTemplate( "comments.php" ) ?>
+<?php $this->includeTemplate( "comment.php" ) ?>
 
 <!--
 <a href="<?php /* echo $this->url( 'recipe.edit', $this->object ) */ ?>">edit</a>
