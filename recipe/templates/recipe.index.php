@@ -5,10 +5,11 @@
 .block .block_title .titleGreen { color: #a0c223; }
 .block .block_title .titleBlue { color: #666; }
 .block ul { margin-left: none; }
-.block ul li { margin: 0; padding: 0; background: url('<?php echo __PS_BASE_URI__ . '/themes/mmarket/img/border_sublist.jpg'; ?>') repeat-x left bottom #fff; }
-.block ul li a { color: #666; padding: 0; margin: 0; line-height: 30px; font-family: Georgia, Times, Arial, sans-serif; font-size: 1.2em; }
-.block ul li a:hover { background: url('<?php echo __PS_BASE_URI__ . '/themes/mmarket/img/border_sublist.jpg'; ?>') repeat-x left bottom #f9f9f9; font-size: 1.4em; color: #de5161; text-decoration: none; }
+.block ul li { margin: 0; padding: 0; height: 30px; }
+.block ul li a { display: block; color: #666; padding: 0; margin: 0; line-height: 30px; height: 30px; font-family: Georgia, Times, Arial, sans-serif; font-size: 1.2em; background: url('<?php echo __PS_BASE_URI__ . '/themes/mmarket/img/border_sublist.jpg'; ?>') repeat-x left bottom;  }
+.block ul li a:hover { background: url('<?php echo __PS_BASE_URI__ . '/themes/mmarket/img/border_sublist.jpg'; ?>') repeat-x left bottom #f9f9f9; color: #de5161; text-decoration: none; }
 .block ul li:hover { padding-left: 15px; background: url('<?php echo __PS_BASE_URI__ . '/themes/mmarket/img/fleche.jpg'; ?>') no-repeat left center #f9f9f9; }
+
 .block .register { background: url('<?php echo __PS_BASE_URI__ . '/themes/mmarket/img/block_registerRecipe.jpg'; ?>') no-repeat left center; width: 198px; height: 66px; }
 .block .register p { padding-top: 22px; padding-left: 25px; line-height: 16px; font-family: Georgia, Times, Arial, sans-serif; }
 .block .register p a { color: #484848; font-size: 1.1em; }
