@@ -22,6 +22,7 @@
         <?php echo $this->renderFormFieldRow( 'tags' ) ?>
     </fieldset>
     <fieldset class="inlineLabels">
+        <h2>Photo(s)</h2>
         <?php echo $this->renderFormFieldRow( 'pictures' ) ?>
         <h2>Vid&eacute;o</h2>
         <?php echo $this->renderFormFieldRow( 'video' ) ?>
