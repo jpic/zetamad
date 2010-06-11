@@ -8,12 +8,24 @@
 </style>
 
 <ul id="nav-object">
-        <li class="browseby">Trier par:</li>
-        <li><a href="" class="selected">date</a></li>
+        <li class="browseby">Recettes:</li>
+        <li>
+            <a href="<?php $this->url( 'recipe.listByDate') ?>" <?php if ( $this->request->variables['prefixedUrl'] == madFramework::url( 'recipe.listByDate' ) ): ?>class="selected"<?php endif ?>>
+                date
+            </a>
+        </li>
+        <li class="sep">|</li>
+        <li>
+            <a href="<?php $this->url( 'recipe.list') ?>" <?php if ( $this->request->variables['prefixedUrl'] == madFramework::url( 'recipe.list' ) ): ?>class="selected"<?php endif ?>>
+                toutes
+            </a>
+        </li>
+        <!--
         <li class="sep">|</li>
         <li><a href="">cat&eacute;gorie</a></li>
         <li class="sep">|</li>
         <li><a href="">popularit&eacute;</a></li>
+        -->
         <li class="sep">|</li>
         <li>
             <a href="<?php $this->url( 'recipe.random' ) ?>" title="Recette au hasard"  <?php if ( !empty( $_SESSION['recipe.random'] ) ): ?>class="selected"<?php unset( $_SESSION['recipe.random'] ); endif ?>>
