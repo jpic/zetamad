@@ -16,7 +16,7 @@
         <li><a href="">popularit&eacute;</a></li>
         <li class="sep">|</li>
         <li>
-            <a href="<?php $this->url( 'recipe.random' ) ?>" title="Recette au hasard">
+            <a href="<?php $this->url( 'recipe.random' ) ?>" title="Recette au hasard"  <?php if ( !empty( $_SESSION['recipe.random'] ) ): ?>class="selected"<?php unset( $_SESSION['recipe.random'] ); endif ?>>
                 au hasard
             </a>
         </li>
