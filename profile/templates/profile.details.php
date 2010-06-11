@@ -163,11 +163,11 @@ if ( empty( $this->object['picture'] ) )
     ?>
 	<div class="product_block <?php if ( ( $forLoop + 1 ) % 4 == 0 ): ?>nomarg<?php endif ?>">
 		<div class="thumb">
-			<a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>">
+			<a title="<?php echo $product->name ?>" href="<?php echo prestashopUrl( $product ) ?>">
 				<img width="167" height="167" alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-home.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" />
 			</a>
 		</div>
-                <a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>">
+                <a title="<?php echo $product->name ?>" href="<?php echo prestashopUrl( $product ) ?>">
                     <?php echo $this->truncateWords($product->name, 30); ?>[...]
                 </a>
 	</div>

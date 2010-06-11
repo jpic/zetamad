@@ -1,4 +1,12 @@
 <?php
+function prestashopUrl( $object ) {
+    $link = $GLOBALS['link'];
+    
+    if ( $object instanceof Product ) {
+        return $link->getProductLink($object->id, $object->link_rewrite);
+    }
+}
+
 // authentication backend
 function prestashopAuthentication( ezcMvcRequest $request, ezcMvcRouter $router ) {
     $framework = madFramework::instance(  );
@@ -63,5 +71,9 @@ function bootstrapPrestashop( $bootstrap ) {
     $smarty = $GLOBALS['smarty'];
     require PRESTASHOP_PATH . '/init.php';
     Configuration::loadConfiguration(  );
+
+    foreach( array_keys( get_defined_vars() ) as $varName ) {
+        $GLOBALS[$varName] =& $$varName;
+    }
 }
 $this->connectSignal( 'postBootstrap', 'bootstrapPrestashop' );

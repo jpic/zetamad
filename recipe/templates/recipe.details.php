@@ -273,10 +273,10 @@ if ( empty( $this->profile['picture'] ) )
                 ?>
     			<li <?php if ( $forloopCounter > 0 ): ?>style="margin-top: 10px;"<?php endif ?>>
 				<div class="objectProduct-th">
-					<a href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $product->id; ?>" style="float: left;"><img alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-small.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" /></a>
+					<a href="<?php echo prestashopUrl( $product ) ?>" style="float: left;"><img alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-small.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" /></a>
 				</div>
 				<div class="objectProduct-link">
-					<a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $product->id; ?>"><?php echo $product->name ?></a>
+					<a title="<?php echo $product->name ?>" href="<?php echo prestashopUrl( $product ) ?>"><?php echo $product->name ?></a>
 					<p><a title="<?php $this->e( $product->manufacturer_name ) ?>" href="<?php echo __PS_BASE_URI__ ?>manufacturer.php?id_manufacturer=<?php echo $product->id_manufacturer ?>" style="color: rgb(208, 47, 30); text-decoration: none;"><?php $this->e( $product->manufacturer_name ) ?></a></p>
 				</div>
 				<div class="clear"></div>
@@ -308,10 +308,10 @@ if ( empty( $this->profile['picture'] ) )
                 ?>
     			<li <?php if ( count( $this->toolProducts ) > 1 ): ?>style="margin-top: 10px;"<?php endif ?>>
 				<div class="objectProduct-th">
-					<a href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $product->id; ?>" style="float: left;"><img alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-small.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" /></a>
+					<a href="<?php echo prestashopUrl( $product ) ?>" style="float: left;"><img alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-small.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" /></a>
 				</div>
 				<div class="objectProduct-link">
-					<a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $product->id; ?>"><?php echo $product->name ?></a>
+					<a title="<?php echo $product->name ?>" href="<?php echo prestashopUrl( $product ) ?>"><?php echo $product->name ?></a>
 					<p><a title="<?php $this->e( $product->manufacturer_name ) ?>" href="<?php echo __PS_BASE_URI__ ?>manufacturer.php?id_manufacturer=<?php echo $product->id_manufacturer ?>" style="color: rgb(208, 47, 30); text-decoration: none;"><?php $this->e( $product->manufacturer_name ) ?></a></p>
 				</div>
 				<div class="clear"></div>
