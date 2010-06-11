@@ -24,7 +24,7 @@
 
 .recipe .author-right { float: right; width: 450px; border-top: 1px solid #dadada; padding: 9px 0;}
 .recipe .author-right h2 { color: #969696; font-size: 30px; font-family: Times, Georgia, Arial; font-weight: normal; }
-.recipe .author-right h3, .recipe .author-left #external-links h3 { color: #969696; font-size: 24px; font-family: Times, Georgia, Arial; font-weight: normal; padding-bottom: 5px; border-bottom: 1px solid #dadada; margin-top: 20px; }
+.recipe .author-right h3, .recipe .author-left #external-links h3 { color: #969696; font-size: 19px; font-family: Times, Georgia, Arial; font-weight: normal; padding-bottom: 5px; border-bottom: 1px solid #dadada; margin-top: 20px; }
 .recipe .author-right .author-intro, .recipe .author-right .author-profil { text-align: justify; margin-top: 10px; font-family: Verdana; font-size: 11px; color: #969696; word-spacing: 0.5px; line-height: 18px;}
 
 .recipe .author-left .recipe-author, .recipe .author-right .recipe-description { margin-top: 40px; }
@@ -103,6 +103,7 @@ if ( empty( $this->object['picture'] ) )
 		</div>
         <?php endif ?>
 	</div>
+	
 	<div class="author-right">
 			<h2><?php $this->e( $this->object['name'] ) ?></h2>
 			<p class="author-intro">

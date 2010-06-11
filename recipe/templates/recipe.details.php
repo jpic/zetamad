@@ -145,6 +145,12 @@ if ( empty( $this->profile['picture'] ) )
 				</li>
 				<?php endforeach ?>
 			    </ul>
+			    <?php ?>
+				<ul id="object-categories" style="border: 1px solid #f6c9d0; clear: both; overflow:auto; padding: 0 5px; margin-top: 5px; background: #fee6ea;">
+					<li class="title">Modération :</li>
+					<li><a class="editrecipe" href="<?php /*echo $this->url( 'recipe.edit', $object )*/ ?>">Modifier la recette</a></li>
+				</ul>
+			    <?php  ?>
 			    <div class="clear"></div>
 			<?php endif ?>
                         <?php if ( !empty( $this->tags ) ): ?>
