@@ -852,6 +852,53 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
 
     public function date( $date ) {
-        return $date;
+        if ( $date == date( 'Y-m-d') ) {
+            return "aujourd'hui";
+        }
+
+        if ( $date == date( 'Y-m-d', strtotime( '-1 day') ) ) {
+            return 'hier';
+        }
+
+        if ( $date == date( 'Y-m-d', strtotime( '-2 day') ) ) {
+            return 'avant hier';
+        }
+
+        $info = date_parse_from_format( 'Y-m-d', $date );
+        $ts = mktime(
+            $info['hour'],
+            $info['minute'],
+            $info['second'],
+            $info['month'],
+            $info['day'],
+            $info['year']
+        );
+        $diff = time() - $ts;
+        $diffDays = intval( $diff / 86400 );
+
+        if ( $diffDays < 7 ) {
+            return "il y a $diffDays jours";
+        }
+
+        if ( $diffDays < 14 ) {
+            return "la semaine dernière";
+        }
+
+        if ( $diffDays < 21 ) {
+            return "il y a deux semaines";
+        }
+
+        if ( $info['month'] == date('m') ) {
+            return "il y a trois semaines";
+        }
+
+        $diffMonths = intval( $diff / ( 86400*30 ) );
+
+        if ( $diffMonths <= 1 ) {
+            return "le mois dernier";
+        }
+        
+        return "il y a $diffMonths mois";
+
     }
 }
