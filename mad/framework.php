@@ -155,12 +155,6 @@ class madFramework {
                 trigger_error( 'Signal preSetupDatabase returned false, but $this->database was not set', E_USER_ERROR );
             }
         }
-        
-        $this->sendSignal( 'preSetupModel', array( $this ) );
-
-        if ( $this->applications['mad']['refreshDatabase'] ) {
-            $this->model->applyConfiguration(  );
-        }
 
         $this->sendSignal( 'postBootstrap', array( $this ) );
 
