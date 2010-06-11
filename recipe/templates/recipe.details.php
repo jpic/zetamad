@@ -139,7 +139,7 @@ if ( empty( $this->profile['picture'] ) )
 				<li class="title">Classée dans :</li>
 				<?php foreach( $this->categories as $category ): ?>
 				<li>
-				    <a href="<?php $this->url( 'recipe.listByCategory', $category ) ?>" title="Recettes de la catégorie <?php $this->e( $category['title']) ?>">
+				    <a href="<?php $this->url( 'recipe.categoryDetails', $category ) ?>" title="Recettes de la catégorie <?php $this->e( $category['title']) ?>">
 					<?php $this->e( $category['title'] ) ?>
 				    </a>
 				</li>

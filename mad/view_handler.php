@@ -210,7 +210,10 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     public function includeTemplate( $template ) { # {{{
         madFramework::instance()->sendSignal( 'preIncludeTemplate', array( $template ) );
         include $template;
-        madFramework::instance()->sendSignal( 'postIncludeTemplate', array( $template ) );
+    } # }}}
+    public function includeOnceTemplate( $template ) { # {{{
+        madFramework::instance()->sendSignal( 'preIncludeTemplate', array( $template ) );
+        include_once $template;
     } # }}}
     public function includeApplicationTemplate( $application, $template ) { # {{{
         $registry = madFramework::instance();

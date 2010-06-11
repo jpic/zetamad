@@ -2,7 +2,6 @@
 /*Init 100%*/
 #center_column { width: 980px; padding: 0; }
 #center_column a { text-decoration: none;}
-#left_column, .breadcrumb { display: none; }
 
 #center_column .recipe-block { font-size: 11px; width: 238px; float: left; padding: 0 12px 12px 0; }
 #center_column .recipe-details a { color: #DE5161; }
@@ -20,12 +19,18 @@
 #center_column .recipe-details .author a:hover { text-decoration: underline; }
 </style>
 
-<?php $this->includeTemplate( 'recipe.header.php' ) ?>
+<?php $this->includeOnceTemplate( 'recipe.header.php' ) ?>
 
 <div class="breadcrumb">
 	<a title="retour à Accueil" href="/">Accueil</a>
 	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
-	Recettes
+            <a href="<?php $this->url( 'recipe.list' ) ?>" title="Toutes les recettes par titre">
+                Recettes
+            </a>
+        <?php if ( !empty( $this->breadcrumbHack ) ): ?>
+	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
+	<?php echo $this->breadcrumbHack ?>
+        <?php endif ?>
 </div>
 
 <?php $forloopCounter = 1; foreach( $this->objectList as $object ): ?>
