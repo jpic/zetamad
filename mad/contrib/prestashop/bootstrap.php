@@ -3,7 +3,7 @@ function prestashopUrl( $object ) {
     $link = $GLOBALS['link'];
     
     if ( $object instanceof Product ) {
-        return $link->getProductLink($object->id, $object->link_rewrite);
+        return $link->getProductLink($object);
     }
 }
 
