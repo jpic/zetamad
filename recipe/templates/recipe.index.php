@@ -59,7 +59,11 @@
         </div>
         <div class="keywordsCloud">
             <?php foreach( $this->tags as $tag ): ?>
+<<<<<<< Updated upstream
             <a href="<?php $this->url( 'recipe.listByTag', $tag ) ?>" style="font-size: 80%;" title="<?php $this->e( $tag['name'] ) ?>"><?php $this->e( $tag['name'] ) ?></a>&nbsp;
+=======
+            <a href="<?php $this->url( 'recipe.listByTag', $tag ) ?>" style="font-size: 80%;" title="<?php $this->e( $tag['tag'] ) ?>"><?php $this->e( $tag['tag'] ) ?></a>&nbsp;
+>>>>>>> Stashed changes
             <?php endforeach ?>
             <a style="font-size: 180%;">sexe</a>&nbsp;
             <a style="font-size: 80%;">oeufs</a>&nbsp;
