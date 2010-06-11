@@ -850,4 +850,8 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         return implode( '', $html );
     } # }}}
 
+
+    public function date( $date ) {
+        return $date;
+    }
 }
