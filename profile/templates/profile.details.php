@@ -6,7 +6,7 @@
 
 #nav-recipe { color: #b0aaac; width: 980px; height: 30px; list-style: none; margin-bottom: 10px; }
 #nav-recipe li { display: block; float: left; line-height: 30px; height: 30px; }
-#nav-recipe li.browseby { font-size: 10px; font-family: Verdana; padding-right: 8px; }
+#nav-recipe li.browseby { font-size: 10px; font-family: Verdana; padding-right: 8px; line-height: 31px; }
 #nav-recipe li a { font: bold 15px Times, Arial; color: #b0aaac; text-transform: uppercase; }
 #nav-recipe li a.selected { color: #000; }
 #nav-recipe li.sep { font-size: 9px; padding: 0px 8px; }
@@ -88,7 +88,7 @@ if ( empty( $this->object['picture'] ) )
 		</div>
         <?php if ( !empty( $this->sites ) ): ?>
 		<div id="external-links">
-			<h3>Les sites de <?php $this->e( $this->object['name'] ) ?></h3>
+			<h3>Les sites de <?php $this->e( $this->object['name'] ) ?>"</h3>
 			<ul>
                 <?php
                 foreach( $this->sites as $site ):
@@ -153,23 +153,29 @@ if ( empty( $this->object['picture'] ) )
 </div>
 <?php endif ?>
 
-<?php if ( $products = prestashopFetchProducts( $this->products, 'product' ) ): ?>
+<?php if ( !empty( $this->products ) ): ?>
 <div class="favorites_products">
 	<div class="title">Mes produits favoris</div>
     <?php 
     $forLoop = 0;
-    foreach( $products as $product ): ?>
+    foreach( $this->products as $product ): ?>
     <?php
+    $productId = $product['product'];
+    $product = new Product(intval( $productId ), true, 2);
+
+    // skip deleted products
+    if (!$product) continue;
+
     $cover = Product::getCover( $product->id );
     ?>
 	<div class="product_block <?php if ( ( $forLoop + 1 ) % 4 == 0 ): ?>nomarg<?php endif ?>">
 		<div class="thumb">
-			<a title="<?php echo $product->name ?>" href="<?php echo prestashopUrl( $product ) ?>">
+			<a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>">
 				<img width="167" height="167" alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-home.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" />
 			</a>
 		</div>
-                <a title="<?php echo $product->name ?>" href="<?php echo prestashopUrl( $product ) ?>">
-                    <?php echo $this->truncateWords($product->name, 30); ?><?php if ( strlen( $product->name ) > 30 ) echo " ..." ?>
+                <a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>">
+                    <?php echo $this->truncateWords($product->name, 30); ?>[...]
                 </a>
 	</div>
     <?php 

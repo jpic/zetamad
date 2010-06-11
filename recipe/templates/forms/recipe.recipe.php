@@ -1,5 +1,4 @@
 <?php include "form_css.php" ?>
-
 <form action="" method="post" class="uniForm" enctype="multipart/form-data">
     <?php if ( ! $this->form->isValid ): ?>
     <div id="errorMsg">
@@ -10,7 +9,7 @@
     <h2><?php echo ucfirst( $this->t( 'META.TITLE' ) ) ?></h2>
 
     <fieldset class="inlineLabels">
-        <h3>Présentation générale</h3>
+        <h2>Présentation générale</h2>
         <?php echo $this->renderFormFieldRow( 'title' ) ?>
         <?php echo $this->renderFormFieldRow( 'categories' ) ?>
         <?php echo $this->renderFormFieldRow( 'profile' ) ?>
@@ -23,16 +22,27 @@
         <?php echo $this->renderFormFieldRow( 'tags' ) ?>
     </fieldset>
     <fieldset class="inlineLabels">
-        <h3>Illustrations</h3>
+        <h2>M&eacute;dias</h3>
         <?php echo $this->renderFormFieldRow( 'pictures' ) ?>
+        Vid&eacute;o
         <?php echo $this->renderFormFieldRow( 'video' ) ?>
     </fieldset>
     <fieldset class="inlineLabels">
-        <h3>Ingrédients</h3>
+        <h2>Pour combien de personnes ?</h2>
         <?php echo $this->renderFormFieldRow( 'yield' ) ?>
+    </fieldset>
         <?php echo $this->renderFormFieldRow( 'ingredientQuantities' ) ?>
+    </fieldset>
+    <fieldset class="inlineLabels">
+        <h2>Produits de la recette</h2>
         <?php echo $this->renderFormFieldRow( 'ingredientProducts' ) ?>
+    </fieldset>
+    <fieldset class="inlineLabels">
+        <h2>Ustensiles nécéssaires</h2>
         <?php echo $this->renderFormFieldRow( 'tools' ) ?>
+        </fieldset>
+    <fieldset class="inlineLabels">
+        <h2>Ustensiles dans le catalogue Madeleine Market</h2>
         <?php echo $this->renderFormFieldRow( 'toolProducts' ) ?>
     </fieldset>
     <div class="buttonHolder">
