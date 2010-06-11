@@ -36,6 +36,7 @@
                 </td>
                 <td>
                     <input type="button" class="deleteRow" value="Effacer" />
+                    <?php echo $this->renderInputWidget( $formSet->formConfiguration['sortkey'], $key ) ?>
                     <?php if ( !empty( $row['id'] ) ): ?>
                     <input type="hidden" name="recipe_recipe[pictures][<?php echo $key ?>][id]" value="<?php echo $row['id'] ?>" />
                     <?php endif ?>
@@ -47,6 +48,7 @@
 
         
         <h2>Vid&eacute;o</h2>
+
         <?php echo $this->renderFormFieldRow( 'video' ) ?>
     </fieldset>
     <fieldset class="inlineLabels">

@@ -470,10 +470,6 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     } # }}}
 
     public function fixFormData( $form ) {
-        if ( is_string( $form ) ) {
-            $form = $this->form->formConfiguration[$form]->form;
-        }
-
         if ( $form->isFormSet ) {
             // make default initial data
             if ( !count( $form->data ) ) {
@@ -491,6 +487,22 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     public function getTableRowFormSetClass( $form ) {
         return substr( $form->formName, strrpos( $form->formName, '.' ) +1 );
     }
+
+    public function prepareFormSet( $form ) {
+        $this->fixFormData( $form );
+        
+        foreach( $form->formConfiguration as &$attribute ) {
+            if ( !$this->isRenderable( $attribute ) ) {
+                continue;
+            }
+
+            $this->processAttribute( $attribute );
+        }
+
+        return $form;
+    }
+
+    // @todo: refactor with prepareformSet
     
     public function renderFormSet( $form ) { # {{{
         $html = array(
