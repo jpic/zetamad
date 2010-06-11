@@ -27,7 +27,7 @@ span.commentTitle, span.commentInfo { font-family: Verdana; font-style: normal; 
                         </span>
                         <?php endif ?>
                         <span class="commentInfo">
-                            Par &nbsp;<?php $this->e( $comment['userFirstName'] . ' ' . $comment['userLastName'] ) ?>, <?php echo $this->date( $comment['created'] ) ?>
+                            Par <?php $this->e( $comment['userFirstName'] . ' ' . $comment['userLastName'] ) ?>, <?php echo $this->date( $comment['created'] ) ?>
                         </span>
                     </div>
                     <h5 style="font-weight: normal;">
