@@ -12,7 +12,7 @@
 #nav-recipe li.sep { font-size: 9px; padding: 0px 8px; }
 
 .recipe { width: 740px; float: left;}
-.recipe .author-left { width: 260px; float: left;}
+.recipe .author-left { width: 272px; float: left;}
 .recipe .author-left #author-photo { border: 1px solid #dadada; padding: 5px; width: 260px; height: 260px; }
 .recipe .author-left #author-photo img { vertical-align: bottom; }
 .recipe .author-left .share { float: right; padding-top: 5px; }
@@ -85,6 +85,12 @@ if ( empty( $this->object['picture'] ) )
 				</a>
 			</p>
             -->
+		</div>
+		<div style="float: right; margin: 5px 0;">
+			<a onclick="return addthis_sendto()" onmouseout="addthis_close()" onmouseover="return addthis_open(this, '', window.location.href, document.title)" href="http://www.addthis.com/bookmark.php?v=250&amp;pub=xa-4a48da264c324c50">
+				<img style="border: 0pt none;" alt="Partager" src="<?php echo __PS_BASE_URI__; ?>themes/mmarket/img/lg-bookmark-mm.gif">
+			</a>
+			<script src="http://s7.addthis.com/js/250/addthis_widget.js?pub=xa-4a48da264c324c50" type="text/javascript"></script>
 		</div>
         <?php if ( !empty( $this->sites ) ): ?>
 		<div id="external-links">

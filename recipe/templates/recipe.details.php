@@ -113,11 +113,11 @@ if ( empty( $this->profile['picture'] ) )
                 <?php endif ?>
             </div>
 	    
-	<div style="float: right; margin-bottom: 10px;">
-		<a href="http://www.addthis.com/bookmark.php?v=250&pub=xa-4a48da264c324c50" onmouseover="return addthis_open(this, '', window.location.href, document.title)" onmouseout="addthis_close()" onclick="return addthis_sendto()">
-		    <img src="/themes/mmarket/img/lg-bookmark-mm.gif" width="127" height="15" alt="Partager" style="border:0"/>
+	<div style="float: right; margin: 5px 0;">
+		<a onclick="return addthis_sendto()" onmouseout="addthis_close()" onmouseover="return addthis_open(this, '', window.location.href, document.title)" href="http://www.addthis.com/bookmark.php?v=250&amp;pub=xa-4a48da264c324c50">
+			<img style="border: 0pt none;" alt="Partager" src="<?php echo __PS_BASE_URI__; ?>themes/mmarket/img/lg-bookmark-mm.gif">
 		</a>
-		<script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js?pub=xa-4a48da264c324c50"></script>
+		<script src="http://s7.addthis.com/js/250/addthis_widget.js?pub=xa-4a48da264c324c50" type="text/javascript"></script>
 	</div>
 
                 <div class="object-author">
