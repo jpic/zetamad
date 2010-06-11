@@ -256,19 +256,14 @@ if ( empty( $this->profile['picture'] ) )
         </div>
         <?php endif ?>
 
-        <?php if ( !empty( $this->ingredientProducts) ): ?>
+        <?php if ( $ingredientProducts = prestashopFetchProducts( $this->ingredientProducts, 'product' ) ): ?>
     	<div class="block">
     		<h4>Suggestions de produits</h4>
     		<ul>
                 <?php 
                 $forloopCounter = 0;
-                foreach( $this->ingredientProducts as $ingredientProduct ): ?>
+                foreach( $ingredientProducts as $product ): ?>
                 <?php
-                $product = new Product(intval( $ingredientProduct['product'] ), true, 2);
-
-                // skip invalid products
-                if ( !$product ) continue;
-                
                 $cover = Product::getCover( $product->id );
                 ?>
     			<li <?php if ( $forloopCounter > 0 ): ?>style="margin-top: 10px;"<?php endif ?>>
@@ -291,19 +286,14 @@ if ( empty( $this->profile['picture'] ) )
     	</div>
         <?php endif ?>
 
-        <?php if ( !empty( $this->toolProducts ) ): ?>
+        <?php if ( $toolProducts = prestashopFetchProducts( $this->toolProducts, 'product') ): ?>
     	<div class="block">
     		<h4>Outils recommandés</h4>
     		<ul>
                 <?php 
                 $forloopCounter = 0;
-                foreach( $this->toolProducts as $toolProduct ): ?>
+                foreach( $toolProducts as $product ): ?>
                 <?php
-                $product = new Product(intval( $toolProduct['product'] ), true, 2);
-
-                // skip invalid products
-                if ( !$product ) continue;
-
                 $cover = Product::getCover( $product->id );
                 ?>
     			<li <?php if ( count( $this->toolProducts ) > 1 ): ?>style="margin-top: 10px;"<?php endif ?>>

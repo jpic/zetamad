@@ -88,7 +88,7 @@ if ( empty( $this->object['picture'] ) )
 		</div>
         <?php if ( !empty( $this->sites ) ): ?>
 		<div id="external-links">
-			<h3>Les sites de <?php $this->e( $this->object['name'] ) ?>"</h3>
+			<h3>Les sites de <?php $this->e( $this->object['name'] ) ?></h3>
 			<ul>
                 <?php foreach( $this->sites as $site ): ?>
 				<li><a href="http://<?php echo $site['site'] ?>"><span style="color: #232323;">&bull;</span> <?php echo $site['site'] ?></a></li>
@@ -146,19 +146,13 @@ if ( empty( $this->object['picture'] ) )
 </div>
 <?php endif ?>
 
-<?php if ( !empty( $this->products ) ): ?>
+<?php if ( $products = prestashopFetchProducts( $this->products, 'product' ) ): ?>
 <div class="favorites_products">
 	<div class="title">Mes produits favoris</div>
     <?php 
     $forLoop = 0;
-    foreach( $this->products as $product ): ?>
+    foreach( $products as $product ): ?>
     <?php
-    $productId = $product['product'];
-    $product = new Product(intval( $productId ), true, 2);
-
-    // skip deleted products
-    if (!$product) continue;
-
     $cover = Product::getCover( $product->id );
     ?>
 	<div class="product_block <?php if ( ( $forLoop + 1 ) % 4 == 0 ): ?>nomarg<?php endif ?>">
@@ -168,7 +162,7 @@ if ( empty( $this->object['picture'] ) )
 			</a>
 		</div>
                 <a title="<?php echo $product->name ?>" href="<?php echo prestashopUrl( $product ) ?>">
-                    <?php echo $this->truncateWords($product->name, 30); ?>[...]
+                    <?php echo $this->truncateWords($product->name, 30); ?><?php if ( strlen( $product->name ) > 30 ) echo " ..." ?>
                 </a>
 	</div>
     <?php 

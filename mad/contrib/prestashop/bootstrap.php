@@ -7,6 +7,25 @@ function prestashopUrl( $object ) {
     }
 }
 
+function prestashopFetchProducts( $rows, $key ) {
+    $products = array();
+    foreach( $rows as $row ) {
+        $productId = $row[$key];
+
+        if ( !is_numeric( $productId )) {
+            continue;
+        }
+        
+        $product = new Product(intval( $productId ), true, 2);
+
+        // skip deleted products
+        if (!$product->name ) continue;
+
+        $products[] = $product;
+    }
+    return $products;
+}
+
 // authentication backend
 function prestashopAuthentication( ezcMvcRequest $request, ezcMvcRouter $router ) {
     $framework = madFramework::instance(  );
