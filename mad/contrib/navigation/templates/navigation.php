@@ -19,9 +19,9 @@
 #tabAdminFixed #adminMenu li.tabMenu:hover { background: -moz-linear-gradient(#f0ede6, #e0dcd0); background-color: #e0dcd0; }
 #tabAdminFixed #adminMenu li.tabMenu ul.adminSubMenu { position: absolute; z-index: 999; bottom: 24px; left: -1px; background: #f0ede6; border: 1px solid #999999; border-bottom: 0; visibility: hidden; width: 170px;}
 #tabAdminFixed #adminMenu li.tabMenu:hover > ul.adminSubMenu { visibility: visible; }
-#tabAdminFixed #adminMenu li.tabMenu ul.adminSubMenu li { margin: 0 5px; cursor: default; list-style-type: none; height: 12px; padding: 4px 10px; }
+#tabAdminFixed #adminMenu li.tabMenu ul.adminSubMenu li { margin: 0 5px; cursor: default; list-style-type: none; line-height: 16px; padding: 4px 5px; }
 #tabAdminFixed #adminMenu li.tabMenu ul.adminSubMenu li.last { padding-bottom: 10px; border-bottom: 1px solid #999999; }
-#tabAdminFixed #adminMenu li.tabMenu ul.adminSubMenu li a { color: #333333; font-weight: bold; display: inline; }
+#tabAdminFixed #adminMenu li.tabMenu ul.adminSubMenu li a { color: #333333; font-weight: bold; display: inline;  }
 #tabAdminFixed #adminMenu li.tabMenu ul.adminSubMenu li a:hover { color: #000; text-decoration: underline; }
 </style>
 
