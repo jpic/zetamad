@@ -44,8 +44,8 @@ class madFramework {
         if ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], 'static' ) ) {
             // dont refresh cache on static file hits
             $this->applications['mad']['refreshAutoload']      = false;
-            $this->applications['mad']['refreshDatabase']      = false;
-            $this->applications['mad']['refreshBin']           = false;
+            $this->applications['mad']['refreshStatic']        = false;
+            $this->applications['mad']['refreshTemplates']     = false;
             $this->applications['mad']['refreshConfiguration'] = false;
         } elseif ( $this->applications['mad']['refreshConfiguration'] ) {
             // force configuration reload
@@ -67,6 +67,16 @@ class madFramework {
         if ( !is_dir( $this->entryApplicationPath . '/cache/etc' ) ) {
             mkdir( $this->entryApplicationPath . '/cache/etc' );
             $this->applications['mad']['refreshConfiguration'] = true;
+        }
+
+        if ( !is_dir( $this->entryApplicationPath . '/cache/templates' ) ) {
+            mkdir( $this->entryApplicationPath . '/cache/templates' );
+            $this->applications['mad']['refreshTemplates'] = true;
+        }
+
+        if ( !is_dir( $this->entryApplicationPath . '/www/static' ) ) {
+            mkdir( $this->entryApplicationPath . '/www/static' );
+            $this->applications['mad']['refreshStatic'] = true;
         }
 
         if ( !isset( self::$instance ) ) {
@@ -157,6 +167,14 @@ class madFramework {
             }
         }
 
+        if ( $this->applications['mad']['refreshTemplates'] ) {
+            $this->refreshTemplates();
+        }
+
+        if ( $this->applications['mad']['refreshStatic'] ) {
+            $this->refreshStatic();
+        }
+
         $this->sendSignal( 'postBootstrap', array( $this ) );
 
         if ( !isset( $_SESSION ) ) {
@@ -165,6 +183,34 @@ class madFramework {
 
         if ( !isset( $_SESSION['messages'] ) ) {
             $_SESSION['messages'] = array(  );
+        }
+    }
+
+    public function refreshTemplates() {
+        $staticPath = ENTRY_APP_PATH . '/www/static';
+        if ( is_dir( $staticPath ) ) {
+            ezcBaseFile::removeRecursive( $staticPath );
+        }
+
+        $applications = array_reverse( array_keys( (array) $configuration['applications'] ) );
+
+        foreach( $applications as $application ) {
+            $path = $configuration->getPathSetting( 'applications', $application, 'path' ) . '/static';
+            madFramework::copyRecursive( $path, $staticPath );
+        }
+    }
+
+    public function refreshStatic() {
+        $templatesPath = ENTRY_APP_PATH . '/cache/templates';
+        if ( is_dir( $templatesPath ) ) {
+            ezcBaseFile::removeRecursive( $templatesPath );
+        }
+
+        $applications = array_reverse( array_keys( (array) $configuration['applications'] ) );
+
+        foreach( $applications as $application ) {
+            $path = $configuration->getPathSetting( 'applications', $application, 'path' ) . '/templates';
+            madFramework::copyRecursive( $path, $templatesPath );
         }
     }
 

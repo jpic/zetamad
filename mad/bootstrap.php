@@ -489,36 +489,6 @@ function setDefaultManyToManyTableNames( $configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'setDefaultManyToManyTableNames' );
 
-function copyStatic( $configuration ) {
-    $staticPath = ENTRY_APP_PATH . '/www/static';
-    if ( is_dir( $staticPath ) ) {
-        ezcBaseFile::removeRecursive( $staticPath );
-    }
-
-    $applications = array_reverse( array_keys( (array) $configuration['applications'] ) );
-
-    foreach( $applications as $application ) {
-        $path = $configuration->getPathSetting( 'applications', $application, 'path' ) . '/static';
-        madFramework::copyRecursive( $path, $staticPath );
-    }
-}
-$this->connectSignal( 'postConfigurationRefresh', 'copyStatic' );
-
-function copyTemplates( $configuration ) {
-    $templatesPath = ENTRY_APP_PATH . '/cache/templates';
-    if ( is_dir( $templatesPath ) ) {
-        ezcBaseFile::removeRecursive( $templatesPath );
-    }
-
-    $applications = array_reverse( array_keys( (array) $configuration['applications'] ) );
-
-    foreach( $applications as $application ) {
-        $path = $configuration->getPathSetting( 'applications', $application, 'path' ) . '/templates';
-        madFramework::copyRecursive( $path, $templatesPath );
-    }
-}
-$this->connectSignal( 'postConfigurationRefresh', 'copyTemplates' );
-
 function shortTemplateTags( $configuration ) {
     if ( defined( 'RecursiveDirectoryIterator::FOLLOW_SYMLINKS' ) ) {
         $flags = RecursiveDirectoryIterator::FOLLOW_SYMLINKS|RecursiveIteratorIterator::LEAVES_ONLY|RecursiveIteratorIterator::SELF_FIRST;
