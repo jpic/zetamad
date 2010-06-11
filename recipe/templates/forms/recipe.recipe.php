@@ -25,14 +25,27 @@
         <h2>Photos</h2>
         
         <table>
-        <?php $formset = $this->form->formConfiguration['pictures']->form ?>
-        <?php foreach( $this->getFormData( 'pictures' ) as $key => $row ): ?>
-            <tr class="<?php echo $this->getTableRowFormSetClass( $formset ) ?> formset">
-
+        <?php $formSet = $this->form->formConfiguration['pictures']['form'] ?>
+        <?php foreach( $this->prepareFormSet( $formSet )->data as $key => $row ): ?>
+            <tr class="<?php echo $this->getTableRowFormSetClass( $formSet ) ?> formset">
+                <td>
+                    <?php echo $this->renderImageWidget( $formSet->formConfiguration['picture'], $key ) ?>
+                </td>
+                <td>
+                    <?php echo $this->renderTextWidget( $formSet->formConfiguration['title'], $key ) ?>
+                </td>
+                <td>
+                    <input type="button" class="deleteRow" value="Effacer" />
+                    <?php if ( !empty( $row['id'] ) ): ?>
+                    <input type="hidden" name="recipe_recipe[pictures][<?php echo $key ?>][id]" value="<?php echo $row['id'] ?>" />
+                    <?php endif ?>
+                </td>
             </tr>
         <?php endforeach ?>
         </table>
+        <button disabled="disabled" class="formset_add">Ajouter</button>
 
+        
         <h2>Vid&eacute;o</h2>
         <?php echo $this->renderFormFieldRow( 'video' ) ?>
     </fieldset>
