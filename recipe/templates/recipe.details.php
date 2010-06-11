@@ -84,15 +84,13 @@ if ( empty( $this->pictures[0]['picture'] ) )
     $this->pictures[0]['picture'] = 'default.jpg';
 if ( empty( $this->profile['picture'] ) )
     $this->profile['picture'] = 'default.jpg';
-
-$this->pictures[0]['title'] = empty( $this->pictures[0]['title'] ) ? $this->object['title'] : $this->pictures[0]['title'];
 ?>
 
 <div class="object hrecipe">
         <div class="object-left">
             <div id="object-photo">
                 <a class="thickbox" href="<?php echo $this->getAbsoluteUploadUrl( $this->pictures[0]['picture'] ) ?>" title="<?php $this->e( $this->object['title'] ) ?>">
-                    <img class="photo" src="<?php echo $this->thumbnail( $this->pictures[0]['picture'], 300, 300 ); ?>" alt="<?php $this->e( $this->pictures[0]['title'] ) ?>" style="margin:4px 0 0; vertical-align:baseline;" id="bigpic" />
+                    <img class="photo" src="<?php echo $this->thumbnail( $this->pictures[0]['picture'], 300, 300 ); ?>" alt="<?php $this->e( empty( $this->pictures[0]['title'] ) ? $this->object['title'] : $this->pictures[0]['title'] ) ?>" style="margin:4px 0 0; vertical-align:baseline;" id="bigpic" />
                 </a>
                 <?php if ( count( $this->pictures ) > 1 ): ?>
                 <div id="object-ths">
