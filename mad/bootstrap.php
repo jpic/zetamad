@@ -72,6 +72,13 @@ function prefixRoutes( $configuration ) {
             $configuration['routes'][$name]['regexp'] = '@^' . $applicationPrefix . $route['regexp'] . '@';
         }
 
+        if ( !empty( $route['rails'] ) && substr( $route['rails'], -1 ) == '/' ) {
+            // strip trailing slash, should be done by another function
+            // but crunching instead of debugging right now
+
+            $configuration['routes'][$name]['rails'] = substr( $route['rails'], 0, strlen( $route['rails'] ) -1 );
+        }
+
         $configuration['routes'][$name]['name'] = $name;
     }
 }
