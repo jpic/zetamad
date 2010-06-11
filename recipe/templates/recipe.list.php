@@ -4,13 +4,6 @@
 #center_column a { text-decoration: none;}
 #left_column, .breadcrumb { display: none; }
 
-#nav-recipe { color: #b0aaac; border-bottom: 1px solid #e1e1e1; width: 980px; height: 30px; list-style: none; margin-bottom: 10px; }
-#nav-recipe li { display: block; float: left; line-height: 30px; height: 30px; }
-#nav-recipe li.browseby { font-size: 10px; font-family: Verdana; padding-right: 8px; }
-#nav-recipe li a { font: bold 15px Times, Arial; color: #b0aaac; text-transform: uppercase; }
-#nav-recipe li a.selected { color: #000; }
-#nav-recipe li.sep { font-size: 9px; padding: 0px 8px; }
-
 #center_column .recipe-block { font-size: 11px; width: 238px; float: left; padding: 0 12px 12px 0; }
 #center_column .recipe-details a { color: #DE5161; }
 #center_column .recipe-details a:hover { color: #DE5161; }
@@ -27,22 +20,7 @@
 #center_column .recipe-details .author a:hover { text-decoration: underline; }
 </style>
 
-<ul id="nav-recipe">
-<!--
-	<li class="browseby">Trier par:</li>
-	<li><a href="" class="selected">date</a></li>
-	<li class="sep">|</li>
-	<li><a href="">cat&eacute;gorie</a></li>
-	<li class="sep">|</li>
-	<li><a href="">popularit&eacute;</a></li>
--->
-	<li class="sep">|</li>
-	<li>
-            <a href="<?php $this->url( 'recipe.random' ) ?>" title="Recette au hasard">
-                au hasard
-            </a>
-        </li>
-</ul>
+<?php $this->includeTemplate( 'recipe.header.php' ) ?>
 
 <div class="breadcrumb">
 	<a title="retour à Accueil" href="/">Accueil</a>
