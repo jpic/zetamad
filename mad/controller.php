@@ -88,6 +88,13 @@ class madController extends ezcMvcController {
         );
     }
 
+    public function routeRedirect( $name, $arguments ) {
+        $this->result->status = new ezcMvcExternalRedirect( madFramework::url(
+            $name,
+            $arguments
+        ) );
+    }
+
     public function doVoid() {
         
     }

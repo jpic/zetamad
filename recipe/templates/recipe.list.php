@@ -27,18 +27,22 @@
 #center_column .recipe-details .author a:hover { text-decoration: underline; }
 </style>
 
-<!--
 <ul id="nav-recipe">
+<!--
 	<li class="browseby">Trier par:</li>
 	<li><a href="" class="selected">date</a></li>
 	<li class="sep">|</li>
 	<li><a href="">cat&eacute;gorie</a></li>
 	<li class="sep">|</li>
 	<li><a href="">popularit&eacute;</a></li>
-	<li class="sep">|</li>
-	<li><a href="">au hasard</a></li>
-</ul>
 -->
+	<li class="sep">|</li>
+	<li>
+            <a href="<?php $this->url( 'recipe.random' ) ?>" title="Recette au hasard">
+                au hasard
+            </a>
+        </li>
+</ul>
 
 <div class="breadcrumb">
 	<a title="retour à Accueil" href="/">Accueil</a>
