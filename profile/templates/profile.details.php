@@ -88,15 +88,10 @@ if ( empty( $this->object['picture'] ) )
 		</div>
         <?php if ( !empty( $this->sites ) ): ?>
 		<div id="external-links">
-			<h3>Les sites de <?php $this->e( $this->object['name'] ) ?>"</h3>
+			<h3>Les sites de <?php $this->e( $this->object['name'] ) ?></h3>
 			<ul>
-                <?php
-                foreach( $this->sites as $site ):
-                    if ( substr( $site['site'], 0, 7 ) != 'http://' ) {
-                        $site['site'] = 'http://' . $site['site'];
-                    }
-                ?>
-		<li><a href="<?php echo $site['site'] ?>"><span style="color: #232323;">&bull;</span> <?php echo $site['site'] ?></a></li>
+                <?php foreach( $this->sites as $site ): ?>
+				<li><a href="http://<?php echo $site['site'] ?>"><?php echo $site['site'] ?></a></li>
                 <?php endforeach ?>
 			</ul>
 		</div>
@@ -133,17 +128,15 @@ if ( empty( $this->object['picture'] ) )
         <?php
         $forLoop = 0;
         foreach( $this->recipes as $recipe ):
-            if ( empty( $recipe['picture'] ) ) $recipe['picture'] = 'default.jpg';
+            if ( !isset( $recipe['picture'] ) ) continue;
         ?>
 	<div class="recipe_block <?php if ( ( $forLoop + 1 ) % 4 == 0 ): ?>nomarg<?php endif ?>">
 		<div class="thumb">
-			<a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>" title="<?php $this->e( empty( $recipe['pictureTitle'] ) ? $recipe['title'] : $recipe['pictureTitle'] ) ?>">
+			<a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>" title="<?php $this->e( $recipe['title'] ) ?>">
                 <img src="<?php echo $this->thumbnail( $recipe['picture'], 167, 167 ) ?>" width="167" height="167" alt="<?php $this->e( $recipe['title'] ) ?>" />
             </a>
 		</div>
-		<a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>" title="<?php $this->e( $recipe['title'] ) ?>">
-                    <?php echo $this->truncateWords($recipe['title'], 30); ?><?php if ( strlen( $recipe['title'] ) > 30 ) echo " ..." ?>
-                </a>
+		<a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>" title="<?php $this->e( $recipe['title'] ) ?>"><?php $this->e( $recipe['title'] ) ?></a>
 	</div>
         <?php
             $forLoop++;
