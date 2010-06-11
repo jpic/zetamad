@@ -2,7 +2,8 @@
 .button { cursor: pointer; }
 fieldset.comment textarea { font-family: Verdana; font-style: normal; font-variant: normal; font-weight: normal; font-size: 12px; line-height: normal; font-size-adjust: none; font-stretch: normal; width: 400px; height: 80px; }
 fieldset.comment input.textInput { width: 400px; }
-span.commentTitle, span.commentInfo { font-family: Verdana; font-style: normal; font-variant: normal; font-weight: bold; font-size: 14px; line-height: normal; font-size-adjust: none; font-stretch: normal; -x-system-font: none; color: rgb(132, 132, 132); }
+span.commentTitle { font-family: Verdana; font-style: normal; font-variant: normal; font-weight: bold; font-size: 14px; line-height: normal; font-size-adjust: none; font-stretch: normal; -x-system-font: none; color: rgb(132, 132, 132); }
+span.commentInfo { font-family: Verdana; font-style: normal; font-variant: normal; font-weight: normal; font-size: 12px; line-height: normal; font-size-adjust: none; font-stretch: normal; -x-system-font: none; color: rgb(132, 132, 132); }
 </style>
 <div class="product-tab">
     <div style="clear: left; width: 735px; overflow: auto; margin: 15px 0pt;">
