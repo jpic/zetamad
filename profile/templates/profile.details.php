@@ -128,15 +128,17 @@ if ( empty( $this->object['picture'] ) )
         <?php
         $forLoop = 0;
         foreach( $this->recipes as $recipe ):
-            if ( !isset( $recipe['picture'] ) ) continue;
+            if ( empty( $recipe['picture'] ) ) $recipe['picture'] = 'default.jpg';
         ?>
 	<div class="recipe_block <?php if ( ( $forLoop + 1 ) % 4 == 0 ): ?>nomarg<?php endif ?>">
 		<div class="thumb">
-			<a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>" title="<?php $this->e( $recipe['title'] ) ?>">
+			<a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>" title="<?php $this->e( empty( $recipe['pictureTitle'] ) ? $recipe['title'] : $recipe['pictureTitle'] ) ?>">
                 <img src="<?php echo $this->thumbnail( $recipe['picture'], 167, 167 ) ?>" width="167" height="167" alt="<?php $this->e( $recipe['title'] ) ?>" />
             </a>
 		</div>
-		<a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>" title="<?php $this->e( $recipe['title'] ) ?>"><?php $this->e( $recipe['title'] ) ?></a>
+		<a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>" title="<?php $this->e( $recipe['title'] ) ?>">
+                    <?php echo $this->truncateWords($recipe['title'], 30); ?><?php if ( strlen( $recipe['title'] ) > 30 ) echo " ..." ?>
+                </a>
 	</div>
         <?php
             $forLoop++;
