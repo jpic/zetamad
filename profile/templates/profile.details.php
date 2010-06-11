@@ -52,6 +52,12 @@
 #recipe-column .block .msg-author { background: #F6F6F6; width: 168px; display: block; margin: 0 auto; height: 100px; border: 1px solid #dadada; font: normal 11px Verdana; padding: 5px; color: #969696; }
 #recipe-column .block .title-setmsg { font-style: italic; font-family: Times; font-size: 16px; font-weight: bold; color: #969696; padding-bottom: 5px; width: 180px; margin: 0 auto; }
 
+#object-categories { font-size: 11px; color: #666; }
+#object-categories li { line-height: 30px; display: block; float: left; margin-right: 5px; }
+#object-categories .title { font-weight: bold; }
+#object-categories li a { color: #D02F1E; }
+#object-categories li a:hover { text-decoration: underline; }
+
 a.btn-block { display: block; height: 30px; width: 180px; margin: 0 auto; margin-top: 10px; text-align: center; font-size: 16px; font-style: italic; font-family: Times; color: #fff; line-height: 30px; background: #929da3; }
 a.btn-block:hover { background: #539893; }
 </style>
@@ -106,6 +112,12 @@ if ( empty( $this->object['picture'] ) )
 	
 	<div class="author-right">
 			<h2><?php $this->e( $this->object['name'] ) ?></h2>
+			<?php ?>
+				<ul id="object-categories" style="border: 1px solid #f6c9d0; clear: both; overflow:auto; padding: 0 5px; margin-top: 5px; background: #fee6ea;">
+					<li class="title">Modération :</li>
+					<li><a class="editrecipe" href="<?php /*echo $this->url( 'recipe.edit', $object )*/ ?>">Modifier le profil de <?php $this->e( $this->object['name'] ) ?></a></li>
+				</ul>
+			<?php  ?>
 			<p class="author-intro">
                 <?php $this->e( $this->object['introduction'] ) ?>
 			</p>

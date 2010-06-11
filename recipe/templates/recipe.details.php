@@ -35,6 +35,7 @@
 .object .object-right .object-infos { overflow: auto; border-bottom: 1px dashed #dadada; margin-bottom: 20px; padding-bottom: 7px; }
 .object .object-right .object-infos-block { float: left; margin-right: 15px; color: #D02F1E; font-size: 11px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; padding: 5px; }
 
+/* aussi présent dans profile.details */
 #object-categories { font-size: 11px; color: #666; }
 #object-categories li { line-height: 30px; display: block; float: left; margin-right: 5px; }
 #object-categories .title { font-weight: bold; }
