@@ -10,25 +10,25 @@
 <ul id="nav-object">
         <li class="browseby">Recettes:</li>
         <li>
-            <a href="<?php $this->url( 'recipe.listByDate') ?>" <?php if ( $this->request->variables['prefixedUrl'] == madFramework::url( 'recipe.listByDate' ) ): ?>class="selected"<?php endif ?>>
+            <a title="Liste des recettes triées par date" href="<?php $this->url( 'recipe.listByDate') ?>" <?php if ( $this->request->variables['prefixedUrl'] == madFramework::url( 'recipe.listByDate' ) ): ?>class="selected"<?php endif ?>>
                 date
             </a>
         </li>
         <li class="sep">|</li>
         <li>
-            <a href="<?php $this->url( 'recipe.list') ?>" <?php if ( $this->request->variables['prefixedUrl'] == madFramework::url( 'recipe.list' ) ): ?>class="selected"<?php endif ?>>
+            <a title="Liste des recettes classées alphab&eacute;tiquement" href="<?php $this->url( 'recipe.list') ?>" <?php if ( $this->request->variables['prefixedUrl'] == madFramework::url( 'recipe.list' ) ): ?>class="selected"<?php endif ?>>
                 toutes
             </a>
         </li>
-        <!--
         <li class="sep">|</li>
-        <li><a href="">cat&eacute;gorie</a></li>
+        <li><a title="Liste des catégories de recette" href="<?php $this->url( 'recipe.categoryList' ) ?>" >cat&eacute;gories</a></li>
+        <!--
         <li class="sep">|</li>
         <li><a href="">popularit&eacute;</a></li>
         -->
         <li class="sep">|</li>
         <li>
-            <a href="<?php $this->url( 'recipe.random' ) ?>" title="Recette au hasard"  <?php if ( !empty( $_SESSION['recipe.random'] ) ): ?>class="selected"<?php unset( $_SESSION['recipe.random'] ); endif ?>>
+            <a title="Ouvrir une recette au hasard!" href="<?php $this->url( 'recipe.random' ) ?>" title="Recette au hasard"  <?php if ( !empty( $_SESSION['recipe.random'] ) ): ?>class="selected"<?php unset( $_SESSION['recipe.random'] ); endif ?>>
                 au hasard
             </a>
         </li>
