@@ -90,8 +90,13 @@ if ( empty( $this->object['picture'] ) )
 		<div id="external-links">
 			<h3>Les sites de <?php $this->e( $this->object['name'] ) ?></h3>
 			<ul>
-                <?php foreach( $this->sites as $site ): ?>
-				<li><a href="http://<?php echo $site['site'] ?>"><span style="color: #232323;">&bull;</span> <?php echo $site['site'] ?></a></li>
+                <?php
+                foreach( $this->sites as $site ):
+                    if ( substr( $site['site'], 0, 7 ) != 'http://' ) {
+                        $site['site'] = 'http://' . $site['site'];
+                    }
+                ?>
+		<li><a href="<?php echo $site['site'] ?>"><span style="color: #232323;">&bull;</span> <?php echo $site['site'] ?></a></li>
                 <?php endforeach ?>
 			</ul>
 		</div>
