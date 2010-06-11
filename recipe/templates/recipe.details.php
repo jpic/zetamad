@@ -272,7 +272,7 @@ if ( empty( $this->profile['picture'] ) )
 				</div>
 				<div class="objectProduct-link">
 					<a title="<?php echo $product->name ?>" href="<?php echo prestashopUrl( $product ) ?>"><?php echo $product->name ?></a>
-					<p><a title="<?php $this->e( $product->manufacturer_name ) ?>" href="<?php echo __PS_BASE_URI__ ?>manufacturer.php?id_manufacturer=<?php echo $product->id_manufacturer ?>" style="color: rgb(208, 47, 30); text-decoration: none;"><?php $this->e( $product->manufacturer_name ) ?></a></p>
+					<p style="color: rgb(208, 47, 30);"><?php $this->e( $product->manufacturer_name ) ?></p>
 				</div>
 				<div class="clear"></div>
 			</li>
@@ -302,7 +302,7 @@ if ( empty( $this->profile['picture'] ) )
 				</div>
 				<div class="objectProduct-link">
 					<a title="<?php echo $product->name ?>" href="<?php echo prestashopUrl( $product ) ?>"><?php echo $product->name ?></a>
-					<p><a title="<?php $this->e( $product->manufacturer_name ) ?>" href="<?php echo __PS_BASE_URI__ ?>manufacturer.php?id_manufacturer=<?php echo $product->id_manufacturer ?>" style="color: rgb(208, 47, 30); text-decoration: none;"><?php $this->e( $product->manufacturer_name ) ?></a></p>
+					<p style="color: rgb(208, 47, 30);"><?php $this->e( $product->manufacturer_name ) ?></p>
 				</div>
 				<div class="clear"></div>
 			</li>
