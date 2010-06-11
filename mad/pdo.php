@@ -19,6 +19,8 @@ class madPdo extends PDO {
     public $dbName = '';
     public $queryCache = array(  );
 
+    public $doCache = false;
+
     public function __construct( $name_host, $username='', $password='', $driverOptions=array() ) {
         if ( isset( $driverOptions['autoId'] ) ) {
             $this->autoId = $driverOptions['autoId'];
@@ -36,14 +38,14 @@ class madPdo extends PDO {
 
         parent::__construct( $name_host, $username, $password, $driverOptions );
         $this->setAttribute( PDO::ATTR_STATEMENT_CLASS, array( 'madPDOStatement' ) );
-        
-        if ( function_exists( 'apc_fetch' ) && $cache = apc_fetch( 'mad schmaless tables' ) ) {
+
+        if ( $cache = $this->cacheGet( 'mad schemaless tables' ) ) {
             $this->schemalessTables = $cache;
         } else {
             $this->cacheReset(  );
         }
 
-        if ( function_exists( 'apc_fetch' ) && $cache = apc_fetch( 'mad query cache' ) ) {
+        if ( $cache = $this->cacheGet( 'mad query cache' ) ) {
             $this->queryCache = $cache;
         }
     }
@@ -75,18 +77,25 @@ class madPdo extends PDO {
             }
         }
 
-        if ( function_exists( 'apc_store' ) ) {
-            apc_store( 'mad query cache', array() );
-            apc_store( 'mad schemaless tables', $this->schemalessTables );
-        }
+        $this->cacheStore( 'mad query cache', array() );
+        $this->cacheStore( 'mad schemaless tables', $this->schemalessTables );
+    }
+
+    public function cacheGet( $key ) {
+        return madFramework::cacheGet( $key );
+    }
+
+    public function cacheStore( $key, $value ) {
+        madFramework::cacheStore( $key, $value );
     }
 
     public function __destruct(  ) {
-        if ( function_exists( 'apc_store' ) ) {
-            apc_store( 'mad schemaless tables', $this->schemalessTables );
-            apc_store( 'mad query cache', $this->queryCache );
+        if ( $this->doCache ) {
+            $this->cacheStore( 'mad schemaless tables', $this->schemalessTables );
+            $this->cacheStore( 'mad query cache', $this->queryCache );
         }
     }
+    
     public function prepare(  ) {
         $args = func_get_args(  );
         $statement = $args[0];
@@ -103,6 +112,7 @@ class madPdo extends PDO {
              } else {
                  $statement = $this->rewriteSelect( $statement );
                  $this->queryCache[$key] = $statement;
+                 $this->doCache = true;
              }
              
              $return = parent::prepare( $statement );

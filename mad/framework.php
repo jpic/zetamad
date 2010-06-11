@@ -658,4 +658,22 @@ class madFramework {
         return $result;
     }
     # }}}
+
+    static public function cacheGet( $key ) {
+        $key = str_replace( ' ', '_', strtolower( $key ) );
+        $cachePath = ENTRY_APP_PATH . '/cache/' . $key . '.php';
+
+        if ( !file_exists( $cachePath) ) {
+            return false;
+        }
+
+        return include ENTRY_APP_PATH . '/cache/' . $key . '.php';
+    }
+
+    static public function cacheStore( $key, $value ) {
+        $key = str_replace( ' ', '_', strtolower( $key ) );
+        $file = ENTRY_APP_PATH . '/cache/' . $key . '.php';
+        $php = '<?php return ' . var_export( $value, true ) . ';';
+        file_put_contents( $file, $php );
+    }
 }
