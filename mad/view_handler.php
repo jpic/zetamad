@@ -366,7 +366,6 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         $this->processAttribute( $attribute );
 
         if ( $attribute['asFormSet'] ) {
-            $html[] = sprintf( '<h2>%s</h2>', $attribute['label'] );
             $html[] = $this->renderFormSet( $attribute['form'] );
         } elseif ( $attribute['asMultiValue'] ) {
             $method = sprintf( 
