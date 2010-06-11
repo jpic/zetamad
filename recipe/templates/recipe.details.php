@@ -101,6 +101,8 @@ if ( empty( $this->pictures[0]['picture'] ) )
     $this->pictures[0]['picture'] = 'default.jpg';
 if ( empty( $this->profile['picture'] ) )
     $this->profile['picture'] = 'default.jpg';
+
+$this->pictures[0]['title'] = empty( $this->pictures[0]['title'] ) ? $this->object['title'] : $this->pictures[0]['title'];
 ?>
 
 <div class="object hrecipe">
@@ -115,6 +117,9 @@ if ( empty( $this->profile['picture'] ) )
                     <?php
                     /* prepare 300x300 thumbnail called by javacript */
                     $this->thumbnail( $picture['picture'], 300, 300 );
+
+                    /* be prepared in case there is no picture title */
+                    $picture['title'] = empty( $picture['title'] ) ? $this->object['title'] : $picture['title'];
                     ?>
                     <div class="object-th">
                         <a rel="other-views" href="<?php echo $this->getAbsoluteUploadUrl( $picture['picture'] ) ?>" class="thickbox">
