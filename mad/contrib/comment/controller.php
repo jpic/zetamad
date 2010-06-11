@@ -21,7 +21,7 @@ class madCommentsController extends madFormController {
             );
         }
 
-        $this->addMessage( 'listValidateSuccess', array( 'table' => $table ) );
+        $this->addMessage( 'listValidateSuccess', array( 'table' => $table ), 'comment' );
         $this->redirectToReferer();
     }
 
@@ -37,7 +37,7 @@ class madCommentsController extends madFormController {
             );
         }
 
-        $this->addMessage( 'listValidateSuccess', array( 'table' => $table ) );
+        $this->addMessage( 'listUnvalidateSuccess', array( 'table' => $table ), 'comment' );
         $this->redirectToReferer();
     }
 }

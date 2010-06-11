@@ -210,7 +210,7 @@ class madFormController extends madController {
                     $this->processedData[$this->displayAttribute]
                 );
             } else {
-                $this->addMessage( 'saveSuccess', $this->processedData );
+                $this->addMessage( 'saveSuccess', $this->processedData, $this->formConfiguration['namespace']['value'] );
 
                 if ( !empty( $this->framework->routeConfiguration['successRoute'] ) ) {
                     $this->result->status = new ezcMvcExternalRedirect( madFramework::url(

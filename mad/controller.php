@@ -57,6 +57,9 @@ class madController extends ezcMvcController {
     }
 
     public function t( $key, $dictionnary = null, $contexts = array() ) {
+        if ( !is_array( $contexts ) ) {
+            $contexts = array( $contexts );
+        }
         $contexts = array_merge( $contexts, $this->result->variables['contexts'] );
 
         if ( is_null( $dictionnary ) && isset( $this->object ) ) {
