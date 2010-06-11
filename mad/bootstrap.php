@@ -489,6 +489,21 @@ function setDefaultManyToManyTableNames( $configuration ) {
 }
 $this->connectSignal( 'postConfigurationRefresh', 'setDefaultManyToManyTableNames' );
 
+function copyStatic( $configuration ) {
+    $staticPath = ENTRY_APP_PATH . '/www/static';
+    if ( is_dir( $staticPath ) ) {
+        ezcBaseFile::removeRecursive( $staticPath );
+    }
+
+    $applications = array_reverse( array_keys( (array) $configuration['applications'] ) );
+
+    foreach( $applications as $application ) {
+        $path = $configuration->getPathSetting( 'applications', $application, 'path' ) . '/static';
+        madFramework::copyRecursive( $path, $staticPath );
+    }
+}
+$this->connectSignal( 'postConfigurationRefresh', 'copyStatic' );
+
 function copyTemplates( $configuration ) {
     $templatesPath = ENTRY_APP_PATH . '/cache/templates';
     if ( is_dir( $templatesPath ) ) {
