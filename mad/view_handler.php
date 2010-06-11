@@ -468,7 +468,29 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
         return implode( "\n\t\t", $html );
     } # }}}
-    
+
+    public function fixFormData( $form ) {
+        if ( is_string( $form ) ) {
+            $form = $this->form->formConfiguration[$form]->form;
+        }
+
+        if ( $form->isFormSet ) {
+            // make default initial data
+            if ( !count( $form->data ) ) {
+                $form->data = array( array(  ) );
+
+                foreach( $form->formConfiguration as &$attribute ) {
+                    $form->data[0][$attribute['name']] = '';
+                }
+            }
+        }
+
+        return $form;
+    }
+
+    public function getTableRowFormSetClass( $form ) {
+        return substr( $form->formName, strrpos( $form->formName, '.' ) +1 );
+    }
     
     public function renderFormSet( $form ) { # {{{
         $html = array(
@@ -476,15 +498,6 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             '<thead>',
             '<tr>',
         );
-
-        // make default initial data
-        if ( !count( $form->data ) ) {
-            $form->data = array( array(  ) );
-
-            foreach( $form->formConfiguration as &$attribute ) {
-                $form->data[0][$attribute['name']] = '';
-            }
-        }
 
         // render thead
         foreach( $form->formConfiguration as &$attribute ) {
@@ -507,10 +520,10 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         $html[] = '<tbody>';
 
         // render tbody
-        foreach( $form->data as $key => &$row ) {
+        foreach( $this->fixFormData( $form )->data as $key => &$row ) {
             $html[] = sprintf(
                 '<tr class="formset_%s_form formset" valign="top">',
-                substr( $attribute['form']->formName, strrpos( $attribute['form']->formName, '.' ) +1 )
+                $this->getTableRowFormSetClass( $form )
             );
             
             foreach( $form->formConfiguration as &$attribute ) {

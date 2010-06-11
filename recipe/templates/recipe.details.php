@@ -1,3 +1,10 @@
+<?php
+$this->variables['metaTitle'] = sprintf(
+    '%s, recette contribuée par %s',
+    $this->object['title'],
+    $this->profile['name']
+);
+?>
 <style>
 /*Init 100%*/
 #center_column { width: 980px; padding: 0; }

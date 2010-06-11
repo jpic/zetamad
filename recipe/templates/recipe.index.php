@@ -31,7 +31,9 @@
             <span class="titleGreen">Cat&eacute;gories</span>
         </div>
             <ul>
-                <li><a href="" title="">Salades</a></li>
+                <?php foreach( $this->categories as $category ): ?>
+                <li><a href="<?php $this->url( 'recipe.categoryDetails', $category ) ?>" title="<?php $this->e( $category['title'] ) ?>"><?php $this->e( $category['title'] ) ?></a></li>
+                <?php endforeach ?>
                 <li><a href="" title="">Verrines</a></li>
                 <li><a href="" title="">Entr&eacute;es</a></li>
                 <li><a href="" title="">Plats europ&eacute;ens</a></li>
@@ -56,7 +58,9 @@
             <span class="titleBlue">Nuage de tags</span>
         </div>
         <div class="keywordsCloud">
-            <a style="font-size: 80%;">bruchetta</a>&nbsp;
+            <?php foreach( $this->tags as $tag ): ?>
+            <a href="<?php $this->url( 'recipe.listByTag', $tag ) ?>" style="font-size: 80%;" title="<?php $this->e( $tag['name'] ) ?>"><?php $this->e( $tag['name'] ) ?></a>&nbsp;
+            <?php endforeach ?>
             <a style="font-size: 180%;">sexe</a>&nbsp;
             <a style="font-size: 80%;">oeufs</a>&nbsp;
             <a style="font-size: 110%;">sardine</a>&nbsp;
@@ -71,8 +75,20 @@
 </div>
 
 <div id="right">
-    <p class="title">Actuellement, <span class="totalRecipe">147</span> recettes publi&eacute;es sur Madeleine Market !
+    <p class="title">Actuellement, <span class="totalRecipe"><?php $this->e( $this->recipeCount ) ?></span> recettes publi&eacute;es sur Madeleine Market !
     
-    dernières recettes
-    
+    derniï¿½res recettes
+
+et <?php $this->e( $this->profileCount ) ?> contributeurs
+
 </div>
+
+<?php foreach( $this->recipes as $recipe ) : ?>
+<?php $this->url( 'recipe.details', $recipe ) ?>
+<?php $this->e( $recipe['title'] ) ?>
+<?php endforeach ?>
+
+<?php foreach( $this->profiles as $profile ): ?>
+<?php $this->url( 'profile.details' , $profile ) ?>
+<?php $this->e( $profile['name'] ) ?>
+<?php endforeach ?>

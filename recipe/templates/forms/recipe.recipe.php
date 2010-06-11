@@ -22,8 +22,17 @@
         <?php echo $this->renderFormFieldRow( 'tags' ) ?>
     </fieldset>
     <fieldset class="inlineLabels">
-        <h2>Photo(s)</h2>
-        <?php echo $this->renderFormFieldRow( 'pictures' ) ?>
+        <h2>Photos</h2>
+        
+        <table>
+        <?php $formset = $this->form->formConfiguration['pictures']->form ?>
+        <?php foreach( $this->getFormData( 'pictures' ) as $key => $row ): ?>
+            <tr class="<?php echo $this->getTableRowFormSetClass( $formset ) ?> formset">
+
+            </tr>
+        <?php endforeach ?>
+        </table>
+
         <h2>Vid&eacute;o</h2>
         <?php echo $this->renderFormFieldRow( 'video' ) ?>
     </fieldset>

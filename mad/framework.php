@@ -75,14 +75,15 @@ class madFramework {
     }
 
     public function __destruct() {
-        if ( $this->xhprofEnable ) {
+//        if ( $this->xhprofEnable ) {
             $data = xhprof_disable();
 
             require $this->entryApplicationPath . '/' . $this->applications['mad']['xhprofPath'] . '/utils/xhprof_lib.php';
             require $this->entryApplicationPath . '/' . $this->applications['mad']['xhprofPath'] . '/utils/xhprof_runs.php';
             $profiler = new XHProfRuns_Default();
             $runId = $profiler->save_run( $data, 'mad' );
-        }
+            shell_exec("echo $runId > /tmp/prof");
+//        }
     }
 
     public function createXhprofEnable()  {
