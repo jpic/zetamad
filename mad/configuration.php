@@ -149,7 +149,9 @@ class madConfiguration extends madObject {
 
                 // store the path because we'll parse application config in the 
                 // order of sections in applications.ini
-                $this['applications'][$applicationName]['path'] = madFramework::getRelativePath( $applicationPath, $entryApplicationPath );
+                $this['applications'][$applicationName] = array(
+                    'path' => madFramework::getRelativePath( $applicationPath, $entryApplicationPath )
+                );
             }
         }
     }
@@ -291,7 +293,7 @@ class madConfiguration extends madObject {
                             $this[$name][$element->group][$element->setting] = array();
                         }
 
-                        eval( '$this[$name][$element->group][$element->setting]'. $element->dimensions . ' = $element->value;' );
+                        @eval( '$this[$name][$element->group][$element->setting]'. $element->dimensions . ' = $element->value;' );
                         break;
                 }
             }
