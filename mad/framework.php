@@ -186,7 +186,7 @@ class madFramework {
         }
     }
 
-    public function refreshTemplates() {
+    public function refreshStatic() {
         $staticPath = ENTRY_APP_PATH . '/www/static';
         if ( is_dir( $staticPath ) ) {
             ezcBaseFile::removeRecursive( $staticPath );
@@ -200,7 +200,7 @@ class madFramework {
         }
     }
 
-    public function refreshStatic() {
+    public function refreshTemplates() {
         $templatesPath = ENTRY_APP_PATH . '/cache/templates';
         if ( is_dir( $templatesPath ) ) {
             ezcBaseFile::removeRecursive( $templatesPath );
