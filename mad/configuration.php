@@ -287,6 +287,10 @@ class madConfiguration extends madObject {
                         }
                         break;
                     case ezcConfigurationIniItem::SETTING:
+                        if ( !isset( $this[$name][$element->group][$element->setting] ) && $element->dimensions == '[]') {
+                            $this[$name][$element->group][$element->setting] = array();
+                        }
+
                         eval( '$this[$name][$element->group][$element->setting]'. $element->dimensions . ' = $element->value;' );
                         break;
                 }
