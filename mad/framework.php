@@ -85,7 +85,7 @@ class madFramework {
     }
 
     public function __destruct() {
-//        if ( $this->xhprofEnable ) {
+        if ( $this->xhprofEnable ) {
             $data = xhprof_disable();
 
             require $this->entryApplicationPath . '/' . $this->applications['mad']['xhprofPath'] . '/utils/xhprof_lib.php';
@@ -93,7 +93,7 @@ class madFramework {
             $profiler = new XHProfRuns_Default();
             $runId = $profiler->save_run( $data, 'mad' );
             shell_exec("echo $runId > /tmp/prof");
-//        }
+        }
     }
 
     public function createXhprofEnable()  {
@@ -155,7 +155,7 @@ class madFramework {
             $this->locale = new madConfiguration( $this->entryApplicationPath . '/cache/locale', $this->applications, 'locale' );
         }
 
-        if ( $this->applications['mad']['refreshBin'] ) {
+        if ( !empty( $this->applications['mad']['refreshBin'] ) ) {
             $this->refreshBin(  );
         }
 
@@ -192,10 +192,10 @@ class madFramework {
             ezcBaseFile::removeRecursive( $staticPath );
         }
 
-        $applications = array_reverse( array_keys( (array) $configuration['applications'] ) );
+        $applications = array_reverse( array_keys( (array) $this->configuration['applications'] ) );
 
         foreach( $applications as $application ) {
-            $path = $configuration->getPathSetting( 'applications', $application, 'path' ) . '/static';
+            $path = $this->configuration->getPathSetting( 'applications', $application, 'path' ) . '/static';
             madFramework::copyRecursive( $path, $staticPath );
         }
     }
@@ -206,10 +206,10 @@ class madFramework {
             ezcBaseFile::removeRecursive( $templatesPath );
         }
 
-        $applications = array_reverse( array_keys( (array) $configuration['applications'] ) );
+        $applications = array_reverse( array_keys( (array) $this->applications ) );
 
         foreach( $applications as $application ) {
-            $path = $configuration->getPathSetting( 'applications', $application, 'path' ) . '/templates';
+            $path = $this->configuration->getPathSetting( 'applications', $application, 'path' ) . '/templates';
             madFramework::copyRecursive( $path, $templatesPath );
         }
     }
