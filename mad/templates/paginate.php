@@ -1,4 +1,4 @@
-<?php if ( $this->lastPage > 1 ): ?>
+<?php if ( !empty( $this->lastPage ) && $this->lastPage > 1 ): ?>
 
     <table class="pagination" align="center">
         <tbody>
