@@ -30,7 +30,6 @@ class madModelController extends madFormController {
         $framework = madFramework::instance(  );
         $insert = $framework->pdo->prepare( $sql );
         $result = $insert->execute( $row );
-        var_dump( $result );
         $row['namespace'] = $table;
     }
 
