@@ -12,14 +12,17 @@
         <h2>Présentation générale</h2>
         <?php echo $this->renderFormFieldRow( 'title' ) ?>
         <?php echo $this->renderFormFieldRow( 'categories' ) ?>
+        <?php echo $this->renderFormFieldRow( 'tags' ) ?>
         <?php echo $this->renderFormFieldRow( 'profile' ) ?>
         <?php echo $this->renderFormFieldRow( 'author' ) ?>
         <?php echo $this->renderFormFieldRow( 'cookTime' ) ?>
         <?php echo $this->renderFormFieldRow( 'prepTime' ) ?>
         <?php echo $this->renderFormFieldRow( 'restTime' ) ?>
         <?php echo $this->renderFormFieldRow( 'summary' ) ?>
+    </fieldset>
+    <fieldset class="inlineLabels">
+        <h2>Etapes</h2>
         <?php echo $this->renderFormFieldRow( 'steps' ) ?>
-        <?php echo $this->renderFormFieldRow( 'tags' ) ?>
     </fieldset>
     <fieldset class="inlineLabels">
         <h2>Photos</h2>
