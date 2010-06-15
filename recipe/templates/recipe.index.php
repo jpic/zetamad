@@ -28,7 +28,7 @@
 #right .recipe-details .author a:hover { text-decoration: underline; }
 
 #left_column { display: block !important; }
-#category-viewed, #category-best-and-new-products, #category-newsletter, #block_advertisingleft-fb, #block-advertisingleft-1 { display: none; }
+#category-viewed, #contact-form-banner, #category-best-and-new-products, #category-newsletter, #block_advertisingleft-fb, #block-advertisingleft-1 { display: none; }
 
 </style>
 
