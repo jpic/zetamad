@@ -64,9 +64,9 @@ a.btn-block:hover { background: #539893; }
 
 <div class="breadcrumb">
 	<a title="retour à Accueil" href="/">Accueil</a>
-	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
+	<span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>/themes/mmarket/img/fleche.jpg"></span>
 	<a href="<?php echo $this->url( 'profile.list' ) ?>" title="List des profils">Profils</a>
-    <span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
+    <span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>/themes/mmarket/img/fleche.jpg"></span>
 	<?php $this->e( $this->object['name'] ) ?>
 </div>
 
@@ -112,12 +112,13 @@ if ( empty( $this->object['picture'] ) )
 	
 	<div class="author-right">
 			<h2><?php $this->e( $this->object['name'] ) ?></h2>
-			<?php ?>
+
+                        <?php if ( $this->isAuthenticated && !empty( $this->request->variables['user']['role'] ) && $this->request->variables['user']['role'] == 'administrator' ): ?>
 				<ul id="object-categories" style="border: 1px solid #f6c9d0; clear: both; overflow:auto; padding: 0 5px; margin-top: 5px; background: #fee6ea;">
 					<li class="title">Modération :</li>
-					<li><a class="editrecipe" href="<?php /*echo $this->url( 'recipe.edit', $object )*/ ?>">Modifier le profil de <?php $this->e( $this->object['name'] ) ?></a></li>
+					<li><a class="editrecipe" href="<?php echo $this->url( 'profile.edit', $this->object ) ?>">Modifier le profil de <?php $this->e( $this->object['name'] ) ?></a></li>
 				</ul>
-			<?php  ?>
+			<?php endif ?>
 			<p class="author-intro">
                 <?php $this->e( $this->object['introduction'] ) ?>
 			</p>

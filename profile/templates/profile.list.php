@@ -64,14 +64,16 @@ a.btn-block:hover { background: #f1f1f1; text-decoration: none; }
 		
 		<div class="description">
 			<h3><a href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->e( $object['name'] ) ?>"><?php $this->e( $this->truncateWords( $object['name'], 80 ) ) ?></a></h3>
-            <?php if ( isset( $object['introduction'] ) ): ?>
+            <?php if ( !empty( $object['introduction'] ) ): ?>
 		<p>
 			<?php $this->e( $this->truncateWords( $object['introduction'], 700 ) ) ?> 
-			<a class="show_more" href="<?php echo $this->url( 'profile.details', $object ) ?>" title="Lire la suite" >(...)</a>
+			<?php if ( strlen( $object['introduction'] ) > 700 ): ?>
+                        <a class="show_more" href="<?php echo $this->url( 'profile.details', $object ) ?>" title="Lire la suite" >(...)</a>
+                        <?php endif ?>
 		</p>
             <?php endif ?>
 		
-		<a style="float: right;" class="btn-block"" href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->e( $object['name'] ) ?>">Voir le profil</a>
+		<a style="float: right;" class="btn-block" href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->e( $object['name'] ) ?>">Voir le profil</a>
 		
 		</div>
 		
