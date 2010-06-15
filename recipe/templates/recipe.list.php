@@ -64,7 +64,6 @@
 </div>
 <?php $forloopCounter++; endforeach; ?>
 
-</ul>
 
 <?php
     $this->includeTemplate( 'paginate.php' );

@@ -83,14 +83,6 @@ if ( empty( $this->object['picture'] ) )
             <?php else: ?>
             <img src="<?php echo $this->thumbnail( $this->configuration['defaultPicture'], 260, 260 ) ?>" width="260" height="260" alt="<?php $this->e( $this->object['name'] ) ?>" />	
             <?php endif ?>
-            <!--
-			<p class="share">
-				<a href="#">
-                    TODO
-					<img src="http://www.madeleinemarket.com/themes/mmarket/img/lg-bookmark-mm.gif" />
-				</a>
-			</p>
-            -->
 		</div>
 		<div style="float: right; margin: 5px 0;">
 			<a onclick="return addthis_sendto()" onmouseout="addthis_close()" onmouseover="return addthis_open(this, '', window.location.href, document.title)" href="http://www.addthis.com/bookmark.php?v=250&amp;pub=xa-4a48da264c324c50">
