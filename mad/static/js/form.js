@@ -3,6 +3,10 @@ $(document).ready( function(  ) {
     $( 'button.formset_add' ).click( function( e ) {
         e.preventDefault(  );
         var table = $(this).prev(  );
+        if ( table.get(0).tagName != 'TABLE' ) {
+            table = table.prev();
+        }
+
         var count = table.children('tbody').children('tr').length;
         var next = count;
         var tr = table.children('tbody').children('tr:first').clone();
