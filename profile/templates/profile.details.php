@@ -114,7 +114,7 @@ if ( empty( $this->object['picture'] ) )
 			<p class="author-intro">
                 <?php $this->e( $this->object['introduction'] ) ?>
 			</p>
-            <?php if ( !empty( $this->object['presentation'] ) ): ?>
+            <?php if ( !empty( $this->object['presentation'] ) && trim( $this->object['presentation']) ):  ?>
 			<h3>Profil</h3>
 			<p class="author-profil">
                 <?php $this->e( $this->object['presentation'] ) ?>
