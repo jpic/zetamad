@@ -6,7 +6,7 @@
     </div>
     <?php endif ?>
 
-    <h2><?php echo ucfirst( $this->t( 'META.TITLE' ) ) ?></h2>
+    <h2><?php echo ucfirst( $this->metaTitle ) ?></h2>
 
     <fieldset class="inlineLabels">
         <h2>Présentation générale</h2>
