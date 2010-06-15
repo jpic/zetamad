@@ -161,6 +161,9 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     public function e( $value ) { # {{{
         echo $this->htmlize( $value );
     } # }}}
+    public function eu( $value ) {
+        echo ucfirst( $this->htmlize( $value ) );
+    }
     public function htmlize( $value ) {
         return nl2br( htmlentities( stripslashes( $value ), ENT_COMPAT, 'UTF-8' ) );
     }

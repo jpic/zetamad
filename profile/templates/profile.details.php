@@ -67,7 +67,7 @@ a.btn-block:hover { background: #539893; }
 	<span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>/themes/mmarket/img/fleche.jpg"></span>
 	<a href="<?php echo $this->url( 'profile.list' ) ?>" title="List des profils">Profils</a>
     <span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>/themes/mmarket/img/fleche.jpg"></span>
-	<?php $this->e( $this->object['name'] ) ?>
+	<?php $this->eu( $this->object['name'] ) ?>
 </div>
 
 <?php
@@ -79,9 +79,9 @@ if ( empty( $this->object['picture'] ) )
 	<div class="author-left">
 		<div id="author-photo">
 			<?php if ( isset( $this->object['picture'] ) ): ?>
-            <img src="<?php echo $this->thumbnail( $this->object['picture'], 260, 260 ) ?>" width="260" height="260" alt="<?php $this->e( $this->object['name'] ) ?>" />	
+            <img src="<?php echo $this->thumbnail( $this->object['picture'], 260, 260 ) ?>" width="260" height="260" alt="<?php $this->eu( $this->object['name'] ) ?>" />
             <?php else: ?>
-            <img src="<?php echo $this->thumbnail( $this->configuration['defaultPicture'], 260, 260 ) ?>" width="260" height="260" alt="<?php $this->e( $this->object['name'] ) ?>" />	
+            <img src="<?php echo $this->thumbnail( $this->configuration['defaultPicture'], 260, 260 ) ?>" width="260" height="260" alt="<?php $this->eu( $this->object['name'] ) ?>" />
             <?php endif ?>
 		</div>
 		<div style="float: right; margin: 5px 0;">
@@ -92,7 +92,7 @@ if ( empty( $this->object['picture'] ) )
 		</div>
         <?php if ( !empty( $this->sites ) ): ?>
 		<div id="external-links">
-			<h3>Les sites de <?php $this->e( $this->object['name'] ) ?></h3>
+			<h3>Les sites de <?php $this->eu( $this->object['name'] ) ?></h3>
 			<ul>
                 <?php foreach( $this->sites as $site ): ?>
 				<li><a href="<?php if ( substr( $site['site'], 0, 4 ) != 'http' ): ?>http://<?php endif ?><?php echo $site['site'] ?>"><?php echo $site['site'] ?></a></li>
@@ -103,12 +103,12 @@ if ( empty( $this->object['picture'] ) )
 	</div>
 	
 	<div class="author-right">
-			<h2><?php $this->e( $this->object['name'] ) ?></h2>
+			<h2><?php $this->eu( $this->object['name'] ) ?></h2>
 
                         <?php if ( $this->isAuthenticated && !empty( $this->request->variables['user']['role'] ) && $this->request->variables['user']['role'] == 'administrator' ): ?>
 				<ul id="object-categories" style="border: 1px solid #f6c9d0; clear: both; overflow:auto; padding: 0 5px; margin-top: 5px; background: #fee6ea;">
 					<li class="title">Modération :</li>
-					<li><a class="editrecipe" href="<?php echo $this->url( 'profile.edit', $this->object ) ?>">Modifier le profil de <?php $this->e( $this->object['name'] ) ?></a></li>
+					<li><a class="editrecipe" href="<?php echo $this->url( 'profile.edit', $this->object ) ?>">Modifier le profil de <?php $this->eu( $this->object['name'] ) ?></a></li>
 				</ul>
 			<?php endif ?>
 			<p class="author-intro">
@@ -126,7 +126,7 @@ if ( empty( $this->object['picture'] ) )
     <!--
 <div id="recipe-column">
 	<div class="block">
-		<p class="title-setmsg">&Agrave; <?php $this->e( $this->object['name'] ) ?> :</p>
+		<p class="title-setmsg">&Agrave; <?php $this->eu( $this->object['name'] ) ?> :</p>
         <form action="" method="post" class="msg-author-form">
 		    <textarea name="message" class="msg-author">Votre message</textarea>
 		    <a class="btn-block" href="#">Envoyer</a>

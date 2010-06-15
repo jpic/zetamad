@@ -52,18 +52,18 @@ a.btn-block:hover { background: #f1f1f1; text-decoration: none; }
     ?>
 	<div class="profil_block" <?php if ( $forLoop == $last ): ?>style="border: 0;"<?php endif ?>>
 		<div class="thumb">
-			<a href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->e( $object['name'] ) ?>">
+			<a href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->eu( $object['name'] ) ?>">
                             <?php
                             if ( empty( $object['picture']))
                                 $object['picture'] = 'default.jpg';
                             ?>
-            <img src="<?php echo $this->thumbnail( $object['picture'], 200, 200 ) ?>" width="200" height="200" alt="<?php $this->e( $object['name'] ) ?>" />	
+            <img src="<?php echo $this->thumbnail( $object['picture'], 200, 200 ) ?>" width="200" height="200" alt="<?php $this->eu( $object['name'] ) ?>" />
           
             </a>
 		</div>
 		
 		<div class="description">
-			<h3><a href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->e( $object['name'] ) ?>"><?php $this->e( $this->truncateWords( $object['name'], 80 ) ) ?></a></h3>
+			<h3><a href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->eu( $object['name'] ) ?>"><?php $this->e( $this->truncateWords( $object['name'], 80 ) ) ?></a></h3>
             <?php if ( !empty( $object['introduction'] ) ): ?>
 		<p>
 			<?php $this->e( $this->truncateWords( $object['introduction'], 700 ) ) ?> 
@@ -73,7 +73,7 @@ a.btn-block:hover { background: #f1f1f1; text-decoration: none; }
 		</p>
             <?php endif ?>
 		
-		<a style="float: right;" class="btn-block" href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->e( $object['name'] ) ?>">Voir le profil</a>
+		<a style="float: right;" class="btn-block" href="<?php echo $this->url( 'profile.details', $object ) ?>" title="<?php $this->eu( $object['name'] ) ?>">Voir le profil</a>
 		
 		</div>
 		
@@ -94,11 +94,11 @@ $this->includeTemplate( 'paginate.php' );
     <div class="UIListingProfils">
         <div class="UIListingProfils_pic">
             <?php if ( isset( $object['picture'] ) ): ?>
-            <img src="<?php echo $this->thumbnail( $object['picture'], 150, 150 ) ?>" alt="<?php $this->e( $object['name'] ) ?>" />
+            <img src="<?php echo $this->thumbnail( $object['picture'], 150, 150 ) ?>" alt="<?php $this->eu( $object['name'] ) ?>" />
             <?php endif ?>
         </div>
         <div class="UIListingProfils_infos">
-            <h3><?php $this->e( $object['name'] ) ?></h3>
+            <h3><?php $this->eu( $object['name'] ) ?></h3>
             <?php $this->e( $object['introduction'] ) ?> (<a href="<?php echo $this->url( 'profile.details', $object ) ?>" class="plus">Lire la suite...</a>).
         </div>
         <div class="UIListingProfils_actions">
