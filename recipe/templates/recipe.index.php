@@ -1,14 +1,5 @@
 <style>
-#left_recipe { float:left; margin-top:4px; width:193px; }
-.block { border: none; padding: 0; }
-.block .block_title { padding: 0; font-family: Times, Arial, sans-serif; font-size: 2em; font-weight: normal; background: url('<?php echo __PS_BASE_URI__ . '/themes/mmarket/img/border_title.jpg'; ?>') repeat-x left bottom; }
-.block .block_title .titleGreen { color: #a0c223; }
-.block .block_title .titleBlue { color: #666; }
-.block ul { margin-left: none; }
-.block ul li { margin: 0; padding: 0; height: 30px; background: url('<?php echo __PS_BASE_URI__ . '/themes/mmarket/img/fleche-left.gif'; ?>') no-repeat left center; }
-.block ul li a { display: block; color: #666; padding: 0; margin: 0; line-height: 30px; height: 30px; font-family: Times, Arial, sans-serif; font-size: 1.4em; background: url('<?php echo __PS_BASE_URI__ . '/themes/mmarket/img/border_sublist.jpg'; ?>') repeat-x left bottom; padding-left: 10px; }
-.block ul li a:hover { color: #de5161; text-decoration: none; }
-.block ul li:hover { background: url('<?php echo __PS_BASE_URI__ . '/themes/mmarket/img/fleche-left.gif'; ?>') no-repeat left center #f9f9f9; color: #de5161; text-decoration: none; }
+
 
 .block .register { background: url('<?php echo __PS_BASE_URI__ . '/themes/mmarket/img/block_registerRecipe.jpg'; ?>') no-repeat left center; width: 198px; height: 66px; }
 .block .register p { padding-top: 22px; padding-left: 25px; line-height: 16px; font-family: Times, Arial, sans-serif; }
@@ -16,7 +7,6 @@
 .block .register p a:hover { text-decoration: underline; }
 .block .keywordsCloud a { color :#666; }
 .block .keywordsCloud a:hover { color: #DE5161; }
-#left_recipe .mtop { margin-top: 25px; }
 
 /*default*/
 #right { width: 768px; float: right;  }
@@ -40,10 +30,12 @@
 #right .recipe-details .author a { color: #b0aaac; text-decoration: none; }
 #right .recipe-details .author a:hover { text-decoration: underline; }
 
+#left_column { display: block !important; }
+
 </style>
 
-<div id="left_recipe">
-    <div class="categories-left block">
+<div id="left_column">
+    <div id="categories-left" class="block">
         <div class="block_title">
             <span class="titleGreen">Cat&eacute;gories</span>
         </div>
