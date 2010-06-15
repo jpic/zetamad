@@ -38,9 +38,9 @@ class madFormController extends madController {
             $this->requestFormName = str_replace( '.', '_', $this->formName );
         }
 
-        if ( !$this->formConfiguration && !empty( $this->framework->configuration['forms'][$this->formName] ) ) {
+        if ( !count( $this->formConfiguration ) && !empty( $this->framework->configuration['forms'][$this->formName] ) ) {
             $this->formConfiguration = $this->framework->configuration['forms'][$this->formName];
-        } elseif ( !$this->formConfiguration ) {
+        } elseif ( !count( $this->formConfiguration ) ) {
             trigger_error( "Cannot find form configuration", E_USER_ERROR );
         }
 

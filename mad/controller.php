@@ -101,5 +101,15 @@ class madController extends ezcMvcController {
     public function doVoid() {
         
     }
+
+    public function do404() {
+        if ( $this->action == '404' ) {
+            return;
+        }
+
+        $request = clone $this->request;
+        $request->uri = madFramework::url( 'mad.404' );
+        $this->result = new ezcMvcInternalRedirect( $request );
+    }
 }
 

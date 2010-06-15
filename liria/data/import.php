@@ -21,7 +21,7 @@ foreach( $profiles as $key => $profile ) {
     $uuid = $profile['id'];
     unset ( $profile['id'] );
     $profile['slug'] = madFramework::slugify( $profile['name'] );
-
+    
     $sites = is_string( $profile['sites'] ) ? array( $profile['sites'] ) : $profile['sites'];
     unset( $profile['sites'] );
 
@@ -37,6 +37,10 @@ foreach( $profiles as $key => $profile ) {
 
 
     foreach( $products as $product ) {
+        if ( !is_numeric( $product ) ) {
+            continue;
+        }
+
         madFramework::query(
             'insert into profileProduct set product = :product, profile = :profile',
             array(
@@ -79,6 +83,7 @@ foreach( $recipes as $uuid => $recipe ) {
         unset( $recipeCopy[$unst] );
     }
 
+    var_dump( $recipeCopy );
     madModelController::saveArray( $recipeCopy );
 
     if ( !empty( $recipe['picture'] ) ) {
@@ -97,26 +102,27 @@ foreach( $recipes as $uuid => $recipe ) {
         if (strlen($recipe['category']) > 50) {
             $recipe['category'] = 'dessert';
         }
-        
-        if ( in_array( $recipe['category'], array_keys($categoryMap) ) ) {
-            $category = $categoryMap[$recipe['category']];
-        } else {
-            $insert = array(
-                'namespace' => 'recipeCategory',
-                'title'     => $recipe['category'],
-                'slug'      => madFramework::slugify( $recipe['category'] ),
+        if ( strlen( trim( $recipe['category'] ) ) > 0 ) {
+            if ( in_array( $recipe['category'], array_keys($categoryMap) ) ) {
+                $category = $categoryMap[$recipe['category']];
+            } else {
+                $insert = array(
+                    'namespace' => 'recipeCategory',
+                    'title'     => $recipe['category'],
+                    'slug'      => madFramework::slugify( $recipe['category'] ),
+                );
+                madModelController::saveArray( $insert );
+                $category = $insert['id'];
+                $categoryMap[$recipe['category']] = $category;
+            }
+    
+            $insertRelation = array(
+                'namespace'      => 'recipe_recipeCategory',
+                'recipe'         => $recipeCopy['id'],
+                'recipeCategory' => $category,
             );
-            madModelController::saveArray( $insert );
-            $category = $insert['id'];
-            $categoryMap[$recipe['category']] = $category;
+            madModelController::saveArray( $insertRelation );
         }
-
-        $insertRelation = array(
-            'namespace'      => 'recipe_recipeCategory',
-            'recipe'         => $recipeCopy['id'],
-            'recipeCategory' => $category,
-        );
-        madModelController::saveArray( $insertRelation );
     }
 
     if ( !empty( $recipe['recipeSteps'] ) ) {

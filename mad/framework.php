@@ -167,6 +167,8 @@ class madFramework {
             }
         }
 
+        $this->pdo->query( 'set names utf8' );
+
         if ( $this->applications['mad']['refreshTemplates'] ) {
             $this->refreshTemplates();
         }

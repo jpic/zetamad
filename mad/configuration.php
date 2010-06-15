@@ -276,7 +276,6 @@ class madConfiguration extends madObject {
                             // start by the least specific.
                             foreach( array_reverse( $groupParts ) as $parentGroup ) {
                                 if ( !isset( $settings[$parentGroup] ) ) {
-                                    var_dump( $parentGroup, $settings, $this[$name] );
                                     trigger_error( "Can't inherit from a section that was not defined! Happenned with: " . $element->group, E_USER_ERROR );
                                 }
 

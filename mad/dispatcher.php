@@ -66,40 +66,62 @@ class madHttpDispatcher {
 
         $framework->request = $framework->requestParser->createRequest();
 
-        $framework->request->uri = substr( $framework->request->uri, -1 ) == '/' ? substr( $framework->request->uri, 0, -1 ) : $framework->request->uri;
-        
-        $framework->request->variables['prefixedUrl'] = $framework->urlPrefix . $framework->request->uri;
-        
-        $framework->request->variables['isAjaxRequest'] = isset( $framework->request->raw['HTTP_X_REQUESTED_WITH'] ) &&
-            $framework->request->raw['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
-        
-        $framework->request->files = $this->monkeyFiles( $_FILES );
-        
-        $framework->sendSignal( 'postParseRequest', array( $framework->request ) );
-        
-        $framework->router = new madRouter( $framework->request, $framework->configuration['routes'] );
-        
-        $framework->sendSignal( 'postCreateRouter', array( $framework->request, $framework->router ) );
-        
-        $framework->routingInformation = $framework->router->getRoutingInformation();
+        $continue = true;
+        $continueCount = 1;
+        while( $continue === true ) {
+            $continue = false;
 
-        // get route routeConfiguration
-        $framework->routeConfiguration = $framework->configuration['routes'][$framework->routingInformation->routeName];
+            $framework->request->uri = substr( $framework->request->uri, -1 ) == '/' ? substr( $framework->request->uri, 0, -1 ) : $framework->request->uri;
 
-        $framework->controller = $this->createRouteController( $framework );
-        $framework->controller->createResult();
+            $framework->request->variables['prefixedUrl'] = $framework->urlPrefix . $framework->request->uri;
 
-        $framework->sendSignal( 'postCreateResult', array( $framework->request, $framework->result ) );
+            $framework->request->variables['isAjaxRequest'] = isset( $framework->request->raw['HTTP_X_REQUESTED_WITH'] ) &&
+                $framework->request->raw['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
 
-        if ( $framework->result->status !== 0 ) {
-            $framework->response = new ezcMvcResponse;
-            $framework->response->status = $framework->result->status;
-        } else {
-            $framework->response = $this->createResponse( $framework );
+            $framework->request->files = $this->monkeyFiles( $_FILES );
+
+            $framework->sendSignal( 'postParseRequest', array( $framework->request ) );
+
+            $framework->router = new madRouter( $framework->request, $framework->configuration['routes'] );
+
+            $framework->sendSignal( 'postCreateRouter', array( $framework->request, $framework->router ) );
+
+            try {
+                $framework->routingInformation = $framework->router->getRoutingInformation();
+            } catch ( ezcMvcRouteNotFoundException $e ) {
+                $framework->routingInformation = new ezcMvcRoutingInformation( 'mad.404', 'madController', '404', $framework->router);
+            }
+
+            // get route routeConfiguration
+            $framework->routeConfiguration = $framework->configuration['routes'][$framework->routingInformation->routeName];
+
+            $framework->controller = $this->createRouteController( $framework );
+            $framework->result = $framework->controller->createResult();
+
+            $framework->sendSignal( 'postCreateResult', array( $framework->request, $framework->result ) );
+
+            if ( $continueCount > 4 ) {
+                trigger_error('Too many loops!', E_USER_ERROR);
+            }
+
+            if ( $framework->result instanceof ezcMvcInternalRedirect )
+            {
+                $request = $framework->result->request;
+                $continue = true;
+                $continueCount++;
+                # continue;
+            }
+
+            if ( $framework->result->status !== 0 ) {
+                $framework->response = new ezcMvcResponse;
+                $framework->response->status = $framework->result->status;
+            } else {
+                $framework->response = $this->createResponse( $framework );
+            }
+
+            $framework->responseWriter = new ezcMvcHttpResponseWriter( $framework->response );
+            $framework->responseWriter->handleResponse();
         }
-        
-        $framework->responseWriter = new ezcMvcHttpResponseWriter( $framework->response );
-        $framework->responseWriter->handleResponse();
     }
 
     public function createRouteController( $framework ) {

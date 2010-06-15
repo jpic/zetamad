@@ -43,6 +43,8 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             return false;
         }
         $path = $uploadPath;
+        // LOCAL HACK
+        return $path;
 
         $thumbnailName = sprintf( '%s_%sx%s.%s',
             $info['filename'],

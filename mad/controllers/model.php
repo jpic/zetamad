@@ -30,7 +30,7 @@ class madModelController extends madFormController {
         $framework = madFramework::instance(  );
         $insert = $framework->pdo->prepare( $sql );
         $result = $insert->execute( $row );
-
+        var_dump( $result );
         $row['namespace'] = $table;
     }
 
@@ -135,6 +135,11 @@ class madModelController extends madFormController {
 
         $sql = "select * from $table where " . implode( ' AND ', $where ) . " limit 0, 1";
         $rows = madFramework::query( $sql, $arguments );
+
+        if ( !is_array( $rows ) || !count( $rows ) ) {
+            return $this->do404();
+        }
+
         $row = $rows[0];
 
         $object = new madObject( $row );
