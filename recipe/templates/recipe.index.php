@@ -1,6 +1,7 @@
 <style>
 
-
+#register { border: none; display: none; }
+#left-keywordsCloud .keywordsCloud { padding: 0 10px; }
 .block .register { background: url('<?php echo __PS_BASE_URI__ . '/themes/mmarket/img/block_registerRecipe.jpg'; ?>') no-repeat left center; width: 198px; height: 66px; }
 .block .register p { padding-top: 22px; padding-left: 25px; line-height: 16px; font-family: Times, Arial, sans-serif; }
 .block .register p a { color: #484848; font-size: 1em; font-family: Verdana; }
@@ -10,7 +11,7 @@
 
 /*default*/
 #right { width: 768px; float: right;  }
-#right p.title { border-bottom: 1px solid #dadada;  margin-bottom: 10px; color: #a0978b; font-size: 1.4em; font-family: Times; line-height: 42px; }
+#right p.title { border-bottom: 1px solid #dadada;  margin-bottom: 10px; color: #a0978b; font-size: 1.4em; font-family: Times; padding-bottom: 8px; margin-bottom: 16px; }
 #right p.title span.totalRecipe { color: #d35732; }
 
 #right .recipe-block { font-size: 11px; width: 238px; float: left; padding: 0 27px 27px 0; }
@@ -18,11 +19,7 @@
 #right .recipe-details:hover { background: #f5f5f5; }
 #right .recipe-details a { color: #DE5161; }
 #right .recipe-details a:hover { color: #DE5161; }
-#right .recipe-details a.editprofil { float: left; color: #DE5161; font-size: 10px; font-weight: normal; display: block; _height: 20px; line-height: 20px; }
-#right .recipe-details a.editrecipe { float: right; color: #DE5161; font-size: 10px; font-weight: normal; display: block; _height: 20px; line-height: 20px; }
-#right .recipe-details a.editrecipe:hover, #right .recipe-details a.editprofil:hover { text-decoration: underline;  }
 #right .recipe-block p.link { padding: 5px 0; color: #b0aaac; font-size: 10px; font-family: Verdana;}
-#right .recipe-block div.adminpanel { margin: 5px 0; padding-top: 5px; border-top: 1px solid #dadada;}
 #right .recipe-details { border: 1px solid #d3d3d3; padding: 5px; overflow: hidden; height: 280px; }
 #right .recipe-details img.picture { width: 226px; height: 226px; vertical-align: bottom; }
 #right .recipe-details .infos {line-height: 18px; font-weight: bold; font-family: Verdana; padding: 10px 0 0 0; }
@@ -31,6 +28,7 @@
 #right .recipe-details .author a:hover { text-decoration: underline; }
 
 #left_column { display: block !important; }
+#category-viewed, #category-best-and-new-products, #category-newsletter, #block_advertisingleft-fb, #block-advertisingleft-1 { display: none; }
 
 </style>
 
@@ -46,7 +44,7 @@
             </ul>
     </div>
     
-    <div class="categories-left block mtop">
+    <div id="register" class="block mtop">
         <div class="register">
             <p>
                 <a href="" title="">Cr&eacute;ez un profil gratuitement et publiez vos recettes !</a>
@@ -54,7 +52,7 @@
         </div>
     </div>
     
-    <div class="categories-left block mtop">
+    <div id="left-keywordsCloud" class="block mtop">
         <div class="block_title">
             <span class="titleBlue">Nuage de tags</span>
         </div>
@@ -62,15 +60,6 @@
             <?php foreach( $this->tags as $tag ): ?>
             <a href="<?php $this->url( 'recipe.listByTag', $tag ) ?>" style="font-size: 80%;" title="<?php $this->e( $tag['name'] ) ?>"><?php $this->e( $tag['name'] ) ?></a>&nbsp;
             <?php endforeach ?>
-            <a style="font-size: 180%;">sexe</a>&nbsp;
-            <a style="font-size: 80%;">oeufs</a>&nbsp;
-            <a style="font-size: 110%;">sardine</a>&nbsp;
-            <a style="font-size: 150%;">charlotte aux fraises</a>&nbsp;
-            <a style="font-size: 200%;">gateau chocolat</a>&nbsp;
-            <a style="font-size: 130%;">tarte fraises</a>&nbsp;
-            <a style="font-size: 80%;">tatin</a>&nbsp;
-            <a style="font-size: 130%;">prunes</a>&nbsp;
-            <a style="font-size: 100%;">salade</a>&nbsp;
         </div>
     </div>
 </div>
