@@ -405,6 +405,19 @@ class madObject extends ArrayObject {
 
         return (array) $this;
     }
+
+    public function arrayToObjects() {
+        foreach( $this as $key => $value ) {
+            if ( is_array( $value ) ) {
+                $this[$key] = new madObject( $value );
+            }
+
+            if ( $this[$key] instanceof madObject ) {
+                $this[$key]->arrayToObjects();
+            }
+        }
+    }
+
     public function forceListAttribute( $name ) {
         if ( !isset( $this[$name] ) ) {
             return false;

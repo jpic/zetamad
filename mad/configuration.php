@@ -234,13 +234,15 @@ class madConfiguration extends madObject {
     public function parseIni( $file ) {
         preg_match( '@/(?P<appName>[^/]+)/(?P<subdir>[^/]+)/(?P<name>[^/]+)\.ini$@', $file, $matches );
         $name = $matches['name'];
+
+        if ( isset( $this[$name] ) && !is_array( $this[$name] ) ) {
+            $settings = (array) $this[$name]->objectsToArray();
+        } else {
+            $settings = array();
+        }
         $appName = $matches['appName'];
         
         $parser = new ezcConfigurationIniParser( ezcConfigurationIniParser::PARSE, $file );
-
-        if ( !isset( $this[$name] ) ) {
-            $this[$name] = new madObject();
-        }
 
         $unsetGroups = array(  );
 
@@ -248,13 +250,9 @@ class madConfiguration extends madObject {
             if ( $element instanceof ezcConfigurationIniItem ) {
                 switch ( $element->type ) {
                     case ezcConfigurationIniItem::GROUP_HEADER:
-                        if ( !isset( $this[$name] ) ) {
-                            $this[$name] = new madObject();
-                        }
-                        
-                        if ( !isset( $this[$name][$element->group] ) ) {
-                            $this[$name][$element->group] = new madObject();
-                            $this[$name][$element->group]['META'] = array(
+                        if ( !isset( $settings[$element->group] ) ) {
+                            $settings[$element->group] = array();
+                            $settings[$element->group]['META'] = array(
                                 'application' => substr( $element->group, 0, strpos( $element->group, '.' ) ),
                             );
                         }
@@ -266,7 +264,7 @@ class madConfiguration extends madObject {
 
                             // hardlink the real group to its false name for 
                             // the parsed variables to be set in both.
-                            $this[$name][$realGroup] = $this[$name][$element->group];
+                            $settings[$realGroup] =& $settings[$element->group];
 
                             // the configuration section with the false name 
                             // will be dereferenced later.
@@ -277,23 +275,22 @@ class madConfiguration extends madObject {
                             // merge does override, so the order is reversed to 
                             // start by the least specific.
                             foreach( array_reverse( $groupParts ) as $parentGroup ) {
-                                if ( !isset($this[$name])) {
-                                    $this[$name] = new madObject();
-                                }
-                                if ( !isset( $this[$name][$parentGroup] ) ) {
+                                if ( !isset( $settings[$parentGroup] ) ) {
+                                    var_dump( $parentGroup, $settings, $this[$name] );
                                     trigger_error( "Can't inherit from a section that was not defined! Happenned with: " . $element->group, E_USER_ERROR );
                                 }
 
-                                $this[$name][$realGroup]->merge( $this[$name][$parentGroup] );
+                                $real = new madObject( $settings[$realGroup] );
+                                $parent = new madObject( $settings[$parentGroup] );
+                                $real->merge( $parent );
+                                $settings[$realGroup] = (array) $real->objectsToArray();
+                                unset( $real );
+                                unset( $parent );
                             }
                         }
                         break;
                     case ezcConfigurationIniItem::SETTING:
-                        if ( !isset( $this[$name][$element->group][$element->setting] ) && $element->dimensions == '[]') {
-                            $this[$name][$element->group][$element->setting] = array();
-                        }
-
-                        @eval( '$this[$name][$element->group][$element->setting]'. $element->dimensions . ' = $element->value;' );
+                        eval( '$settings[$element->group][$element->setting]'. $element->dimensions . ' = $element->value;' );
                         break;
                 }
             }
@@ -303,8 +300,11 @@ class madConfiguration extends madObject {
         }
 
         foreach( $unsetGroups as $group ) {
-            unset( $this[$name][$group] );
+            unset( $settings[$group] );
         }
+
+        $this[$name] = new madObject( $settings );
+        $this[$name]->arrayToObjects();
 
         madFramework::fixPathArray( $this[$name] );
     }
