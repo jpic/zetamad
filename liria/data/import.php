@@ -25,10 +25,16 @@ foreach( $profiles as $key => $profile ) {
     $sites = is_string( $profile['sites'] ) ? array( $profile['sites'] ) : $profile['sites'];
     unset( $profile['sites'] );
 
-    $products = is_string( $profile['products'] ) ? array( $profile['products'] ) : $profile['products'];
-    unset( $profile['products'] );
+    if ( isset( $profile['products'] ) ) {
+        $products = is_string( $profile['products'] ) ? array( $profile['products'] ) : $profile['products'];
+        unset( $profile['products'] );
+    } else {
+
+        $products = array(  );
+    }
 
     madModelController::saveArray( $profile );
+
 
     foreach( $products as $product ) {
         madFramework::query(
@@ -132,9 +138,11 @@ foreach( $recipes as $uuid => $recipe ) {
             $insert = array( 
                 'recipe'     => $recipeCopy['id'],
                 'ingredient' => $ingredientQuantity['ingredient'],
-                'quantity'   => $ingredientQuantity['quantity'],
                 'namespace'  => 'recipeIngredientQuantity',
             );
+            if ( !empty( $ingredientQuantity['quantity'] ) ) 
+                $insert['quantity']  = $ingredientQuantity['quantity'];
+
             madModelController::saveArray( $insert );
         }
     }
