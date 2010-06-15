@@ -1,4 +1,4 @@
 RewriteEngine On
-RewriteRule .*/static/(.*) liria/www/static/$1 [L,QSA]
+RewriteRule [^/]*/static/(.*) liria/www/static/$1 [L,QSA]
 RewriteRule upload/(.*) liria/upload/$1 [L,QSA]
 RewriteRule .* liria/www/index.php [L,QSA]
