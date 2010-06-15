@@ -526,8 +526,8 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
             $html[] = sprintf(
                 '<th class="%s">%s</th>',
-                $this->ucfirst( $attribute['label'] ),
-                $attribute['name']
+                $attribute['name'],
+                $this->ucfirst( $attribute['label'] )
             );
         }
 
