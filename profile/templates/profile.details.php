@@ -114,7 +114,7 @@ if ( empty( $this->object['picture'] ) )
 			<p class="author-intro">
                 <?php $this->e( $this->object['introduction'] ) ?>
 			</p>
-            <?php if ( isset( $this->object['presentation'] ) ): ?>
+            <?php if ( !empty( $this->object['presentation'] ) ): ?>
 			<h3>Profil</h3>
 			<p class="author-profil">
                 <?php $this->e( $this->object['presentation'] ) ?>
@@ -140,15 +140,20 @@ if ( empty( $this->object['picture'] ) )
         <?php
         $forLoop = 0;
         foreach( $this->recipes as $recipe ):
-            if ( !isset( $recipe['picture'] ) ) continue;
+            if ( empty( $recipe['recipePicture_picture'] ) ) $recipe['recipePicture_picture'] = 'default.jpg';
         ?>
 	<div class="recipe_block <?php if ( ( $forLoop + 1 ) % 4 == 0 ): ?>nomarg<?php endif ?>">
 		<div class="thumb">
 			<a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>" title="<?php $this->e( $recipe['title'] ) ?>">
-                <img src="<?php echo $this->thumbnail( $recipe['picture'], 167, 167 ) ?>" width="167" height="167" alt="<?php $this->e( $recipe['title'] ) ?>" />
+                <img src="<?php echo $this->thumbnail( $recipe['recipePicture_picture'], 167, 167 ) ?>" width="167" height="167" alt="<?php $this->e( $recipe['title'] ) ?>" />
             </a>
 		</div>
-		<a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>" title="<?php $this->e( $recipe['title'] ) ?>"><?php $this->e( $recipe['title'] ) ?></a>
+		<a href="<?php echo $this->url( 'recipe.details', $recipe ) ?>" title="<?php $this->e( $recipe['title'] ) ?>">
+                    <?php echo $this->truncateWords( $recipe['title'], 30 ) ?>
+                    <?php if ( strlen( $recipe['title'] ) > 30 ): ?>
+                    ...
+                    <?php endif ?>
+                </a>
 	</div>
         <?php
             $forLoop++;
@@ -158,29 +163,24 @@ if ( empty( $this->object['picture'] ) )
 </div>
 <?php endif ?>
 
-<?php if ( !empty( $this->products ) ): ?>
+<?php if ( !empty( $this->products ) && $products = prestashopFetchProducts( $this->products, 'product' ) ): ?>
 <div class="favorites_products">
 	<div class="title">Mes produits favoris</div>
     <?php 
     $forLoop = 0;
-    foreach( $this->products as $product ): ?>
+    foreach( $products as $product ): ?>
     <?php
-    $productId = $product['product'];
-    $product = new Product(intval( $productId ), true, 2);
-
-    // skip deleted products
-    if (!$product) continue;
 
     $cover = Product::getCover( $product->id );
     ?>
 	<div class="product_block <?php if ( ( $forLoop + 1 ) % 4 == 0 ): ?>nomarg<?php endif ?>">
 		<div class="thumb">
-			<a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>">
+                    <a title="<?php echo $product->name ?>" href="<?php echo prestashopUrl( $product ) ?>">
 				<img width="167" height="167" alt="<?php echo $product->name ?>" src="<?php echo sprintf( "%simg/p/%s-%s-home.jpg", __PS_BASE_URI__, $product->id, $cover['id_image'] ) ?>" />
 			</a>
 		</div>
-                <a title="<?php echo $product->name ?>" href="<?php echo __PS_BASE_URI__ ?>product.php?id_product=<?php echo $productId; ?>">
-                    <?php echo $this->truncateWords($product->name, 30); ?>[...]
+                <a title="<?php echo $product->name ?>" href="<?php echo prestashopUrl( $product ) ?>">
+                    <?php echo $this->truncateWords($product->name, 30); ?><?php if ( strlen( $product->name ) > 30 ) echo " ..." ?>
                 </a>
 	</div>
     <?php 
