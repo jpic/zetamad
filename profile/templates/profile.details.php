@@ -95,7 +95,7 @@ if ( empty( $this->object['picture'] ) )
 			<h3>Les sites de <?php $this->e( $this->object['name'] ) ?></h3>
 			<ul>
                 <?php foreach( $this->sites as $site ): ?>
-				<li><a href="http://<?php echo $site['site'] ?>"><?php echo $site['site'] ?></a></li>
+				<li><a href="<?php if ( substr( $site['site'], 0, 4 ) != 'http' ): ?>http://<?php endif ?><?php echo $site['site'] ?>"><?php echo $site['site'] ?></a></li>
                 <?php endforeach ?>
 			</ul>
 		</div>
