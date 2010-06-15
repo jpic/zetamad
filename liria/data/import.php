@@ -149,6 +149,10 @@ foreach( $recipes as $uuid => $recipe ) {
             if ( !empty( $ingredientQuantity['quantity'] ) ) 
                 $insert['quantity']  = $ingredientQuantity['quantity'];
 
+            if ( !empty( $ingredientQuantity['quantity'] ) ) {
+                $insert['quantity'] = $ingredientQuantity['quantity'];
+            }
+
             madModelController::saveArray( $insert );
         }
     }
