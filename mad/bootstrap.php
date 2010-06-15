@@ -386,6 +386,32 @@ function setDefaultFieldClasses( $configuration ) {
             if ( !empty($field['maxLength']) ) {
                 $field['classes'][] = 'validate_maxlength ' . $field['maxLength'];
             }
+
+            if ( !in_array( $fieldName, (array) $field['classes'] ) ) {
+                $field['classes'][] = $fieldName;
+            }
+
+            if ( !empty( $field['type'] ) ) {
+                switch( $field['type'] ) {
+                    case 'int':
+                        $field['classes'][] = 'validate_integer';
+                        break;
+                    case 'float':
+                        $field['classes'][] = 'validate_number';
+                        break;
+                    case 'url':
+                        $field['classes'][] = 'validate_url';
+                        break;
+                    case 'email':
+                        $field['classes'][] = 'validate_email';
+                        break;
+                    case 'letters':
+                        $field['classes'][] = 'validate_alpha';
+                        break;
+                }
+            } else {
+                $field['type'] = 'text';
+            }
         }
     }
 }
