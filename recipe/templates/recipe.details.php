@@ -33,6 +33,7 @@ $this->variables['metaTitle'] = sprintf(
 .object .object-right .object-header .share-object { position: absolute; bottom: 10px; left: 0; }
 
 .object .object-left .object-author, .object .object-right .object-description { margin-top: 20px; }
+.object-description { margin-top: 10px; }
 .object .object-left .object-author .author-name, .object .object-right .h3 { clear: both; font-size: 18px; color: #969696; font-family: Times; border-bottom: 1px solid #dadada; margin-bottom: 7px; padding-bottom: 7px; }
 .object .object-left .object-author .author-photo { float: left; margin-right: 7px; margin-bottom: 2px; border: 1px solid #dadada; vertical-align: bottom; width: 87px; height: 87px; }
 .object .object-left .object-author .author-description { line-height: 19px; font-size: 11px; color: #969696; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; text-align: justify;}

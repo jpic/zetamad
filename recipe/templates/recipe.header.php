@@ -1,5 +1,5 @@
 <style type="text/css">
-#nav-object { color: #b0aaac; width: 980px; height: 30px; list-style: none; margin-bottom: 10px; }
+#nav-object { color: #b0aaac; width: 980px; height: 30px; list-style: none; margin-bottom: 0 /*release*/; }
 #nav-object li { display: block; float: left; line-height: 30px; height: 30px; }
 #nav-object li.browseby { font-size: 10px; font-family: Lucida, "Lucida Sans", Arial, sans-serif;; padding-right: 8px; line-height: 31px; }
 #nav-object li a { font: bold 15px Times, Arial; color: #b0aaac; text-transform: uppercase; }
