@@ -27,12 +27,20 @@
 #right .recipe-details .author a { color: #b0aaac; text-decoration: none; }
 #right .recipe-details .author a:hover { text-decoration: underline; }
 
-#left_column { display: block !important; }
-#category-viewed, #contact-form-banner, #category-best-and-new-products, #category-newsletter, #block_advertisingleft-fb, #block-advertisingleft-1 { display: none; }
+body#index #center_column #left_column { display:block; }
 
 </style>
 
 <?php $this->includeOnceTemplate( 'recipe.header.php' ) ?>
+
+<div class="breadcrumb">
+	<a title="retour à Accueil" href="<?php echo __PS_BASE_URI__ ?>">Accueil</a>
+	<span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>themes/mmarket/img/fleche.jpg"></span>
+	<a href="<?php $this->url( 'recipe.index' ) ?>" title="Recettes">
+		Recettes
+	</a>
+</div>
+<div class="clear"></div>
 
 <div id="left_column">
     <div id="categories-left" class="block">
@@ -67,14 +75,6 @@
 </div>
 
 <div id="right">
-    <div class="breadcrumb">
-	<a title="retour à Accueil" href="<?php echo __PS_BASE_URI__ ?>">Accueil</a>
-	<span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>themes/mmarket/img/fleche.jpg"></span>
-            <a href="<?php $this->url( 'recipe.index' ) ?>" title="Recettes">
-                Recettes
-            </a>
-    </div>
-
     <p class="title">Actuellement, <span class="totalRecipe"><?php $this->e( $this->recipeCount ) ?></span> recettes publi&eacute;es sur Madeleine Market !</p>
     
     <?php
