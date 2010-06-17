@@ -130,6 +130,10 @@ UniForm = function() {
      * @param string caption
      */
     validate_email : function(field, caption) {
+      if ( field.hasClass('required') == false && field.val() == '' ) {
+          return true;
+      }
+      
       if(field.val().match(/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/)) {
         return true;
       } else {
@@ -144,6 +148,10 @@ UniForm = function() {
      * @param string caption
      */
     validate_url : function(field, caption) {
+      if ( field.hasClass('required') == false && field.val() == '' ) {
+          return true;
+      }
+
       if(field.val().match(/^(http|https|ftp):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?\/?/i)) {
         return true;
       } else {
@@ -158,6 +166,10 @@ UniForm = function() {
      * @param string caption
      */
     validate_number : function(field, caption) {
+      if ( field.hasClass('required') == false && field.val() == '' ) {
+          return true;
+      }
+
       if(field.val().match(/(^-?\d\d*\.\d*$)|(^-?\d\d*$)|(^-?\.\d\d*$)/)) {
         return true;
       } else {
@@ -172,6 +184,10 @@ UniForm = function() {
      * @param string caption
      */
     validate_integer : function(field, caption) {
+      if ( field.hasClass('required') == false && field.val() == '' ) {
+          return true;
+      }
+
       if(field.val().match(/(^-?\d\d*$)/)) {
         return true;
       } else {
@@ -186,6 +202,10 @@ UniForm = function() {
      * @param string caption
      */
     validate_alpha : function(field, caption) {
+      if ( field.hasClass('required') == false && field.val() == '' ) {
+          return true;
+      }
+
       if(field.val().match(/^[a-zA-Z]+$/)) {
         return true;
       } else {
@@ -200,6 +220,10 @@ UniForm = function() {
      * @param string caption
      */
     validate_alphanum : function(field, caption) {
+      if ( field.hasClass('required') == false && field.val() == '' ) {
+          return true;
+      }
+
       if(field.val().match(/\W/)) {
         return caption + ' value should contain only numbers and letters (without special characters)';
       } else {
