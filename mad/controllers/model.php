@@ -22,6 +22,10 @@ class madModelController extends madFormController {
                 continue;
             }
 
+            if ( is_null( $value ) ) {
+                $row[$column] = '';
+            }
+
             $set[] = "$column = :$column";
         }
 
