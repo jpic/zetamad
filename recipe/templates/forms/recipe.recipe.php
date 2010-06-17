@@ -32,14 +32,16 @@
         <?php foreach( $this->prepareFormSet( $formSet )->data as $key => $row ): ?>
             <tr class="<?php echo $this->getTableRowFormSetClass( $formSet ) ?> formset">
                 <td>
+                     <?php echo $this->renderInputWidget( $formSet->formConfiguration['sortkey'], $key ) ?>
+                </td>
+                <td>
                     <?php echo $this->renderImageWidget( $formSet->formConfiguration['picture'], $key ) ?>
                 </td>
                 <td>
                     <?php echo $this->renderTextWidget( $formSet->formConfiguration['title'], $key ) ?>
                 </td>
                 <td>
-                    <input type="button" class="deleteRow" value="Effacer" />
-                    <?php echo $this->renderInputWidget( $formSet->formConfiguration['sortkey'], $key ) ?>
+                    <input type="button" class="deleteRow" value="Effacer" name="<?php echo $key ?>" />
                     <?php if ( !empty( $row['id'] ) ): ?>
                     <input type="hidden" name="recipe_recipe[pictures][<?php echo $key ?>][id]" value="<?php echo $row['id'] ?>" />
                     <?php endif ?>
@@ -48,7 +50,22 @@
         <?php endforeach ?>
         </table>
         <button disabled="disabled" class="formset_add">Ajouter</button>
-
+        <div class="formset_template" style="display: none;"><!--
+            <tr class="<?php echo $this->getTableRowFormSetClass( $formSet ) ?> formset">
+                <td>
+                     <?php echo $this->renderInputWidget( $formSet->formConfiguration['sortkey'], 'voidKey' ) ?>
+                </td>
+                <td>
+                    <?php echo $this->renderImageWidget( $formSet->formConfiguration['picture'], 'voidKey' ) ?>
+                </td>
+                <td>
+                    <?php echo $this->renderTextWidget( $formSet->formConfiguration['title'], 'voidKey' ) ?>
+                </td>
+                <td>
+                    <input type="button" class="deleteRow" value="Effacer" name="voidKey" />
+                </td>
+            </tr>
+        --></div>
         
         <h2>Vid&eacute;o</h2>
 

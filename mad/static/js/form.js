@@ -1,5 +1,6 @@
 $(document).ready( function(  ) {
     $( 'form.uniForm input:first' ).focus(  );
+
     $( 'button.formset_add' ).click( function( e ) {
         e.preventDefault(  );
         var table = $(this).prev(  );
@@ -7,36 +8,51 @@ $(document).ready( function(  ) {
             table = table.prev();
         }
 
-        var count = table.children('tbody').children('tr').length;
-        var next = count;
-        var tr = table.children('tbody').children('tr:first').clone();
+        var template;
+        var templateDiv = $(this).next();
+        if ( templateDiv.get(0).tagName != 'DIV' && !templateDiv.hasClass('formset_template') ) {
+            templateDiv = templateDiv.next();
+        }
+
+        templateDiv.each(function() {
+            template = $(this).html();
+        })
+        // strip comment tags
+        template = template.substr( 6, template.indexOf( '-->' ) - 6 );
+
+        // if there is at least one formset tr, start by its key
+        if ( table.find('tr:first input[type=button]').length ) {
+            var next = parseInt( table.find('tr:first input[type=button]').attr('name') );
+        } else {
+            // or start by 0
+            var next = 0;
+        }
+        table.find('input[type=button]').each(function() {
+            var key = parseInt( $(this).attr('name') );
+            if ( key >= next ) {
+                next = key + 1;
+            }
+        });
+        var tr = $(template);
 
         tr.find('input[type=checkbox]').attr('disabled', '');
         tr.find('input[type=button]').attr('disabled', '');
         tr.find('input[type=hidden]').val('');
 
-        tr.find('textarea').each(function() {
-            $(this).val('');
-            $(this).attr('name', $(this).attr('name').replace(/\[0\]/, '['+next+']'));
-            if ( $(this).attr( 'id' ) !== undefined ) {
-                $(this).attr('id', $(this).attr('id').replace(/\[0\]/, '['+next+']'));
-            }
-        });
-
-        tr.find('input').each(function() {
+        tr.find('textarea, input, button, select').each(function() {
             if ( $(this).attr( 'name' ) !== undefined ) {
-                $(this).attr('name', $(this).attr('name').replace(/\[0\]/, '['+next+']'));
+                $(this).attr('name', $(this).attr('name').replace(/voidKey/, next));
             }
 
             if ( $(this).attr( 'id' ) !== undefined ) {
-                $(this).attr('id', $(this).attr('id').replace(/\[0\]/, '['+next+']'));
+                $(this).attr('id', $(this).attr('id').replace(/voidKey/, next));
             }
-            
+
             if ( $(this).attr( 'type' ) != 'button' ) {
                 $(this).val('');
             } else if ( $(this).hasClass( 'deleteRow' ) ) {
                 $(this).click( function(  ) {
-                    $(this).parents( 'tr' ).remove(  ); 
+                    $(this).parents( 'tr' ).remove(  );
                 })
             }
         });
@@ -48,6 +64,8 @@ $(document).ready( function(  ) {
     $( 'input.deleteRow' ).click( function(  ) {
         $( this ).parents( 'tr' ).remove(  );
     })
+
+    $( 'input.deleteRow' ).attr( 'disabled', '' );
 
     $( '.add-another' ).click(function(e) {
         e.preventDefault(  );
