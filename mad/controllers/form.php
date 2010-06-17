@@ -6,6 +6,8 @@ class madFormController extends madController {
     public $requestFormName;
     public $routeConfiguration;
     public $processedData;
+    public $requestData;
+    public $persistentData;
     public $formConfiguration;
     public $isValid = true;
     public $isSuccessfull = false;
@@ -135,8 +137,8 @@ class madFormController extends madController {
         }
 
         $rows = madFramework::query( $sql, $arguments );
-        
-        $this->data->merge( $this->isFormSet ? $rows : $rows[0] );
+        $this->persistentData = $this->isFormSet ? $rows : $rows[0];
+        $this->data->merge( $this->persistentData );
 
         if ( $this->isFormSet ) {
             foreach( $this->data as $key => $row ) {
@@ -225,7 +227,8 @@ class madFormController extends madController {
     }
 
     public function mergeRequestData(  ) {
-        $this->data->merge( $this->request->variables[$this->requestFormName] );
+        $this->requestData = $this->request->variables[$this->requestFormName];
+        $this->data->merge( $this->requestData );
 
         if ( isset( $this->request->files[$this->requestFormName] ) ) {
             $files = new madObject( $this->request->files[$this->requestFormName] );
