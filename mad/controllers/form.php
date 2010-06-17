@@ -455,6 +455,10 @@ class madFormController extends madController {
                 continue;
             }
 
+            if ( array_key_exists( 'id', $row ) && !$row['id'] ) {
+                unset( $row['id'] );
+            }
+            
             madModelController::saveArray( $row );
 
             // set the id to reverseFks
