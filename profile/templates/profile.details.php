@@ -63,10 +63,12 @@ a.btn-block:hover { background: #539893; }
 </style>
 
 <div class="breadcrumb">
-	<a title="retour à Accueil" href="/">Accueil</a>
-	<span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>/themes/mmarket/img/fleche.jpg"></span>
-	<a href="<?php echo $this->url( 'profile.list' ) ?>" title="List des profils">Profils</a>
-    <span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>/themes/mmarket/img/fleche.jpg"></span>
+	<a title="retour à Accueil" href="<?php echo __PS_BASE_URI__ ?>">Accueil</a>
+        <span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>themes/mmarket/img/fleche.jpg"></span>
+	<a href="<?php echo $this->url( 'recipe.index' ) ?>" title="Recettes">Recettes</a>
+	<span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>themes/mmarket/img/fleche.jpg"></span>
+	<a href="<?php echo $this->url( 'profile.list' ) ?>" title="List des profils">Contributeurs</a>
+    <span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>themes/mmarket/img/fleche.jpg"></span>
 	<?php $this->eu( $this->object['name'] ) ?>
 </div>
 

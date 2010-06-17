@@ -27,7 +27,7 @@ class madRecipeController extends madModelController {
     public function doIndex() {
         $this->result->variables['categories'] = madFramework::query( 'select * from recipeCategory' );
         $this->result->variables['tags'] = madFramework::query( 'select * from tag' );
-        $this->result->variables['recipes'] = madFramework::query( 'select recipe.id, recipe.title, recipe.slug, profile.name as profile_name, profile.slug as profile_slug, recipePicture.picture, recipePicture.title as recipe_picture from recipe left join profile on recipe.profile = profile.id left join recipePicture on recipePicture.recipe = recipe.id group by recipe.id order by recipe.updated desc limit 0, 6' );
+        $this->result->variables['recipes'] = madFramework::query( 'select recipe.id, recipe.title, recipe.slug, profile.name as profile_name, profile.slug as profile_slug, recipePicture.picture, recipePicture.title as recipe_picture, profile.slug as profile_slug, profile.name as profile_name from recipe left join profile on recipe.profile = profile.id left join recipePicture on recipePicture.recipe = recipe.id group by recipe.id order by recipe.updated desc limit 0, 6' );
         $this->result->variables['profiles'] = madFramework::query( 'select * from profile order by updated desc limit 0, 6' );
         
         $rows = madFramework::query( 'select count(id) from profile' );

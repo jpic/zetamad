@@ -32,6 +32,8 @@
 
 </style>
 
+<?php $this->includeOnceTemplate( 'recipe.header.php' ) ?>
+
 <div id="left_column">
     <div id="categories-left" class="block">
         <div class="block_title">
@@ -65,6 +67,14 @@
 </div>
 
 <div id="right">
+    <div class="breadcrumb">
+	<a title="retour à Accueil" href="<?php echo __PS_BASE_URI__ ?>">Accueil</a>
+	<span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>themes/mmarket/img/fleche.jpg"></span>
+            <a href="<?php $this->url( 'recipe.index' ) ?>" title="Recettes">
+                Recettes
+            </a>
+    </div>
+
     <p class="title">Actuellement, <span class="totalRecipe"><?php $this->e( $this->recipeCount ) ?></span> recettes publi&eacute;es sur Madeleine Market !</p>
     
     <?php
@@ -91,15 +101,11 @@
 
 				</a>
 			</p>
-                <?php
-                /*
 		<p class="author">
                     <a href="<?php echo $this->url( 'profile.details', array( 'slug' => $object['profile_slug'] ) ) ?>" title="<?php $this->e( $object['profile_name'] ) ?>">
                         <?php echo $this->truncateWords($object['profile_name'], 35) ?>
                     </a>
 		</p>
-              */
-                ?>
 		
 		<div class="clear"></div>
 	</div>

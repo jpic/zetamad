@@ -22,13 +22,13 @@
 <?php $this->includeOnceTemplate( 'recipe.header.php' ) ?>
 
 <div class="breadcrumb">
-	<a title="retour à Accueil" href="/">Accueil</a>
-	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
-            <a href="<?php $this->url( 'recipe.list' ) ?>" title="Toutes les recettes par titre">
+	<a title="retour à Accueil" href="<?php echo __PS_BASE_URI__ ?>">Accueil</a>
+	<span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>themes/mmarket/img/fleche.jpg"></span>
+            <a href="<?php $this->url( 'recipe.index' ) ?>" title="Recettes">
                 Recettes
             </a>
         <?php if ( !empty( $this->breadcrumbHack ) ): ?>
-	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
+	<span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>themes/mmarket/img/fleche.jpg"></span>
 	<?php echo $this->breadcrumbHack ?>
         <?php endif ?>
 </div>

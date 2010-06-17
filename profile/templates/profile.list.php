@@ -38,8 +38,10 @@ a.btn-block:hover { background: #f1f1f1; text-decoration: none; }
 </style>
 
 <div class="breadcrumb">
-	<a title="retour à Accueil" href="/">Accueil</a>
-	<span class="navigation-pipe"><img alt="" src="/themes/mmarket/img/fleche.jpg"></span>
+	<a title="retour à Accueil" href="<?php echo __PS_BASE_URI__ ?>">Accueil</a>
+        <span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>themes/mmarket/img/fleche.jpg"></span>
+	<a href="<?php echo $this->url( 'recipe.index' ) ?>" title="Recettes">Recettes</a>
+	<span class="navigation-pipe"><img alt="" src="<?php echo __PS_BASE_URI__ ?>themes/mmarket/img/fleche.jpg"></span>
 	Profils
 </div>
 
