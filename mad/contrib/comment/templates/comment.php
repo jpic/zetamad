@@ -44,7 +44,7 @@ span.commentInfo { font-family: Verdana; font-style: normal; font-variant: norma
         <?php endif ?>
 
         <?php if ( $this->isAuthenticated ): ?>
-        <form action="<?php $this->url( 'comment.post', array( 'relatedNamespace' => $this->object['namespace'], 'relatedId' => $this->object['id'] ) ) ?>?next=<?php $this->e( $_SERVER['REQUEST_URI'] ) ?>" method="post" class="uniForm" enctype="multipart/form-data">
+        <form name="comment" action="<?php $this->url( 'comment.post', array( 'relatedNamespace' => $this->object['namespace'], 'relatedId' => $this->object['id'] ) ) ?>?next=<?php $this->e( $_SERVER['REQUEST_URI'] ) ?>" method="post" class="uniForm" enctype="multipart/form-data">
         <fieldset style="border: medium none ; padding: 0px 10px 10px; width: 55%;" class="comment">
             Titre<br>
                 <?php echo $this->renderTextWidget( $this->commentForm->formConfiguration['title'] ) ?>
@@ -56,10 +56,24 @@ span.commentInfo { font-family: Verdana; font-style: normal; font-variant: norma
                 </p>
 		<p class="submit">
                     <input class="button" name="submitMessage" value="Envoyer" type="submit">
-
 		</p>
 	</fieldset>
         </form>
+
+        <script type="text/javascript">
+        $(document).ready(function( e ) {
+            $('form[name=comment]').submit(function() {
+                if ( $(this).find('textarea').val() == '' ) {
+                    alert('Merci de saisir le contenu de votre commentaire');
+                    return false;
+                }
+                if ( $(this).find('input[type=text]').val() == '' ) {
+                    alert('Merci de saisir le titre de votre commentaire');
+                    return false;
+                }
+            })
+        })
+        </script>
 
 
         <?php else: ?>
