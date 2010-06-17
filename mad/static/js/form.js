@@ -74,6 +74,10 @@ $(document).ready( function(  ) {
     
     // enable buttons
     $( 'button.formset_add' ).attr( 'disabled', '' );
+
+    $( 'table.multipleField' ).tableDnD();
+    $( 'table.formset' ).tableDnD();
+
 });
 
 /* Credit: django.contrib.admin (BSD) */
