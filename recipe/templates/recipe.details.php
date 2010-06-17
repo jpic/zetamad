@@ -211,8 +211,7 @@ if ( empty( $this->profile['picture'] ) )
                         <?php 
                         if ( !empty( $this->object['prepTime'] ) ||
                              !empty( $this->object['cookTime'] ) ||
-                             !empty( $this->object['restTime'] ) ||
-                             !empty( $this->object['yield'] )
+                             !empty( $this->object['restTime'] )
                         ):
                         ?>
                         <div class="object-infos">
