@@ -50,6 +50,17 @@ class madFormController extends madController {
             $this->formMeta = $this->formConfiguration['META'];
             unset( $this->formConfiguration['META'] );
         }
+
+        // formsets will need a hidden id field to avoid mixing
+        if ( $this->isFormSet && empty( $this->formConfiguration['id'] ) ) {
+            $this->formConfiguration['id'] = array(
+                'name'   => 'id',
+                'widget' => 'hidden',
+                'type'   => 'int',
+                'column' => 'id',
+                'classes' => array(),
+            );
+        }
         
         foreach( $this->formConfiguration as $name => &$attribute ) {
             if ( isset( $attribute['relation'] ) && $attribute['relation'] == 'reverseFk' ) {

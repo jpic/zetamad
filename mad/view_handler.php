@@ -522,6 +522,10 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
             $this->processAttribute( $attribute );
 
+            if ( $attribute['widget'] == 'hidden' ) {
+                continue;
+            }
+
             $html[] = sprintf(
                 '<th class="%s">%s</th>',
                 $attribute['name'],
@@ -546,7 +550,10 @@ class madViewHandler extends ezcMvcPhpViewHandler {
                     continue;
                 }
 
-                $this->processAttribute( $attribute );
+                if ( $attribute['widget'] == 'hidden' ) {
+                    // render it later
+                    continue;
+                }
 
                 if ( !empty( $attribute['widget'] ) ) {
                     $method = sprintf( 
@@ -566,18 +573,17 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             
             $html[] = '<td class="formsetDeleteRowh">';
             $html[] = sprintf( 
-                '<input type="button" class="deleteRow" value="%s" disabled="%s" />',
-                $this->ucfirst( $this->t( 'delete' ) ),
-                !empty( $row['id'] ) ? 'disabled' : ''
+                '<input type="button" class="deleteRow" value="%s" disabled="disabled" />',
+                $this->ucfirst( $this->t( 'delete' ) )
             );
-            if ( !empty( $row['id'] ) ) {
-                $html[] = sprintf(
-                    '<input type="hidden" name="%s" value="%s[%s][%s]" />',
-                    $row['id'],
-                    $form->requestFormName,
-                    $key,
-                    'id'
-                );
+
+            foreach( $form->formConfiguration as &$attribute ) {
+                if ( empty( $attribute['widget'] ) || $attribute['widget'] != 'hidden' ) {
+                    // already rendered
+                    continue;
+                }
+
+                $html[] = $this->renderInputWidget( $attribute , $key );
             }
 
             $html[] = '</td>';
@@ -666,36 +672,37 @@ class madViewHandler extends ezcMvcPhpViewHandler {
                     continue;
                 }
 
-                if ( !empty( $formAttribute['widget'] ) ) {
-                    $method = sprintf( 
-                        "render%sWidget",
-                        ucfirst( $formAttribute['widget'] )
-                    );
-
-                    $html[] = '<td>';
-                    if ( method_exists( $this, $method ) ) {
-                        $html[] = $this->$method( $formAttribute, $key );
-                    } else {
-                        $html[] = $this->renderInputWidget( $formAttribute, $key );
-                    }
-                    $html[] = '</td>';
+                if ( empty( $formAttribute['widget'] ) || $formAttribute['widget'] == 'hidden' ) {
+                    continue;
                 }
+
+                $method = sprintf(
+                    "render%sWidget",
+                    ucfirst( $formAttribute['widget'] )
+                );
+
+                $html[] = '<td>';
+                if ( method_exists( $this, $method ) ) {
+                    $html[] = $this->$method( $formAttribute, $key );
+                } else {
+                    $html[] = $this->renderInputWidget( $formAttribute, $key );
+                }
+                $html[] = '</td>';
             }
             
             $html[] = '<td class="formsetDeleteRow">';
             $html[] = sprintf( 
-                '<input type="button" class="deleteRow" value="%s" disabled="%s" />',
-                $this->ucfirst( $this->t( 'delete' ) ),
-                !empty( $row['id'] ) ? '' : 'disabled'
+                '<input type="button" class="deleteRow" value="%s" disabled="disabled" />',
+                $this->ucfirst( $this->t( 'delete' ) )
             );
-            if ( !empty( $row['id'] ) ) {
-                $html[] = sprintf(
-                    '<input type="hidden" value="%s" name="%s[%s][%s]" />',
-                    $row['id'],
-                    $form->requestFormName,
-                    $key,
-                    'id'
-                );
+
+            foreach( $form->formConfiguration as &$attribute ) {
+                if ( empty( $attribute['widget'] ) || $attribute['widget'] != 'hidden' ) {
+                    // already rendered
+                    continue;
+                }
+
+                $html[] = $this->renderInputWidget( $attribute , $key );
             }
 
             $html[] = '</td>';
