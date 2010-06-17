@@ -5,9 +5,10 @@ class madFormController extends madController {
     public $data;
     public $requestFormName;
     public $routeConfiguration;
-    public $processedData;
-    public $requestData;
-    public $persistentData;
+    public $processedData = array();
+    public $requestData = array();
+    public $persistentData = array();
+    public $deletedData = array();
     public $formConfiguration;
     public $isValid = true;
     public $isSuccessfull = false;
@@ -238,7 +239,12 @@ class madFormController extends madController {
     }
 
     public function mergeRequestData(  ) {
-        $this->requestData = $this->request->variables[$this->requestFormName];
+        if ( isset( $this->request->variables[$this->requestFormName] ) ) {
+            $this->requestData = $this->request->variables[$this->requestFormName];
+        } else {
+            $this->requestData = array();
+        }
+
         $this->data->merge( $this->requestData );
 
         if ( isset( $this->request->files[$this->requestFormName] ) ) {
@@ -255,6 +261,12 @@ class madFormController extends madController {
             if ( isset( $attribute['relation'] ) && $attribute['relation'] == 'reverseFk' ) {
                 if ( !empty( $this->data[$name] ) ) {
                     $attribute['form']->data = $this->data[$name];
+                }
+                if ( !empty( $this->requestData[$name] ) ) {
+                    $attribute['form']->requestData = $this->requestData[$name];
+                }
+                if ( !empty( $this->persistentData[$name] ) ) {
+                    $attribute['form']->persistentData = $this->persistentData[$name];
                 }
                 $attribute['form']->process(  );
 
@@ -377,6 +389,62 @@ class madFormController extends madController {
             $processedData = $this->processedData;
         } else {
             $processedData = array( &$this->processedData );
+        }
+
+
+        // assume that persistentData that is not in requestData should be deleted
+        if ( $this->isFormSet ) {
+            foreach( $this->persistentData as $persistentRow ) {
+                if ( count( $this->requestData ) ) {
+                    foreach( $this->requestData as  $requestRow ) {
+                        if ( empty( $requestRow['id'] ) ) {
+                            // new row to save, nothing to do
+                            continue;
+                        }
+
+                        if ( $requestRow['id'] == $persistentRow['id'] ) {
+                            // the row was sent in the reqeust, nothing to do
+                            continue 2;
+                        }
+                    }
+                }
+
+                // remove from processedData
+                foreach( $this->processedData as $key => $row ) {
+                    if ( !isset( $row['id'] ) ) {
+                        continue;
+                    }
+
+                    if ( $row['id'] == $persistentRow['id'] ) {
+                        unset( $this->processedData[$key] );
+                        break;
+                    }
+                }
+
+                // remove from data
+                foreach( $this->data as $key => $row ) {
+                    if ( !isset( $row['id'] ) ) {
+                        continue;
+                    }
+                    
+                    if ( $row['id'] == $persistentRow['id'] ) {
+                        unset( $this->data[$key] );
+                        break;
+                    }
+                }
+
+                $this->deletedData[$key] = $persistentRow['id'];
+            }
+
+            $table = $this->formConfiguration['namespace']['value'];
+
+            foreach( $this->framework->pdo->schemalessTables[$table] as $attribute ) {
+                $query = "delete from `{$table}_{$attribute}` where id in ('". implode("','", $this->deletedData)."')";
+                madFramework::query($query);
+            }
+
+            $query = "delete from $table where id in ('". implode("','", $this->deletedData)."')";
+            madFramework::query($query);
         }
 
         // save this to get pk for relations
