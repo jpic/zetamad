@@ -167,7 +167,7 @@ if ( empty( $this->profile['picture'] ) )
 			
                         <?php if ( !empty( $this->tags ) ): ?>
                             <ul id="object-tags">
-                                <li class="title">Mots clés:</li>
+                                <li class="title">Mots clés :</li>
                                 <?php foreach( $this->tags as $tag ): ?>
                                 <li>
                                     <a href="<?php $this->url( 'recipe.listByTag', $tag ) ?>" title="Recettes tagu&eacute;es <?php $this->e( $tag['name']) ?>">
@@ -204,7 +204,6 @@ if ( empty( $this->profile['picture'] ) )
                 if ( !empty( $this->object['prepTime'] ) ||
                      !empty( $this->object['cookTime'] ) ||
                      !empty( $this->object['restTime'] ) ||
-                     !empty( $this->object['yield'] ) ||
                      !empty( $this->object['recipeSteps'] )
                 ):
                 ?>
