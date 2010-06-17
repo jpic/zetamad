@@ -436,7 +436,7 @@ class madFormController extends madController {
                 $this->deletedData[$key] = $persistentRow['id'];
             }
 
-            if ( !$this->deletedData ) {
+            if ( $this->deletedData ) {
                 $table = $this->formConfiguration['namespace']['value'];
 
                 foreach( $this->framework->pdo->schemalessTables[$table] as $attribute ) {
