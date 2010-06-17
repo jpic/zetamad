@@ -210,7 +210,7 @@ class madFormController extends madController {
         if ( ! $this->formName ) {
             return true;
         }
-
+        
         array_unshift( $this->result->variables['contexts'], $this->formConfiguration['namespace']['value'] );
         array_unshift( $this->result->variables['contexts'], $this->formName );
 
@@ -436,15 +436,17 @@ class madFormController extends madController {
                 $this->deletedData[$key] = $persistentRow['id'];
             }
 
-            $table = $this->formConfiguration['namespace']['value'];
+            if ( !$this->deletedData ) {
+                $table = $this->formConfiguration['namespace']['value'];
 
-            foreach( $this->framework->pdo->schemalessTables[$table] as $attribute ) {
-                $query = "delete from `{$table}_{$attribute}` where id in ('". implode("','", $this->deletedData)."')";
+                foreach( $this->framework->pdo->schemalessTables[$table] as $attribute ) {
+                    $query = "delete from `{$table}_{$attribute}` where id in ('". implode("','", $this->deletedData)."')";
+                    madFramework::query($query);
+                }
+
+                $query = "delete from $table where id in ('". implode("','", $this->deletedData)."')";
                 madFramework::query($query);
             }
-
-            $query = "delete from $table where id in ('". implode("','", $this->deletedData)."')";
-            madFramework::query($query);
         }
 
         // save this to get pk for relations
