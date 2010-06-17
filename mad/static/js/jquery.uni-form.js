@@ -58,7 +58,7 @@ UniForm = function() {
       } // for
       
       if((min_length > 0) && (field.val().length < min_length)) {
-        return caption + ' value should be at least ' + min_length + ' characters long';
+        return 'Veuillez saisir au moins ' + min_length + ' caractères dans le champs ' + caption;
       } else {
         return true;
       } // if
@@ -84,7 +84,7 @@ UniForm = function() {
       } // for
       
       if((max_length > 0) && (field.val().length > max_length)) {
-        return caption + ' value should not be longer than ' + max_length + ' characters';
+          return 'Veuillez saisir moins de ' + max_length + ' caractères dans le champs ' + caption;
       } else {
         return true;
       } // if
@@ -137,7 +137,7 @@ UniForm = function() {
       if(field.val().match(/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/)) {
         return true;
       } else {
-        return caption + ' value is not a valid email address';
+        return 'Veuillez saisir une addresse email valide pour le champs ' + caption;
       }
     },
     
@@ -155,7 +155,7 @@ UniForm = function() {
       if(field.val().match(/^(http|https|ftp):\/\/(([A-Z0-9][A-Z0-9_-]*)(\.[A-Z0-9][A-Z0-9_-]*)+)(:(\d+))?\/?/i)) {
         return true;
       } else {
-        return caption + ' value is not a valid URL';
+        return 'Veuillez saisir une url valide pour le champs ' + caption;
       }
     }, 
     
@@ -173,7 +173,7 @@ UniForm = function() {
       if(field.val().match(/(^-?\d\d*\.\d*$)|(^-?\d\d*$)|(^-?\.\d\d*$)/)) {
         return true;
       } else {
-        return caption + ' value need to be a number';
+        return 'Veuillez saisir un nombre valide dans le champs ' + caption;
       }
     },
     
@@ -191,7 +191,7 @@ UniForm = function() {
       if(field.val().match(/(^-?\d\d*$)/)) {
         return true;
       } else {
-        return caption + ' value need to be a whole number';
+        return 'Veuillez saisir un nombre entier valide dans le champs ' + caption;
       }
     },
     
@@ -209,7 +209,7 @@ UniForm = function() {
       if(field.val().match(/^[a-zA-Z]+$/)) {
         return true;
       } else {
-        return caption + ' value should contain only letters (without special characters or numbers)';
+        return 'Veuillez ne saisir que des lettres dans le champs ' + caption;
       }
     },
     
