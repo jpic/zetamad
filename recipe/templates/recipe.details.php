@@ -173,6 +173,7 @@ if ( empty( $this->profile['picture'] ) )
                                 </li>
                                 <?php endforeach ?>
                             </ul>
+                            <div class="clear"></div>
                         <?php endif ?>
                         <?php if ( !empty( $this->object['author'] ) ): ?>
                         <p class="object-author">Par&nbsp; <?php $this->e( $this->object['author'] ) ?></p>
