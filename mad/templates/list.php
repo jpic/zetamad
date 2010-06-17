@@ -13,6 +13,8 @@
     .object_table tbody .row_details a:hover { text-decoration: underline; }
 </style>
 
+<h2><?php $this->e( $this->metaTitle ) ?></h2>
+
 <?php if ( !count( $this->objectList ) ): ?>
 <p>
     <?php $this->e( isset( $this->framework->routeConfiguration["ifEmpty"] ) ? ucfirst( $this->framework->routeConfiguration["ifEmpty"] ) : "Aucun objet trouvé" ) ?>
