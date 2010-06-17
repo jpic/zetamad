@@ -143,6 +143,13 @@ if ( empty( $this->profile['picture'] ) )
         <div class="object-right">
                 <div class="object-header">
                         <h2 class="fn"><?php $this->e( $this->object['title'] ) ?></h2>
+			    <?php if ( $this->isAuthenticated && !empty( $this->request->variables['user']['role'] ) && $this->request->variables['user']['role'] == 'administrator' ): ?>
+				<ul id="object-categories" style="border: 1px solid #f6c9d0; clear: both; overflow:auto; padding: 0 5px; margin-top: 5px; background: #fee6ea;">
+					<li class="title">Modération :</li>
+					<li><a class="editrecipe" href="<?php $this->url( 'recipe.edit', $this->object ) ?>">Modifier la recette</a></li>
+				</ul>
+                            <div class="clear"></div>
+			    <?php endif ?>
 			<?php if ( !empty( $this->categories ) ): ?>
 			    <ul id="object-categories">
 				<li class="title">Classée dans :</li>
@@ -154,14 +161,10 @@ if ( empty( $this->profile['picture'] ) )
 				</li>
 				<?php endforeach ?>
 			    </ul>
-			    <?php if ( $this->isAuthenticated && !empty( $this->request->variables['user']['role'] ) && $this->request->variables['user']['role'] == 'administrator' ): ?>
-				<ul id="object-categories" style="border: 1px solid #f6c9d0; clear: both; overflow:auto; padding: 0 5px; margin-top: 5px; background: #fee6ea;">
-					<li class="title">Modération :</li>
-					<li><a class="editrecipe" href="<?php $this->url( 'recipe.edit', $this->object ) ?>">Modifier la recette</a></li>
-				</ul>
-			    <?php endif ?>
-			    <div class="clear"></div>
-			<?php endif ?>
+                        <div class="clear"></div>
+                        <?php endif ?>
+			    
+			
                         <?php if ( !empty( $this->tags ) ): ?>
                             <ul id="object-tags">
                                 <li class="title">Mots clés:</li>
