@@ -833,7 +833,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     } # }}}
 
     public function getAttributeError( $formAttribute, $key = null ) {
-        if ( $key == 'voidKey' ) {
+        if ( $key === 'voidKey' ) {
             return;
         }
 
@@ -849,7 +849,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
     }
 
     public function getAttributeValue( $formAttribute, $key = null ) {
-        if ( $key == 'voidKey' ) {
+        if ( $key === 'voidKey' ) {
             return;
         }
 
