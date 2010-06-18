@@ -74,6 +74,7 @@
     <fieldset class="inlineLabels">
         <h2>Ingrédients</h2>
         <?php echo $this->renderFormFieldRow( 'yield' ) ?>
+        <?php echo $this->renderFormFieldRow( 'calories' ) ?>
         <?php echo $this->renderFormFieldRow( 'ingredientQuantities' ) ?>
     </fieldset>
     <fieldset class="inlineLabels">
