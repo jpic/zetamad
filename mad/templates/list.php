@@ -27,7 +27,11 @@ $(document).ready(function() {
     var confirmMessage = '<?php echo str_replace( "'", "\\'", $this->ut( 'confirmAction' ) ) ?>';
 
     $("form#actionForm input[type=checkbox][name=selectAll]").change(function() {
-        $("input[type=checkbox]").attr("checked", $(this).attr("checked") );
+        if ( $(this).attr("checked") != undefined) {
+            $("input[type=checkbox]").attr("checked", $(this).attr("checked"));
+        } else {
+            $("input[type=checkbox]").attr("checked", '');
+        }
     });
     $("form#actionForm input[type=checkbox][name=selectAll]").attr( "disabled", "" );
 
