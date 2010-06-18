@@ -153,12 +153,16 @@ function findClasses( $configuration ) {
 //$this->connectSignal( 'postConfigurationRefresh', 'findClasses' );
 
 function stripTrailingSlashes( $configuration ) {
-    function doStripTrailingSlashes( &$array ) {
-        foreach( $array as $name => $value ) {
-            if ( is_array( $value ) || $value instanceof Traversable ) {
-                doStripTrailingSlashes( $value );
-            } else {
-                $value = substr( $value, -1 ) == '/' ? substr( $value, 0, -1 ) : $value;
+    if ( !function_exists( 'doStripTrailingSlashes' ) ) {
+        // for christ sake why does php declare this function globally?
+
+        function doStripTrailingSlashes( &$array ) {
+            foreach( $array as $name => $value ) {
+                if ( is_array( $value ) || $value instanceof Traversable ) {
+                    doStripTrailingSlashes( $value );
+                } else {
+                    $value = substr( $value, -1 ) == '/' ? substr( $value, 0, -1 ) : $value;
+                }
             }
         }
     }

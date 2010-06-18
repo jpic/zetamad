@@ -106,6 +106,40 @@ class madFramework {
         return true;
     }
 
+    public function refreshConfiguration( $setupApplications = false ) {
+        $this->configuration = new madConfiguration( $this->entryApplicationPath . '/etc', $this->applications );
+        // parse all ini files again, with overload support, that will
+        // update the core configuration (applications.ini)
+        $this->configuration->refreshApplications( $this->entryApplicationPath, 'etc' );
+        $this->configuration->refresh( $this->entryApplicationPath, array_keys( (array)$this->configuration['applications'] ), 'etc' );
+        // bootstrapper requires refreshed configuration with non-overloaded variables
+        $this->applications =& $this->configuration['applications'];
+        if ( $setupApplications ) {
+            // call bootstrap.php from all installed application path to
+            // connect signals
+            $this->setupApplications(  );
+        }
+
+        // allow connected functions to visit it befoere it is written
+        $this->sendSignal( 'postConfigurationRefresh', array( &$this->configuration ) );
+        // cache the parsed configuration for performances
+        $this->configuration->write( $this->entryApplicationPath . '/cache/etc' );
+    }
+
+    public function refreshLocale() {
+        $this->locale = new madConfiguration( $this->entryApplicationPath . '/locale', $this->applications );
+        $this->locale->refresh( $this->entryApplicationPath, array_keys( (array)$this->configuration['applications'] ), 'locale' );
+        // no need for application configuration in the locale confiuration
+        unset( $this->locale['applications'] );
+        $this->sendSignal( 'postLocaleRefresh', array( $this->locale ) );
+
+        if ( !is_dir( $this->entryApplicationPath . '/cache/locale' ) ) {
+            mkdir( $this->entryApplicationPath . '/cache/locale' );
+        }
+
+        $this->locale->write( $this->entryApplicationPath . '/cache/locale' );
+    }
+
     public function run(  ) {
         if ( $this->applications['mad']['refreshAutoload'] ) {
             $this->refreshAutoload(  );
@@ -116,20 +150,7 @@ class madFramework {
         $this->setupAutoload(  );
         
         if ( $this->applications['mad']['refreshConfiguration'] ) {
-            $this->configuration = new madConfiguration( $this->entryApplicationPath . '/etc', $this->applications );
-            // parse all ini files again, with overload support, that will 
-            // update the core configuration (applications.ini)
-            $this->configuration->refreshApplications( $this->entryApplicationPath, 'etc' );
-            $this->configuration->refresh( $this->entryApplicationPath, array_keys( (array)$this->configuration['applications'] ), 'etc' );
-            // bootstrapper requires refreshed configuration with non-overloaded variables
-            $this->applications =& $this->configuration['applications'];
-            // call bootstrap.php from all installed application path to 
-            // connect signals
-            $this->setupApplications(  );
-            // allow connected functions to visit it befoere it is written
-            $this->sendSignal( 'postConfigurationRefresh', array( &$this->configuration ) );
-            // cache the parsed configuration for performances
-            $this->configuration->write( $this->entryApplicationPath . '/cache/etc' );
+            $this->refreshConfiguration( true );
         } else {
             $this->configuration = new madConfiguration( $this->entryApplicationPath . '/cache/etc', $this->applications );
             // php parser is still retarded
@@ -140,17 +161,7 @@ class madFramework {
         $this->applications['mad']['refreshLocale'] = isset( $this->applications['mad']['refreshLocale'] ) && $this->applications['mad']['refreshLocale'] && is_dir( $this->entryApplicationPath . '/locale' ) ? false : true;
 
         if ( $this->applications['mad']['refreshLocale'] ) {
-            $this->locale = new madConfiguration( $this->entryApplicationPath . '/locale', $this->applications );
-            $this->locale->refresh( $this->entryApplicationPath, array_keys( (array)$this->configuration['applications'] ), 'locale' );
-            // no need for application configuration in the locale confiuration
-            unset( $this->locale['applications'] );
-            $this->sendSignal( 'postLocaleRefresh', array( $this->locale ) );
-
-            if ( !is_dir( $this->entryApplicationPath . '/cache/locale' ) ) {
-                mkdir( $this->entryApplicationPath . '/cache/locale' );
-            }
-
-            $this->locale->write( $this->entryApplicationPath . '/cache/locale' );
+            $this->refreshLocale();
         } else {
             $this->locale = new madConfiguration( $this->entryApplicationPath . '/cache/locale', $this->applications, 'locale' );
         }
@@ -177,6 +188,10 @@ class madFramework {
             $this->refreshStatic();
         }
 
+        if ( $this->applications['mad']['refreshPdo'] ) {
+            $this->refreshPdo();
+        }
+
         $this->sendSignal( 'postBootstrap', array( $this ) );
 
         if ( !isset( $_SESSION ) ) {
@@ -186,6 +201,10 @@ class madFramework {
         if ( !isset( $_SESSION['messages'] ) ) {
             $_SESSION['messages'] = array(  );
         }
+    }
+
+    public function refreshPdo() {
+        $this->pdo->cacheReset();
     }
 
     public function refreshStatic() {
