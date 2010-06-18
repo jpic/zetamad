@@ -150,6 +150,9 @@ if ( empty( $this->profile['picture'] ) )
 				</ul>
                             <div class="clear"></div>
 			    <?php endif ?>
+			    <?php if ( !empty( $this->object['author'] ) ): ?>
+			    <p class="object-author">Par&nbsp; <?php $this->e( $this->object['author'] ) ?></p>
+			    <?php endif ?>
 			<?php if ( !empty( $this->categories ) ): ?>
 			    <ul id="object-categories">
 				<li class="title">Classée dans :</li>
@@ -177,9 +180,6 @@ if ( empty( $this->profile['picture'] ) )
                                 <?php endforeach ?>
                             </ul>
                             <div class="clear"></div>
-                        <?php endif ?>
-                        <?php if ( !empty( $this->object['author'] ) ): ?>
-                        <p class="object-author">Par&nbsp; <?php $this->e( $this->object['author'] ) ?></p>
                         <?php endif ?>
                         <?php if ( !empty( $this->object['summary'] ) ): ?>
                         <div class="object-intro summary">
