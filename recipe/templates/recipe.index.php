@@ -68,7 +68,7 @@ body#index #center_column #left_column { display:block; }
         </div>
         <div class="keywordsCloud">
             <?php foreach( $this->tags as $tag ): ?>
-            <a href="<?php $this->url( 'recipe.listByTag', $tag ) ?>" style="font-size: 80%;" title="<?php $this->e( $tag['name'] ) ?>"><?php $this->e( $tag['name'] ) ?></a>&nbsp;
+            <a href="<?php $this->url( 'tag.details', $tag ) ?>" style="font-size: 80%;" title="<?php $this->e( $tag['name'] ) ?>"><?php $this->e( $tag['name'] ) ?></a>&nbsp;
             <?php endforeach ?>
         </div>
     </div>

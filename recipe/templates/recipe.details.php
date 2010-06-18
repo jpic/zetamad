@@ -170,7 +170,7 @@ if ( empty( $this->profile['picture'] ) )
                                 <li class="title">Mots clés :</li>
                                 <?php foreach( $this->tags as $tag ): ?>
                                 <li>
-                                    <a href="<?php $this->url( 'recipe.listByTag', $tag ) ?>" title="Recettes tagu&eacute;es <?php $this->e( $tag['name']) ?>">
+                                    <a href="<?php $this->url( 'tag.details', $tag ) ?>" title="Recettes tagu&eacute;es <?php $this->e( $tag['name']) ?>">
                                         <?php $this->e( $tag['name'] ) ?>
                                     </a>
                                 </li>
