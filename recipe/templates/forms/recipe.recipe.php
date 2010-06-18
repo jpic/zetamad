@@ -72,9 +72,8 @@
         <?php echo $this->renderFormFieldRow( 'video' ) ?>
     </fieldset>
     <fieldset class="inlineLabels">
-        <h2>Pour combien de personnes ?</h2>
+        <h2>Ingrédients</h2>
         <?php echo $this->renderFormFieldRow( 'yield' ) ?>
-    </fieldset>
         <?php echo $this->renderFormFieldRow( 'ingredientQuantities' ) ?>
     </fieldset>
     <fieldset class="inlineLabels">
