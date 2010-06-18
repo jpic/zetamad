@@ -44,7 +44,7 @@ class madDevController extends madController {
         foreach( $functions as $function ) {
             $once = !empty( $this->request->variables[$function . 'Once'] );
             $enable = !empty( $this->request->variables[$function . 'Enable'] ) || !empty( $this->request->variables[$function] );
-            $disable = !empty( $this->request->variables[$function . 'Disable'] ) && empty( $this->request->variables[$function] );
+            $disable = !$enable && ( empty( $this->request->variables[$function] ) || !empty( $this->request->variables[$function . 'Disable'] ) );
 
             $enabled = !empty( $this->framework->configuration['applications']['mad'][$function] );
 
