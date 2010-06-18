@@ -103,7 +103,23 @@ $(document).ready(function() {
 
                 <?php foreach( $this->framework->routeConfiguration["tableColumns"] as $key ): ?>
                 <td class="row_name">
+                    <?php
+                    if ( !empty( $this->framework->routeConfiguration["tableColumnLinks"][$key] ) ):
+                        $args = array();
+                        foreach( $this->framework->routeConfiguration["tableColumnLinks"][$key]['with'] as $col => $argName ) {
+                            $args[$argName] = $object[$col];
+                        }
+                        $url = madFramework::url(
+                            $this->framework->routeConfiguration["tableColumnLinks"][$key]['to'],
+                            $args
+                        );
+                    ?>
+                    <a href="<?php echo $url ?>">
+                    <?php endif ?>
                     <?php $this->et( $this->getValueString( $object, $key ) ) ?>
+                    <?php if ( !empty( $this->framework->routeConfiguration["tableColumns"][$key] ) ): ?>
+                    </a>
+                    <?php endif ?>
                 </td>
                 <?php endforeach ?>
 
