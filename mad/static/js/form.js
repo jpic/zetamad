@@ -52,7 +52,8 @@ $(document).ready( function(  ) {
             }
         });
 
-        tr.appendTo(table)
+        tr.appendTo(table);
+        table.tableDnD();
     });
 
 

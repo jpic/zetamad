@@ -145,11 +145,20 @@ YOU CAN VERY EASILY REVERT TO A GENERIC STYLE OF UNI-FORM. BEST OF LUCK...
 td.title { width: 250px;}
 .title input { width: 210px !important; }
 td.description textarea { width: 660px !important; }
-div.tags label { width: 230px !important;}
-div.tags p { float: !important; margin-left: 247px !important; }
 
 td.order input {width: 70px !important; margin-right: 20px;}
 td.picture input {width: 270px !important; margin-right: 20px;}
+td.ingredient { width: 330px;}
+td.ingredient input { width: 330px !important; }
+td.quantity { width: 330px;}
+td.quantity input { width: 330px !important; }
+
+td.ingredientProducts { width: 660px; }
+td.ingredientProducts input { width: 660px; }
+td.toolProducts { width: 660px; }
+td.ingredientProducts input { width: 660px; }
+td.tools { width: 660px; }
+td.tools input { width: 660px; }
 
 h3 { font-family: Times; font-size: 20px; color: #666; padding: 0 0 5px 0 !important; }
 label, th { font-size: 12px; text-transform: Capitalize; }

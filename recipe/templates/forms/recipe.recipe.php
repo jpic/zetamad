@@ -27,45 +27,7 @@
     <fieldset class="inlineLabels">
         <h2>Photos</h2>
         
-        <table>
-        <?php $formSet = $this->form->formConfiguration['pictures']['form'] ?>
-        <?php foreach( $this->prepareFormSet( $formSet )->data as $key => $row ): ?>
-            <tr class="<?php echo $this->getTableRowFormSetClass( $formSet ) ?> formset">
-                <td>
-                     <?php echo $this->renderInputWidget( $formSet->formConfiguration['sortkey'], $key ) ?>
-                </td>
-                <td>
-                    <?php echo $this->renderImageWidget( $formSet->formConfiguration['picture'], $key ) ?>
-                </td>
-                <td>
-                    <?php echo $this->renderTextWidget( $formSet->formConfiguration['title'], $key ) ?>
-                </td>
-                <td>
-                    <input type="button" class="deleteRow" value="Effacer" name="<?php echo $key ?>" />
-                    <?php if ( !empty( $row['id'] ) ): ?>
-                    <input type="hidden" name="recipe_recipe[pictures][<?php echo $key ?>][id]" value="<?php echo $row['id'] ?>" />
-                    <?php endif ?>
-                </td>
-            </tr>
-        <?php endforeach ?>
-        </table>
-        <button disabled="disabled" class="formset_add">Ajouter</button>
-        <div class="formset_template" style="display: none;"><!--
-            <tr class="<?php echo $this->getTableRowFormSetClass( $formSet ) ?> formset">
-                <td>
-                     <?php echo $this->renderInputWidget( $formSet->formConfiguration['sortkey'], 'voidKey' ) ?>
-                </td>
-                <td>
-                    <?php echo $this->renderImageWidget( $formSet->formConfiguration['picture'], 'voidKey' ) ?>
-                </td>
-                <td>
-                    <?php echo $this->renderTextWidget( $formSet->formConfiguration['title'], 'voidKey' ) ?>
-                </td>
-                <td>
-                    <input type="button" class="deleteRow" value="Effacer" name="voidKey" />
-                </td>
-            </tr>
-        --></div>
+        <?php echo $this->renderFormFieldRow( 'pictures' ) ?>
         
         <h2>Vid&eacute;o</h2>
 
@@ -80,6 +42,9 @@
     <fieldset class="inlineLabels">
         <h2>Produits de la recette</h2>
         <?php echo $this->renderFormFieldRow( 'ingredientProducts' ) ?>
+        <p class="formHint">
+            Pour ajouter un produit du catalogue vous devez indiquer sa référence. Il s'agit du numéro dans l'URL de la page du produit sur Madeleinemarket.com
+        </p>
     </fieldset>
     <fieldset class="inlineLabels">
         <h2>Ustensiles nécéssaires</h2>
@@ -88,6 +53,9 @@
     <fieldset class="inlineLabels">
         <h2>Ustensiles dans le catalogue Madeleine Market</h2>
         <?php echo $this->renderFormFieldRow( 'toolProducts' ) ?>
+        <p class="formHint">
+            Pour ajouter un produit du catalogue vous devez indiquer sa référence. Il s'agit du numéro dans l'URL de la page du produit sur Madeleinemarket.com
+        </p>
     </fieldset>
     <div class="buttonHolder">
       <!--

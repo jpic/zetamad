@@ -634,33 +634,27 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
 
         $html[] = '</tbody>';
-//        $html[] = '<tfoot>';
-//
-//        foreach( $form->formConfiguration as &$formAttribute ) {
-//            if ( !$this->isRenderable( $formAttribute ) ) {
-//                continue;
-//            }
-//
-//            $this->processAttribute( $formAttribute );
-//
-//            $html[] = sprintf(
-//                '<td class="formHint">%s</td>',
-//                $this->ucfirst( $formAttribute['help'] )
-//            );
-//        }
-//
-//        $html[] = '</tfoot>';
+        $html[] = '<tfoot>';
+
+        foreach( $form->formConfiguration as &$formAttribute ) {
+            if ( !$this->isRenderable( $formAttribute ) ) {
+                continue;
+            }
+
+            $this->processAttribute( $formAttribute );
+
+            $html[] = sprintf(
+                '<td class="formHint">%s</td>',
+                $this->ucfirst( $formAttribute['help'] )
+            );
+        }
+
+        $html[] = '</tfoot>';
         $html[] = '</table>';
 
         $html[] = '<button disabled="disabled" class="formset_add">';
         $html[] = $this->ucfirst( $this->t( 'add' ) );
         $html[] = '</button>';
-        
-        if (!empty($formAttribute['help'])) {
-            $html[] = '<p class="formHint">';
-            $html[] = $formAttribute['help'];
-            $html[] = '</p>';
-        }
 
         $htmlTemplate = array(
             sprintf(
@@ -714,8 +708,9 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
         $template = array(
             sprintf(
-                '<tr class="formset_%s_form formset" valign="top">',
-                $this->getTableRowFormSetClass( $form )
+                '<tr class="formset_%s_form formset %s" valign="top">',
+                $this->getTableRowFormSetClass( $form ),
+                $formAttribute['name']
             ),
         );
 
@@ -773,7 +768,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
                     ucfirst( $formAttribute['widget'] )
                 );
 
-                $html[] = '<td>';
+                $html[] = sprintf('<td class="%s">', $formAttribute['name']);
                 if ( method_exists( $this, $method ) ) {
                     $html[] = $this->$method( $formAttribute, $key );
                 } else {
