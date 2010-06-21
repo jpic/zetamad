@@ -127,14 +127,16 @@ class madFormController extends madController {
 
     public function mergePersistentData( $relationAttribute = null ) {
         $table = $this->formConfiguration['namespace']['value'];
-        if ( is_null( $relationAttribute ) ) {
+        if ( is_null( $relationAttribute ) || !isset( $relationAttribute['relation'] ) ) {
             // @todo: sql rewriter still doesn't rewrite id in where clause
             $sql = "select * from $table where $table.id = :id";
             $arguments = $this->request->variables;
-        } else {
+        } elseif ( $relationAttribute['relation'] == 'reverseFk' ) {
             $fk = $relationAttribute['fkName'];
             $sql = "select * from $table where $fk = :id";
             $arguments = $relationAttribute['parentForm']->data;
+        } else {
+            trigger_error( "What relation is this attribute?");
         }
 
         $rows = madFramework::query( $sql, $arguments );
@@ -161,6 +163,15 @@ class madFormController extends madController {
                 $attribute['form']->mergePersistentData( $attribute );
 
                 $this->data[$attribute['name']] = $attribute['form']->data;
+            }
+
+            if ( $attribute['relation'] == 'manyToMany' && isset( $this->id ) ) {
+                $q = $this->framework->pdo->prepare( "select $attribute[rightRelationAttribute] from $attribute[relationNamespace] where $attribute[leftRelationAttribute] = :id" );
+                $q->setFetchMode( PDO::FETCH_COLUMN, 0 );
+                $s = $q->execute( array( 'id' => $this->id ) );
+                $ids = $q->fetchAll() or array();
+                $this->persistentData[$name] = $ids;
+                $this->data[$name] = $ids;
             }
         }
     }
@@ -439,6 +450,11 @@ class madFormController extends madController {
                 }
 
                 if ( $attribute['relation'] == 'manyToMany' ) {
+                    $q = $this->framework->pdo->prepare( "select id from $attribute[relationNamespace] where $attribute[leftRelationAttribute] = :id" );
+                    $q->setFetchMode( PDO::FETCH_COLUMN, 0 );
+                    $s = $q->execute( array( 'id' => $row['id'] ) );
+                    $ids = $q->fetchAll() or array();
+                    madFramework::delete( $attribute['relationNamespace'], $ids );
                     foreach( $row[$attribute['name']] as $relatedId ) {
                         $relation = array(
                             'namespace' => $attribute['relationNamespace'],
