@@ -1,6 +1,8 @@
 $(document).ready( function(  ) {
     $( 'form.uniForm input:first' ).focus(  );
 
+    var next = 1000;
+
     $( 'button.formset_add' ).click( function( e ) {
         e.preventDefault(  );
         var table = $(this).prev(  );
@@ -20,13 +22,6 @@ $(document).ready( function(  ) {
         // strip comment tags
         template = template.substr( 6, template.indexOf( '-->' ) - 6 );
 
-        // if there is at least one formset tr, start by its key
-        if ( table.find('tr:first input[type=button]').length ) {
-            var next = parseInt( table.find('tr:first input[type=button]').attr('name') );
-        } else {
-            // or start by 0
-            var next = 0;
-        }
         table.find('input[type=button]').each(function() {
             var key = parseInt( $(this).attr('name') );
             if ( key >= next ) {

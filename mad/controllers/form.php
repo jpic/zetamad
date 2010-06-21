@@ -51,17 +51,6 @@ class madFormController extends madController {
             $this->formMeta = $this->formConfiguration['META'];
             unset( $this->formConfiguration['META'] );
         }
-
-        // formsets will need a hidden id field to avoid mixing
-        if ( $this->isFormSet && empty( $this->formConfiguration['id'] ) ) {
-            $this->formConfiguration['id'] = array(
-                'name'   => 'id',
-                'widget' => 'hidden',
-                'type'   => 'int',
-                'column' => 'id',
-                'classes' => array(),
-            );
-        }
         
         foreach( $this->formConfiguration as $name => &$attribute ) {
             if ( isset( $attribute['relation'] ) && $attribute['relation'] == 'reverseFk' ) {
@@ -386,72 +375,33 @@ class madFormController extends madController {
         $this->isValid = false;
     }
 
+    public function save( $doTransaction = true ) {
+        if ( $doTransaction ) {
+            $this->framework->pdo->beginTransaction();
+        }
 
-    public function save() {
+        // delete all rows, will reinsert later in posted order
+        if ( $this->isFormSet ) {
+            $delete = array();
+            foreach( $this->persistentData as $key => $persistentRow ) {
+                $delete[] = $persistentRow['id'];
+
+                // unprocess persistent data not in request data
+                if ( !array_key_exists( $key, $this->requestData ) ) {
+                    unset( $this->processedData[$key] );
+                }
+            }
+            madFramework::delete( $this->formConfiguration['namespace']['value'], $delete );
+        }
+
         // for some reason this doesn't work:
         // $processedData =& $this->isFormSet ? $this->processedData : array( &$this->processedData );
         if ( $this->isFormSet ) {
-            $processedData = $this->processedData;
+            foreach( $this->requestData as $key => $value ) {
+                $processedData[$key] = $this->processedData[$key];
+            }
         } else {
             $processedData = array( &$this->processedData );
-        }
-
-
-        // assume that persistentData that is not in requestData should be deleted
-        if ( $this->isFormSet ) {
-            foreach( $this->persistentData as $persistentRow ) {
-                if ( count( $this->requestData ) ) {
-                    foreach( $this->requestData as  $requestRow ) {
-                        if ( empty( $requestRow['id'] ) ) {
-                            // new row to save, nothing to do
-                            continue;
-                        }
-
-                        if ( $requestRow['id'] == $persistentRow['id'] ) {
-                            // the row was sent in the reqeust, nothing to do
-                            continue 2;
-                        }
-                    }
-                }
-
-                // remove from processedData
-                foreach( $this->processedData as $key => $row ) {
-                    if ( !isset( $row['id'] ) ) {
-                        continue;
-                    }
-
-                    if ( $row['id'] == $persistentRow['id'] ) {
-                        unset( $this->processedData[$key] );
-                        break;
-                    }
-                }
-
-                // remove from data
-                foreach( $this->data as $key => $row ) {
-                    if ( !isset( $row['id'] ) ) {
-                        continue;
-                    }
-                    
-                    if ( $row['id'] == $persistentRow['id'] ) {
-                        unset( $this->data[$key] );
-                        break;
-                    }
-                }
-
-                $this->deletedData[$key] = $persistentRow['id'];
-            }
-
-            if ( $this->deletedData ) {
-                $table = $this->formConfiguration['namespace']['value'];
-
-                foreach( $this->framework->pdo->schemalessTables[$table] as $attribute ) {
-                    $query = "delete from `{$table}_{$attribute}` where id in ('". implode("','", $this->deletedData)."')";
-                    madFramework::query($query);
-                }
-
-                $query = "delete from $table where id in ('". implode("','", $this->deletedData)."')";
-                madFramework::query($query);
-            }
         }
 
         // save this to get pk for relations
@@ -460,7 +410,7 @@ class madFormController extends madController {
                 continue;
             }
 
-            if ( array_key_exists( 'id', $row ) && !$row['id'] ) {
+            if ( array_key_exists( 'id', $row ) && $this->isFormSet ) {
                 unset( $row['id'] );
             }
             
@@ -485,7 +435,7 @@ class madFormController extends madController {
                         $attribute['form']->processedData[$attribute['fkName']] = $row['id'];
                     }
 
-                    $attribute['form']->save(  );
+                    $attribute['form']->save( false );
                 }
 
                 if ( $attribute['relation'] == 'manyToMany' ) {
@@ -503,5 +453,9 @@ class madFormController extends madController {
         }
 
         $this->isSuccessfull = true;
+
+        if ( $doTransaction ) {
+            $this->framework->pdo->commit();
+        }
     }
 }
