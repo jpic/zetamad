@@ -811,9 +811,9 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             $html[] = '</p>';
         }
 
-        $html[] = '<button disabled="disabled" class="formset_add">';
+        $html[] = '<button disabled="disabled" class="formset_add"><span><span>';
         $html[] = $this->ucfirst( $this->t( 'add' ) );
-        $html[] = '</button>';
+        $html[] = '</span></span></button>';
 
 
         $htmlTemplate = array(

@@ -41,7 +41,7 @@
                     <?php echo $this->renderTextWidget( $formSet->formConfiguration['title'], $key ) ?>
                 </td>
                 <td>
-                    <input type="button" class="deleteRow" value="Effacer" name="<?php echo $key ?>" />
+                    <button class="primaryAction deleteRow" name="<?php echo $key ?>"><span><span>Effacer</span></span></button>
                     <?php if ( !empty( $row['id'] ) ): ?>
                     <input type="hidden" name="recipe_recipe[pictures][<?php echo $key ?>][id]" value="<?php echo $row['id'] ?>" />
                     <?php endif ?>
@@ -49,7 +49,7 @@
             </tr>
         <?php endforeach ?>
         </table>
-        <button disabled="disabled" class="formset_add">Ajouter</button>
+        <button disabled="disabled" class="formset_add"><span><span>Ajouter</span></span></button>
         <div class="formset_template" style="display: none;"><!--
             <tr class="<?php echo $this->getTableRowFormSetClass( $formSet ) ?> formset">
                 <td>
@@ -62,7 +62,7 @@
                     <?php echo $this->renderTextWidget( $formSet->formConfiguration['title'], 'voidKey' ) ?>
                 </td>
                 <td>
-                    <input type="button" class="deleteRow" value="Effacer" name="voidKey" />
+                    <button class="primaryAction deleteRow" name="voidKey"><span><span>Effacer</span></span></button>
                 </td>
             </tr>
         --></div>
@@ -93,7 +93,11 @@
       <!--
       <button type="reset" class="resetButton">Rétablir les valeurs initiales</button>
       -->
-      <button type="submit" class="primaryAction">Enregistrer</button>
+      <button type="submit" class="primaryAction">
+        <span>
+            <span>Enregistrer</span>
+        </span>
+      </button>
     </div>
 
 </form>
