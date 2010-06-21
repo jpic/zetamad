@@ -297,8 +297,10 @@ class madFormController extends madController {
             $this->processedData( $attribute, $attribute['value'] );
         } elseif ( !empty( $attribute['autoNow'] ) ) {
             $this->processedData( $attribute, date( 'Y-m-d' ) );
-        } elseif ( !empty( $attribute['autoNowAdd'] ) && !isset( $this->processedData['id'] ) ) {
-            $this->processedData( $attribute, date( 'Y-m-d' ) );
+        } elseif ( !empty( $attribute['autoNowAdd'] ) ) {
+            if ( !isset( $this->processedData['id'] ) ) {
+                $this->processedData( $attribute, date( 'Y-m-d' ) );
+            }
         } elseif ( !empty( $attribute['slugify'] ) ) {
             $phrase = madFramework::dictionnaryReplace(
                 $attribute['slugify'],
@@ -310,6 +312,9 @@ class madFormController extends madController {
             $this->processedData( $attribute, $slug );
         } elseif ( !empty( $attribute['autoMe'] ) ) {
             $this->processedData( $attribute, $this->request->variables['user']['id'] );
+        } elseif ( empty( $attribute['widget'] ) ) {
+            var_dump( $attribute );
+            trigger_error( "Dunno what to do with this attribute that doesn't have a widget", E_USER_ERROR);
         } elseif ( in_array( $attribute['widget'], array( 'file', 'image' ) ) && $value instanceof ezcMvcRequestFile ) {
             $fileName = iconv( 'utf-8', 'us-ascii//TRANSLIT', $value->name );
 
