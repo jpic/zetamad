@@ -586,6 +586,22 @@ class madFramework {
         }
     }
 
+    static public function delete( $table, $ids ) {
+        $framework = madFramework::instance(  );
+
+        if ( is_numeric( $ids ) ) {
+            $ids = array( $ids );
+        }
+
+        foreach( $framework->pdo->schemalessTables[$table] as $attribute ) {
+            $query = "delete from `{$table}_{$attribute}` where id in ('". implode("','", $ids)."')";
+            madFramework::query($query);
+        }
+
+        $query = "delete from $table where id in ('". implode("','", $ids)."')";
+        madFramework::query($query);
+    }
+
     static public function pdoExecute( $statement, $arguments, $sql = null ) {
         if (is_object($arguments)) {
             $arguments = (array) $arguments;
