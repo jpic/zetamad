@@ -572,7 +572,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
 
         $template[] = '</td>';
         $template[] = '</tr>';
-
+        
         $html[] = '<th></th>';
         $html[] = '</tr>';
         $html[] = '</thead>';

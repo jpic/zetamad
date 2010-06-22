@@ -34,7 +34,6 @@
 
 
 .favorites_recipes, .favorites_products { float: left; width: 740px; margin-top: 20px; }
-.favorites_products { margin-top: 5px; }
 .favorites_recipes .recipe_block, .favorites_products .product_block { margin-bottom: 15px; float: left; width: 175px; margin-right: 13px; }
 .favorites_recipes .nomarg, .favorites_products .nomarg { margin: 0 !important; }
 .favorites_recipes .recipe_block .thumb, .favorites_products .product_block .thumb { padding: 3px; border: 1px solid #dadada; }

@@ -61,7 +61,7 @@
       <!--
       <button type="reset" class="resetButton">Rétablir les valeurs initiales</button>
       -->
-      <button type="submit" class="primaryAction">Enregistrer</button>
+      <button type="submit" class="primaryAction"><span><span>Enregistrer</span></span></button>
     </div>
 
 </form>
