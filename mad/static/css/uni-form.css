@@ -17,7 +17,7 @@
     .uniForm fieldset legend{ width: 100%; border-bottom:1px solid #EFEFEF; font-family:"Times new roman"; font-size:28px; font-weight:normal; margin:10px 0; display: block; }
     
     /* This is the main unit that contains our form elements */
-    .uniForm .ctrlHolder{ padding: 7px; border-bottom: 1px solid #dadada; }
+    .uniForm .ctrlHolder{ padding: 7px 0; border-bottom: 1px solid #dadada; }
     
     .uniForm .buttonHolder{ text-align: right; }
       .uniForm .resetButton{ float: left; }
@@ -141,9 +141,15 @@ YOU CAN VERY EASILY REVERT TO A GENERIC STYLE OF UNI-FORM. BEST OF LUCK...
   
   
 /* LAURENT */
-button.primaryAction, button.formset_add { background:none repeat scroll 0 0 transparent; border:0 none; cursor:pointer; margin:0; overflow:visible; padding:0; width:auto; }
-button.primaryAction span, button.formset_add span { background: url("http://127.0.0.1/mm/themes/mmarket/img/bkg_btn.png") no-repeat scroll 0 0 transparent; color:#555555; float:left; font:bold 11px/25px Tahoma,Verdana,Arial,sans-serif; height:28px; padding:0 0 0 6px; text-align:center; text-transform:uppercase; white-space:nowrap; }
-button.deleteRow span { color: #d66b6b; background: url("http://127.0.0.1/mm/themes/mmarket/img/bkg_btndel.png") }
+table.recipe_step tr, table.recipe_ingredientQuantity tr, table.multipleField tr, table.multipleField tr, table.recipe_picture tr { background: #f9f9f9; }
+table.recipe_step tr:hover, table.recipe_ingredientQuantity tr:hover, table.multipleField tr:hover, table.multipleField tr:hover, table.recipe_picture tr:hover { background: #f1f1f1; }
+table.recipe_ingredientQuantity { padding-top: 7px; }
+p.formHint a { color: #DE5161; }
+p.formHint a:hover { text-decoration: underline; color: #000; }
+p.formHint{ padding-top: 5px; line-height: 19px; width: auto; }
+button.primaryAction { background:none repeat scroll 0 0 transparent; border:0 none; cursor:pointer; margin:0; overflow:visible; padding:0; width:auto; }
+button.primaryAction span { background: url("../../../../../mm/themes/mmarket/img/bkg_btn.png") no-repeat scroll 0 0 transparent; color:#555555; float:left; font:bold 11px/25px Tahoma,Verdana,Arial,sans-serif; height:28px; padding:0 0 0 6px; text-align:center; text-transform:uppercase; white-space:nowrap; }
+button.deleteRow span { color: #d66b6b; background: url("../../../../../mm/themes/mmarket/img/bkg_btndel.png") }
 button.primaryAction span span, button.formset_add span span { background-position:100% 0; padding:0 15px 0 9px; }
 td.title { width: 250px;}
 .title input { width: 210px !important; }
