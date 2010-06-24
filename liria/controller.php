@@ -14,6 +14,8 @@ class madProjectController extends madModelController {
             ucfirst( $tag['name'] ),
             ucfirst( $tag['name'] )
         );
+
+        $this->result->variables['metaTitle'] = "Recettes du tag " . $tag['name'];
     }
 }
 ?>
