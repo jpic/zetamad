@@ -969,6 +969,8 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             $this->getAttributeHtmlId( $formAttribute, $key )
         );
 
+        $html[] = '<option value="">-----</option>';
+
         $actualValue = $this->getAttributeValue( $formAttribute, $key );
         foreach( $formAttribute['choices'] as $value => $display ) {
             $selected = $value == $actualValue || ( is_array( $actualValue ) && in_array( $value, $actualValue ) );
