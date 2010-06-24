@@ -15,7 +15,7 @@
         
         <div class="ctrlHolder tags">
         <label for="tags">tags</label>
-        <input value="" name="tags" class="textInput tags" type="text">
+        <input value="<?php echo implode( ', ', $this->tags ) ?>" name="tags" class="textInput tags" type="text">
         <p class="formHint">Tags séparés par des virgules</p>
         </div>
 

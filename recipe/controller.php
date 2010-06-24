@@ -99,9 +99,9 @@ class madRecipeController extends madModelController {
 
                 // remove orphan tags
                 $queries = array(
-                    'delete from tag_name where id not in (select id from recipe_tag_tag)',
-                    'delete from tag_slug where id not in (select id from recipe_tag_tag)',
-                    'delete from tag where id not in (select id from recipe_tag_tag)',
+                    'delete from tag_name where id not in (select value from recipe_tag_tag)',
+                    'delete from tag_slug where id not in (select value from recipe_tag_tag)',
+                    'delete from tag where id not in (select value from recipe_tag_tag)',
                 );
                 foreach( $queries as $query ) {
                     $this->framework->pdo->query( $query );
