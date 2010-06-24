@@ -555,6 +555,11 @@ class madFramework {
         if ( !$string ) {
             return '';
         }
+
+        if ( !empty( madFramework::instance(  )->configuration['applications']['mad']['brokenGd'] ) ) {
+            return preg_replace('~[^-\w]+~', '', strtolower( $string ));
+        }
+
         $slug = preg_replace('~[^\\pL\d]+~u', '-', $string );
         $slug = trim($slug, '-');
         $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
