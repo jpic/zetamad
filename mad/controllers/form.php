@@ -298,10 +298,16 @@ class madFormController extends madController {
         } elseif ( !empty( $attribute['autoNow'] ) ) {
             $this->processedData( $attribute, date( 'Y-m-d' ) );
         } elseif ( !empty( $attribute['autoNowAdd'] ) ) {
-            if ( !isset( $this->processedData['id'] ) ) {
+            if ( !isset( $this->persistentData['id'] ) ) {
                 $this->processedData( $attribute, date( 'Y-m-d' ) );
+            } else {
+                $this->processedData( $attribute, $this->persistentData[$attribute['name']] );
             }
         } elseif ( !empty( $attribute['slugify'] ) ) {
+            if ( isset( $this->persistentData[$attribute['name']] ) ) {
+                $this->processedData( $attribute, $this->persistentData[$attribute['name']] );
+                return;
+            }
             $phrase = madFramework::dictionnaryReplace(
                 $attribute['slugify'],
                 $this->processedData
@@ -457,7 +463,11 @@ class madFormController extends madController {
                     $q->setFetchMode( PDO::FETCH_COLUMN, 0 );
                     $s = $q->execute( array( 'id' => $row['id'] ) );
                     $ids = $q->fetchAll() or array();
-                    madFramework::delete( $attribute['relationNamespace'], $ids );
+
+                    if ( $ids ) {
+                        madFramework::delete( $attribute['relationNamespace'], $ids );
+                    }
+
                     foreach( $row[$attribute['name']] as $relatedId ) {
                         $relation = array(
                             'namespace' => $attribute['relationNamespace'],
