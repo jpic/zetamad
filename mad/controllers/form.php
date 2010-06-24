@@ -402,7 +402,10 @@ class madFormController extends madController {
                     unset( $this->processedData[$key] );
                 }
             }
-            madFramework::delete( $this->formConfiguration['namespace']['value'], $delete );
+
+            if ( $delete ) {
+                madFramework::delete( $this->formConfiguration['namespace']['value'], $delete );
+            }
         }
 
         // for some reason this doesn't work:
