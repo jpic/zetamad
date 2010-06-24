@@ -25,7 +25,6 @@ class madViewHandler extends ezcMvcPhpViewHandler {
      * @return <type> Absolute URL to resized image
      */
     public function thumbnail( $path, $size ) { # {{{
-        return $path;
         $uploadPath = ENTRY_APP_PATH . '/upload/' . $path;
         if ( !file_exists( $uploadPath ) ) {
             $registry = madFramework::instance(  );
