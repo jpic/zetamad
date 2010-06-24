@@ -12,7 +12,13 @@
         <h2>Présentation générale</h2>
         <?php echo $this->renderFormFieldRow( 'title' ) ?>
         <?php echo $this->renderFormFieldRow( 'categories' ) ?>
-        <?php echo $this->renderFormFieldRow( 'tags' ) ?>
+        
+        <div class="ctrlHolder tags">
+        <label for="tags">tags</label>
+        <input value="" name="tags" class="textInput tags" type="text">
+        <p class="formHint">Tags séparés par des virgules</p>
+        </div>
+
         <?php echo $this->renderFormFieldRow( 'profile' ) ?>
         <?php echo $this->renderFormFieldRow( 'author' ) ?>
         <?php echo $this->renderFormFieldRow( 'cookTime' ) ?>

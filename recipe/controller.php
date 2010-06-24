@@ -36,6 +36,81 @@ class madRecipeController extends madModelController {
         $rows = madFramework::query( 'select count(id) from recipe' );
         $this->result->variables['recipeCount'] = current( $rows[0] );
     }
+
+    public function doForm(  ) {
+        if ( isset( $this->id ) )  {
+            // edit mode
+            $this->mergePersistentData();
+
+            // load tags
+            $q = $this->framework->pdo->prepare( 'select tag.name from recipe_tag left join tag on recipe_tag.tag = tag.id where recipe_tag.recipe = :id' );
+            $q->setFetchMode( PDO::FETCH_COLUMN, 0 );
+            $q->execute( array( 'id' => $this->id ) );
+            $this->result->variables['tags'] = $q->fetchAll();
+        }
+
+        if ( $this->request->protocol == 'http-post' ) {
+            $this->mergeRequestData(  );
+            $this->process(  );
+
+            if ( $this->isValid ) {
+                $this->save(  );
+
+                // delete all relations to tags
+                $q = $this->framework->pdo->prepare( 'select id from recipe_tag where recipe = :id' );
+                $q->setFetchMode( PDO::FETCH_COLUMN, 0 );
+                $q->execute( array( 'id' => $this->processedData['id'] ) );
+                $ids = $q->fetchAll();
+                if ( $ids ) {
+                    madFramework::delete( 'recipe_tag', $ids );
+                }
+
+                // get or create all tags
+                $tags = array(  );
+                foreach( explode( ',', $this->request->variables['tags'] ) as $tagName ) {
+                    $tagName = trim( $tagName );
+
+                    $rows = madFramework::query( 'select id from tag where name = :name', array( 'name' => $tagName ) );
+                    if ( ! count( $rows ) ) {
+                        // create
+                        $tag = array( 
+                            'namespace' => 'tag',
+                            'name'      => $tagName,
+                            'slug'      => madFramework::slugify( $tagName ),
+                        );
+                        madModelController::saveArray( $tag );
+                        $tags[] = $tag['id'];
+                    } else {
+                        // fetch id
+                        $tags[] = $rows[0]['id'];
+                    }
+                }
+                
+                // add relations to tags
+                foreach( $tags as $tagId ) {
+                    $relation = array( 
+                        'namespace' => 'recipe_tag',
+                        'recipe'    => $this->processedData['id'],
+                        'tag'       => $tagId,
+                    );
+                    madModelController::saveArray( $relation );
+                }
+
+
+                // remove orphan tags
+                $queries = array(
+                    'delete from tag_name where id not in (select id from recipe_tag_tag)',
+                    'delete from tag_slug where id not in (select id from recipe_tag_tag)',
+                    'delete from tag where id not in (select id from recipe_tag_tag)',
+                );
+                foreach( $queries as $query ) {
+                    $this->framework->pdo->query( $query );
+                }
+            }
+        } else {
+            $this->process(  );
+        }
+    }
 }
 
 ?>
