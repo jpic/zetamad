@@ -64,6 +64,20 @@ class madAuthenticationController extends madController {
             $this->framework->configuration->getSetting( 'applications', 'authentication', 'loginUrl' )
         );
     }
+
+    public function doSearch() {
+        if ( empty( $this->email ) ) {
+            return;
+        }
+
+        $rows = madFramework::query( 'select * from user where email = :email', $this->request->variables );
+
+        if ( empty( $rows[0] ) ) {
+            return;
+        }
+
+        $this->routeRedirect( 'authentication.userEdit', $rows[0] );
+    }
 }
 
 ?>
