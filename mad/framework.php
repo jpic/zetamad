@@ -552,6 +552,9 @@ class madFramework {
     }
 
     static public function slugify( $string ) {
+        if ( !$string ) {
+            return '';
+        }
         $slug = preg_replace('~[^\\pL\d]+~u', '-', $string );
         $slug = trim($slug, '-');
         $slug = iconv('utf-8', 'us-ascii//TRANSLIT', $slug);
@@ -589,6 +592,10 @@ class madFramework {
     static public function delete( $table, $ids ) {
         $framework = madFramework::instance(  );
 
+        if ( !$ids ) {
+            trigger_error( "Empty \$ids" );
+        }
+        
         if ( is_numeric( $ids ) ) {
             $ids = array( $ids );
         }
