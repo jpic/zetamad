@@ -158,7 +158,7 @@ class madFramework {
             $this->setupApplications(  );
         }
         
-        $this->applications['mad']['refreshLocale'] = isset( $this->applications['mad']['refreshLocale'] ) && $this->applications['mad']['refreshLocale'] && is_dir( $this->entryApplicationPath . '/locale' ) ? false : true;
+        $this->applications['mad']['refreshLocale'] = empty( $this->applications['mad']['refreshLocale'] ) || !is_dir( $this->entryApplicationPath . '/locale' ) ? false : true;
 
         if ( $this->applications['mad']['refreshLocale'] ) {
             $this->refreshLocale();
