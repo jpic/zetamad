@@ -1018,11 +1018,16 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             return 'avant hier';
         }
 
-        $info = date_parse_from_format( 'Y-m-d', $date );
+        preg_match( '/(?P<year>[0-9]+)-(?P<month>[0-9]+)-(?P<day>[0-9]+)/', $date, $matches );
+        $info = $matches[0];
+        $info['year'] = (int) $info['year'];
+        $info['month'] = (int) $info['month'];
+        $info['day'] = (int) $info['day'];
+
         $ts = mktime(
-            $info['hour'],
-            $info['minute'],
-            $info['second'],
+            0,
+            0,
+            0,
             $info['month'],
             $info['day'],
             $info['year']
