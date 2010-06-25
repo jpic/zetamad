@@ -70,7 +70,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         if ( !$src = @imageCreateFromJpeg( $path ) ) {
             if ( !$src = @imageCreateFromPng( $path ) ) {
                 if ( !$src = @imageCreateFromGif( $path ) ) {
-                    trigger_error( "Cannot open $path", E_USER_ERROR );
+                    return '';
                 }
             }
         }
