@@ -26,9 +26,11 @@ class madViewHandler extends ezcMvcPhpViewHandler {
      */
     public function thumbnail( $path, $size ) { # {{{
         $uploadPath = ENTRY_APP_PATH . '/upload/' . $path;
+
         if ( !empty( $this->framework->configuration['applications']['mad']['brokenGd'] ) ) {
             return $uploadPath;
         }
+
         if ( !file_exists( $uploadPath ) ) {
             $registry = madFramework::instance(  );
             foreach( $registry->configuration['applications'] as $name => $application ) {
@@ -42,7 +44,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         }
 
         $info = pathinfo( $uploadPath );
-        if ( !$info && !$info['extension'] ) {
+        if ( !$info || !$info['extension'] ) {
             return false;
         }
         $path = $uploadPath;
