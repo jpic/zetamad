@@ -25,7 +25,10 @@ class madProfileController extends madModelController {
         }
 
         if ( $this->request->protocol == 'http-post' ) {
-            $this->mergeRequestData(  );
+            if ( !$this->mergeRequestData(  ) ) {
+                return;
+            }
+            
             $this->process(  );
 
             if ( $this->isValid ) {
