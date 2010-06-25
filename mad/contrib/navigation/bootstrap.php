@@ -13,6 +13,10 @@ function prepareMenu( $template ) {
             continue;
         }
 
+        if ( !empty( $route['acceptedRoles'] ) && !in_array( $framework->request->variables['user']['role'], $route['acceptedRoles'] ) ) {
+            continue;
+        }
+
         $menu[$route['META']['application']][madFramework::url( $routeName )] = madFramework::translate( $routeName );
     }
 

@@ -184,4 +184,25 @@ class madModelController extends madFormController {
             );
         }
     }
+
+
+    public function doListUpdate() {
+        $table = $this->framework->routeConfiguration['table'];
+        $columns = $this->framework->routeConfiguration['columns'];
+
+        foreach( $this->ids as $id ) {
+            foreach( $columns as $column => $value ) {
+                madFramework::query(
+                    "insert into $table set id = :id, $column = :value",
+                    array(
+                        'id' => $id,
+                        'value' => $value,
+                    )
+                );
+            }
+        }
+
+        $this->addMessage( 'listUpdateSuccess', array( 'table' => $table ), $table );
+        $this->redirectToReferer();
+    }
 }

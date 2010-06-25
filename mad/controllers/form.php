@@ -110,7 +110,9 @@ class madFormController extends madController {
     public function doForm(  ) {
         if ( isset( $this->id ) )  {
             // edit mode
-            $this->mergePersistentData();
+            if ( !$this->mergePersistentData() ) {
+                return;
+            }
         }
 
         if ( $this->request->protocol == 'http-post' ) {
@@ -140,6 +142,11 @@ class madFormController extends madController {
         }
 
         $rows = madFramework::query( $sql, $arguments );
+
+        if ( empty( $rows ) ) {
+            return $this->do404( 'objectNotFound' );
+        }
+
         $this->persistentData = $this->isFormSet ? $rows : $rows[0];
         $this->data->merge( $this->persistentData );
 
@@ -174,6 +181,8 @@ class madFormController extends madController {
                 $this->data[$name] = $ids;
             }
         }
+
+        return true;
     }
 
     public function setAttributeContext( &$attribute ) {
@@ -210,7 +219,11 @@ class madFormController extends madController {
         if ( ! $this->formName ) {
             return true;
         }
-        
+
+        if ( $this->result->status !== 0 ) {
+            return;
+        }
+
         array_unshift( $this->result->variables['contexts'], $this->formConfiguration['namespace']['value'] );
         array_unshift( $this->result->variables['contexts'], $this->formName );
 
@@ -298,18 +311,20 @@ class madFormController extends madController {
         } elseif ( !empty( $attribute['autoNow'] ) ) {
             $this->processedData( $attribute, date( 'Y-m-d' ) );
         } elseif ( !empty( $attribute['autoNowAdd'] ) ) {
-            if ( !isset( $this->persistentData['id'] ) ) {
+            if ( !isset( $this->persistentData[$attribute['column']] ) ) {
                 $this->processedData( $attribute, date( 'Y-m-d' ) );
             } else {
-                $this->processedData( $attribute, $this->persistentData[$attribute['name']] );
+                $this->processedData( $attribute, $this->persistentData[$attribute['column']] );
             }
         } elseif ( !empty( $attribute['slugify'] ) ) {
             if ( isset( $this->persistentData[$attribute['name']] ) ) {
                 $this->processedData( $attribute, $this->persistentData[$attribute['name']] );
                 return;
             }
+
+            $slugify = $attribute['slugify'];
             $phrase = madFramework::dictionnaryReplace(
-                $attribute['slugify'],
+                $slugify,
                 $this->processedData
             );
             

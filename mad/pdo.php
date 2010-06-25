@@ -402,7 +402,7 @@ class madPdo extends PDO {
         }
 
         if ( !isset( $this->schemalessTables[$table] ) ) {
-            $createStatement = parent::prepare( "CREATE TABLE $table (id INT(12) PRIMARY KEY AUTO_INCREMENT) ENGINE=InnoDb" );
+            $createStatement = parent::prepare( "CREATE TABLE $table (id INT(12) PRIMARY KEY AUTO_INCREMENT) ENGINE=InnoDb CHARSET=UTF8" );
             $createStatement->createTable = $table;
             $statement->objects[] = $createStatement;
             unset( $createStatement );
@@ -421,7 +421,7 @@ class madPdo extends PDO {
             }
 
             if ( !isset( $this->schemalessTables[$table] ) || !in_array( $column, $this->schemalessTables[$table] ) ) {
-                $createStatement = parent::prepare( "CREATE TABLE {$table}_{$column} (id INT(12), value TEXT, UNIQUE(id)) ENGINE=InnoDb" );
+                $createStatement = parent::prepare( "CREATE TABLE {$table}_{$column} (id INT(12), value TEXT, UNIQUE(id)) ENGINE=InnoDb CHARSET=UTF8" );
                 $createStatement->createColumn = array( $table, $column );
                 $statement->objects[] = $createStatement;
                 unset( $createStatement );

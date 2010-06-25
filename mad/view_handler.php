@@ -969,7 +969,9 @@ class madViewHandler extends ezcMvcPhpViewHandler {
             $this->getAttributeHtmlId( $formAttribute, $key )
         );
 
-        $html[] = '<option value="">-----</option>';
+        if ( empty( $formAttribute['multiple'] ) ) {
+            $html[] = '<option value="">-----</option>';
+        }
 
         $actualValue = $this->getAttributeValue( $formAttribute, $key );
         foreach( $formAttribute['choices'] as $value => $display ) {

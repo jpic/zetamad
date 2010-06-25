@@ -19,7 +19,9 @@
         <p class="formHint">Tags séparés par des virgules</p>
         </div>
 
+        <?php if ( !empty( $this->user['role'] ) && $this->user['role'] === 'administrator' ): ?>
         <?php echo $this->renderFormFieldRow( 'profile' ) ?>
+        <?php endif ?>
         <?php echo $this->renderFormFieldRow( 'author' ) ?>
         <?php echo $this->renderFormFieldRow( 'cookTime' ) ?>
         <?php echo $this->renderFormFieldRow( 'prepTime' ) ?>

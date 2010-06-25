@@ -13,7 +13,7 @@
     .object_table tbody .row_details a:hover { text-decoration: underline; }
 </style>
 
-<h2><?php $this->e( $this->metaTitle ) ?></h2>
+<h2><?php echo $this->metaTitle ?></h2>
 
 <?php if ( !count( $this->objectList ) ): ?>
 <p>
@@ -143,3 +143,8 @@ $(document).ready(function() {
 
 
 <?php endif ?>
+
+
+<?php
+    $this->includeTemplate( 'paginate.php' );
+?>

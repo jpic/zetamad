@@ -89,11 +89,14 @@ class madHttpDispatcher {
             try {
                 $framework->routingInformation = $framework->router->getRoutingInformation();
             } catch ( ezcMvcRouteNotFoundException $e ) {
-                $framework->routingInformation = new ezcMvcRoutingInformation( 'mad.404', 'madController', '404', $framework->router);
+                $framework->routingInformation = new madRoutingInformation( 'mad.404', 'madController', '404', $framework->router );
+                $framework->routingInformation->routeName = 'mad.404';
+                $framework->routingInformation->route = $framework->configuration['routes']['mad.404'];
             }
 
             // get route routeConfiguration
             $framework->routeConfiguration = $framework->configuration['routes'][$framework->routingInformation->routeName];
+            $framework->routeConfiguration['action'] = (string) $framework->routeConfiguration['action'];
 
             $framework->controller = $this->createRouteController( $framework );
             $framework->result = $framework->controller->createResult();
@@ -109,13 +112,15 @@ class madHttpDispatcher {
                 $request = $framework->result->request;
                 $continue = true;
                 $continueCount++;
-                # continue;
+                continue;
             }
 
             if ( $framework->result->status !== 0 ) {
                 $framework->response = new ezcMvcResponse;
                 $framework->response->status = $framework->result->status;
-            } else {
+            } 
+
+            if ( ! $framework->result->status instanceof ezcMvcExternalRedirect ) {
                 $framework->response = $this->createResponse( $framework );
             }
 
@@ -155,7 +160,15 @@ class madHttpDispatcher {
                 $framework->view->send( $key, $value );
             }
 
-            $template = ENTRY_APP_PATH . '/cache/templates/' . $framework->routeConfiguration['template'];
+            if ( !empty( $framework->result->variables['template'] ) ) {
+                $template = ENTRY_APP_PATH . '/cache/templates/' . $framework->result->variables['template'];
+
+                if ( !file_exists( $template ) ) {
+                    trigger_error( "Result variable template $template does not exists", E_USER_ERROR );
+                }
+            } else {
+                $template = ENTRY_APP_PATH . '/cache/templates/' . $framework->routeConfiguration['template'];
+            }
 
             if ( !empty( $framework->result->variables['form'] ) ) {
                 if ( !file_exists($template) ) {

@@ -36,7 +36,7 @@ ul#flash li a:hover { float: right; direction: rtl; color: #000; text-decoration
 
 <?php echo $this->body; ?>
 
-<?php if ( !isset( $_GET['popup'] ) && isset( $this->user ) && isset( $this->user['role'] ) && $this->user['role'] == 'administrator' ): ?>
+<?php if ( !isset( $_GET['popup'] ) && isset( $this->user ) && isset( $this->user['role'] ) && in_array( $this->user['role'], array( 'administrator', 'contributor' ) ) ): ?>
     <?php $this->includeTemplate( 'navigation.php' ) ?>
 <?php endif ?>
 

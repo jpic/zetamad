@@ -30,7 +30,16 @@ class madController extends ezcMvcController {
         }
         
         if ( ! $break ) {
-            $result = parent::createResult(  );
+            $actionMethod = 'do' . ucfirst( $this->action );
+
+            if ( method_exists( $this, $actionMethod ) )
+            {
+                $result = $this->$actionMethod();
+            } else {
+                throw new ezcMvcActionNotFoundException( $this->action );
+            }
+
+            $result = $this->$actionMethod(  );
         }
 
         foreach( $this->controllers as $controller ) {
@@ -102,14 +111,12 @@ class madController extends ezcMvcController {
         
     }
 
-    public function do404() {
-        if ( $this->action == '404' ) {
-            return;
-        }
-
-        $request = clone $this->request;
-        $request->uri = madFramework::url( 'mad.404' );
-        $this->result = new ezcMvcInternalRedirect( $request );
+    public function do404( $message = 'noSuchPage' ) {
+        $this->result->variables['template'] = '404.php';
+        $this->result->variables['message'] = $message;
+        $this->result->variables['metaTitle'] = madFramework::translate( $message );
+        $this->result->status = new madNotFoundStatus();
+        return false;
     }
 }
 

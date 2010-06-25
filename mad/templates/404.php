@@ -1,1 +1,1 @@
-Cette page n'existe pas.
+<?php $this->uet( $this->message ) ?>

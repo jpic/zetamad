@@ -88,11 +88,12 @@ a.btn-block:hover { background: #f1f1f1; }
 
 <?php
 if ( empty( $this->pictures ) )
-    $this->pictures = array();
+    $this->variables['pictures'] = array();
 if ( empty( $this->pictures[0]['picture'] ) )
-    $this->pictures[0]['picture'] = 'default.jpg';
-if ( empty( $this->profile['picture'] ) )
-    $this->profile['picture'] = 'default.jpg';
+    $this->variables['pictures'][0]['picture'] = 'default.jpg';
+if ( empty( $this->profile['picture'] ) ) {
+    $this->variables['profile']['picture'] = 'default.jpg';
+}
 ?>
 
 <div class="object hrecipe">

@@ -27,14 +27,14 @@ class madRecipeController extends madModelController {
     public function doIndex() {
         $this->result->variables['categories'] = madFramework::query( 'select * from recipeCategory' );
         $this->result->variables['tags'] = madFramework::query( 'select * from tag' );
-        $this->result->variables['recipes'] = madFramework::query( 'select recipe.id, recipe.title, recipe.slug, profile.name as profile_name, profile.slug as profile_slug, recipePicture.picture, recipePicture.title as recipe_picture, profile.slug as profile_slug, profile.name as profile_name from recipe left join profile on recipe.profile = profile.id left join recipePicture on recipePicture.recipe = recipe.id group by recipe.id order by recipe.updated desc limit 0, 6' );
-        $this->result->variables['profiles'] = madFramework::query( 'select * from profile order by updated desc limit 0, 6' );
+        $this->result->variables['recipes'] = madFramework::query( 'select recipe.id, recipe.title, recipe.slug, profile.name as profile_name, profile.slug as profile_slug, recipePicture.picture, recipePicture.title as recipe_picture, profile.slug as profile_slug, profile.name as profile_name from recipe left join profile on recipe.profile = profile.id left join recipePicture on recipePicture.recipe = recipe.id where status = "validated" group by recipe.id order by recipe.updated desc limit 0, 6' );
+        $this->result->variables['profiles'] = madFramework::query( 'select * from profile where status = "validated" order by updated desc limit 0, 6' );
         
-        $rows = madFramework::query( 'select count(id) from profile' );
-        $this->result->variables['profileCount'] = current( $rows[0] );
+        $rows = madFramework::query( 'select count(id) from profile where status = "validated"' );
+        $this->result->variables['profileCount'] = isset( $rows[0] ) ? current( $rows[0] ) : '0';
         
-        $rows = madFramework::query( 'select count(id) from recipe' );
-        $this->result->variables['recipeCount'] = current( $rows[0] );
+        $rows = madFramework::query( 'select count(id) from recipe where status = "validated"' );
+        $this->result->variables['recipeCount'] = isset( $rows[0] ) ? current( $rows[0] ) : '0';
     }
 
     public function doForm(  ) {
@@ -42,15 +42,29 @@ class madRecipeController extends madModelController {
             // edit mode
             $this->mergePersistentData();
 
+            // contributors can only edit theirs
+            if ( $this->user['role'] !== 'administrator' && $this->user['id'] != $this->persistentData['profile'] ) {
+                $this->controllers['authentication']->doRoleError();
+                return;
+            }
+
             // load tags
             $q = $this->framework->pdo->prepare( 'select tag.name from recipe_tag left join tag on recipe_tag.tag = tag.id where recipe_tag.recipe = :id' );
             $q->setFetchMode( PDO::FETCH_COLUMN, 0 );
             $q->execute( array( 'id' => $this->id ) );
             $this->result->variables['tags'] = $q->fetchAll();
+        } else {
+            $this->result->variables['tags'] = array();
         }
 
         if ( $this->request->protocol == 'http-post' ) {
             $this->mergeRequestData(  );
+
+            if ( empty( $this->request->variables['recipe_recipe']['profile'] ) ) {
+                $profile = madProfileController::getOrCreateProfile();
+                $this->formConfiguration['profile']['value'] = $profile['id'];
+            }
+
             $this->process(  );
 
             if ( $this->isValid ) {
