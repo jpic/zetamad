@@ -3,6 +3,11 @@ class madProjectController extends madModelController {
     public function doTagDetails() {
         // details action for the category
         $this->doDetails();
+
+        if ( empty( $this->result->variables['object'] ) ) {
+            return;
+        }
+
         $tag = $this->result->variables['object'];
 
         // list action for recipes
