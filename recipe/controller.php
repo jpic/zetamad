@@ -57,6 +57,10 @@ class madRecipeController extends madModelController {
             $this->result->variables['tags'] = array();
         }
 
+        if ( $this->user['role'] !== 'administrator' ) {
+            $this->formConfiguration['status']['value'] = 'new';
+        }
+
         if ( $this->request->protocol == 'http-post' ) {
             $this->mergeRequestData(  );
 
