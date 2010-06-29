@@ -1019,7 +1019,7 @@ class madViewHandler extends ezcMvcPhpViewHandler {
         }
 
         preg_match( '/(?P<year>[0-9]+)-(?P<month>[0-9]+)-(?P<day>[0-9]+)/', $date, $matches );
-        $info = $matches[0];
+        $info = $matches;
         $info['year'] = (int) $info['year'];
         $info['month'] = (int) $info['month'];
         $info['day'] = (int) $info['day'];
