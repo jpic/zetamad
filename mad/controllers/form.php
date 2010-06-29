@@ -483,7 +483,16 @@ class madFormController extends madController {
                         madFramework::delete( $attribute['relationNamespace'], $ids );
                     }
 
-                    foreach( $row[$attribute['name']] as $relatedId ) {
+                    if ( empty( $this->requestData[$attribute['name']] ) ) {
+                        continue;
+                    }
+
+                    $processedRequestData = array();
+                    foreach( $this->requestData[$attribute['name']] as $key => $value ) {
+                        $processedRequestData[] = $value;
+                    }
+
+                    foreach( $processedRequestData as $relatedId ) {
                         $relation = array(
                             'namespace' => $attribute['relationNamespace'],
                             $attribute['leftRelationAttribute'] => $row['id'],
