@@ -2,7 +2,7 @@
 #center_column { padding-left: 9px !important; width:780px !important; float: left !important;}
 h2.title { color: #000000; font-family:'Times','Helvetica',serif; font-size:35px; font-weight:100; line-height:40px; padding-bottom: 5px; margin: 15px 0 15px 0; border-bottom: 1px solid #dadada; }
 h3 { color: #DE5161; font-size: 14px; padding: 0; margin: 0; line-height: 18px; }
-.UIListingProfils, p, li { font-size: 12px; line-height: 25px; font-family: Lucida, "Lucida Sans", Arial, sans-serif; }
+.UIListingProfils, center_column p, center_column li { font-size: 12px; line-height: 25px; font-family: Lucida, "Lucida Sans", Arial, sans-serif; }
 .UIListingProfils { border-bottom:1px solid #dadada; margin-bottom:6px; padding-bottom:6px; overflow: auto; }
 .UIListingProfils .UIListingProfils_pic { width: 150px; height: 150px; float: left; }
 .UIListingProfils .UIListingProfils_pic img { vertical-align: bottom; }
