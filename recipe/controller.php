@@ -88,6 +88,10 @@ class madRecipeController extends madModelController {
                 foreach( explode( ',', $this->request->variables['tags'] ) as $tagName ) {
                     $tagName = trim( $tagName );
 
+                    if ( !strlen( $tagName ) ) {
+                        continue;
+                    }
+
                     $rows = madFramework::query( 'select id from tag where name = :name', array( 'name' => $tagName ) );
                     if ( ! count( $rows ) ) {
                         // create
