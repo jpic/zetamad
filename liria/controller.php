@@ -22,5 +22,25 @@ class madProjectController extends madModelController {
 
         $this->result->variables['metaTitle'] = "Recettes du tag " . $tag['name'];
     }
+
+    public function doTagListDelete() {
+        // select all recipe_tag that are related to a tag to delete
+        $sql = sprintf( 
+            'select id from recipe_tag where tag in ( %s ) ',
+            implode( ', ', $this->ids )
+        );
+        $rows = madFramework::query( $sql );
+        
+        $ids = array();
+        foreach( $rows as $row ) {
+            $ids[] = $row['id'];
+        }
+        
+        // delete the recipe_tags
+        madFramework::delete( 'recipe_tag', $ids );
+
+        // delete the actual tags
+        $this->doListDelete();
+    }
 }
 ?>

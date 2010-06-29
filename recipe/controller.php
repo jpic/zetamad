@@ -125,6 +125,26 @@ class madRecipeController extends madModelController {
             $this->process(  );
         }
     }
+
+    public function doListDelete() {
+        // select all recipe_tag that are related to a tag to delete
+        $sql = sprintf(
+            'select id from recipeStep where recipe in ( %s ) ',
+            implode( ', ', $this->ids )
+        );
+        $rows = madFramework::query( $sql );
+
+        $ids = array();
+        foreach( $rows as $row ) {
+            $ids[] = $row['id'];
+        }
+
+        // delete the recipe_tags
+        madFramework::delete( 'recipeStep_recipe', $ids );
+
+        // delete the actual tags
+        $this->doListDelete();
+    }
 }
 
 ?>
