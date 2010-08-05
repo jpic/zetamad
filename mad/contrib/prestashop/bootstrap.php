@@ -55,7 +55,7 @@ function prestashopAuthentication( ezcMvcRequest $request, ezcMvcRouter $router 
         }
         
         // HACK: ne pas commit, ca flinguerai toute la securité!!!
-        $request->variables['user']['role'] = 'administrator';
+        // $request->variables['user']['role'] = 'administrator';
     }
 }
 $this->connectSignal( 'postCreateRouter', 'prestashopAuthentication' );
